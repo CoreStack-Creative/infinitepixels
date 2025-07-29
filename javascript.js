@@ -58,8 +58,8 @@ function displaySearchResults(results) {
     searchResults.innerHTML = ''; // Clear previous results
 
     if (results.length === 0) {
-        // Show "No results" message
-        searchResults.innerHTML = '<p class="no-results">No matching games found.</p>';
+        // Show "No results found" message
+        searchResults.innerHTML = '<p class="no-results">No results found.</p>';
         searchResults.classList.add('active');
     } else {
         // Display results
