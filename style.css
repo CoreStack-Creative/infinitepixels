@@ -161,8 +161,9 @@ body {
 .logo-icon {
     width: 65px;
     height: 65px;
-    background: linear-gradient(45deg, #8a2be2, #4b0082);
-    border-radius: 8px;
+    /* Remove background and border-radius */
+    background: none;
+    border-radius: 0;
     display: flex;
     align-items: center;
     justify-content: center;
