@@ -29,11 +29,11 @@ sidebarToggle.addEventListener('click', () => {
     sidebar.classList.toggle('collapsed');
     mainContent.classList.toggle('expanded');
 
-    // Only show bars icon, and visually indicate selected/unselected
-    if (sidebarCollapsed) {
-        sidebarToggle.classList.add('selected'); // Add a class for selected state
+    // Selected when menu is open, unselected when closed
+    if (!sidebarCollapsed) {
+        sidebarToggle.classList.add('selected'); // Selected when open
     } else {
-        sidebarToggle.classList.remove('selected'); // Remove selected state
+        sidebarToggle.classList.remove('selected'); // Unselected when closed
     }
     sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>'; // Always show bars icon
 });
@@ -415,6 +415,7 @@ function handleResize() {
             sidebar.classList.add('collapsed');
             mainContent.classList.add('expanded');
             sidebarCollapsed = true;
+            sidebarToggle.classList.remove('selected'); // Unselected when closed
         }
 
         // Add mobile-specific touch events

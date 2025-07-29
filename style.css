@@ -140,7 +140,8 @@ body {
 }
 
 .sidebar.collapsed {
-    transform: translateX(-220px);
+    /* Move sidebar further off-screen when collapsed */
+    transform: translateX(-320px);
 }
 
 .sidebar-header {
@@ -688,11 +689,13 @@ body {
 @media (max-width: 768px) {
     .sidebar {
         width: 220px;
-        transform: translateX(-160px);
+        /* ...existing code... */
+        transform: translateX(-220px);
     }
 
     .sidebar.collapsed {
-        transform: translateX(0);
+        /* Move sidebar further off-screen for mobile */
+        transform: translateX(-320px);
     }
 
     .main-content {
