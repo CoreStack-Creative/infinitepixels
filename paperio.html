@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paper.io - InfinitePixels</title>
+    <link rel="icon" href="images/infinitepixlesfav.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="images/infinitepixleslogo.webp" alt="InfinitePixels Logo" width="85px" height="85px">
+                </div>
+                <h2>InfinitePixels</h2>
+            </div>
+        </div>
+
+        <ul class="nav-links">
+            <li>
+                <a href="index.html">
+                    <i class="icon">
+                        <img src="images/home.png" alt="Homepage" width="20" height="20">
+                    </i>
+                    <span>Homepage</span>
+                </a>
+            </li>
+            <li>
+                <a href="#" class="active">
+                    <i class="icon">
+                        <img src="images/games.png" alt="Games" width="20" height="20">
+                    </i>
+                    <span>Games</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="icon">
+                        <img src="images/random.png" alt="Random" width="20" height="20">
+                    </i>
+                    <span>Random</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="icon">
+                        <img src="images/grid.png" alt="Categories" width="20" height="20">
+                    </i>
+                    <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="icon">
+                        <img src="images/news.png" alt="News" width="20" height="20">
+                    </i>
+                    <span>News</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="icon">
+                        <img src="images/settings.png" alt="Settings" width="20" height="20">
+                    </i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="top-bar">
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search games...">
+            <button class="search-btn" id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+            <div class="search-results" id="searchResults">
+                <!-- Search results will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <div class="game-layout">
+            <!-- Game Section -->
+            <div class="game-section">
+                <!-- Game Canvas Container -->
+                <div class="game-container" id="gameContainer">
+                    <canvas id="gameCanvas" width="800" height="600">
+                        Your browser does not support the HTML5 canvas tag.
+                    </canvas>
+                    
+                    <!-- Game Control Bar -->
+                    <div class="game-control-bar" id="gameControlBar">
+                        <div class="game-title">
+                            <h2>Paper.io</h2>
+                        </div>
+                        <div class="game-controls">
+                            <button class="control-btn share-btn" id="shareBtn">
+                                <i class="fas fa-share"></i>
+                                <span>Share</span>
+                            </button>
+                            <button class="control-btn fullscreen-btn" id="fullscreenBtn">
+                                <i class="fas fa-expand"></i>
+                                <span>Fullscreen</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Fullscreen Collapse Arrow -->
+                    <div class="collapse-arrow" id="collapseArrow">
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                </div>
+
+                <!-- Game Description -->
+                <div class="game-description">
+                    <h3>About Paper.io</h3>
+                    <p>Conquer as much territory as possible in this addictive multiplayer game! Draw lines to expand your area while avoiding other players. The bigger your territory, the higher you'll rank on the leaderboard. Be strategic and quick to dominate the paper world!</p>
+                    
+                    <div class="game-genres">
+                        <span class="genre-tag">Multiplayer</span>
+                        <span class="genre-tag">Strategy</span>
+                        <span class="genre-tag">Arcade</span>
+                        <span class="genre-tag">io Games</span>
+                    </div>
+                </div>
+
+                <!-- Ad Section -->
+                <div class="ad-section">
+                    <div class="ad-placeholder">
+                        <i class="fas fa-ad"></i>
+                        <span>Advertisement</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Games Section -->
+            <div class="sidebar-games">
+                <!-- Top Ad -->
+                <div class="sidebar-ad">
+                    <div class="ad-placeholder small">
+                        <i class="fas fa-ad"></i>
+                        <span>Ad</span>
+                    </div>
+                </div>
+
+                <!-- Related Games -->
+                <div class="related-games">
+                    <h3>More Games</h3>
+                    
+                    <div class="game-item" data-game="slither-io">
+                        <div class="game-thumbnail slither-theme"></div>
+                        <div class="game-details">
+                            <h4>Slither.io</h4>
+                            <p>Snake multiplayer</p>
+                        </div>
+                    </div>
+
+                    <div class="game-item" data-game="agar-io">
+                        <div class="game-thumbnail agar-theme"></div>
+                        <div class="game-details">
+                            <h4>Agar.io</h4>
+                            <p>Cell evolution</p>
+                        </div>
+                    </div>
+
+                    <div class="game-item" data-game="hole-io">
+                        <div class="game-thumbnail hole-theme"></div>
+                        <div class="game-details">
+                            <h4>Hole.io</h4>
+                            <p>Black hole battle</p>
+                        </div>
+                    </div>
+
+                    <div class="game-item" data-game="wings-io">
+                        <div class="game-thumbnail wings-theme"></div>
+                        <div class="game-details">
+                            <h4>Wings.io</h4>
+                            <p>Aerial combat</p>
+                        </div>
+                    </div>
+
+                    <div class="game-item" data-game="zombs-io">
+                        <div class="game-thumbnail zombs-theme"></div>
+                        <div class="game-details">
+                            <h4>Zombs.io</h4>
+                            <p>Zombie survival</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Share Modal -->
+    <div class="share-modal" id="shareModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Share Paper.io</h3>
+                <button class="close-btn" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Share this game with your friends!</p>
+                <div class="share-link-container">
+                    <input type="text" id="shareLink" value="https://infinitepixels.com/paperio" readonly>
+                    <button class="copy-btn" id="copyBtn">Copy</button>
+                </div>
+                <div class="share-message" id="shareMessage">Link copied to clipboard!</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="javascript.js"></script>
+</body>
+</html>
