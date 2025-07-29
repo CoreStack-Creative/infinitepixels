@@ -29,12 +29,13 @@ sidebarToggle.addEventListener('click', () => {
     sidebar.classList.toggle('collapsed');
     mainContent.classList.toggle('expanded');
 
-    // Change icon based on sidebar state
+    // Only show bars icon, and visually indicate selected/unselected
     if (sidebarCollapsed) {
-        sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>'; // Show bars icon
+        sidebarToggle.classList.add('selected'); // Add a class for selected state
     } else {
-        sidebarToggle.innerHTML = '<i class="fas fa-arrow-right"></i>'; // Show arrow icon
+        sidebarToggle.classList.remove('selected'); // Remove selected state
     }
+    sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>'; // Always show bars icon
 });
 
 // Search functionality
@@ -392,6 +393,17 @@ document.addEventListener('keydown', (e) => {
             }
         });
     }
+});
+
+// Prevent sidebar toggle from being triggered by search bar interactions
+searchInput.addEventListener('focus', (e) => {
+    e.stopPropagation();
+});
+searchInput.addEventListener('mousedown', (e) => {
+    e.stopPropagation();
+});
+searchBtn && searchBtn.addEventListener('mousedown', (e) => {
+    e.stopPropagation();
 });
 
 // Mobile responsive handling

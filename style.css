@@ -44,6 +44,11 @@ body {
     color: #8a2be2;
 }
 
+.sidebar-toggle.selected {
+    background: #8a2be2;
+    color: #fff;
+}
+
 /* Search Styles */
 .search-container {
     display: flex;
