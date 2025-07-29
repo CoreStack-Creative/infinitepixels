@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>InfinitePixels - Ultimate Gaming Hub</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
+
     <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -16,13 +18,8 @@
                 </div>
                 <h2>InfinitePixels</h2>
             </div>
-            <button class="toggle-btn" id="toggleBtn">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
         </div>
-        
+
         <ul class="nav-links">
             <li>
                 <a href="#" class="active">
@@ -74,6 +71,22 @@
             </li>
         </ul>
     </nav>
+
+    <div class="top-bar">
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search games...">
+            <button class="search-btn" id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+            <div class="search-results" id="searchResults">
+                <!-- Search results will be displayed here -->
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <main class="main-content" id="mainContent">

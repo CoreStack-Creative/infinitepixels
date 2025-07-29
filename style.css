@@ -13,6 +13,105 @@ body {
     min-height: 100vh;
 }
 
+/* Top Bar Styles */
+.top-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(30, 30, 63, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 15px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 1001; /* Ensure it's above the sidebar */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.5em;
+    padding: 5px;
+    transition: color 0.3s ease;
+}
+
+.sidebar-toggle:hover {
+    color: #8a2be2;
+}
+
+/* Search Styles */
+.search-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.search-container input[type="text"] {
+    padding: 8px 30px 8px 12px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1em;
+    color: #333;
+    width: 250px;
+    background: rgba(255, 255, 255, 0.9);
+    transition: width 0.3s ease;
+}
+
+.search-container input[type="text"]:focus {
+    outline: none;
+    width: 300px;
+}
+
+.search-container .search-btn {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: #333;
+    cursor: pointer;
+    font-size: 1.2em;
+    padding: 5px;
+    transition: color 0.3s ease;
+}
+
+.search-container .search-btn:hover {
+    color: #8a2be2;
+}
+
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: rgba(30, 30, 63, 0.9);
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    color: #fff;
+    font-size: 0.9em;
+    padding: 10px;
+    margin-top: 5px;
+    z-index: 10;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.search-results p {
+    padding: 5px 0;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.search-results p:hover {
+    background-color: rgba(138, 43, 226, 0.2);
+}
+
 /* Sidebar Styles */
 .sidebar {
     position: fixed;
@@ -27,6 +126,7 @@ body {
     transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     z-index: 1000;
     box-shadow: 0 0 30px rgba(138, 43, 226, 0.2);
+    padding-top: 60px; /* Account for the top bar */
 }
 
 .sidebar.collapsed {
@@ -36,7 +136,7 @@ body {
 .sidebar-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     padding: 20px;
     border-bottom: 1px solid rgba(138, 43, 226, 0.2);
 }
@@ -69,30 +169,6 @@ body {
     color: #ffffff;
     font-size: 18px;
     font-weight: 600;
-}
-
-.toggle-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 6px;
-    transition: background-color 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.toggle-btn:hover {
-    background-color: rgba(138, 43, 226, 0.2);
-}
-
-.toggle-btn span {
-    width: 20px;
-    height: 2px;
-    background-color: #ffffff;
-    transition: all 0.3s ease;
-    border-radius: 2px;
 }
 
 .nav-links {
@@ -140,6 +216,7 @@ body {
     margin-left: 280px;
     transition: margin-left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     min-height: 100vh;
+    padding-top: 70px; /* Account for the top bar */
 }
 
 .main-content.expanded {
@@ -356,7 +433,7 @@ body {
 
 .space-theme {
     background: radial-gradient(circle, #1a1a3e, #0a0a23);
-    background-image: 
+    background-image:
         radial-gradient(2px 2px at 20px 30px, #fff, transparent),
         radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
         radial-gradient(1px 1px at 90px 40px, #fff, transparent);
@@ -364,7 +441,7 @@ body {
 
 .cyber-theme {
     background: linear-gradient(45deg, #00ffff, #ff00ff);
-    background-image: 
+    background-image:
         repeating-linear-gradient(90deg, transparent, transparent 98px, rgba(255,255,255,0.1) 100px);
 }
 
@@ -374,7 +451,7 @@ body {
 
 .pixel-theme {
     background: #2a2a5a;
-    background-image: 
+    background-image:
         linear-gradient(45deg, #8a2be2 25%, transparent 25%),
         linear-gradient(-45deg, #8a2be2 25%, transparent 25%);
     background-size: 20px 20px;
@@ -396,14 +473,14 @@ body {
 
 .colony-theme {
     background: radial-gradient(circle, #1a1a3e, #0a0a23);
-    background-image: 
+    background-image:
         radial-gradient(1px 1px at 15px 15px, #00ffff, transparent),
         radial-gradient(1px 1px at 35px 45px, #8a2be2, transparent);
 }
 
 .cosmic-theme {
     background: radial-gradient(circle, #2d1b69, #0a0a23);
-    background-image: 
+    background-image:
         radial-gradient(2px 2px at 30px 40px, #fff, transparent),
         radial-gradient(1px 1px at 80px 20px, #8a2be2, transparent),
         radial-gradient(1px 1px at 120px 80px, #00ffff, transparent);
@@ -557,96 +634,3 @@ body {
     border: 2px solid #8a2be2;
     padding: 13px 28px;
     border-radius: 30px;
-    color: #8a2be2;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.btn-secondary:hover {
-    background: #8a2be2;
-    color: white;
-    transform: translateY(-2px);
-}
-
-.spotlight-visual {
-    position: relative;
-    height: 400px;
-}
-
-.spotlight-image {
-    width: 100%;
-    height: 100%;
-    border-radius: 20px;
-    position: relative;
-    overflow: hidden;
-}
-
-.cosmic-particles {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-}
-
-.particle {
-    position: absolute;
-    width: 4px;
-    height: 4px;
-    background: #ffffff;
-    border-radius: 50%;
-    animation: twinkle 2s ease-in-out infinite;
-}
-
-.particle:nth-child(1) { top: 20%; left: 30%; animation-delay: 0s; }
-.particle:nth-child(2) { top: 60%; left: 70%; animation-delay: 0.5s; }
-.particle:nth-child(3) { top: 80%; left: 20%; animation-delay: 1s; }
-.particle:nth-child(4) { top: 40%; left: 80%; animation-delay: 1.5s; }
-.particle:nth-child(5) { top: 70%; left: 50%; animation-delay: 2s; }
-.particle:nth-child(6) { top: 30%; left: 60%; animation-delay: 2.5s; }
-
-@keyframes twinkle {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.5); }
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .sidebar {
-        transform: translateX(-220px);
-    }
-    
-    .sidebar.open {
-        transform: translateX(0);
-    }
-    
-    .main-content {
-        margin-left: 60px;
-    }
-    
-    .hero-content,
-    .spotlight-content {
-        grid-template-columns: 1fr;
-        gap: 40px;
-    }
-    
-    .hero-title {
-        font-size: 2.5rem;
-    }
-    
-    .spotlight-text h2 {
-        font-size: 2rem;
-    }
-    
-    .games-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-    }
-    
-    .spotlight-features {
-        flex-direction: column;
-        gap: 15px;
-    }
-}
