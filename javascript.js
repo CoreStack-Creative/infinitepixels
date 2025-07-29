@@ -31,15 +31,23 @@ sidebarToggle.addEventListener('click', () => {
 
     // Change icon based on sidebar state
     if (sidebarCollapsed) {
-        sidebarToggle.innerHTML = '<i class="fas fa-arrow-right"></i>'; // Show arrow icon
-    } else {
         sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>'; // Show bars icon
+    } else {
+        sidebarToggle.innerHTML = '<i class="fas fa-arrow-right"></i>'; // Show arrow icon
     }
 });
 
 // Search functionality
 searchInput.addEventListener('input', () => {
     const searchTerm = searchInput.value.toLowerCase();
+
+    if (searchTerm.trim() === '') {
+        // Hide results if input is empty
+        searchResults.classList.remove('active');
+        searchResults.innerHTML = '';
+        return;
+    }
+
     const filteredGames = gameData.filter(game => game.name.toLowerCase().includes(searchTerm));
 
     displaySearchResults(filteredGames);
@@ -49,13 +57,17 @@ function displaySearchResults(results) {
     searchResults.innerHTML = ''; // Clear previous results
 
     if (results.length === 0) {
-        searchResults.innerHTML = '<p>No search results.</p>';
+        // Show "No results" message
+        searchResults.innerHTML = '<p class="no-results">No matching games found.</p>';
+        searchResults.classList.add('active');
     } else {
+        // Display results
         results.forEach(game => {
             const resultElement = document.createElement('p');
             resultElement.textContent = game.name;
             searchResults.appendChild(resultElement);
         });
+        searchResults.classList.add('active');
     }
 }
 
