@@ -835,6 +835,23 @@ body {
     z-index: 10002;
 }
 
+.game-container.fullscreen.bar-collapsed .game-control-bar {
+    display: none;
+}
+
+.game-container.fullscreen.bar-collapsed iframe,
+.game-container.fullscreen.bar-collapsed #gameFrame {
+    height: 100vh;
+}
+
+.game-container.fullscreen.bar-collapsed .collapse-arrow {
+    display: block;
+    position: fixed;
+    right: 30px;
+    bottom: 30px; /* Move arrow to bottom right */
+    z-index: 10002;
+}
+
 /* Game Control Bar */
 .game-control-bar {
     display: flex;

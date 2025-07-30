@@ -199,18 +199,19 @@ function toggleFullscreen() {
     if (isFullscreen) {
         gameContainer.classList.add('fullscreen');
         fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i><span>Exit Fullscreen</span>';
-        
-        // Resize canvas for fullscreen
         gameCanvas.style.width = '100vw';
         gameCanvas.style.height = 'calc(100vh - 60px)';
+        collapseArrow.style.display = 'block';
+        gameContainer.classList.remove('bar-collapsed');
+        barCollapsed = false;
     } else {
         gameContainer.classList.remove('fullscreen');
         fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i><span>Fullscreen</span>';
         barCollapsed = false;
         gameControlBar.classList.remove('collapsed');
         collapseArrow.classList.remove('rotated');
-        
-        // Reset canvas size
+        collapseArrow.style.display = '';
+        gameContainer.classList.remove('bar-collapsed');
         gameCanvas.style.width = '100%';
         gameCanvas.style.height = 'auto';
     }
@@ -219,13 +220,24 @@ function toggleFullscreen() {
 // Collapse arrow functionality
 collapseArrow.addEventListener('click', () => {
     barCollapsed = !barCollapsed;
-    
-    if (barCollapsed) {
-        gameControlBar.classList.add('collapsed');
-        collapseArrow.classList.add('rotated');
+
+    if (isFullscreen) {
+        if (barCollapsed) {
+            gameContainer.classList.add('bar-collapsed');
+            collapseArrow.classList.add('rotated');
+            // Arrow stays visible
+        } else {
+            gameContainer.classList.remove('bar-collapsed');
+            collapseArrow.classList.remove('rotated');
+        }
     } else {
-        gameControlBar.classList.remove('collapsed');
-        collapseArrow.classList.remove('rotated');
+        if (barCollapsed) {
+            gameControlBar.classList.add('collapsed');
+            collapseArrow.classList.add('rotated');
+        } else {
+            gameControlBar.classList.remove('collapsed');
+            collapseArrow.classList.remove('rotated');
+        }
     }
 });
 
