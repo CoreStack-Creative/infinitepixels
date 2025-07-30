@@ -113,23 +113,7 @@
                             <h2>Paper.io</h2>
                         </div>
                         <div class="game-controls" style="display: flex; align-items: center; gap: 18px;">
-                            <!-- Feedback Buttons (smaller, no "Fun?", only one vote, visual lock) -->
-                            <div class="feedback-inline" style="display: flex; align-items: center; background: rgba(138,43,226,0.13); border-radius: 16px; padding: 7px 14px; margin-right: 18px; gap: 8px; box-shadow: 0 2px 8px rgba(138,43,226,0.08); position: relative;">
-                                <button id="thumbsUpBtn" style="background: linear-gradient(135deg, #4CAF50 60%, #8a2be2 100%); border: none; cursor: pointer; font-size: 1.1em; color: #fff; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(76,175,80,0.12); transition: transform 0.15s;">
-                                    <i class="fas fa-thumbs-up"></i>
-                                </button>
-                                <button id="thumbsDownBtn" style="background: linear-gradient(135deg, #e74c3c 60%, #8a2be2 100%); border: none; cursor: pointer; font-size: 1.1em; color: #fff; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(231,76,60,0.12); transition: transform 0.15s;">
-                                    <i class="fas fa-thumbs-down"></i>
-                                </button>
-                                <!-- Floating thumbs container -->
-                                <div id="floatingThumbs" style="pointer-events:none; position:absolute; left:0; top:0; width:100%; height:100%; z-index:10;"></div>
-                                <div id="voteLock" style="display:none; position:absolute; left:0; top:0; width:100%; height:100%; align-items:center; justify-content:center; pointer-events:auto;">
-                                    <span style="font-size:1.2em; color:#8a2be2; display:flex; align-items:center; gap:6px;">
-                                        <i class="fas fa-lock"></i>
-                                        <span style="font-weight:600;">Voted!</span>
-                                    </span>
-                                </div>
-                            </div>
+                            <!-- Remove feedback-inline section from here -->
                             <button class="control-btn share-btn" id="shareBtn">
                                 <i class="fas fa-share"></i>
                                 <span>Share</span>
@@ -148,8 +132,27 @@
                 </div>
 
                 <!-- Game Description -->
-                <div class="game-description">
-                    <h3>About Paper.io</h3>
+                <div class="game-description" style="position:relative;">
+                    <div class="description-header" style="display:flex; align-items:center; justify-content:space-between;">
+                        <h3 style="margin-bottom:0;">About Paper.io</h3>
+                        <!-- Feedback Buttons (moved here, top right corner) -->
+                        <div class="feedback-inline" style="display: flex; align-items: center; background: rgba(138,43,226,0.13); border-radius: 16px; box-shadow: 0 2px 8px rgba(138,43,226,0.08); position: relative;">
+                            <button id="thumbsUpBtn" style="background: linear-gradient(135deg, #4CAF50 60%, #8a2be2 100%); border: none; cursor: pointer; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(76,175,80,0.12); transition: transform 0.15s;">
+                                <i class="fas fa-thumbs-up"></i>
+                            </button>
+                            <button id="thumbsDownBtn" style="background: linear-gradient(135deg, #e74c3c 60%, #8a2be2 100%); border: none; cursor: pointer; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(231,76,60,0.12); transition: transform 0.15s;">
+                                <i class="fas fa-thumbs-down"></i>
+                            </button>
+                            <!-- Floating thumbs container -->
+                            <div id="floatingThumbs" style="pointer-events:none; position:absolute; left:0; top:0; width:100%; height:100%; z-index:10;"></div>
+                            <div id="voteLock" style="display:none; position:absolute; left:0; top:0; width:100%; height:100%; align-items:center; justify-content:center; pointer-events:auto;">
+                                <span style="font-size:1.2em; color:#8a2be2; display:flex; align-items:center; gap:6px;">
+                                    <i class="fas fa-lock"></i>
+                                    <span style="font-weight:600;">Voted!</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
                     <p>Conquer as much territory as possible in this addictive multiplayer game! Draw lines to expand your area while avoiding other players. The bigger your territory, the higher you'll rank on the leaderboard. Be strategic and quick to dominate the paper world!</p>
                     
                     <div class="game-genres">
