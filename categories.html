@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories - InfinitePixels</title>
+    <link rel="icon" href="images/infinitepixlesfav.png" type="image/x-icon">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="images/infinitepixleslogo.webp" alt="InfinitePixels Logo" width="85px" height="85px">
+                </div>
+                <h2>InfinitePixels</h2>
+            </div>
+        </div>
+
+        <ul class="nav-links">
+            <li>
+                <a href="index.html">
+                    <i class="icon">
+                        <img src="images/home.png" alt="Homepage" width="20" height="20">
+                    </i>
+                    <span>Homepage</span>
+                </a>
+            </li>
+            <li>
+                <a href="games.html">
+                    <i class="icon">
+                        <img src="images/games.png" alt="Games" width="20" height="20">
+                    </i>
+                    <span>Games</span>
+                </a>
+            </li>
+            <li>
+                <a href="random.html">
+                    <i class="icon">
+                        <img src="images/random.png" alt="Random" width="20" height="20">
+                    </i>
+                    <span>Random</span>
+                </a>
+            </li>
+            <li>
+                <a href="categories.html" class="active">
+                    <i class="icon">
+                        <img src="images/grid.png" alt="Categories" width="20" height="20">
+                    </i>
+                    <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="news.html">
+                    <i class="icon">
+                        <img src="images/news.png" alt="News" width="20" height="20">
+                    </i>
+                    <span>News</span>
+                </a>
+            </li>
+            <li>
+                <a href="settings.html">
+                    <i class="icon">
+                        <img src="images/settings.png" alt="Settings" width="20" height="20">
+                    </i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="top-bar">
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search categories...">
+            <button class="search-btn" id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+            <div class="search-results" id="searchResults">
+                <!-- Search results will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <!-- Hero Section -->
+        <section class="categories-hero" style="padding: 90px 0 40px; background: linear-gradient(135deg, #1a1a3e 0%, #2d1b69 100%); position:relative; overflow:hidden;">
+            <div class="hero-content" style="position:relative; z-index:2; max-width:900px; margin:0 auto;">
+                <h1 style="font-size:3.5rem; font-weight:900; margin-bottom:18px; background:linear-gradient(45deg,#8a2be2,#4b0082,#9932cc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gradientShift 3s ease-in-out infinite;">Game Categories</h1>
+                <p style="font-size:1.35rem; color:#b8b8d4; margin-bottom:0;">Browse by genre and discover your next favorite game. Each category is a new adventure!</p>
+            </div>
+            <!-- Decorative floating icons -->
+            <div style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;">
+                <span style="position:absolute;top:10%;left:8%;font-size:2.7rem;opacity:0.13;">🧩</span>
+                <span style="position:absolute;top:25%;right:10%;font-size:2.2rem;opacity:0.11;">🚀</span>
+                <span style="position:absolute;bottom:18%;left:12%;font-size:2.5rem;opacity:0.10;">🏎️</span>
+                <span style="position:absolute;bottom:10%;right:8%;font-size:2.8rem;opacity:0.13;">🐉</span>
+                <span style="position:absolute;top:50%;left:48%;font-size:3.2rem;opacity:0.09;">🎮</span>
+            </div>
+        </section>
+
+        <!-- Categories Grid -->
+        <section class="categories-section" style="padding: 40px 0;">
+            <div class="categories-container" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:38px;max-width:1200px;margin:0 auto;">
+                <!-- IO Games Category -->
+                <div class="category-card" data-category="io" style="background:linear-gradient(135deg,#23234a 60%,#2a2a5a 100%);border-radius:22px;overflow:hidden;box-shadow:0 8px 32px rgba(138,43,226,0.10);transition:transform 0.3s,box-shadow 0.3s;position:relative;cursor:pointer;">
+                    <div style="padding:36px 28px 28px 28px;display:flex;flex-direction:column;align-items:center;">
+                        <div class="category-icon io-icon" style="background:linear-gradient(45deg,#4CAF50,#8BC34A);color:white;width:70px;height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin-bottom:22px;box-shadow:0 2px 12px rgba(76,175,80,0.13);">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3 style="font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:10px;">IO Games</h3>
+                        <p style="color:#b8b8d4;font-size:1.08rem;margin-bottom:18px;text-align:center;">Multiplayer online games where you compete against players worldwide.</p>
+                        <div style="font-size:1.1rem;color:#8a2be2;font-weight:600;margin-bottom:0;">24 Games</div>
+                    </div>
+                    <div class="category-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(138,43,226,0.93);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;border-radius:22px;">
+                        <button class="explore-btn" style="background:linear-gradient(45deg,#fff,#f0f0f0);color:#8a2be2;border:none;padding:14px 32px;border-radius:30px;font-weight:700;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.13);transition:all 0.3s;">Explore IO Games</button>
+                    </div>
+                </div>
+                <!-- Clicker Games Category -->
+                <div class="category-card" data-category="clicker" style="background:linear-gradient(135deg,#23234a 60%,#2a2a5a 100%);border-radius:22px;overflow:hidden;box-shadow:0 8px 32px rgba(138,43,226,0.10);transition:transform 0.3s,box-shadow 0.3s;position:relative;cursor:pointer;">
+                    <div style="padding:36px 28px 28px 28px;display:flex;flex-direction:column;align-items:center;">
+                        <div class="category-icon clicker-icon" style="background:linear-gradient(45deg,#FF9800,#FFC107);color:white;width:70px;height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin-bottom:22px;box-shadow:0 2px 12px rgba(255,152,0,0.13);">
+                            <i class="fas fa-mouse-pointer"></i>
+                        </div>
+                        <h3 style="font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:10px;">Clicker Games</h3>
+                        <p style="color:#b8b8d4;font-size:1.08rem;margin-bottom:18px;text-align:center;">Addictive idle games where every click brings you closer to victory.</p>
+                        <div style="font-size:1.1rem;color:#8a2be2;font-weight:600;margin-bottom:0;">18 Games</div>
+                    </div>
+                    <div class="category-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(138,43,226,0.93);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;border-radius:22px;">
+                        <button class="explore-btn" style="background:linear-gradient(45deg,#fff,#f0f0f0);color:#8a2be2;border:none;padding:14px 32px;border-radius:30px;font-weight:700;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.13);transition:all 0.3s;">Explore Clicker Games</button>
+                    </div>
+                </div>
+                <!-- Action Games Category -->
+                <div class="category-card" data-category="action" style="background:linear-gradient(135deg,#23234a 60%,#2a2a5a 100%);border-radius:22px;overflow:hidden;box-shadow:0 8px 32px rgba(138,43,226,0.10);transition:transform 0.3s,box-shadow 0.3s;position:relative;cursor:pointer;">
+                    <div style="padding:36px 28px 28px 28px;display:flex;flex-direction:column;align-items:center;">
+                        <div class="category-icon action-icon" style="background:linear-gradient(45deg,#F44336,#E91E63);color:white;width:70px;height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin-bottom:22px;box-shadow:0 2px 12px rgba(244,67,54,0.13);">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h3 style="font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:10px;">Action Games</h3>
+                        <p style="color:#b8b8d4;font-size:1.08rem;margin-bottom:18px;text-align:center;">Fast-paced games that test your reflexes and quick thinking.</p>
+                        <div style="font-size:1.1rem;color:#8a2be2;font-weight:600;margin-bottom:0;">32 Games</div>
+                    </div>
+                    <div class="category-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(138,43,226,0.93);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;border-radius:22px;">
+                        <button class="explore-btn" style="background:linear-gradient(45deg,#fff,#f0f0f0);color:#8a2be2;border:none;padding:14px 32px;border-radius:30px;font-weight:700;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.13);transition:all 0.3s;">Explore Action Games</button>
+                    </div>
+                </div>
+                <!-- Puzzle Games Category -->
+                <div class="category-card" data-category="puzzle" style="background:linear-gradient(135deg,#23234a 60%,#2a2a5a 100%);border-radius:22px;overflow:hidden;box-shadow:0 8px 32px rgba(138,43,226,0.10);transition:transform 0.3s,box-shadow 0.3s;position:relative;cursor:pointer;">
+                    <div style="padding:36px 28px 28px 28px;display:flex;flex-direction:column;align-items:center;">
+                        <div class="category-icon puzzle-icon" style="background:linear-gradient(45deg,#9C27B0,#673AB7);color:white;width:70px;height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin-bottom:22px;box-shadow:0 2px 12px rgba(156,39,176,0.13);">
+                            <i class="fas fa-puzzle-piece"></i>
+                        </div>
+                        <h3 style="font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:10px;">Puzzle Games</h3>
+                        <p style="color:#b8b8d4;font-size:1.08rem;margin-bottom:18px;text-align:center;">Brain-teasing challenges that will keep you thinking for hours.</p>
+                        <div style="font-size:1.1rem;color:#8a2be2;font-weight:600;margin-bottom:0;">28 Games</div>
+                    </div>
+                    <div class="category-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(138,43,226,0.93);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;border-radius:22px;">
+                        <button class="explore-btn" style="background:linear-gradient(45deg,#fff,#f0f0f0);color:#8a2be2;border:none;padding:14px 32px;border-radius:30px;font-weight:700;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.13);transition:all 0.3s;">Explore Puzzle Games</button>
+                    </div>
+                </div>
+
+                <!-- Racing Games Category -->
+                <div class="category-card" data-category="racing" style="background:linear-gradient(135deg,#23234a 60%,#2a2a5a 100%);border-radius:22px;overflow:hidden;box-shadow:0 8px 32px rgba(138,43,226,0.10);transition:transform 0.3s,box-shadow 0.3s;position:relative;cursor:pointer;">
+                    <div style="padding:36px 28px 28px 28px;display:flex;flex-direction:column;align-items:center;">
+                        <div class="category-icon racing-icon" style="background:linear-gradient(45deg,#2196F3,#03A9F4);color:white;width:70px;height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin-bottom:22px;box-shadow:0 2px 12px rgba(33,150,243,0.13);">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <h3 style="font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:10px;">Racing Games</h3>
+                        <p style="color:#b8b8d4;font-size:1.08rem;margin-bottom:18px;text-align:center;">Speed through tracks and outrace your opponents in thrilling races.</p>
+                        <div style="font-size:1.1rem;color:#8a2be2;font-weight:600;margin-bottom:0;">15 Games</div>
+                    </div>
+                    <div class="category-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(138,43,226,0.93);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;border-radius:22px;">
+                        <button class="explore-btn" style="background:linear-gradient(45deg,#fff,#f0f0f0);color:#8a2be2;border:none;padding:14px 32px;border-radius:30px;font-weight:700;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.13);transition:all 0.3s;">Explore Racing Games</button>
+                    </div>
+                </div>
+
+                <!-- RPG Games Category -->
+                <div class="category-card" data-category="rpg" style="background:linear-gradient(135deg,#23234a 60%,#2a2a5a 100%);border-radius:22px;overflow:hidden;box-shadow:0 8px 32px rgba(138,43,226,0.10);transition:transform 0.3s,box-shadow 0.3s;position:relative;cursor:pointer;">
+                    <div style="padding:36px 28px 28px 28px;display:flex;flex-direction:column;align-items:center;">
+                        <div class="category-icon rpg-icon" style="background:linear-gradient(45deg,#673AB7,#9C27B0);color:white;width:70px;height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin-bottom:22px;box-shadow:0 2px 12px rgba(103,58,183,0.13);">
+                            <i class="fas fa-dragon"></i>
+                        </div>
+                        <h3 style="font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:10px;">RPG Games</h3>
+                        <p style="color:#b8b8d4;font-size:1.08rem;margin-bottom:18px;text-align:center;">Immersive role-playing adventures with character progression.</p>
+                        <div style="font-size:1.1rem;color:#8a2be2;font-weight:600;margin-bottom:0;">21 Games</div>
+                    </div>
+                    <div class="category-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(138,43,226,0.93);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;border-radius:22px;">
+                        <button class="explore-btn" style="background:linear-gradient(45deg,#fff,#f0f0f0);color:#8a2be2;border:none;padding:14px 32px;border-radius:30px;font-weight:700;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.13);transition:all 0.3s;">Explore RPG Games</button>
+                    </div>
+                </div>
+
+                <!-- Strategy Games Category -->
+                <div class="category-card" data-category="strategy" style="background:linear-gradient(135deg,#23234a 60%,#2a2a5a 100%);border-radius:22px;overflow:hidden;box-shadow:0 8px 32px rgba(138,43,226,0.10);transition:transform 0.3s,box-shadow 0.3s;position:relative;cursor:pointer;">
+                    <div style="padding:36px 28px 28px 28px;display:flex;flex-direction:column;align-items:center;">
+                        <div class="category-icon strategy-icon" style="background:linear-gradient(45deg,#FF5722,#FF9800);color:white;width:70px;height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin-bottom:22px;box-shadow:0 2px 12px rgba(255,87,34,0.13);">
+                            <i class="fas fa-chess"></i>
+                        </div>
+                        <h3 style="font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:10px;">Strategy Games</h3>
+                        <p style="color:#b8b8d4;font-size:1.08rem;margin-bottom:18px;text-align:center;">Plan your moves carefully and outsmart your opponents.</p>
+                        <div style="font-size:1.1rem;color:#8a2be2;font-weight:600;margin-bottom:0;">19 Games</div>
+                    </div>
+                    <div class="category-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(138,43,226,0.93);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;border-radius:22px;">
+                        <button class="explore-btn" style="background:linear-gradient(45deg,#fff,#f0f0f0);color:#8a2be2;border:none;padding:14px 32px;border-radius:30px;font-weight:700;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.13);transition:all 0.3s;">Explore Strategy Games</button>
+                    </div>
+                </div>
+
+                <!-- Arcade Games Category -->
+                <div class="category-card" data-category="arcade" style="background:linear-gradient(135deg,#23234a 60%,#2a2a5a 100%);border-radius:22px;overflow:hidden;box-shadow:0 8px 32px rgba(138,43,226,0.10);transition:transform 0.3s,box-shadow 0.3s;position:relative;cursor:pointer;">
+                    <div style="padding:36px 28px 28px 28px;display:flex;flex-direction:column;align-items:center;">
+                        <div class="category-icon arcade-icon" style="background:linear-gradient(45deg,#3F51B5,#2196F3);color:white;width:70px;height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin-bottom:22px;box-shadow:0 2px 12px rgba(63,81,181,0.13);">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <h3 style="font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:10px;">Arcade Games</h3>
+                        <p style="color:#b8b8d4;font-size:1.08rem;margin-bottom:18px;text-align:center;">Classic arcade-style games with simple controls and endless fun.</p>
+                        <div style="font-size:1.1rem;color:#8a2be2;font-weight:600;margin-bottom:0;">26 Games</div>
+                    </div>
+                    <div class="category-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(138,43,226,0.93);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;border-radius:22px;">
+                        <button class="explore-btn" style="background:linear-gradient(45deg,#fff,#f0f0f0);color:#8a2be2;border:none;padding:14px 32px;border-radius:30px;font-weight:700;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.13);transition:all 0.3s;">Explore Arcade Games</button>
+                    </div>
+                </div>
+
+                <!-- Sports Games Category -->
+                <div class="category-card" data-category="sports" style="background:linear-gradient(135deg,#23234a 60%,#2a2a5a 100%);border-radius:22px;overflow:hidden;box-shadow:0 8px 32px rgba(138,43,226,0.10);transition:transform 0.3s,box-shadow 0.3s;position:relative;cursor:pointer;">
+                    <div style="padding:36px 28px 28px 28px;display:flex;flex-direction:column;align-items:center;">
+                        <div class="category-icon sports-icon" style="background:linear-gradient(45deg,#FFEB3B,#FFC107);color:white;width:70px;height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin-bottom:22px;box-shadow:0 2px 12px rgba(255,235,59,0.13);">
+                            <i class="fas fa-futbol"></i>
+                        </div>
+                        <h3 style="font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:10px;">Sports Games</h3>
+                        <p style="color:#b8b8d4;font-size:1.08rem;margin-bottom:18px;text-align:center;">Experience the thrill of your favorite sports from your browser.</p>
+                        <div style="font-size:1.1rem;color:#8a2be2;font-weight:600;margin-bottom:0;">16 Games</div>
+                    </div>
+                    <div class="category-overlay" style="position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(138,43,226,0.93);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.3s;border-radius:22px;">
+                        <button class="explore-btn" style="background:linear-gradient(45deg,#fff,#f0f0f0);color:#8a2be2;border:none;padding:14px 32px;border-radius:30px;font-weight:700;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.13);transition:all 0.3s;">Explore Sports Games</button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Popular Categories Section -->
+        <section class="popular-categories" style="padding: 60px 0 40px;">
+            <h2 style="font-size:2.3rem;font-weight:800;margin-bottom:36px;background:linear-gradient(45deg,#fff,#b8b8d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Trending Categories</h2>
+            <div class="trending-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:28px;max-width:900px;margin:0 auto;">
+                <div class="trending-item" data-category="io" style="background:linear-gradient(135deg,#23234a 60%,#2a2a5a 100%);border-radius:14px;padding:28px;box-shadow:0 4px 18px rgba(138,43,226,0.10);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;">
+                    <div class="trending-icon" style="font-size:2.2rem;margin-bottom:10px;">🌐</div>
+                    <span style="color:#fff;font-weight:600;">IO Games</span>
+                </div>
+                <div class="trending-item" data-category="clicker" style="background:linear-gradient(135deg,#23234a 60%,#2a2a5a 100%);border-radius:14px;padding:28px;box-shadow:0 4px 18px rgba(138,43,226,0.10);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;">
+                    <div class="trending-icon" style="font-size:2.2rem;margin-bottom:10px;">👆</div>
+                    <span style="color:#fff;font-weight:600;">Clicker Games</span>
+                </div>
+                <div class="trending-item" data-category="puzzle" style="background:linear-gradient(135deg,#23234a 60%,#2a2a5a 100%);border-radius:14px;padding:28px;box-shadow:0 4px 18px rgba(138,43,226,0.10);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;">
+                    <div class="trending-icon" style="font-size:2.2rem;margin-bottom:10px;">🧩</div>
+                    <span style="color:#fff;font-weight:600;">Puzzle Games</span>
+                </div>
+                <div class="trending-item" data-category="action" style="background:linear-gradient(135deg,#23234a 60%,#2a2a5a 100%);border-radius:14px;padding:28px;box-shadow:0 4px 18px rgba(138,43,226,0.10);cursor:pointer;transition:transform 0.2s,box-shadow 0.2s;">
+                    <div class="trending-icon" style="font-size:2.2rem;margin-bottom:10px;">🚀</div>
+                    <span style="color:#fff;font-weight:600;">Action Games</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="javascript.js"></script>
+</body>
+</html>
