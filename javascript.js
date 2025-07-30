@@ -138,6 +138,7 @@ sidebarToggle.addEventListener('click', () => {
     sidebarCollapsed = !sidebarCollapsed;
     sidebar.classList.toggle('collapsed');
     mainContent.classList.toggle('expanded');
+    mobileSidebarOverlayHandler();
 
     // Selected when menu is open, unselected when closed
     if (!sidebarCollapsed) {
@@ -147,6 +148,66 @@ sidebarToggle.addEventListener('click', () => {
     }
     sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>'; // Always show bars icon
 });
+
+// --- Mobile sidebar overlay and toggle logic ---
+function mobileSidebarOverlayHandler() {
+    if (window.innerWidth <= 900) {
+        if (!sidebarCollapsed) {
+            document.body.classList.add('sidebar-open');
+        } else {
+            document.body.classList.remove('sidebar-open');
+        }
+    } else {
+        document.body.classList.remove('sidebar-open');
+    }
+}
+window.addEventListener('resize', () => {
+    handleResize();
+    mobileSidebarOverlayHandler();
+});
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize game
+    initializeGame();
+    
+    // Handle initial responsive state
+    handleResize();
+    
+    // Add load animation
+    document.body.style.opacity = '0';
+    document.body.style.transition = 'opacity 0.5s ease';
+    
+    setTimeout(() => {
+        document.body.style.opacity = '1';
+    }, 100);
+    
+    // Stagger animation of game items
+    gameItems.forEach((item, index) => {
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(-20px)';
+        item.style.transition = 'all 0.6s ease';
+        
+        setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateX(0)';
+        }, 300 + (index * 100));
+    });
+    mobileSidebarOverlayHandler();
+});
+
+// Close sidebar when clicking overlay on mobile
+document.addEventListener('click', function(e) {
+    if (
+        window.innerWidth <= 900 &&
+        document.body.classList.contains('sidebar-open') &&
+        !sidebar.contains(e.target) &&
+        !sidebarToggle.contains(e.target)
+    ) {
+        sidebarCollapsed = true;
+        sidebar.classList.add('collapsed');
+        mainContent.classList.remove('expanded');
+        document.body.classList.remove('sidebar-open');
+    }
+}, true);
 
 // Search functionality
 searchInput.addEventListener('input', () => {
@@ -681,6 +742,7 @@ document.addEventListener('DOMContentLoaded', () => {
             item.style.transform = 'translateX(0)';
         }, 300 + (index * 100));
     });
+    mobileSidebarOverlayHandler();
 });
 
 // Window event listeners
