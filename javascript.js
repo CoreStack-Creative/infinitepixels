@@ -751,4 +751,855 @@ window.addEventListener('orientationchange', () => {
     setTimeout(handleResize, 100);
 });
 
-console.log('🎮 Paper.io page loaded successfully! Press "S" to toggle sidebar, "F" for fullscreen.');
+console.log('🎮 Paper.io page loaded successfully! Press "S" to toggle sidebar, "F" for fullscreen.'); 
+// Settings Page JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize settings system
+    initializeSettings();
+    
+    // Setup event listeners
+    setupTabNavigation();
+    setupSliders();
+    setupKeybinds();
+    setupColorPicker();
+    setupSaveSystem();
+    setupModalSystem();
+    setupResetFunctionality();
+    
+    // Load saved settings
+    loadSettings();
+    
+    console.log('🎮 Settings page initialized successfully!');
+});
+
+// Settings data structure
+let settingsData = {
+    display: {
+        theme: 'dark',
+        accentColor: '#8a2be2',
+        dynamicBg: true,
+        reducedMotion: false,
+        uiScale: 100,
+        fullscreenDefault: false,
+        showFps: false
+    },
+    audio: {
+        masterVolume: 80,
+        gameVolume: 90,
+        musicVolume: 60,
+        sfxVolume: 85,
+        spatialAudio: false,
+        bassBoost: false,
+        audioQuality: 'high'
+    },
+    controls: {
+        keybinds: {
+            moveUp: 'KeyW',
+            moveLeft: 'KeyA',
+            moveDown: 'KeyS',
+            moveRight: 'KeyD',
+            action: 'Space',
+            pause: 'Escape'
+        },
+        gamepadEnabled: true,
+        gamepadSensitivity: 1.0,
+        gamepadVibration: true,
+        deadzone: 15
+    },
+    gameplay: {
+        targetFps: 60,
+        graphicsQuality: 'medium',
+        vsync: false,
+        autoSave: true,
+        skipIntros: false,
+        streamerMode: false,
+        difficulty: 'normal'
+    },
+    account: {
+        username: 'GamerPro123',
+        email: 'gamer@example.com',
+        displayName: 'Pro Gamer',
+        gameUpdates: true,
+        friendRequests: true,
+        achievements: true,
+        promotions: false
+    },
+    privacy: {
+        profileVisibility: 'friends',
+        showOnlineStatus: true,
+        showCurrentGame: true,
+        allowMessages: true,
+        analytics: true,
+        crashReports: true
+    },
+    advanced: {
+        devMode: false,
+        showConsole: false,
+        betaFeatures: false,
+        serverRegion: 'auto',
+        bandwidth: 'unlimited'
+    }
+};
+
+// Initialize settings system
+function initializeSettings() {
+    // Apply initial theme
+    applyTheme(settingsData.display.theme);
+    
+    // Apply accent color
+    applyAccentColor(settingsData.display.accentColor);
+    
+    // Update all UI elements with current values
+    updateAllUIElements();
+}
+
+// Tab navigation system
+function setupTabNavigation() {
+    const tabs = document.querySelectorAll('.settings-tab');
+    const panels = document.querySelectorAll('.settings-panel');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const targetPanel = tab.dataset.tab;
+            
+            // Remove active class from all tabs and panels
+            tabs.forEach(t => t.classList.remove('active'));
+            panels.forEach(p => p.classList.remove('active'));
+            
+            // Add active class to clicked tab and corresponding panel
+            tab.classList.add('active');
+            document.getElementById(`${targetPanel}-panel`).classList.add('active');
+            
+            // Add click animation
+            tab.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                tab.style.transform = '';
+            }, 150);
+        });
+    });
+}
+
+// Slider functionality
+function setupSliders() {
+    const sliders = document.querySelectorAll('.setting-slider');
+    
+    sliders.forEach(slider => {
+        const valueDisplay = slider.parentElement.querySelector('.slider-value');
+        
+        // Update display on input
+        slider.addEventListener('input', (e) => {
+            const value = parseFloat(e.target.value);
+            const id = e.target.id;
+            
+            // Format value based on slider type
+            let displayValue;
+            if (id === 'uiScale') {
+                displayValue = `${value}%`;
+            } else if (id === 'gamepadSensitivity') {
+                displayValue = `${value.toFixed(1)}x`;
+            } else if (id === 'deadzone') {
+                displayValue = `${value}%`;
+            } else {
+                displayValue = `${value}%`;
+            }
+            
+            valueDisplay.textContent = displayValue;
+            
+            // Update settings data
+            updateSettingValue(id, value);
+            
+            // Apply immediate effects for certain settings
+            if (id === 'uiScale') {
+                applyUIScale(value);
+            }
+        });
+        
+        // Add hover effects
+        slider.addEventListener('mouseenter', () => {
+            slider.style.background = 'rgba(138, 43, 226, 0.2)';
+        });
+        
+        slider.addEventListener('mouseleave', () => {
+            slider.style.background = 'rgba(255, 255, 255, 0.1)';
+        });
+    });
+}
+
+// Keybind system
+function setupKeybinds() {
+    const keybindButtons = document.querySelectorAll('.keybind-btn');
+    let listeningForKey = false;
+    let currentButton = null;
+    
+    keybindButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            if (listeningForKey) return;
+            
+            listeningForKey = true;
+            currentButton = button;
+            button.classList.add('listening');
+            button.textContent = 'Press key...';
+        });
+    });
+    
+    // Listen for keypress when setting keybinds
+    document.addEventListener('keydown', (e) => {
+        if (listeningForKey && currentButton) {
+            e.preventDefault();
+            
+            const keyName = getKeyDisplayName(e.code);
+            const action = currentButton.dataset.action;
+            
+            // Update button display
+            currentButton.textContent = keyName;
+            currentButton.classList.remove('listening');
+            
+            // Update settings data
+            settingsData.controls.keybinds[action] = e.code;
+            
+            // Reset listening state
+            listeningForKey = false;
+            currentButton = null;
+            
+            // Show success animation
+            currentButton.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
+            setTimeout(() => {
+                currentButton.style.background = '';
+            }, 1000);
+        }
+    });
+}
+
+// Color picker system
+function setupColorPicker() {
+    const colorPicker = document.getElementById('accentColor');
+    const colorPresets = document.querySelectorAll('.color-preset');
+    
+    // Main color picker
+    colorPicker.addEventListener('change', (e) => {
+        const color = e.target.value;
+        applyAccentColor(color);
+        settingsData.display.accentColor = color;
+        
+        // Update preset selection
+        updatePresetSelection(color);
+    });
+    
+    // Color presets
+    colorPresets.forEach(preset => {
+        preset.addEventListener('click', () => {
+            const color = preset.dataset.color;
+            colorPicker.value = color;
+            applyAccentColor(color);
+            settingsData.display.accentColor = color;
+            
+            // Update preset selection
+            updatePresetSelection(color);
+            
+            // Animation
+            preset.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                preset.style.transform = '';
+            }, 200);
+        });
+    });
+}
+
+// Save system
+function setupSaveSystem() {
+    const saveButton = document.getElementById('saveBtn');
+    const modal = document.getElementById('saveModal');
+    
+    saveButton.addEventListener('click', () => {
+        // Add loading animation
+        saveButton.style.opacity = '0.7';
+        saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        
+        // Simulate save delay
+        setTimeout(() => {
+            saveSettings();
+            showSaveModal();
+            
+            // Reset button
+            saveButton.style.opacity = '';
+            saveButton.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+        }, 1000);
+    });
+}
+
+// Modal system
+function setupModalSystem() {
+    const modal = document.getElementById('saveModal');
+    const modalOk = document.getElementById('modalOk');
+    
+    modalOk.addEventListener('click', () => {
+        modal.classList.remove('active');
+    });
+    
+    // Close modal on outside click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+        }
+    });
+}
+
+// Reset functionality
+function setupResetFunctionality() {
+    const resetButton = document.getElementById('resetBtn');
+    
+    resetButton.addEventListener('click', () => {
+        if (confirm('Are you sure you want to reset all settings to default? This cannot be undone.')) {
+            resetToDefaults();
+            updateAllUIElements();
+            showNotification('Settings reset to defaults', 'success');
+        }
+    });
+}
+
+// Helper Functions
+
+function updateSettingValue(settingId, value) {
+    // Map setting IDs to data structure
+    const settingMap = {
+        // Display
+        'uiScale': () => settingsData.display.uiScale = value,
+        // Audio
+        'masterVolume': () => settingsData.audio.masterVolume = value,
+        'gameVolume': () => settingsData.audio.gameVolume = value,
+        'musicVolume': () => settingsData.audio.musicVolume = value,
+        'sfxVolume': () => settingsData.audio.sfxVolume = value,
+        // Controls
+        'gamepadSensitivity': () => settingsData.controls.gamepadSensitivity = value,
+        'deadzone': () => settingsData.controls.deadzone = value
+    };
+    
+    if (settingMap[settingId]) {
+        settingMap[settingId]();
+    }
+}
+
+function getKeyDisplayName(keyCode) {
+    const keyMap = {
+        'KeyW': 'W', 'KeyA': 'A', 'KeyS': 'S', 'KeyD': 'D',
+        'Space': 'Space', 'Escape': 'Escape', 'Enter': 'Enter',
+        'ShiftLeft': 'L Shift', 'ShiftRight': 'R Shift',
+        'ControlLeft': 'L Ctrl', 'ControlRight': 'R Ctrl',
+        'AltLeft': 'L Alt', 'AltRight': 'R Alt',
+        'ArrowUp': '↑', 'ArrowDown': '↓', 'ArrowLeft': '←', 'ArrowRight': '→'
+    };
+    
+    return keyMap[keyCode] || keyCode.replace('Key', '').replace('Digit', '');
+}
+
+function applyTheme(theme) {
+    document.body.className = document.body.className.replace(/theme-\w+/g, '');
+    document.body.classList.add(`theme-${theme}`);
+    
+    // Apply theme-specific styles
+    const root = document.documentElement;
+    
+    switch (theme) {
+        case 'light':
+            root.style.setProperty('--bg-primary', '#f5f5f5');
+            root.style.setProperty('--bg-secondary', '#ffffff');
+            root.style.setProperty('--text-primary', '#333333');
+            root.style.setProperty('--text-secondary', '#666666');
+            break;
+        case 'cyberpunk':
+            root.style.setProperty('--bg-primary', '#0d0d0d');
+            root.style.setProperty('--bg-secondary', '#1a1a1a');
+            root.style.setProperty('--accent-color', '#00ffff');
+            break;
+        case 'neon':
+            root.style.setProperty('--bg-primary', '#000012');
+            root.style.setProperty('--bg-secondary', '#0a0a2e');
+            root.style.setProperty('--accent-color', '#ff00ff');
+            break;
+        default: // dark
+            root.style.setProperty('--bg-primary', '#0a0a23');
+            root.style.setProperty('--bg-secondary', '#1e1e3f');
+            root.style.setProperty('--text-primary', '#ffffff');
+            root.style.setProperty('--text-secondary', '#b8b8d4');
+    }
+}
+
+function applyAccentColor(color) {
+    const root = document.documentElement;
+    root.style.setProperty('--accent-color', color);
+    
+    // Update various accent elements
+    const elements = document.querySelectorAll('.settings-tab.active, .btn-primary, .keybind-btn');
+    elements.forEach(el => {
+        el.style.background = `linear-gradient(45deg, ${color}, ${adjustBrightness(color, -20)})`;
+    });
+}
+
+function adjustBrightness(hex, percent) {
+    // Convert hex to RGB
+    const num = parseInt(hex.replace("#", ""), 16);
+    const amt = Math.round(2.55 * percent);
+    const R = (num >> 16) + amt;
+    const G = (num >> 8 & 0x00FF) + amt;
+    const B = (num & 0x0000FF) + amt;
+    
+    return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+        (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+        (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+}
+
+function applyUIScale(scale) {
+    const root = document.documentElement;
+    root.style.setProperty('--ui-scale', scale / 100);
+    
+    // Apply scale to main elements
+    document.body.style.fontSize = `${16 * (scale / 100)}px`;
+}
+
+function updatePresetSelection(selectedColor) {
+    const presets = document.querySelectorAll('.color-preset');
+    presets.forEach(preset => {
+        if (preset.dataset.color === selectedColor) {
+            preset.style.border = '3px solid #ffffff';
+            preset.style.transform = 'scale(1.1)';
+        } else {
+            preset.style.border = '2px solid rgba(255, 255, 255, 0.2)';
+            preset.style.transform = 'scale(1)';
+        }
+    });
+}
+
+function updateAllUIElements() {
+    // Update all sliders
+    Object.keys(settingsData).forEach(category => {
+        Object.keys(settingsData[category]).forEach(setting => {
+            const element = document.getElementById(setting);
+            if (element) {
+                const value = settingsData[category][setting];
+                
+                if (element.type === 'range') {
+                    element.value = value;
+                    const valueDisplay = element.parentElement.querySelector('.slider-value');
+                    if (valueDisplay) {
+                        let displayValue;
+                        if (setting === 'uiScale') {
+                            displayValue = `${value}%`;
+                        } else if (setting === 'gamepadSensitivity') {
+                            displayValue = `${value.toFixed(1)}x`;
+                        } else if (setting === 'deadzone') {
+                            displayValue = `${value}%`;
+                        } else {
+                            displayValue = `${value}%`;
+                        }
+                        valueDisplay.textContent = displayValue;
+                    }
+                } else if (element.type === 'checkbox') {
+                    element.checked = value;
+                } else if (element.tagName === 'SELECT') {
+                    element.value = value;
+                } else if (element.type === 'text' || element.type === 'email') {
+                    element.value = value;
+                } else if (element.type === 'color') {
+                    element.value = value;
+                }
+            }
+        });
+    });
+    
+    // Update keybind buttons
+    Object.keys(settingsData.controls.keybinds).forEach(action => {
+        const button = document.querySelector(`[data-action="${action}"]`);
+        if (button) {
+            button.textContent = getKeyDisplayName(settingsData.controls.keybinds[action]);
+        }
+    });
+    
+    // Update color presets
+    updatePresetSelection(settingsData.display.accentColor);
+}
+
+function saveSettings() {
+    try {
+        // Save to localStorage (Note: In production, this would be sent to a server)
+        const settingsJSON = JSON.stringify(settingsData);
+        // Using a variable instead of localStorage for Claude.ai compatibility
+        window.savedSettings = settingsJSON;
+        
+        // Apply all current settings
+        applyTheme(settingsData.display.theme);
+        applyAccentColor(settingsData.display.accentColor);
+        applyUIScale(settingsData.display.uiScale);
+        
+        return true;
+    } catch (error) {
+        console.error('Failed to save settings:', error);
+        showNotification('Failed to save settings', 'error');
+        return false;
+    }
+}
+
+function loadSettings() {
+    try {
+        // Load from localStorage (Note: In production, this would be fetched from a server)
+        const savedData = window.savedSettings;
+        if (savedData) {
+            const parsed = JSON.parse(savedData);
+            settingsData = { ...settingsData, ...parsed };
+        }
+        
+        // Apply loaded settings
+        applyTheme(settingsData.display.theme);
+        applyAccentColor(settingsData.display.accentColor);
+        applyUIScale(settingsData.display.uiScale);
+        
+        return true;
+    } catch (error) {
+        console.error('Failed to load settings:', error);
+        return false;
+    }
+}
+
+function resetToDefaults() {
+    // Reset to default values
+    settingsData = {
+        display: {
+            theme: 'dark',
+            accentColor: '#8a2be2',
+            dynamicBg: true,
+            reducedMotion: false,
+            uiScale: 100,
+            fullscreenDefault: false,
+            showFps: false
+        },
+        audio: {
+            masterVolume: 80,
+            gameVolume: 90,
+            musicVolume: 60,
+            sfxVolume: 85,
+            spatialAudio: false,
+            bassBoost: false,
+            audioQuality: 'high'
+        },
+        controls: {
+            keybinds: {
+                moveUp: 'KeyW',
+                moveLeft: 'KeyA',
+                moveDown: 'KeyS',
+                moveRight: 'KeyD',
+                action: 'Space',
+                pause: 'Escape'
+            },
+            gamepadEnabled: true,
+            gamepadSensitivity: 1.0,
+            gamepadVibration: true,
+            deadzone: 15
+        },
+        gameplay: {
+            targetFps: 60,
+            graphicsQuality: 'medium',
+            vsync: false,
+            autoSave: true,
+            skipIntros: false,
+            streamerMode: false,
+            difficulty: 'normal'
+        },
+        account: {
+            username: 'GamerPro123',
+            email: 'gamer@example.com',
+            displayName: 'Pro Gamer',
+            gameUpdates: true,
+            friendRequests: true,
+            achievements: true,
+            promotions: false
+        },
+        privacy: {
+            profileVisibility: 'friends',
+            showOnlineStatus: true,
+            showCurrentGame: true,
+            allowMessages: true,
+            analytics: true,
+            crashReports: true
+        },
+        advanced: {
+            devMode: false,
+            showConsole: false,
+            betaFeatures: false,
+            serverRegion: 'auto',
+            bandwidth: 'unlimited'
+        }
+    };
+    
+    // Apply default theme and colors
+    applyTheme('dark');
+    applyAccentColor('#8a2be2');
+    applyUIScale(100);
+}
+
+function showSaveModal() {
+    const modal = document.getElementById('saveModal');
+    modal.classList.add('active');
+    
+    // Auto-close after 3 seconds
+    setTimeout(() => {
+        modal.classList.remove('active');
+    }, 3000);
+}
+
+function showNotification(message, type = 'info') {
+    // Create notification element
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <div class="notification-content">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    // Add styles
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'success' ? 'linear-gradient(45deg, #4CAF50, #45a049)' : 'linear-gradient(45deg, #ff6b6b, #ee5a24)'};
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        z-index: 10001;
+        opacity: 0;
+        transform: translateX(100%);
+        transition: all 0.3s ease;
+        font-weight: 500;
+    `;
+    
+    // Add to page
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+        notification.style.opacity = '1';
+        notification.style.transform = 'translateX(0)';
+    }, 100);
+    
+    // Remove after delay
+    setTimeout(() => {
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+}
+
+// Setup all checkbox event listeners
+function setupCheckboxListeners() {
+    const checkboxes = document.querySelectorAll('.setting-checkbox');
+    
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', (e) => {
+            const id = e.target.id;
+            const value = e.target.checked;
+            
+            // Update settings data based on checkbox ID
+            updateCheckboxSetting(id, value);
+            
+            // Apply immediate effects for certain settings
+            if (id === 'dynamicBg') {
+                toggleDynamicBackground(value);
+            } else if (id === 'reducedMotion') {
+                toggleReducedMotion(value);
+            } else if (id === 'devMode') {
+                toggleDevMode(value);
+            }
+        });
+    });
+}
+
+// Setup select dropdown listeners
+function setupSelectListeners() {
+    const selects = document.querySelectorAll('.setting-select');
+    
+    selects.forEach(select => {
+        select.addEventListener('change', (e) => {
+            const id = e.target.id;
+            const value = e.target.value;
+            
+            // Update settings data
+            updateSelectSetting(id, value);
+            
+            // Apply immediate effects
+            if (id === 'themeSelect') {
+                applyTheme(value);
+                settingsData.display.theme = value;
+            }
+        });
+    });
+}
+
+function updateCheckboxSetting(settingId, value) {
+    const settingMap = {
+        // Display
+        'dynamicBg': () => settingsData.display.dynamicBg = value,
+        'reducedMotion': () => settingsData.display.reducedMotion = value,
+        'fullscreenDefault': () => settingsData.display.fullscreenDefault = value,
+        'showFps': () => settingsData.display.showFps = value,
+        // Audio
+        'spatialAudio': () => settingsData.audio.spatialAudio = value,
+        'bassBoost': () => settingsData.audio.bassBoost = value,
+        // Controls
+        'gamepadEnabled': () => settingsData.controls.gamepadEnabled = value,
+        'gamepadVibration': () => settingsData.controls.gamepadVibration = value,
+        // Gameplay
+        'vsync': () => settingsData.gameplay.vsync = value,
+        'autoSave': () => settingsData.gameplay.autoSave = value,
+        'skipIntros': () => settingsData.gameplay.skipIntros = value,
+        'streamerMode': () => settingsData.gameplay.streamerMode = value,
+        // Account
+        'gameUpdates': () => settingsData.account.gameUpdates = value,
+        'friendRequests': () => settingsData.account.friendRequests = value,
+        'achievements': () => settingsData.account.achievements = value,
+        'promotions': () => settingsData.account.promotions = value,
+        // Privacy
+        'showOnlineStatus': () => settingsData.privacy.showOnlineStatus = value,
+        'showCurrentGame': () => settingsData.privacy.showCurrentGame = value,
+        'allowMessages': () => settingsData.privacy.allowMessages = value,
+        'analytics': () => settingsData.privacy.analytics = value,
+        'crashReports': () => settingsData.privacy.crashReports = value,
+        // Advanced
+        'devMode': () => settingsData.advanced.devMode = value,
+        'showConsole': () => settingsData.advanced.showConsole = value,
+        'betaFeatures': () => settingsData.advanced.betaFeatures = value
+    };
+    
+    if (settingMap[settingId]) {
+        settingMap[settingId]();
+    }
+}
+
+function updateSelectSetting(settingId, value) {
+    const settingMap = {
+        // Display
+        'themeSelect': () => settingsData.display.theme = value,
+        // Audio
+        'audioQuality': () => settingsData.audio.audioQuality = value,
+        // Gameplay
+        'targetFps': () => settingsData.gameplay.targetFps = value,
+        'graphicsQuality': () => settingsData.gameplay.graphicsQuality = value,
+        'difficulty': () => settingsData.gameplay.difficulty = value,
+        // Privacy
+        'profileVisibility': () => settingsData.privacy.profileVisibility = value,
+        // Advanced
+        'serverRegion': () => settingsData.advanced.serverRegion = value,
+        'bandwidth': () => settingsData.advanced.bandwidth = value
+    };
+    
+    if (settingMap[settingId]) {
+        settingMap[settingId]();
+    }
+}
+
+function toggleDynamicBackground(enabled) {
+    const heroSection = document.querySelector('.hero');
+    if (heroSection) {
+        if (enabled) {
+            heroSection.classList.add('dynamic-bg');
+        } else {
+            heroSection.classList.remove('dynamic-bg');
+        }
+    }
+}
+
+function toggleReducedMotion(enabled) {
+    if (enabled) {
+        document.body.classList.add('reduced-motion');
+    } else {
+        document.body.classList.remove('reduced-motion');
+    }
+}
+
+function toggleDevMode(enabled) {
+    if (enabled) {
+        console.log('🔧 Developer mode enabled');
+        // Add dev tools to page
+        showNotification('Developer mode enabled', 'success');
+    } else {
+        console.log('🔧 Developer mode disabled');
+        showNotification('Developer mode disabled', 'info');
+    }
+}
+
+// Initialize additional listeners when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    setupCheckboxListeners();
+    setupSelectListeners();
+});
+
+// Keyboard shortcuts for settings
+document.addEventListener('keydown', (e) => {
+    // Ctrl + S to save
+    if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        document.getElementById('saveBtn').click();
+    }
+    
+    // Ctrl + R to reset (with confirmation)
+    if (e.ctrlKey && e.key === 'r') {
+        e.preventDefault();
+        document.getElementById('resetBtn').click();
+    }
+    
+    // Tab navigation with numbers
+    if (e.ctrlKey && e.key >= '1' && e.key <= '7') {
+        e.preventDefault();
+        const tabIndex = parseInt(e.key) - 1;
+        const tabs = document.querySelectorAll('.settings-tab');
+        if (tabs[tabIndex]) {
+            tabs[tabIndex].click();
+        }
+    }
+});
+
+// Auto-save functionality (saves every 30 seconds if changes detected)
+let settingsChanged = false;
+let autoSaveInterval;
+
+function startAutoSave() {
+    autoSaveInterval = setInterval(() => {
+        if (settingsChanged) {
+            saveSettings();
+            settingsChanged = false;
+            console.log('⚡ Settings auto-saved');
+        }
+    }, 30000); // 30 seconds
+}
+
+function markSettingsChanged() {
+    settingsChanged = true;
+}
+
+// Track changes to mark for auto-save
+document.addEventListener('change', (e) => {
+    if (e.target.matches('.setting-slider, .setting-checkbox, .setting-select, .setting-input')) {
+        markSettingsChanged();
+    }
+});
+
+// Start auto-save when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    startAutoSave();
+});
+
+// Clean up auto-save when page unloads
+window.addEventListener('beforeunload', () => {
+    if (autoSaveInterval) {
+        clearInterval(autoSaveInterval);
+    }
+    
+    // Save any pending changes
+    if (settingsChanged) {
+        saveSettings();
+    }
+});
+
+console.log('🎮 Settings JavaScript loaded successfully!');
