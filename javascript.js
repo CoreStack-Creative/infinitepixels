@@ -195,7 +195,7 @@ fullscreenBtn.addEventListener('click', toggleFullscreen);
 
 function toggleFullscreen() {
     isFullscreen = !isFullscreen;
-    
+
     if (isFullscreen) {
         gameContainer.classList.add('fullscreen');
         fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i><span>Exit Fullscreen</span>';
@@ -204,6 +204,9 @@ function toggleFullscreen() {
         collapseArrow.style.display = 'block';
         gameContainer.classList.remove('bar-collapsed');
         barCollapsed = false;
+
+        // Show fullscreen exit message
+        showFullscreenMessage();
     } else {
         gameContainer.classList.remove('fullscreen');
         fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i><span>Fullscreen</span>';
@@ -214,6 +217,53 @@ function toggleFullscreen() {
         gameContainer.classList.remove('bar-collapsed');
         gameCanvas.style.width = '100%';
         gameCanvas.style.height = 'auto';
+        removeFullscreenMessage();
+    }
+}
+
+// Show fullscreen exit message overlay
+function showFullscreenMessage() {
+    // Remove any existing overlay first
+    removeFullscreenMessage();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'fullscreenMessageOverlay';
+    overlay.style.cssText = `
+        position: fixed;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(30,30,63,0.95);
+        color: #fff;
+        padding: 16px 32px;
+        border-radius: 24px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        z-index: 10010;
+        box-shadow: 0 4px 20px rgba(138,43,226,0.25);
+        opacity: 0;
+        transition: opacity 0.4s;
+        pointer-events: none;
+    `;
+    overlay.textContent = 'To exit fullscreen, press the Escape key';
+    document.body.appendChild(overlay);
+
+    setTimeout(() => {
+        overlay.style.opacity = '1';
+    }, 50);
+
+    setTimeout(() => {
+        overlay.style.opacity = '0';
+        setTimeout(() => {
+            removeFullscreenMessage();
+        }, 400);
+    }, 3500);
+}
+
+function removeFullscreenMessage() {
+    const overlay = document.getElementById('fullscreenMessageOverlay');
+    if (overlay) {
+        overlay.parentNode.removeChild(overlay);
     }
 }
 
@@ -511,7 +561,8 @@ document.addEventListener('keydown', (e) => {
         if (shareModal.classList.contains('active')) {
             shareModal.classList.remove('active');
         }
-        if (isFullscreen && e.ctrlKey) {
+        // Exit fullscreen if active
+        if (isFullscreen) {
             toggleFullscreen();
         }
     }
