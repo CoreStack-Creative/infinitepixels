@@ -115,11 +115,12 @@
         <section class="featured-games">
             <h2 class="section-title">Featured Games</h2>
             <div class="games-grid">
-                <div class="game-card" data-game="Paper io">
+                <div class="game-card" data-game="Paper io" data-video>
                     <div class="game-image">
                         <img src="images/paperioimage.jpg" alt="Paper io" class="space-theme game-thumbnail" />
                         <video class="game-video" muted loop preload="metadata">
-                            <source src="images/paperiorec.mov" type="video/quicktime">
+                            <source src="images/paperiorec.mp4" type="video/mp4">
+                            <!-- fallback: <source src="images/paperiorec.mov" type="video/quicktime"> -->
                             Your browser does not support the video tag.
                         </video>
                         <div class="game-overlay">
@@ -134,11 +135,12 @@
                     </div>
                 </div>
 
-                <div class="game-card" data-game="cyber-runner">
+                <div class="game-card" data-game="cyber-runner" data-video>
                     <div class="game-image">
                         <img src="images/basketrandomimage.jpg" alt="Basket Random" class="cyber-theme game-thumbnail" />
                         <video class="game-video" muted loop preload="metadata">
-                            <source src="images/basketrandomrec.mov" type="video/quicktime">
+                            <source src="images/basketrandomrec.mp4" type="video/mp4">
+                            <!-- fallback: <source src="images/basketrandomrec.mov" type="video/quicktime"> -->
                             Your browser does not support the video tag.
                         </video>
                         <div class="game-overlay">
@@ -153,11 +155,12 @@
                     </div>
                 </div>
 
-                <div class="game-card" data-game="mystic-realms">
+                <div class="game-card" data-game="mystic-realms" data-video>
                     <div class="game-image">
                         <img src="images/3dformularacingimage.jpg" alt="3D Formula Racing" class="fantasy-theme game-thumbnail" />
                         <video class="game-video" muted loop preload="metadata">
-                            <source src="images/formularacingrec.mov" type="video/quicktime">
+                            <source src="images/formularacingrec.mp4" type="video/mp4">
+                            <!-- fallback: <source src="images/formularacingrec.mov" type="video/quicktime"> -->
                             Your browser does not support the video tag.
                         </video>
                         <div class="game-overlay">
@@ -172,11 +175,12 @@
                     </div>
                 </div>
 
-                <div class="game-card" data-game="Fruit Merge">
+                <div class="game-card" data-game="Fruit Merge" data-video>
                     <div class="game-image">
                         <img src="images/fruitmergeimage.jpg" alt="Fruit Merge" class="pixel-theme game-thumbnail" />
                         <video class="game-video" muted loop preload="metadata">
-                            <source src="images/fruitmergerec.mov" type="video/quicktime">
+                            <source src="images/fruitmergerec.mp4" type="video/mp4">
+                            <!-- fallback: <source src="images/fruitmergerec.mov" type="video/quicktime"> -->
                             Your browser does not support the video tag.
                         </video>
                         <div class="game-overlay">
@@ -191,11 +195,12 @@
                     </div>
                 </div>
 
-                <div class="game-card" data-game="pixel-warriors">
+                <div class="game-card" data-game="pixel-warriors" data-video>
                     <div class="game-image">
                         <img src="images/cubearenaimage.jpg" alt="Cube Arena 2048" class="pixel-theme game-thumbnail" />
                         <video class="game-video" muted loop preload="metadata">
-                            <source src="images/cube2048rec.mov" type="video/quicktime">
+                            <source src="images/cube2048rec.mp4" type="video/mp4">
+                            <!-- fallback: <source src="images/cube2048rec.mov" type="video/quicktime"> -->
                             Your browser does not support the video tag.
                         </video>
                         <div class="game-overlay">
@@ -210,11 +215,12 @@
                     </div>
                 </div>
            
-                <div class="game-card" data-game="Subway Surfers">
+                <div class="game-card" data-game="Subway Surfers" data-video>
                     <div class="game-image">
                         <img src="images/subwaysurfersimage.jpg" alt="Subway Surfers" class="pixel-theme game-thumbnail" />
                         <video class="game-video" muted loop preload="metadata">
-                            <source src="images/subwaysurfersrec.mov" type="video/quicktime">
+                            <source src="images/subwaysurfersrec.mp4" type="video/mp4">
+                            <!-- fallback: <source src="images/subwaysurfersrec.mov" type="video/quicktime"> -->
                             Your browser does not support the video tag.
                         </video>
                         <div class="game-overlay">
@@ -343,5 +349,20 @@
     </main>
 
     <script src="javascript.js"></script>
+    <script>
+        // Video hover play/pause logic for featured games
+        document.querySelectorAll('.featured-games .game-card').forEach(card => {
+            const video = card.querySelector('.game-video');
+            if (!video) return;
+            card.addEventListener('mouseenter', () => {
+                video.currentTime = 0;
+                video.play();
+            });
+            card.addEventListener('mouseleave', () => {
+                video.pause();
+                video.currentTime = 0;
+            });
+        });
+    </script>
 </body>
 </html>
