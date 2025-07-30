@@ -327,19 +327,24 @@ copyBtn.addEventListener('click', () => {
 // Navigation link functionality
 navLinks.forEach(link => {
     link.addEventListener('click', (e) => {
-        e.preventDefault();
+        // Only animate if href is "#" or missing, otherwise let browser navigate
+        const href = link.getAttribute('href');
+        if (!href || href === '#') {
+            e.preventDefault();
 
-        // Remove active class from all links
-        navLinks.forEach(l => l.classList.remove('active'));
+            // Remove active class from all links
+            navLinks.forEach(l => l.classList.remove('active'));
 
-        // Add active class to clicked link
-        link.classList.add('active');
+            // Add active class to clicked link
+            link.classList.add('active');
 
-        // Add click animation
-        link.style.transform = 'translateX(10px)';
-        setTimeout(() => {
-            link.style.transform = '';
-        }, 200);
+            // Add click animation
+            link.style.transform = 'translateX(10px)';
+            setTimeout(() => {
+                link.style.transform = '';
+            }, 200);
+        }
+        // If href is present and not "#", let browser handle navigation
     });
 });
 
@@ -347,14 +352,27 @@ navLinks.forEach(link => {
 gameItems.forEach(item => {
     item.addEventListener('click', () => {
         const gameName = item.dataset.game;
-        console.log(`Loading ${gameName}...`);
-        
-        // Add click animation
+        // Try to navigate to the corresponding game page if it exists
+        let page = '';
+        switch (gameName) {
+            case 'slither-io': page = 'slither-io.html'; break;
+            case 'agar-io': page = 'agar-io.html'; break;
+            case 'hole-io': page = 'hole-io.html'; break;
+            case 'wings-io': page = 'wings-io.html'; break;
+            case 'zombs-io': page = 'zombs-io.html'; break;
+            default: page = '';
+        }
+        if (page) {
+            window.location.href = page;
+            return;
+        }
+
+        // If no page, just animate
         item.style.transform = 'translateX(10px) scale(0.98)';
         setTimeout(() => {
             item.style.transform = '';
         }, 200);
-        
+
         // Simulate game navigation
         showGameTransition(gameName);
     });
