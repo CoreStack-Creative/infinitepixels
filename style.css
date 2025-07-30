@@ -794,21 +794,45 @@ body {
     z-index: 9999;
     border-radius: 0;
     border: none;
+    /* Remove padding/margin if any */
+    display: flex;
+    flex-direction: column;
 }
 
-#gameCanvas {
-    width: 100%;
-    height: auto;
-    max-height: 600px;
-    display: block;
-    background: linear-gradient(135deg, #1a1a3e, #2d1b69);
-    border-bottom: 1px solid rgba(138, 43, 226, 0.2);
-}
-
-.game-container.fullscreen #gameCanvas {
+.game-container.fullscreen iframe,
+.game-container.fullscreen #gameFrame {
+    /* Make the iframe fill all space except the control bar */
     width: 100vw;
-    height: calc(100vh - 60px);
+    height: calc(100vh - 60px); /* 60px is the control bar height */
     max-height: none;
+    display: block;
+    background: #22224a;
+    border: none;
+    border-bottom: 1px solid rgba(138,43,226,0.2);
+}
+
+.game-container.fullscreen .game-control-bar {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 60px;
+    padding: 0 20px;
+    background: rgba(30, 30, 63, 0.95);
+    z-index: 10001;
+    border-radius: 0;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.game-container.fullscreen .collapse-arrow {
+    position: fixed;
+    right: 30px;
+    bottom: 70px; /* Just above the control bar */
+    display: block;
+    z-index: 10002;
 }
 
 /* Game Control Bar */
