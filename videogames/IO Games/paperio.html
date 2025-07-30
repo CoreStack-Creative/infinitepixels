@@ -112,18 +112,7 @@
                         <div class="game-title">
                             <h2>Paper.io</h2>
                         </div>
-                        <div class="game-controls" style="display: flex; align-items: center; gap: 18px;">
-                                <!-- Feedback Buttons (now on the left, improved style, no counter) -->
-                            <div class="feedback-inline" style="display: flex; align-items: center; background: rgba(138,43,226,0.13); border-radius: 16px; padding: 7px 18px; margin-right: 18px; gap: 10px; box-shadow: 0 2px 8px rgba(138,43,226,0.08);">
-                                <span style="font-size: 1em; color: #b8b8d4; margin-right: 4px; font-weight: 500;">Fun?</span>
-                                <button id="thumbsUpBtn" style="background: linear-gradient(135deg, #4CAF50 60%, #8a2be2 100%); border: none; cursor: pointer; font-size: 1.5em; color: #fff; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(76,175,80,0.15); transition: transform 0.15s;">
-                                    <i class="fas fa-thumbs-up"></i>
-                                </button>
-                                <button id="thumbsDownBtn" style="background: linear-gradient(135deg, #e74c3c 60%, #8a2be2 100%); border: none; cursor: pointer; font-size: 1.5em; color: #fff; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(231,76,60,0.15); transition: transform 0.15s;">
-                                    <i class="fas fa-thumbs-down"></i>
-                                </button>
-                                <span id="feedbackMessage" style="margin-left: 12px; color: #8a2be2; font-weight: 600; font-size: 1em; transition: opacity 0.3s; opacity: 0;"></span>
-                            </div>
+                        <div class="game-controls">
                             <button class="control-btn share-btn" id="shareBtn">
                                 <i class="fas fa-share"></i>
                                 <span>Share</span>
@@ -242,45 +231,5 @@
     </div>
 
     <script src="javascript.js"></script>
-    <script>
-        // Feedback button logic (no counter, message fades out)
-        const thumbsUpBtn = document.getElementById('thumbsUpBtn');
-        const thumbsDownBtn = document.getElementById('thumbsDownBtn');
-        const feedbackMessage = document.getElementById('feedbackMessage');
-
-        if (thumbsUpBtn && thumbsDownBtn && feedbackMessage) {
-            let feedbackTimeout;
-            function showMessage(msg, color) {
-                feedbackMessage.textContent = msg;
-                feedbackMessage.style.color = color;
-                feedbackMessage.style.opacity = "1";
-                clearTimeout(feedbackTimeout);
-                feedbackTimeout = setTimeout(() => {
-                    feedbackMessage.style.opacity = "0";
-                    setTimeout(() => {
-                        feedbackMessage.textContent = "";
-                    }, 300);
-                    thumbsUpBtn.disabled = false;
-                    thumbsDownBtn.disabled = false;
-                }, 1800);
-            }
-            thumbsUpBtn.addEventListener('click', function() {
-                showMessage("Thanks for your positive feedback!", "#4CAF50");
-                thumbsUpBtn.disabled = true;
-                thumbsDownBtn.disabled = true;
-            });
-            thumbsDownBtn.addEventListener('click', function() {
-                showMessage("Thanks for your feedback! We'll try to improve.", "#e74c3c");
-                thumbsUpBtn.disabled = true;
-                thumbsDownBtn.disabled = true;
-            });
-            // Button press animation
-            [thumbsUpBtn, thumbsDownBtn].forEach(btn => {
-                btn.addEventListener('mousedown', () => btn.style.transform = 'scale(0.92)');
-                btn.addEventListener('mouseup', () => btn.style.transform = '');
-                btn.addEventListener('mouseleave', () => btn.style.transform = '');
-            });
-        }
-    </script>
 </body>
 </html>
