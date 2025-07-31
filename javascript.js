@@ -2084,3 +2084,274 @@ addMultipleGamesToCollection([
     }
 ]);
 */
+
+// Settings.js - Handle all settings functionality
+class SettingsManager {
+    constructor() {
+        this.defaultSettings = {
+            theme: 'dark',
+            audioMuted: false
+        };
+        
+        this.settings = this.loadSettings();
+        this.init();
+    }
+    
+    init() {
+        this.setupEventListeners();
+        this.applySettings();
+        this.updateUI();
+    }
+    
+    setupEventListeners() {
+        // Theme toggle
+        const themeToggle = document.getElementById('themeToggle');
+        if (themeToggle) {
+            themeToggle.addEventListener('click', () => this.toggleTheme());
+        }
+        
+        // Audio toggle
+        const audioToggle = document.getElementById('audioToggle');
+        if (audioToggle) {
+            audioToggle.addEventListener('click', () => this.toggleAudio());
+        }
+        
+        // Reset button
+        const resetBtn = document.getElementById('resetBtn');
+        if (resetBtn) {
+            resetBtn.addEventListener('click', () => this.resetSettings());
+        }
+        
+        // Fullscreen controls
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'f' || e.key === 'F') {
+                this.toggleFullscreen();
+            }
+            if (e.key === 'Escape') {
+                this.exitFullscreen();
+            }
+        });
+    }
+    
+    loadSettings() {
+        try {
+            const saved = localStorage.getItem('infinitePixelsSettings');
+            return saved ? JSON.parse(saved) : { ...this.defaultSettings };
+        } catch (error) {
+            console.warn('Error loading settings:', error);
+            return { ...this.defaultSettings };
+        }
+    }
+    
+    saveSettings() {
+        try {
+            localStorage.setItem('infinitePixelsSettings', JSON.stringify(this.settings));
+            this.showStatusMessage('Settings Saved', 'success');
+        } catch (error) {
+            console.error('Error saving settings:', error);
+            this.showStatusMessage('Save Failed', 'error');
+        }
+    }
+    
+    toggleTheme() {
+        this.settings.theme = this.settings.theme === 'dark' ? 'light' : 'dark';
+        this.applyTheme();
+        this.updateThemeUI();
+        this.saveSettings();
+    }
+    
+    applyTheme() {
+        if (this.settings.theme === 'light') {
+            document.body.classList.add('light-theme');
+        } else {
+            document.body.classList.remove('light-theme');
+        }
+    }
+    
+    updateThemeUI() {
+        const themeToggle = document.getElementById('themeToggle');
+        const themeLabel = document.getElementById('themeLabel');
+        
+        if (themeToggle && themeLabel) {
+            if (this.settings.theme === 'light') {
+                themeToggle.classList.add('light');
+                themeLabel.textContent = 'Light Mode';
+            } else {
+                themeToggle.classList.remove('light');
+                themeLabel.textContent = 'Dark Mode';
+            }
+        }
+    }
+    
+    toggleAudio() {
+        this.settings.audioMuted = !this.settings.audioMuted;
+        this.applyAudio();
+        this.updateAudioUI();
+        this.saveSettings();
+    }
+    
+    applyAudio() {
+        // Get all audio elements on the page
+        const audioElements = document.querySelectorAll('audio, video');
+        audioElements.forEach(element => {
+            element.muted = this.settings.audioMuted;
+        });
+        
+        // Apply to Web Audio API contexts if they exist
+        if (window.audioContext) {
+            if (this.settings.audioMuted) {
+                window.audioContext.suspend();
+            } else {
+                window.audioContext.resume();
+            }
+        }
+    }
+    
+    updateAudioUI() {
+        const audioToggle = document.getElementById('audioToggle');
+        const audioIcon = document.getElementById('audioIcon');
+        const audioLabel = document.getElementById('audioLabel');
+        
+        if (audioToggle && audioIcon && audioLabel) {
+            if (this.settings.audioMuted) {
+                audioToggle.classList.add('muted');
+                audioIcon.className = 'fas fa-volume-mute';
+                audioLabel.textContent = 'Muted';
+            } else {
+                audioToggle.classList.remove('muted');
+                audioIcon.className = 'fas fa-volume-up';
+                audioLabel.textContent = 'Unmuted';
+            }
+        }
+    }
+    
+    resetSettings() {
+        // Show confirmation dialog
+        if (confirm('Are you sure you want to reset all settings to default?')) {
+            this.settings = { ...this.defaultSettings };
+            this.applySettings();
+            this.updateUI();
+            this.saveSettings();
+            this.showStatusMessage('Settings Reset', 'success');
+        }
+    }
+    
+    applySettings() {
+        this.applyTheme();
+        this.applyAudio();
+    }
+    
+    updateUI() {
+        this.updateThemeUI();
+        this.updateAudioUI();
+    }
+    
+    toggleFullscreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(err => {
+                console.log('Error attempting to enable fullscreen:', err);
+            });
+        } else {
+            document.exitFullscreen();
+        }
+    }
+    
+    exitFullscreen() {
+        if (document.fullscreenElement) {
+            document.exitFullscreen();
+        }
+    }
+    
+    showStatusMessage(message, type = 'success') {
+        const statusText = document.getElementById('statusText');
+        const statusDot = document.querySelector('.status-dot');
+        
+        if (statusText && statusDot) {
+            statusText.textContent = message;
+            
+            // Update status dot color based on type
+            statusDot.style.background = type === 'success' ? '#2ed573' : '#ff4757';
+            
+            // Reset after 3 seconds
+            setTimeout(() => {
+                statusText.textContent = 'Settings Saved';
+                statusDot.style.background = '#2ed573';
+            }, 3000);
+        }
+    }
+    
+    // Method to get current settings (useful for other parts of the site)
+    getSettings() {
+        return { ...this.settings };
+    }
+    
+    // Method to update settings programmatically
+    updateSetting(key, value) {
+        if (this.settings.hasOwnProperty(key)) {
+            this.settings[key] = value;
+            this.applySettings();
+            this.updateUI();
+            this.saveSettings();
+        }
+    }
+}
+
+// Initialize settings when the page loads
+let settingsManager;
+
+document.addEventListener('DOMContentLoaded', () => {
+    settingsManager = new SettingsManager();
+});
+
+// Make settings manager globally available
+window.getSettingsManager = () => settingsManager;
+
+// Enhanced keyboard controls
+document.addEventListener('keydown', (e) => {
+    // WASD movement (example implementation - you can modify this for your specific needs)
+    const key = e.key.toLowerCase();
+    
+    if (key === 'w' || key === 'a' || key === 's' || key === 'd') {
+        // Highlight the corresponding key in the UI
+        highlightKey(key.toUpperCase());
+    }
+    
+    if (key === ' ') {
+        // Spacebar action
+        e.preventDefault();
+        highlightKey('SPACE');
+    }
+});
+
+function highlightKey(keyName) {
+    const keys = document.querySelectorAll('.key');
+    keys.forEach(key => {
+        if (key.textContent === keyName) {
+            key.style.transform = 'translateY(-4px)';
+            key.style.boxShadow = '0 8px 16px rgba(138, 43, 226, 0.5)';
+            key.style.borderColor = '#8a2be2';
+            
+            setTimeout(() => {
+                key.style.transform = '';
+                key.style.boxShadow = '';
+                key.style.borderColor = '';
+            }, 200);
+        }
+    });
+}
+
+// Audio context setup for Web Audio API compatibility
+function setupAudioContext() {
+    if (!window.audioContext && (window.AudioContext || window.webkitAudioContext)) {
+        window.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    }
+}
+
+// Initialize audio context on user interaction
+document.addEventListener('click', setupAudioContext, { once: true });
+document.addEventListener('keydown', setupAudioContext, { once: true });
+
+// Export for use in other files
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = SettingsManager;
+}
