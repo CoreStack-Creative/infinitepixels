@@ -1603,3 +1603,86 @@ window.addEventListener('beforeunload', () => {
 });
 
 console.log('🎮 Settings JavaScript loaded successfully!');
+
+// Game Spotlight Modal Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const trailerBtn = document.getElementById('trailerBtn');
+    const videoModal = document.getElementById('videoModal');
+    const closeModal = document.getElementById('closeModal');
+    const trailerVideo = document.getElementById('trailerVideo');
+    
+    // Store the original video src
+    const originalVideoSrc = trailerVideo.src;
+    
+    // Open modal when trailer button is clicked
+    trailerBtn.addEventListener('click', function() {
+        videoModal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+        
+        // Start playing the video by adding autoplay parameter
+        trailerVideo.src = originalVideoSrc.replace('?enablejsapi=1', '?enablejsapi=1&autoplay=1');
+    });
+    
+    // Close modal function
+    function closeVideoModal() {
+        videoModal.classList.remove('active');
+        document.body.style.overflow = 'auto'; // Restore scrolling
+        
+        // Stop the video by removing src and adding it back without autoplay
+        trailerVideo.src = '';
+        setTimeout(() => {
+            trailerVideo.src = originalVideoSrc;
+        }, 100);
+    }
+    
+    // Close modal when X button is clicked
+    closeModal.addEventListener('click', closeVideoModal);
+    
+    // Close modal when clicking outside the modal content
+    videoModal.addEventListener('click', function(e) {
+        if (e.target === videoModal) {
+            closeVideoModal();
+        }
+    });
+    
+    // Close modal when pressing Escape key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && videoModal.classList.contains('active')) {
+            closeVideoModal();
+        }
+    });
+    
+    // Handle Play Now button click (if you want to add analytics or confirmation)
+    const playNowBtn = document.querySelector('.btn-primary');
+    if (playNowBtn) {
+        playNowBtn.addEventListener('click', function(e) {
+            // Optional: Add analytics tracking here
+            console.log('Play Now button clicked');
+            
+            // Optional: Add a confirmation dialog
+            // if (!confirm('Ready to enter the battlefield?')) {
+            //     e.preventDefault();
+            // }
+        });
+    }
+    
+    // Add hover effects for particles
+    const spotlightImage = document.querySelector('.spotlight-image');
+    const particles = document.querySelectorAll('.particle');
+    
+    if (spotlightImage && particles.length > 0) {
+        spotlightImage.addEventListener('mouseenter', function() {
+            particles.forEach((particle, index) => {
+                particle.style.animationDuration = '1.5s';
+                particle.style.transform = `translateY(-${5 + index * 2}px)`;
+            });
+        });
+        
+        spotlightImage.addEventListener('mouseleave', function() {
+            particles.forEach((particle) => {
+                particle.style.animationDuration = '3s';
+                particle.style.transform = 'translateY(0px)';
+            });
+        });
+    }
+});
