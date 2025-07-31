@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InfinitePixels - Ultimate Gaming Hub</title>
+    <title>All Games - InfinitePixels</title>
     <link rel="icon" href="images/infinitepixlesfav.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="redirect-style.css">
+    <link rel="stylesheet" href="games-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
@@ -73,7 +75,77 @@
         </ul>
     </nav>
 
-    <main class="main-content" id="mainContent"></main>    
+    <div class="top-bar">
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
 
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search games...">
+            <button class="search-btn" id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+            <div class="search-results" id="searchResults">
+                <!-- Search results will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content" id="mainContent">
+        <div class="all-games-wrapper">
+            <header class="page-banner-section">
+                <h1 class="main-page-title">All Games</h1>
+                <p class="page-description">Discover your next favorite game from our collection</p>
+            </header>
+
+            <div class="game-controls-panel">
+                <div class="search-control-wrapper">
+                    <div class="game-search-box">
+                        <i class="fas fa-search search-magnifier"></i>
+                        <input type="text" id="gameSearchField" placeholder="Search for games..." class="search-text-input">
+                        <button class="search-clear-btn" id="searchClearBtn">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="filter-control-wrapper">
+                    <button class="tag-filter-button" id="tagFilterBtn">
+                        <i class="fas fa-filter"></i>
+                        <span>Filter</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="filter-options-panel" id="filterOptionsPanel">
+                        <div class="filter-panel-header">
+                            <span>Filter by Tags</span>
+                            <button class="reset-filters-btn" id="resetFiltersBtn">Clear All</button>
+                        </div>
+                        <div class="available-filter-tags" id="availableFilterTags">
+                            <!-- Filter tags will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-results-display">
+                <div class="results-counter" id="resultsCounter">
+                    <span id="totalGameCount">0</span> games found
+                </div>
+            </div>
+
+            <div class="game-cards-grid" id="gameCardsGrid">
+                <!-- Game cards will be populated by JavaScript -->
+            </div>
+
+            <div class="page-navigation-wrapper">
+                <div class="page-navigation-controls" id="pageNavigationControls">
+                    <!-- Pagination will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
     </main>
-</body>        
+
+    <script src="javascript.js"></script>
+    <script src="all-games-functionality.js"></script>
+</body>
+</html>

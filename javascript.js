@@ -1604,3 +1604,483 @@ document.addEventListener('DOMContentLoaded', () => {
     // Show redirect overlay almost immediately (100ms delay for smooth animation)
     setTimeout(showRedirectAndGo, 100);
 });
+
+// Games data - Add your games here
+const allGamesDatabase = [
+    {
+        id: 1,
+        name: "1v1 Lol",
+        image: "images/1v1lolimage.jpg",
+        url: "games/1v1lol.html",
+        tags: ["shooter", "action", "multiplayer"]
+    },
+    {
+        id: 2,
+        name: "3D Formula Racing",
+        image: "images/3dformularacingimage.jpg",
+        url: "games/3dformularacing.html",
+        tags: ["racing", "cars", "3d"]
+    },
+    {
+        id: 3,
+        name: "Basket Random",
+        image: "images/basketrandomimage.jpg",
+        url: "games/basketrandom.html",
+        tags: ["2 player", "basketball", "sports"]
+    },
+    {
+        id: 4,
+        name: "Cookie Clicker",
+        image: "images/cookieclickerimage.jpg",
+        url: "games/cookieclicker.html",
+        tags: ["clicker", "idle", "cooking"]
+    },
+    {
+        id: 5,
+        name: "Cube Arena 2048",
+        image: "images/cubearenaimage.jpg",
+        url: "games/cubearena2048.html",
+        tags: ["3d", "2048", "io"]
+    },
+    {
+        id: 6,
+        name: "Draw Climber",
+        image: "images/drawclimberimage.jpg",
+        url: "games/drawclimber.html",
+        tags: ["puzzle", "drawing", "runner"]
+    },
+    {
+        id: 7,
+        name: "Fruit Merge",
+        image: "images/fruitmergeimage.jpg",
+        url: "games/fruitmerge.html",
+        tags: ["watermelon", "puzzle", "fruit"]
+    },
+    {
+        id: 8,
+        name: "Helix Jump",
+        image: "images/helixjumpimage.jpg",
+        url: "games/helixjump.html",
+        tags: ["arcade", "jumping", "platformer"]
+    },
+    {
+        id: 9,
+        name: "Masked Special Forces",
+        image: "images/maskedspecialforcesimage.jpg",
+        url: "games/maskedspecialforces.html",
+        tags: ["shooter", "online", "multiplayer"]
+    },
+    {
+        id: 10,
+        name: "Paper Io",
+        image: "images/paperioimage.jpg",
+        url: "games/paperio.html",
+        tags: ["io", "strategy", "multiplayer"]
+    },
+    {
+        id: 11,
+        name: "Parkour Block 3D",
+        image: "images/parkourblock3dimage.jpg",
+        url: "games/parkourblock3d.html",
+        tags: ["adventure", "3d", "platformer"]
+    },
+    {
+        id: 12,
+        name: "Poly Track",
+        image: "images/polytrackimage.jpg",
+        url: "games/polytrack.html",
+        tags: ["racing", "cars", "online"]
+    },
+    {
+        id: 13,
+        name: "Rodeo Stampede",
+        image: "images/rodeostampedeimage.jpg",
+        url: "games/rodeoStampede.html",
+        tags: ["adventure", "animal", "racing"]
+    },
+    {
+        id: 14,
+        name: "Spiral Roll",
+        image: "images/spiralrollimage.jpg",
+        url: "games/spiralroll.html",
+        tags: ["Platformer", "satisfying", "3d"]
+    },
+    {
+        id: 15,
+        name: "Subway Surfers",
+        image: "images/subwaysurfersimage.jpg",
+        url: "games/subwaysurfers.html",
+        tags: ["endless", "platformer", "parkour"]
+    },
+    {
+        id: 16,
+        name: "Tiny Fishing",
+        image: "images/tinyfishingimage.jpg",
+        url: "games/tinyfishing.html",
+        tags: ["idle", "fishing", "clicker"]
+    },
+    {
+        id: 17,
+        name: "Bloxd io",
+        image: "images/bloxdioimage.jpg",
+        url: "games/bloxdio.html",
+        tags: ["io", "parkour", "multiplayer"]
+    },
+    {
+        id: 18,
+        name: "Moto X3M",
+        image: "images/motox3mimage.jpg",
+        url: "games/motox3m.html",
+        tags: ["bike", "racing", "levels"]
+    },
+{
+        id: 19,
+        name: "Tall Man Run",
+        image: "images/tallmanrunimage.jpg",
+        url: "games/tallmanrun.html",
+        tags: ["3d", "platformer", "runner"]
+    }
+];
+
+// All Games Management System - Unique class name
+class AllGamesController {
+    constructor() {
+        this.gamesList = allGamesDatabase;
+        this.filteredGamesList = [...this.gamesList];
+        this.currentPageNumber = 1;
+        this.itemsPerPage = 9;
+        this.selectedFilterTags = new Set();
+        this.currentSearchTerm = '';
+        
+        this.initializeAllGamesPage();
+    }
+    
+    initializeAllGamesPage() {
+        this.setupAllEventHandlers();
+        this.createFilterTagsDisplay();
+        this.renderGameCards();
+        this.renderPaginationControls();
+        this.updateGameCountDisplay();
+    }
+    
+    setupAllEventHandlers() {
+        // Search functionality with unique IDs
+        const searchInputField = document.getElementById('gameSearchField');
+        const clearSearchButton = document.getElementById('searchClearBtn');
+        
+        searchInputField.addEventListener('input', (e) => {
+            this.currentSearchTerm = e.target.value.toLowerCase();
+            this.applyFiltersAndSearch();
+            this.toggleSearchClearVisibility();
+        });
+        
+        clearSearchButton.addEventListener('click', () => {
+            searchInputField.value = '';
+            this.currentSearchTerm = '';
+            this.applyFiltersAndSearch();
+            this.toggleSearchClearVisibility();
+            searchInputField.focus();
+        });
+        
+        // Filter functionality with unique IDs
+        const tagFilterButton = document.getElementById('tagFilterBtn');
+        const filterOptionsPanel = document.getElementById('filterOptionsPanel');
+        const resetFiltersButton = document.getElementById('resetFiltersBtn');
+        
+        tagFilterButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            filterOptionsPanel.classList.toggle('active');
+            tagFilterButton.classList.toggle('active');
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!filterOptionsPanel.contains(e.target) && !tagFilterButton.contains(e.target)) {
+                filterOptionsPanel.classList.remove('active');
+                tagFilterButton.classList.remove('active');
+            }
+        });
+        
+        resetFiltersButton.addEventListener('click', () => {
+            this.selectedFilterTags.clear();
+            this.refreshFilterTagsDisplay();
+            this.applyFiltersAndSearch();
+        });
+    }
+    
+    toggleSearchClearVisibility() {
+        const clearSearchButton = document.getElementById('searchClearBtn');
+        const searchInputField = document.getElementById('gameSearchField');
+        
+        if (searchInputField.value.length > 0) {
+            clearSearchButton.classList.add('visible');
+        } else {
+            clearSearchButton.classList.remove('visible');
+        }
+    }
+    
+    createFilterTagsDisplay() {
+        const uniqueTagsSet = new Set();
+        this.gamesList.forEach(gameItem => {
+            gameItem.tags.forEach(tagName => uniqueTagsSet.add(tagName));
+        });
+        
+        const filterTagsContainer = document.getElementById('availableFilterTags');
+        filterTagsContainer.innerHTML = '';
+        
+        Array.from(uniqueTagsSet).sort().forEach(tagName => {
+            const tagElement = document.createElement('div');
+            tagElement.className = 'selectable-tag';
+            tagElement.textContent = tagName;
+            tagElement.addEventListener('click', () => this.handleFilterTagToggle(tagName, tagElement));
+            filterTagsContainer.appendChild(tagElement);
+        });
+    }
+    
+    handleFilterTagToggle(tagName, tagElement) {
+        if (this.selectedFilterTags.has(tagName)) {
+            this.selectedFilterTags.delete(tagName);
+            tagElement.classList.remove('active');
+        } else {
+            this.selectedFilterTags.add(tagName);
+            tagElement.classList.add('active');
+        }
+        
+        this.applyFiltersAndSearch();
+    }
+    
+    refreshFilterTagsDisplay() {
+        const selectableTags = document.querySelectorAll('.selectable-tag');
+        selectableTags.forEach(tagElement => {
+            const tagText = tagElement.textContent;
+            if (this.selectedFilterTags.has(tagText)) {
+                tagElement.classList.add('active');
+            } else {
+                tagElement.classList.remove('active');
+            }
+        });
+    }
+    
+    applyFiltersAndSearch() {
+        this.filteredGamesList = this.gamesList.filter(gameItem => {
+            // Search filter logic
+            const matchesSearchQuery = this.currentSearchTerm === '' || 
+                gameItem.name.toLowerCase().includes(this.currentSearchTerm) ||
+                gameItem.tags.some(tagName => tagName.toLowerCase().includes(this.currentSearchTerm));
+            
+            // Tag filter logic
+            const matchesTagFilters = this.selectedFilterTags.size === 0 ||
+                Array.from(this.selectedFilterTags).every(selectedTag => 
+                    gameItem.tags.includes(selectedTag)
+                );
+            
+            return matchesSearchQuery && matchesTagFilters;
+        });
+        
+        this.currentPageNumber = 1;
+        this.renderGameCards();
+        this.renderPaginationControls();
+        this.updateGameCountDisplay();
+    }
+    
+    renderGameCards() {
+        const gameCardsContainer = document.getElementById('gameCardsGrid');
+        const startIndex = (this.currentPageNumber - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        const currentPageGames = this.filteredGamesList.slice(startIndex, endIndex);
+        
+        if (currentPageGames.length === 0) {
+            gameCardsContainer.innerHTML = `
+                <div class="no-games-message">
+                    <i class="fas fa-gamepad"></i>
+                    <h3>No games found</h3>
+                    <p>Try adjusting your search or filter criteria</p>
+                </div>
+            `;
+            return;
+        }
+        
+        gameCardsContainer.innerHTML = currentPageGames.map(gameItem => `
+            <div class="individual-game-card" data-game="${gameItem.name.toLowerCase().replace(/\s+/g, '-')}">
+                <div class="game-preview-image">
+                    <img src="${gameItem.image}" alt="${gameItem.name}" />
+                    <div class="game-hover-overlay">
+                        <a href="${gameItem.url}">
+                            <button class="game-play-button">Play Now</button>
+                        </a>
+                    </div>
+                </div>
+                <div class="game-details-section">
+                    <h3>${gameItem.name}</h3>
+                    <div class="game-category-tags">
+                        ${gameItem.tags.map(tagName => `<span class="category-tag-item">${tagName}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+        
+        // Add click handlers for individual game cards
+        document.querySelectorAll('.individual-game-card').forEach(cardElement => {
+            cardElement.addEventListener('click', (e) => {
+                if (!e.target.closest('.game-play-button')) {
+                    const playButton = cardElement.querySelector('.game-play-button');
+                    if (playButton) {
+                        playButton.click();
+                    }
+                }
+            });
+        });
+    }
+    
+    renderPaginationControls() {
+        const totalPagesCount = Math.ceil(this.filteredGamesList.length / this.itemsPerPage);
+        const paginationContainer = document.getElementById('pageNavigationControls');
+        
+        if (totalPagesCount <= 1) {
+            paginationContainer.innerHTML = '';
+            return;
+        }
+        
+        let paginationHTML = '';
+        
+        // Previous navigation button
+        paginationHTML += `
+            <button class="nav-page-button" ${this.currentPageNumber === 1 ? 'disabled' : ''} 
+                    onclick="allGamesController.navigateToPage(${this.currentPageNumber - 1})">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        `;
+        
+        // Page number buttons logic
+        const maxVisiblePageNumbers = 5;
+        let startPageNumber = Math.max(1, this.currentPageNumber - Math.floor(maxVisiblePageNumbers / 2));
+        let endPageNumber = Math.min(totalPagesCount, startPageNumber + maxVisiblePageNumbers - 1);
+        
+        if (endPageNumber - startPageNumber + 1 < maxVisiblePageNumbers) {
+            startPageNumber = Math.max(1, endPageNumber - maxVisiblePageNumbers + 1);
+        }
+        
+        if (startPageNumber > 1) {
+            paginationHTML += `<button class="nav-page-button" onclick="allGamesController.navigateToPage(1)">1</button>`;
+            if (startPageNumber > 2) {
+                paginationHTML += `<span class="pagination-dots">...</span>`;
+            }
+        }
+        
+        for (let pageNum = startPageNumber; pageNum <= endPageNumber; pageNum++) {
+            paginationHTML += `
+                <button class="nav-page-button ${pageNum === this.currentPageNumber ? 'current-page' : ''}" 
+                        onclick="allGamesController.navigateToPage(${pageNum})">${pageNum}</button>
+            `;
+        }
+        
+        if (endPageNumber < totalPagesCount) {
+            if (endPageNumber < totalPagesCount - 1) {
+                paginationHTML += `<span class="pagination-dots">...</span>`;
+            }
+            paginationHTML += `<button class="nav-page-button" onclick="allGamesController.navigateToPage(${totalPagesCount})">${totalPagesCount}</button>`;
+        }
+        
+        // Next navigation button
+        paginationHTML += `
+            <button class="nav-page-button" ${this.currentPageNumber === totalPagesCount ? 'disabled' : ''} 
+                    onclick="allGamesController.navigateToPage(${this.currentPageNumber + 1})">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        `;
+        
+        paginationContainer.innerHTML = paginationHTML;
+    }
+    
+    navigateToPage(pageNumber) {
+        const totalPagesCount = Math.ceil(this.filteredGamesList.length / this.itemsPerPage);
+        if (pageNumber >= 1 && pageNumber <= totalPagesCount) {
+            this.currentPageNumber = pageNumber;
+            this.renderGameCards();
+            this.renderPaginationControls();
+            this.updateGameCountDisplay();
+            
+            // Smooth scroll to top of games grid
+            document.getElementById('gameCardsGrid').scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start' 
+            });
+        }
+    }
+    
+    updateGameCountDisplay() {
+        const gameCountElement = document.getElementById('totalGameCount');
+        gameCountElement.textContent = this.filteredGamesList.length;
+    }
+    
+    // Method to dynamically add new games
+    addSingleGame(gameData) {
+        const newGameEntry = {
+            id: this.gamesList.length + 1,
+            ...gameData
+        };
+        this.gamesList.push(newGameEntry);
+        this.applyFiltersAndSearch();
+        this.createFilterTagsDisplay();
+    }
+    
+    // Method to add multiple games at once
+    addMultipleGames(gamesArray) {
+        gamesArray.forEach(gameData => {
+            const newGameEntry = {
+                id: this.gamesList.length + 1,
+                ...gameData
+            };
+            this.gamesList.push(newGameEntry);
+        });
+        this.applyFiltersAndSearch();
+        this.createFilterTagsDisplay();
+    }
+}
+
+// Initialize the all games controller when page loads
+let allGamesController;
+
+document.addEventListener('DOMContentLoaded', () => {
+    allGamesController = new AllGamesController();
+});
+
+// Utility functions to add games from external scripts
+function addNewGameToCollection(name, image, url, tags) {
+    if (allGamesController) {
+        allGamesController.addSingleGame({ name, image, url, tags });
+    }
+}
+
+function addMultipleGamesToCollection(gamesArray) {
+    if (allGamesController) {
+        allGamesController.addMultipleGames(gamesArray);
+    }
+}
+
+// Example usage for adding more games:
+/*
+// Add a single game
+addNewGameToCollection("Super Mario Bros", "images/mario.jpg", "games/mario.html", ["platformer", "classic", "adventure"]);
+
+// Add multiple games at once
+addMultipleGamesToCollection([
+    {
+        name: "Tetris Classic",
+        image: "images/tetris.jpg",
+        url: "games/tetris.html",
+        tags: ["puzzle", "classic", "blocks"]
+    },
+    {
+        name: "Pac-Man Arcade",
+        image: "images/pacman.jpg",
+        url: "games/pacman.html",
+        tags: ["arcade", "classic", "maze"]
+    },
+    {
+        name: "Street Fighter",
+        image: "images/streetfighter.jpg",
+        url: "games/streetfighter.html",
+        tags: ["fighting", "action", "multiplayer"]
+    }
+]);
+*/
