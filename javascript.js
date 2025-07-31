@@ -24,8 +24,8 @@ const gameData = [
     { name: "Rodeo Stampede", link: "games/rodeoStampede.html" },
     { name: "Spiral Roll", link: "games/spiralroll.html" },
     { name: "Subway Surfers", link: "games/subwaysurfers.html" },
-    { name: "Tiny Fishing", link: "games/tinyfishing.html" }
-    { name: "Bloxd io", link: "games/bloxdio.html" }
+    { name: "Tiny Fishing", link: "games/tinyfishing.html" },
+    { name: "Bloxd io", link: "games/bloxdio.html" },
     { name: "Moto X3M", link: "games/motox3m.html" }
 ];
 
