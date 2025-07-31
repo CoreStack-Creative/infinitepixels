@@ -3,59 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - Infinite Pixel</title>
+    <title>3D Formula Racing - InfinitePixels</title>
+    <link rel="icon" href="images/infinitepixlesfav.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="settings.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <!-- Top Bar -->
-    <div class="top-bar">
-        <div class="top-bar-left">
-            <button class="sidebar-toggle" id="sidebarToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="breadcrumb">
-                <a href="index.html" class="breadcrumb-link">
-                    <i class="fas fa-home"></i>
-                    Home
-                </a>
-                <span class="breadcrumb-separator">
-                    <i class="fas fa-chevron-right"></i>
-                </span>
-                <span class="breadcrumb-current">Settings</span>
-            </div>
-        </div>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search games...">
-            <button class="search-btn">
-                <i class="fas fa-search"></i>
-            </button>
-            <div class="search-results" id="searchResults"></div>
-        </div>
-    </div>
 
     <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <div class="logo-icon">
-                    <i class="fas fa-infinity"></i>
+                    <img src="images/infinitepixleslogo.webp" alt="InfinitePixels Logo" width="85px" height="85px">
                 </div>
-                <h2>Infinite Pixel</h2>
+                <h2>InfinitePixels</h2>
             </div>
         </div>
+
         <ul class="nav-links">
-            <li><a href="index.html"><span class="icon"><i class="fas fa-home"></i></span>Home</a></li>
-            <li><a href="#" class="active"><span class="icon"><i class="fas fa-cog"></i></span>Settings</a></li>
-            <li><a href="#"><span class="icon"><i class="fas fa-gamepad"></i></span>Games</a></li>
-            <li><a href="#"><span class="icon"><i class="fas fa-trophy"></i></span>Leaderboard</a></li>
-            <li><a href="#"><span class="icon"><i class="fas fa-users"></i></span>Community</a></li>
-            <li><a href="#"><span class="icon"><i class="fas fa-user"></i></span>Profile</a></li>
-            <li><a href="#"><span class="icon"><i class="fas fa-heart"></i></span>Favorites</a></li>
-            <li><a href="#"><span class="icon"><i class="fas fa-history"></i></span>Recent</a></li>
+            <li>
+                <a href="index.html">
+                    <i class="icon">
+                        <img src="images/home.png" alt="Homepage" width="20" height="20">
+                    </i>
+                    <span>Homepage</span>
+                </a>
+            </li>
+            <li>
+                <a href="games.html">
+                    <i class="icon">
+                        <img src="images/games.png" alt="Games" width="20" height="20">
+                    </i>
+                    <span>Games</span>
+                </a>
+            </li>
+            <li>
+                <a href="random.html">
+                    <i class="icon">
+                        <img src="images/random.png" alt="Random" width="20" height="20">
+                    </i>
+                    <span>Random</span>
+                </a>
+            </li>
+            <li>
+                <a href="categories.html">
+                    <i class="icon">
+                        <img src="images/grid.png" alt="Categories" width="20" height="20">
+                    </i>
+                    <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="news.html">
+                    <i class="icon">
+                        <img src="images/news.png" alt="News" width="20" height="20">
+                    </i>
+                    <span>News</span>
+                </a>
+            </li>
+            <li>
+                <a href="settings.html">
+                    <i class="icon">
+                        <img src="images/settings.png" alt="Settings" width="20" height="20">
+                    </i>
+                    <span>Settings</span>
+                </a>
+            </li>
         </ul>
     </nav>
+
+    <div class="top-bar">
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search games...">
+            <button class="search-btn" id="searchBtn">
+                <i class="fas fa-search"></i>
+            </button>
+            <div class="search-results" id="searchResults">
+                <!-- Search results will be displayed here -->
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <main class="main-content" id="mainContent">

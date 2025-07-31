@@ -43,6 +43,13 @@ let barCollapsed = false;
 // Initialize Paper.io game simulation
 function initializeGame() {
     const canvas = gameCanvas;
+    
+    // Add null check to prevent errors
+    if (!canvas) {
+        console.log('Canvas not found, skipping game initialization');
+        return;
+    }
+    
     const ctx = canvas.getContext('2d');
     
     // Set canvas size
@@ -134,20 +141,22 @@ function initializeGame() {
 }
 
 // Sidebar toggle functionality
-sidebarToggle.addEventListener('click', () => {
-    sidebarCollapsed = !sidebarCollapsed;
-    sidebar.classList.toggle('collapsed');
-    mainContent.classList.toggle('expanded');
-    mobileSidebarOverlayHandler();
+if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', () => {
+        sidebarCollapsed = !sidebarCollapsed;
+        if (sidebar) sidebar.classList.toggle('collapsed');
+        if (mainContent) mainContent.classList.toggle('expanded');
+        mobileSidebarOverlayHandler();
 
-    // Selected when menu is open, unselected when closed
-    if (!sidebarCollapsed) {
-        sidebarToggle.classList.add('selected'); // Selected when open
-    } else {
-        sidebarToggle.classList.remove('selected'); // Unselected when closed
-    }
-    sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>'; // Always show bars icon
-});
+        // Selected when menu is open, unselected when closed
+        if (!sidebarCollapsed) {
+            sidebarToggle.classList.add('selected'); // Selected when open
+        } else {
+            sidebarToggle.classList.remove('selected'); // Unselected when closed
+        }
+        sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>'; // Always show bars icon
+    });
+}
 
 // --- Mobile sidebar overlay and toggle logic ---
 function mobileSidebarOverlayHandler() {
@@ -161,13 +170,19 @@ function mobileSidebarOverlayHandler() {
         document.body.classList.remove('sidebar-open');
     }
 }
+
 window.addEventListener('resize', () => {
     handleResize();
     mobileSidebarOverlayHandler();
 });
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize game
-    initializeGame();
+    // Initialize game only if canvas exists
+    if (gameCanvas) {
+        initializeGame();
+    } else {
+        console.log('Game canvas not found, skipping game initialization');
+    }
     
     // Handle initial responsive state
     handleResize();
@@ -199,35 +214,41 @@ document.addEventListener('click', function(e) {
     if (
         window.innerWidth <= 900 &&
         document.body.classList.contains('sidebar-open') &&
-        !sidebar.contains(e.target) &&
-        !sidebarToggle.contains(e.target)
+        sidebar && !sidebar.contains(e.target) &&
+        sidebarToggle && !sidebarToggle.contains(e.target)
     ) {
         sidebarCollapsed = true;
         sidebar.classList.add('collapsed');
-        mainContent.classList.remove('expanded');
+        if (mainContent) mainContent.classList.remove('expanded');
         document.body.classList.remove('sidebar-open');
     }
 }, true);
 
 // Search functionality
-searchInput.addEventListener('input', () => {
-    const searchTerm = searchInput.value.toLowerCase();
+if (searchInput) {
+    searchInput.addEventListener('input', () => {
+        const searchTerm = searchInput.value.toLowerCase();
 
-    if (searchTerm.trim() === '') {
-        // Hide results if input is empty
-        searchResults.classList.remove('active');
-        searchResults.innerHTML = '';
-        return;
-    }
+        if (searchTerm.trim() === '') {
+            // Hide results if input is empty
+            if (searchResults) {
+                searchResults.classList.remove('active');
+                searchResults.innerHTML = '';
+            }
+            return;
+        }
 
-    const filteredGames = gameData.filter(game => 
-        game.name.toLowerCase().includes(searchTerm)
-    );
+        const filteredGames = gameData.filter(game => 
+            game.name.toLowerCase().includes(searchTerm)
+        );
 
-    displaySearchResults(filteredGames);
-});
+        displaySearchResults(filteredGames);
+    });
+}
 
 function displaySearchResults(results) {
+    if (!searchResults) return;
+    
     searchResults.innerHTML = ''; // Clear previous results
 
     if (results.length === 0) {
@@ -251,18 +272,29 @@ function displaySearchResults(results) {
     }
 }
 
-// Fullscreen functionality
-fullscreenBtn.addEventListener('click', toggleFullscreen);
+// Fullscreen functionality - with null check
+if (fullscreenBtn) {
+    fullscreenBtn.addEventListener('click', toggleFullscreen);
+} else {
+    console.log('Fullscreen button not found');
+}
 
 function toggleFullscreen() {
+    if (!gameContainer || !fullscreenBtn) {
+        console.log('Required elements for fullscreen not found');
+        return;
+    }
+    
     isFullscreen = !isFullscreen;
 
     if (isFullscreen) {
         gameContainer.classList.add('fullscreen');
         fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i><span>Exit Fullscreen</span>';
-        gameCanvas.style.width = '100vw';
-        gameCanvas.style.height = 'calc(100vh - 60px)';
-        collapseArrow.style.display = 'block';
+        if (gameCanvas) {
+            gameCanvas.style.width = '100vw';
+            gameCanvas.style.height = 'calc(100vh - 60px)';
+        }
+        if (collapseArrow) collapseArrow.style.display = 'block';
         gameContainer.classList.remove('bar-collapsed');
         barCollapsed = false;
 
@@ -272,12 +304,16 @@ function toggleFullscreen() {
         gameContainer.classList.remove('fullscreen');
         fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i><span>Fullscreen</span>';
         barCollapsed = false;
-        gameControlBar.classList.remove('collapsed');
-        collapseArrow.classList.remove('rotated');
-        collapseArrow.style.display = '';
+        if (gameControlBar) gameControlBar.classList.remove('collapsed');
+        if (collapseArrow) {
+            collapseArrow.classList.remove('rotated');
+            collapseArrow.style.display = '';
+        }
         gameContainer.classList.remove('bar-collapsed');
-        gameCanvas.style.width = '100%';
-        gameCanvas.style.height = 'auto';
+        if (gameCanvas) {
+            gameCanvas.style.width = '100%';
+            gameCanvas.style.height = 'auto';
+        }
         removeFullscreenMessage();
     }
 }
@@ -329,61 +365,71 @@ function removeFullscreenMessage() {
 }
 
 // Collapse arrow functionality
-collapseArrow.addEventListener('click', () => {
-    barCollapsed = !barCollapsed;
+if (collapseArrow) {
+    collapseArrow.addEventListener('click', () => {
+        barCollapsed = !barCollapsed;
 
-    if (isFullscreen) {
-        if (barCollapsed) {
-            gameContainer.classList.add('bar-collapsed');
-            collapseArrow.classList.add('rotated');
-            // Arrow stays visible
+        if (isFullscreen && gameContainer) {
+            if (barCollapsed) {
+                gameContainer.classList.add('bar-collapsed');
+                collapseArrow.classList.add('rotated');
+                // Arrow stays visible
+            } else {
+                gameContainer.classList.remove('bar-collapsed');
+                collapseArrow.classList.remove('rotated');
+            }
         } else {
-            gameContainer.classList.remove('bar-collapsed');
-            collapseArrow.classList.remove('rotated');
+            if (barCollapsed && gameControlBar) {
+                gameControlBar.classList.add('collapsed');
+                collapseArrow.classList.add('rotated');
+            } else if (gameControlBar) {
+                gameControlBar.classList.remove('collapsed');
+                collapseArrow.classList.remove('rotated');
+            }
         }
-    } else {
-        if (barCollapsed) {
-            gameControlBar.classList.add('collapsed');
-            collapseArrow.classList.add('rotated');
-        } else {
-            gameControlBar.classList.remove('collapsed');
-            collapseArrow.classList.remove('rotated');
-        }
-    }
-});
+    });
+}
 
 // Share functionality
-shareBtn.addEventListener('click', () => {
-    shareModal.classList.add('active');
-});
+if (shareBtn) {
+    shareBtn.addEventListener('click', () => {
+        if (shareModal) shareModal.classList.add('active');
+    });
+}
 
-closeModal.addEventListener('click', () => {
-    shareModal.classList.remove('active');
-});
+if (closeModal) {
+    closeModal.addEventListener('click', () => {
+        if (shareModal) shareModal.classList.remove('active');
+    });
+}
 
-shareModal.addEventListener('click', (e) => {
-    if (e.target === shareModal) {
-        shareModal.classList.remove('active');
-    }
-});
+if (shareModal) {
+    shareModal.addEventListener('click', (e) => {
+        if (e.target === shareModal) {
+            shareModal.classList.remove('active');
+        }
+    });
+}
 
-copyBtn.addEventListener('click', () => {
-    shareLink.select();
-    shareLink.setSelectionRange(0, 99999);
-    
-    try {
-        document.execCommand('copy');
-        shareMessage.classList.add('show');
-        copyBtn.textContent = 'Copied!';
+if (copyBtn) {
+    copyBtn.addEventListener('click', () => {
+        if (shareLink) shareLink.select();
+        if (shareLink) shareLink.setSelectionRange(0, 99999);
         
-        setTimeout(() => {
-            shareMessage.classList.remove('show');
-            copyBtn.textContent = 'Copy';
-        }, 2000);
-    } catch (err) {
-        console.error('Copy failed:', err);
-    }
-});
+        try {
+            document.execCommand('copy');
+            if (shareMessage) shareMessage.classList.add('show');
+            copyBtn.textContent = 'Copied!';
+            
+            setTimeout(() => {
+                if (shareMessage) shareMessage.classList.remove('show');
+                copyBtn.textContent = 'Copy';
+            }, 2000);
+        } catch (err) {
+            console.error('Copy failed:', err);
+        }
+    });
+}
 
 // Navigation link functionality
 navLinks.forEach(link => {
@@ -626,23 +672,29 @@ document.addEventListener('keydown', (e) => {
     // Toggle sidebar with 'S' key
     if (e.key.toLowerCase() === 's' && !e.ctrlKey && !e.altKey && 
         document.activeElement !== searchInput) {
-        sidebarToggle.click();
+        if (sidebarToggle) sidebarToggle.click();
     }
 
     // Toggle fullscreen with 'F' key
     if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.altKey && 
         document.activeElement !== searchInput) {
-        fullscreenBtn.click();
+        if (fullscreenBtn) fullscreenBtn.click();
     }
 
     // Close modals with Escape key
     if (e.key === 'Escape') {
-        if (shareModal.classList.contains('active')) {
+        if (shareModal && shareModal.classList.contains('active')) {
             shareModal.classList.remove('active');
         }
         // Exit fullscreen if active
         if (isFullscreen) {
             toggleFullscreen();
+        }
+        
+        // Close video modal if active
+        const videoModal = document.getElementById('videoModal');
+        if (videoModal && videoModal.classList.contains('active')) {
+            closeVideoModal();
         }
     }
 });
@@ -651,7 +703,7 @@ document.addEventListener('keydown', (e) => {
 function handleResize() {
     const isMobile = window.innerWidth <= 768;
 
-    if (isMobile && !sidebarCollapsed) {
+    if (isMobile && !sidebarCollapsed && sidebar && mainContent && sidebarToggle) {
         sidebar.classList.add('collapsed');
         mainContent.classList.add('expanded');
         sidebarCollapsed = true;
@@ -659,7 +711,7 @@ function handleResize() {
     }
 
     // Adjust canvas size
-    if (!isFullscreen) {
+    if (!isFullscreen && gameContainer && gameCanvas) {
         const container = gameContainer.getBoundingClientRect();
         if (container.width > 0) {
             gameCanvas.style.width = '100%';
@@ -686,10 +738,10 @@ function handleSwipe() {
     const diff = touchStartX - touchEndX;
 
     if (Math.abs(diff) > swipeThreshold) {
-        if (diff > 0 && !sidebarCollapsed) {
+        if (diff > 0 && !sidebarCollapsed && sidebarToggle) {
             // Swipe left - close sidebar
             sidebarToggle.click();
-        } else if (diff < 0 && sidebarCollapsed && touchStartX < 50) {
+        } else if (diff < 0 && sidebarCollapsed && touchStartX < 50 && sidebarToggle) {
             // Swipe right from left edge - open sidebar
             sidebarToggle.click();
         }
@@ -707,69 +759,31 @@ window.addEventListener('scroll', () => {
 });
 
 // Prevent accidental interactions
-searchInput.addEventListener('focus', (e) => {
-    e.stopPropagation();
-});
-
-searchInput.addEventListener('mousedown', (e) => {
-    e.stopPropagation();
-});
-
-// Initialize page
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize game
-    initializeGame();
-    
-    // Handle initial responsive state
-    handleResize();
-    
-    // Add load animation
-    document.body.style.opacity = '0';
-    document.body.style.transition = 'opacity 0.5s ease';
-    
-    setTimeout(() => {
-        document.body.style.opacity = '1';
-    }, 100);
-    
-    // Stagger animation of game items
-    gameItems.forEach((item, index) => {
-        item.style.opacity = '0';
-        item.style.transform = 'translateX(-20px)';
-        item.style.transition = 'all 0.6s ease';
-        
-        setTimeout(() => {
-            item.style.opacity = '1';
-            item.style.transform = 'translateX(0)';
-        }, 300 + (index * 100));
+if (searchInput) {
+    searchInput.addEventListener('focus', (e) => {
+        e.stopPropagation();
     });
-    mobileSidebarOverlayHandler();
-});
 
-// Window event listeners
-window.addEventListener('resize', handleResize);
-window.addEventListener('orientationchange', () => {
-    setTimeout(handleResize, 100);
-});
+    searchInput.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+    });
+}
 
-console.log('🎮 Paper.io page loaded successfully! Press "S" to toggle sidebar, "F" for fullscreen.'); 
 // Settings Page JavaScript
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize settings system
-    initializeSettings();
-    
-    // Setup event listeners
-    setupTabNavigation();
-    setupSliders();
-    setupKeybinds();
-    setupColorPicker();
-    setupSaveSystem();
-    setupModalSystem();
-    setupResetFunctionality();
-    
-    // Load saved settings
-    loadSettings();
-    
-    console.log('🎮 Settings page initialized successfully!');
+    // Only initialize settings if we're on the settings page
+    if (document.querySelector('.settings-container')) {
+        initializeSettings();
+        setupTabNavigation();
+        setupSliders();
+        setupKeybinds();
+        setupColorPicker();
+        setupSaveSystem();
+        setupModalSystem();
+        setupResetFunctionality();
+        loadSettings();
+        console.log('🎮 Settings page initialized successfully!');
+    }
 });
 
 // Settings data structure
@@ -841,19 +855,15 @@ let settingsData = {
     }
 };
 
-// Initialize settings system
+// Settings functions (only run if on settings page)
 function initializeSettings() {
-    // Apply initial theme
+    if (!document.querySelector('.settings-container')) return;
+    
     applyTheme(settingsData.display.theme);
-    
-    // Apply accent color
     applyAccentColor(settingsData.display.accentColor);
-    
-    // Update all UI elements with current values
     updateAllUIElements();
 }
 
-// Tab navigation system
 function setupTabNavigation() {
     const tabs = document.querySelectorAll('.settings-tab');
     const panels = document.querySelectorAll('.settings-panel');
@@ -862,15 +872,13 @@ function setupTabNavigation() {
         tab.addEventListener('click', () => {
             const targetPanel = tab.dataset.tab;
             
-            // Remove active class from all tabs and panels
             tabs.forEach(t => t.classList.remove('active'));
             panels.forEach(p => p.classList.remove('active'));
             
-            // Add active class to clicked tab and corresponding panel
             tab.classList.add('active');
-            document.getElementById(`${targetPanel}-panel`).classList.add('active');
+            const panel = document.getElementById(`${targetPanel}-panel`);
+            if (panel) panel.classList.add('active');
             
-            // Add click animation
             tab.style.transform = 'scale(0.95)';
             setTimeout(() => {
                 tab.style.transform = '';
@@ -879,19 +887,16 @@ function setupTabNavigation() {
     });
 }
 
-// Slider functionality
 function setupSliders() {
     const sliders = document.querySelectorAll('.setting-slider');
     
     sliders.forEach(slider => {
         const valueDisplay = slider.parentElement.querySelector('.slider-value');
         
-        // Update display on input
         slider.addEventListener('input', (e) => {
             const value = parseFloat(e.target.value);
             const id = e.target.id;
             
-            // Format value based on slider type
             let displayValue;
             if (id === 'uiScale') {
                 displayValue = `${value}%`;
@@ -903,29 +908,16 @@ function setupSliders() {
                 displayValue = `${value}%`;
             }
             
-            valueDisplay.textContent = displayValue;
-            
-            // Update settings data
+            if (valueDisplay) valueDisplay.textContent = displayValue;
             updateSettingValue(id, value);
             
-            // Apply immediate effects for certain settings
             if (id === 'uiScale') {
                 applyUIScale(value);
             }
         });
-        
-        // Add hover effects
-        slider.addEventListener('mouseenter', () => {
-            slider.style.background = 'rgba(138, 43, 226, 0.2)';
-        });
-        
-        slider.addEventListener('mouseleave', () => {
-            slider.style.background = 'rgba(255, 255, 255, 0.1)';
-        });
     });
 }
 
-// Keybind system
 function setupKeybinds() {
     const keybindButtons = document.querySelectorAll('.keybind-btn');
     let listeningForKey = false;
@@ -950,18 +942,14 @@ function setupKeybinds() {
             const keyName = getKeyDisplayName(e.code);
             const action = currentButton.dataset.action;
             
-            // Update button display
             currentButton.textContent = keyName;
             currentButton.classList.remove('listening');
             
-            // Update settings data
             settingsData.controls.keybinds[action] = e.code;
             
-            // Reset listening state
             listeningForKey = false;
             currentButton = null;
             
-            // Show success animation
             currentButton.style.background = 'linear-gradient(45deg, #4CAF50, #45a049)';
             setTimeout(() => {
                 currentButton.style.background = '';
@@ -970,33 +958,27 @@ function setupKeybinds() {
     });
 }
 
-// Color picker system
 function setupColorPicker() {
     const colorPicker = document.getElementById('accentColor');
     const colorPresets = document.querySelectorAll('.color-preset');
     
-    // Main color picker
-    colorPicker.addEventListener('change', (e) => {
-        const color = e.target.value;
-        applyAccentColor(color);
-        settingsData.display.accentColor = color;
-        
-        // Update preset selection
-        updatePresetSelection(color);
-    });
+    if (colorPicker) {
+        colorPicker.addEventListener('change', (e) => {
+            const color = e.target.value;
+            applyAccentColor(color);
+            settingsData.display.accentColor = color;
+            updatePresetSelection(color);
+        });
+    }
     
-    // Color presets
     colorPresets.forEach(preset => {
         preset.addEventListener('click', () => {
             const color = preset.dataset.color;
-            colorPicker.value = color;
+            if (colorPicker) colorPicker.value = color;
             applyAccentColor(color);
             settingsData.display.accentColor = color;
-            
-            // Update preset selection
             updatePresetSelection(color);
             
-            // Animation
             preset.style.transform = 'scale(1.2)';
             setTimeout(() => {
                 preset.style.transform = '';
@@ -1005,71 +987,66 @@ function setupColorPicker() {
     });
 }
 
-// Save system
 function setupSaveSystem() {
     const saveButton = document.getElementById('saveBtn');
-    const modal = document.getElementById('saveModal');
     
-    saveButton.addEventListener('click', () => {
-        // Add loading animation
-        saveButton.style.opacity = '0.7';
-        saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-        
-        // Simulate save delay
-        setTimeout(() => {
-            saveSettings();
-            showSaveModal();
+    if (saveButton) {
+        saveButton.addEventListener('click', () => {
+            saveButton.style.opacity = '0.7';
+            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
             
-            // Reset button
-            saveButton.style.opacity = '';
-            saveButton.innerHTML = '<i class="fas fa-save"></i> Save Changes';
-        }, 1000);
-    });
+            setTimeout(() => {
+                saveSettings();
+                showSaveModal();
+                
+                saveButton.style.opacity = '';
+                saveButton.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+            }, 1000);
+        });
+    }
 }
 
-// Modal system
 function setupModalSystem() {
     const modal = document.getElementById('saveModal');
     const modalOk = document.getElementById('modalOk');
     
-    modalOk.addEventListener('click', () => {
-        modal.classList.remove('active');
-    });
+    if (modalOk) {
+        modalOk.addEventListener('click', () => {
+            if (modal) modal.classList.remove('active');
+        });
+    }
     
-    // Close modal on outside click
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.classList.remove('active');
-        }
-    });
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+    }
 }
 
-// Reset functionality
 function setupResetFunctionality() {
     const resetButton = document.getElementById('resetBtn');
     
-    resetButton.addEventListener('click', () => {
-        if (confirm('Are you sure you want to reset all settings to default? This cannot be undone.')) {
-            resetToDefaults();
-            updateAllUIElements();
-            showNotification('Settings reset to defaults', 'success');
-        }
-    });
+    if (resetButton) {
+        resetButton.addEventListener('click', () => {
+            if (confirm('Are you sure you want to reset all settings to default? This cannot be undone.')) {
+                resetToDefaults();
+                updateAllUIElements();
+                showNotification('Settings reset to defaults', 'success');
+            }
+        });
+    }
 }
 
-// Helper Functions
-
+// Settings helper functions
 function updateSettingValue(settingId, value) {
-    // Map setting IDs to data structure
     const settingMap = {
-        // Display
         'uiScale': () => settingsData.display.uiScale = value,
-        // Audio
         'masterVolume': () => settingsData.audio.masterVolume = value,
         'gameVolume': () => settingsData.audio.gameVolume = value,
         'musicVolume': () => settingsData.audio.musicVolume = value,
         'sfxVolume': () => settingsData.audio.sfxVolume = value,
-        // Controls
         'gamepadSensitivity': () => settingsData.controls.gamepadSensitivity = value,
         'deadzone': () => settingsData.controls.deadzone = value
     };
@@ -1096,7 +1073,6 @@ function applyTheme(theme) {
     document.body.className = document.body.className.replace(/theme-\w+/g, '');
     document.body.classList.add(`theme-${theme}`);
     
-    // Apply theme-specific styles
     const root = document.documentElement;
     
     switch (theme) {
@@ -1128,7 +1104,6 @@ function applyAccentColor(color) {
     const root = document.documentElement;
     root.style.setProperty('--accent-color', color);
     
-    // Update various accent elements
     const elements = document.querySelectorAll('.settings-tab.active, .btn-primary, .keybind-btn');
     elements.forEach(el => {
         el.style.background = `linear-gradient(45deg, ${color}, ${adjustBrightness(color, -20)})`;
@@ -1136,7 +1111,6 @@ function applyAccentColor(color) {
 }
 
 function adjustBrightness(hex, percent) {
-    // Convert hex to RGB
     const num = parseInt(hex.replace("#", ""), 16);
     const amt = Math.round(2.55 * percent);
     const R = (num >> 16) + amt;
@@ -1151,8 +1125,6 @@ function adjustBrightness(hex, percent) {
 function applyUIScale(scale) {
     const root = document.documentElement;
     root.style.setProperty('--ui-scale', scale / 100);
-    
-    // Apply scale to main elements
     document.body.style.fontSize = `${16 * (scale / 100)}px`;
 }
 
@@ -1170,7 +1142,6 @@ function updatePresetSelection(selectedColor) {
 }
 
 function updateAllUIElements() {
-    // Update all sliders
     Object.keys(settingsData).forEach(category => {
         Object.keys(settingsData[category]).forEach(setting => {
             const element = document.getElementById(setting);
@@ -1206,7 +1177,6 @@ function updateAllUIElements() {
         });
     });
     
-    // Update keybind buttons
     Object.keys(settingsData.controls.keybinds).forEach(action => {
         const button = document.querySelector(`[data-action="${action}"]`);
         if (button) {
@@ -1214,18 +1184,14 @@ function updateAllUIElements() {
         }
     });
     
-    // Update color presets
     updatePresetSelection(settingsData.display.accentColor);
 }
 
 function saveSettings() {
     try {
-        // Save to localStorage (Note: In production, this would be sent to a server)
         const settingsJSON = JSON.stringify(settingsData);
-        // Using a variable instead of localStorage for Claude.ai compatibility
         window.savedSettings = settingsJSON;
         
-        // Apply all current settings
         applyTheme(settingsData.display.theme);
         applyAccentColor(settingsData.display.accentColor);
         applyUIScale(settingsData.display.uiScale);
@@ -1240,14 +1206,12 @@ function saveSettings() {
 
 function loadSettings() {
     try {
-        // Load from localStorage (Note: In production, this would be fetched from a server)
         const savedData = window.savedSettings;
         if (savedData) {
             const parsed = JSON.parse(savedData);
             settingsData = { ...settingsData, ...parsed };
         }
         
-        // Apply loaded settings
         applyTheme(settingsData.display.theme);
         applyAccentColor(settingsData.display.accentColor);
         applyUIScale(settingsData.display.uiScale);
@@ -1260,7 +1224,6 @@ function loadSettings() {
 }
 
 function resetToDefaults() {
-    // Reset to default values
     settingsData = {
         display: {
             theme: 'dark',
@@ -1329,7 +1292,6 @@ function resetToDefaults() {
         }
     };
     
-    // Apply default theme and colors
     applyTheme('dark');
     applyAccentColor('#8a2be2');
     applyUIScale(100);
@@ -1337,16 +1299,16 @@ function resetToDefaults() {
 
 function showSaveModal() {
     const modal = document.getElementById('saveModal');
-    modal.classList.add('active');
-    
-    // Auto-close after 3 seconds
-    setTimeout(() => {
-        modal.classList.remove('active');
-    }, 3000);
+    if (modal) {
+        modal.classList.add('active');
+        
+        setTimeout(() => {
+            modal.classList.remove('active');
+        }, 3000);
+    }
 }
 
 function showNotification(message, type = 'info') {
-    // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.innerHTML = `
@@ -1356,7 +1318,6 @@ function showNotification(message, type = 'info') {
         </div>
     `;
     
-    // Add styles
     notification.style.cssText = `
         position: fixed;
         top: 20px;
@@ -1373,16 +1334,13 @@ function showNotification(message, type = 'info') {
         font-weight: 500;
     `;
     
-    // Add to page
     document.body.appendChild(notification);
     
-    // Animate in
     setTimeout(() => {
         notification.style.opacity = '1';
         notification.style.transform = 'translateX(0)';
     }, 100);
     
-    // Remove after delay
     setTimeout(() => {
         notification.style.opacity = '0';
         notification.style.transform = 'translateX(100%)';
@@ -1392,259 +1350,86 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-// Setup all checkbox event listeners
-function setupCheckboxListeners() {
-    const checkboxes = document.querySelectorAll('.setting-checkbox');
-    
-    checkboxes.forEach(checkbox => {
-        checkbox.addEventListener('change', (e) => {
-            const id = e.target.id;
-            const value = e.target.checked;
-            
-            // Update settings data based on checkbox ID
-            updateCheckboxSetting(id, value);
-            
-            // Apply immediate effects for certain settings
-            if (id === 'dynamicBg') {
-                toggleDynamicBackground(value);
-            } else if (id === 'reducedMotion') {
-                toggleReducedMotion(value);
-            } else if (id === 'devMode') {
-                toggleDevMode(value);
-            }
-        });
-    });
-}
-
-// Setup select dropdown listeners
-function setupSelectListeners() {
-    const selects = document.querySelectorAll('.setting-select');
-    
-    selects.forEach(select => {
-        select.addEventListener('change', (e) => {
-            const id = e.target.id;
-            const value = e.target.value;
-            
-            // Update settings data
-            updateSelectSetting(id, value);
-            
-            // Apply immediate effects
-            if (id === 'themeSelect') {
-                applyTheme(value);
-                settingsData.display.theme = value;
-            }
-        });
-    });
-}
-
-function updateCheckboxSetting(settingId, value) {
-    const settingMap = {
-        // Display
-        'dynamicBg': () => settingsData.display.dynamicBg = value,
-        'reducedMotion': () => settingsData.display.reducedMotion = value,
-        'fullscreenDefault': () => settingsData.display.fullscreenDefault = value,
-        'showFps': () => settingsData.display.showFps = value,
-        // Audio
-        'spatialAudio': () => settingsData.audio.spatialAudio = value,
-        'bassBoost': () => settingsData.audio.bassBoost = value,
-        // Controls
-        'gamepadEnabled': () => settingsData.controls.gamepadEnabled = value,
-        'gamepadVibration': () => settingsData.controls.gamepadVibration = value,
-        // Gameplay
-        'vsync': () => settingsData.gameplay.vsync = value,
-        'autoSave': () => settingsData.gameplay.autoSave = value,
-        'skipIntros': () => settingsData.gameplay.skipIntros = value,
-        'streamerMode': () => settingsData.gameplay.streamerMode = value,
-        // Account
-        'gameUpdates': () => settingsData.account.gameUpdates = value,
-        'friendRequests': () => settingsData.account.friendRequests = value,
-        'achievements': () => settingsData.account.achievements = value,
-        'promotions': () => settingsData.account.promotions = value,
-        // Privacy
-        'showOnlineStatus': () => settingsData.privacy.showOnlineStatus = value,
-        'showCurrentGame': () => settingsData.privacy.showCurrentGame = value,
-        'allowMessages': () => settingsData.privacy.allowMessages = value,
-        'analytics': () => settingsData.privacy.analytics = value,
-        'crashReports': () => settingsData.privacy.crashReports = value,
-        // Advanced
-        'devMode': () => settingsData.advanced.devMode = value,
-        'showConsole': () => settingsData.advanced.showConsole = value,
-        'betaFeatures': () => settingsData.advanced.betaFeatures = value
-    };
-    
-    if (settingMap[settingId]) {
-        settingMap[settingId]();
-    }
-}
-
-function updateSelectSetting(settingId, value) {
-    const settingMap = {
-        // Display
-        'themeSelect': () => settingsData.display.theme = value,
-        // Audio
-        'audioQuality': () => settingsData.audio.audioQuality = value,
-        // Gameplay
-        'targetFps': () => settingsData.gameplay.targetFps = value,
-        'graphicsQuality': () => settingsData.gameplay.graphicsQuality = value,
-        'difficulty': () => settingsData.gameplay.difficulty = value,
-        // Privacy
-        'profileVisibility': () => settingsData.privacy.profileVisibility = value,
-        // Advanced
-        'serverRegion': () => settingsData.advanced.serverRegion = value,
-        'bandwidth': () => settingsData.advanced.bandwidth = value
-    };
-    
-    if (settingMap[settingId]) {
-        settingMap[settingId]();
-    }
-}
-
-function toggleDynamicBackground(enabled) {
-    const heroSection = document.querySelector('.hero');
-    if (heroSection) {
-        if (enabled) {
-            heroSection.classList.add('dynamic-bg');
-        } else {
-            heroSection.classList.remove('dynamic-bg');
-        }
-    }
-}
-
-function toggleReducedMotion(enabled) {
-    if (enabled) {
-        document.body.classList.add('reduced-motion');
-    } else {
-        document.body.classList.remove('reduced-motion');
-    }
-}
-
-function toggleDevMode(enabled) {
-    if (enabled) {
-        console.log('🔧 Developer mode enabled');
-        // Add dev tools to page
-        showNotification('Developer mode enabled', 'success');
-    } else {
-        console.log('🔧 Developer mode disabled');
-        showNotification('Developer mode disabled', 'info');
-    }
-}
-
-// Initialize additional listeners when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    setupCheckboxListeners();
-    setupSelectListeners();
-});
-
-// Keyboard shortcuts for settings
-document.addEventListener('keydown', (e) => {
-    // Ctrl + S to save
-    if (e.ctrlKey && e.key === 's') {
-        e.preventDefault();
-        document.getElementById('saveBtn').click();
-    }
-    
-    // Ctrl + R to reset (with confirmation)
-    if (e.ctrlKey && e.key === 'r') {
-        e.preventDefault();
-        document.getElementById('resetBtn').click();
-    }
-    
-    // Tab navigation with numbers
-    if (e.ctrlKey && e.key >= '1' && e.key <= '7') {
-        e.preventDefault();
-        const tabIndex = parseInt(e.key) - 1;
-        const tabs = document.querySelectorAll('.settings-tab');
-        if (tabs[tabIndex]) {
-            tabs[tabIndex].click();
-        }
-    }
-});
-
-// Auto-save functionality (saves every 30 seconds if changes detected)
-let settingsChanged = false;
-let autoSaveInterval;
-
-function startAutoSave() {
-    autoSaveInterval = setInterval(() => {
-        if (settingsChanged) {
-            saveSettings();
-            settingsChanged = false;
-            console.log('⚡ Settings auto-saved');
-        }
-    }, 30000); // 30 seconds
-}
-
-function markSettingsChanged() {
-    settingsChanged = true;
-}
-
-// Track changes to mark for auto-save
-document.addEventListener('change', (e) => {
-    if (e.target.matches('.setting-slider, .setting-checkbox, .setting-select, .setting-input')) {
-        markSettingsChanged();
-    }
-});
-
-// Start auto-save when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    startAutoSave();
-});
-
-// Clean up auto-save when page unloads
-window.addEventListener('beforeunload', () => {
-    if (autoSaveInterval) {
-        clearInterval(autoSaveInterval);
-    }
-    
-    // Save any pending changes
-    if (settingsChanged) {
-        saveSettings();
-    }
-});
-
-console.log('🎮 Settings JavaScript loaded successfully!');
-
 // Game Spotlight Modal Functionality
 document.addEventListener('DOMContentLoaded', function() {
     const trailerBtn = document.getElementById('trailerBtn');
     const videoModal = document.getElementById('videoModal');
-    const closeModal = document.getElementById('closeModal');
+    const closeModalBtn = document.getElementById('closeModal');
     const trailerVideo = document.getElementById('trailerVideo');
     
+    // Debug: Check if elements exist
+    console.log('Video modal elements found:', {
+        trailerBtn: !!trailerBtn,
+        videoModal: !!videoModal,
+        closeModal: !!closeModalBtn,
+        trailerVideo: !!trailerVideo
+    });
+    
+    // Check each element individually and report which ones are missing
+    if (!trailerBtn) {
+        console.log('Element with id="trailerBtn" not found! Skipping video modal setup.');
+        return;
+    }
+    if (!videoModal) {
+        console.log('Element with id="videoModal" not found! Skipping video modal setup.');
+        return;
+    }
+    if (!closeModalBtn) {
+        console.log('Element with id="closeModal" not found! Skipping video modal setup.');
+        return;
+    }
+    if (!trailerVideo) {
+        console.log('Element with id="trailerVideo" not found! Skipping video modal setup.');
+        return;
+    }
+    
+    console.log('All video modal elements found successfully!');
+    
     // Open modal when trailer button is clicked
-    trailerBtn.addEventListener('click', function() {
+    trailerBtn.addEventListener('click', function(e) {
+        e.preventDefault(); // Prevent any default behavior
+        console.log('Trailer button clicked');
+        
         videoModal.classList.add('active');
         document.body.style.overflow = 'hidden'; // Prevent background scrolling
         
-        // Start playing the video
-        trailerVideo.play().catch(error => {
-            console.error('Error playing video:', error);
-        });
+        // Wait a moment for the modal to appear, then play video
+        setTimeout(() => {
+            trailerVideo.play().catch(error => {
+                console.error('Error playing video:', error);
+                // Try loading the video first
+                trailerVideo.load();
+                setTimeout(() => {
+                    trailerVideo.play().catch(err => {
+                        console.error('Still unable to play video:', err);
+                    });
+                }, 100);
+            });
+        }, 100);
     });
     
     // Close modal function
     function closeVideoModal() {
+        console.log('Closing video modal');
         videoModal.classList.remove('active');
         document.body.style.overflow = 'auto'; // Restore scrolling
         
         // Pause and reset the video
-        trailerVideo.pause();
+        if (!trailerVideo.paused) {
+            trailerVideo.pause();
+        }
         trailerVideo.currentTime = 0;
     }
     
+    // Make closeVideoModal available globally for keyboard shortcuts
+    window.closeVideoModal = closeVideoModal;
+    
     // Close modal when X button is clicked
-    closeModal.addEventListener('click', closeVideoModal);
+    closeModalBtn.addEventListener('click', closeVideoModal);
     
     // Close modal when clicking outside the modal content
     videoModal.addEventListener('click', function(e) {
         if (e.target === videoModal) {
-            closeVideoModal();
-        }
-    });
-    
-    // Close modal when pressing Escape key
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && videoModal.classList.contains('active')) {
             closeVideoModal();
         }
     });
@@ -1655,15 +1440,10 @@ document.addEventListener('DOMContentLoaded', function() {
         playNowBtn.addEventListener('click', function(e) {
             // Optional: Add analytics tracking here
             console.log('Play Now button clicked');
-            
-            // Optional: Add a confirmation dialog
-            // if (!confirm('Ready to enter the battlefield?')) {
-            //     e.preventDefault();
-            // }
         });
     }
     
-    // Add hover effects for particles
+    // Add hover effects for particles (only if elements exist)
     const spotlightImage = document.querySelector('.spotlight-image');
     const particles = document.querySelectorAll('.particle');
     
@@ -1681,5 +1461,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 particle.style.transform = 'translateY(0px)';
             });
         });
+    } else {
+        console.log('Spotlight image or particles not found - skipping hover effects');
+    }
+    
+    // Additional video debugging
+    if (trailerVideo) {
+        trailerVideo.addEventListener('loadstart', () => console.log('Video load started'));
+        trailerVideo.addEventListener('canplay', () => console.log('Video can play'));
+        trailerVideo.addEventListener('error', (e) => console.error('Video error:', e));
     }
 });
+
+console.log('🎮 JavaScript loaded successfully!');
