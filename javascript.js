@@ -1611,16 +1611,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeModal = document.getElementById('closeModal');
     const trailerVideo = document.getElementById('trailerVideo');
     
-    // Store the original video src
-    const originalVideoSrc = trailerVideo.src;
-    
     // Open modal when trailer button is clicked
     trailerBtn.addEventListener('click', function() {
         videoModal.classList.add('active');
         document.body.style.overflow = 'hidden'; // Prevent background scrolling
         
-        // Start playing the video by adding autoplay parameter
-        trailerVideo.src = originalVideoSrc.replace('?enablejsapi=1', '?enablejsapi=1&autoplay=1');
+        // Start playing the video
+        trailerVideo.play().catch(error => {
+            console.error('Error playing video:', error);
+        });
     });
     
     // Close modal function
@@ -1628,11 +1627,9 @@ document.addEventListener('DOMContentLoaded', function() {
         videoModal.classList.remove('active');
         document.body.style.overflow = 'auto'; // Restore scrolling
         
-        // Stop the video by removing src and adding it back without autoplay
-        trailerVideo.src = '';
-        setTimeout(() => {
-            trailerVideo.src = originalVideoSrc;
-        }, 100);
+        // Pause and reset the video
+        trailerVideo.pause();
+        trailerVideo.currentTime = 0;
     }
     
     // Close modal when X button is clicked
