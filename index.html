@@ -1,532 +1,557 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InfinitePixels - Ultimate Gaming Hub</title>
-    <link rel="icon" href="images/infinitepixlesfav.png" type="image/x-icon">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>InfinitePixels - Ultimate Gaming Hub</title>
+   <link rel="icon" href="images/infinitepixlesfav.png" type="image/x-icon">
+   <link rel="stylesheet" href="style.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
 
-    <!-- Sidebar -->
-    <nav class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <div class="logo">
-                <div class="logo-icon">
-                    <img src="images/infinitepixleslogo.webp" alt="InfinitePixels Logo" width="85px" height="85px">
-                </div>
-                <h2>InfinitePixels</h2>
-            </div>
-        </div>
 
-        <ul class="nav-links">
-            <li>
-                <a href="index.html" class="active">
-                    <i class="icon">
-                        <img src="images/home.png" alt="Homepage" width="20" height="20">
-                    </i>
-                    <span>Homepage</span>
-                </a>
-            </li>
-            <li>
-                <a href="games.html">
-                    <i class="icon">
-                        <img src="images/games.png" alt="Games" width="20" height="20">
-                    </i>
-                    <span>Games</span>
-                </a>
-            </li>
-            <li>
-                <a href="random.html">
-                    <i class="icon">
-                        <img src="images/random.png" alt="Random" width="20" height="20">
-                    </i>
-                    <span>Random</span>
-                </a>
-            </li>
-            <li>
-                <a href="categories.html">
-                    <i class="icon">
-                        <img src="images/grid.png" alt="Categories" width="20" height="20">
-                    </i>
-                    <span>Categories</span>
-                </a>
-            </li>
-            <li>
-                <a href="news.html">
-                    <i class="icon">
-                        <img src="images/news.png" alt="News" width="20" height="20">
-                    </i>
-                    <span>News</span>
-                </a>
-            </li>
-            <li>
-                <a href="settings.html">
-                    <i class="icon">
-                        <img src="images/settings.png" alt="Settings" width="20" height="20">
-                    </i>
-                    <span>Settings</span>
-                </a>
-            </li>
-        </ul>
-    </nav>
+   <!-- Sidebar -->
+   <nav class="sidebar" id="sidebar">
+       <div class="sidebar-header">
+           <div class="logo">
+               <div class="logo-icon">
+                   <img src="images/infinitepixleslogo.webp" alt="InfinitePixels Logo" width="85px" height="85px">
+               </div>
+               <h2>InfinitePixels</h2>
+           </div>
+       </div>
 
-    <div class="top-bar">
-        <button class="sidebar-toggle" id="sidebarToggle">
-            <i class="fas fa-bars"></i>
-        </button>
 
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search games...">
-            <button class="search-btn" id="searchBtn">
-                <i class="fas fa-search"></i>
-            </button>
-            <div class="search-results" id="searchResults">
-                <!-- Search results will be displayed here -->
-            </div>
-        </div>
-    </div>
+       <ul class="nav-links">
+           <li>
+               <a href="index.html" class="active">
+                   <i class="icon">
+                       <img src="images/home.png" alt="Homepage" width="20" height="20">
+                   </i>
+                   <span>Homepage</span>
+               </a>
+           </li>
+           <li>
+               <a href="games.html">
+                   <i class="icon">
+                       <img src="images/games.png" alt="Games" width="20" height="20">
+                   </i>
+                   <span>Games</span>
+               </a>
+           </li>
+           <li>
+               <a href="random.html">
+                   <i class="icon">
+                       <img src="images/random.png" alt="Random" width="20" height="20">
+                   </i>
+                   <span>Random</span>
+               </a>
+           </li>
+           <li>
+               <a href="categories.html">
+                   <i class="icon">
+                       <img src="images/grid.png" alt="Categories" width="20" height="20">
+                   </i>
+                   <span>Categories</span>
+               </a>
+           </li>
+           <li>
+               <a href="news.html">
+                   <i class="icon">
+                       <img src="images/news.png" alt="News" width="20" height="20">
+                   </i>
+                   <span>News</span>
+               </a>
+           </li>
+           <li>
+               <a href="settings.html">
+                   <i class="icon">
+                       <img src="images/settings.png" alt="Settings" width="20" height="20">
+                   </i>
+                   <span>Settings</span>
+               </a>
+           </li>
+       </ul>
+   </nav>
 
-    <!-- Main Content -->
-    <main class="main-content" id="mainContent">
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-content">
-                <div class="hero-text">
-                    <h1 class="hero-title">Welcome to <span class="gradient-text">InfinitePixels</span></h1>
-                    <p class="hero-subtitle">Discover endless gaming adventures in our vast digital universe</p>
-                    <button class="cta-button">Start Gaming</button>
-                </div>
-                <div class="hero-visual">
-                    <div class="floating-pixels">
-                        <div class="pixel"></div>
-                        <div class="pixel"></div>
-                        <div class="pixel"></div>
-                        <div class="pixel"></div>
-                        <div class="pixel"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- Featured Games Section -->
-        <section class="featured-games">
-            <h2 class="section-title">Featured Games</h2>
-            <div class="games-grid">
-                <div class="game-card" data-game="Paper io" data-video>
-                    <div class="game-image">
-                        <img src="images/paperioimage.jpg" alt="Paper io" class="space-theme game-thumbnail" />
-                        <video class="game-video" muted loop preload="metadata">
-                            <source src="images/paperiorec.mp4" type="video/mp4">
-                            <!-- fallback: <source src="images/paperiorec.mov" type="video/quicktime"> -->
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="game-overlay">
-                            <a href="games/paperio.html">
-                                <button class="play-btn">Play Now</button>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Paper io</h3>
-                        <p>Capture as much territory as possible</p>
-                    </div>
-                </div>
+   <div class="top-bar">
+       <button class="sidebar-toggle" id="sidebarToggle">
+           <i class="fas fa-bars"></i>
+       </button>
 
-                <div class="game-card" data-game="cyber-runner" data-video>
-                    <div class="game-image">
-                        <img src="images/basketrandomimage.jpg" alt="Basket Random" class="cyber-theme game-thumbnail" />
-                        <video class="game-video" muted loop preload="metadata">
-                            <source src="images/basketrandomrec.mp4" type="video/mp4">
-                            <!-- fallback: <source src="images/basketrandomrec.mov" type="video/quicktime"> -->
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="game-overlay">
-                            <a href="games/basketrandom.html">
-                                <button class="play-btn">Play Now</button>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Basket Random</h3>
-                        <p>Fun two player basketball</p>
-                    </div>
-                </div>
 
-                <div class="game-card" data-game="mystic-realms" data-video>
-                    <div class="game-image">
-                        <img src="images/3dformularacingimage.jpg" alt="3D Formula Racing" class="fantasy-theme game-thumbnail" />
-                        <video class="game-video" muted loop preload="metadata">
-                            <source src="images/formularacingrec.mp4" type="video/mp4">
-                            <!-- fallback: <source src="images/formularacingrec.mov" type="video/quicktime"> -->
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="game-overlay">
-                            <a href="games/3dformularacing.html">
-                                <button class="play-btn">Play Now</button>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="game-info">
-                        <h3>3D Formula Racing</h3>
-                        <p>Formula 1 racing simulator</p>
-                    </div>
-                </div>
+       <div class="search-container">
+           <input type="text" id="searchInput" placeholder="Search games...">
+           <button class="search-btn" id="searchBtn">
+               <i class="fas fa-search"></i>
+           </button>
+           <div class="search-results" id="searchResults">
+               <!-- Search results will be displayed here -->
+           </div>
+       </div>
+   </div>
 
-                <div class="game-card" data-game="Fruit Merge" data-video>
-                    <div class="game-image">
-                        <img src="images/fruitmergeimage.jpg" alt="Fruit Merge" class="pixel-theme game-thumbnail" />
-                        <video class="game-video" muted loop preload="metadata">
-                            <source src="images/fruitmergerec.mp4" type="video/mp4">
-                            <!-- fallback: <source src="images/fruitmergerec.mov" type="video/quicktime"> -->
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="game-overlay">
-                            <a href="games/fruitmerge.html">
-                                <button class="play-btn">Play Now</button>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Fruit Merge</h3>
-                        <p>Drag and drop fruit</p>
-                    </div>
-                </div>
 
-                <div class="game-card" data-game="pixel-warriors" data-video>
-                    <div class="game-image">
-                        <img src="images/1v1lolimage.png" alt="1v1.LOL" class="pixel-theme game-thumbnail" />
-                        <video class="game-video" muted loop preload="metadata">
-                            <source src="images/1v1lolrec.mov" type="video/mp4">
-                            <!-- fallback: <source src="images/cube2048rec.mov" type="video/quicktime"> -->
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="game-overlay">
-                            <a href="games/1v1lol.html">
-                                <button class="play-btn">Play Now</button>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="game-info">
-                        <h3>1v1.LOL</h3>
-                        <p>Intense pvp battles</p>
-                    </div>
-                </div>
-           
-                <div class="game-card" data-game="Subway Surfers" data-video>
-                    <div class="game-image">
-                        <img src="images/subwaysurfersimage.jpg" alt="Subway Surfers" class="pixel-theme game-thumbnail" />
-                        <video class="game-video" muted loop preload="metadata">
-                            <source src="images/subwaysurfersrec.mp4" type="video/mp4">
-                            <!-- fallback: <source src="images/subwaysurfersrec.mov" type="video/quicktime"> -->
-                            Your browser does not support the video tag.
-                        </video>
-                        <div class="game-overlay">
-                            <a href="games/subwaysurfers.html">
-                                <button class="play-btn">Play Now</button>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Subway Surfers</h3>
-                        <p>Endless runner dodging train obstacle</p>
-                    </div>
-                </div>                
-                
-            </div>
-        </section>
+   <!-- Main Content -->
+   <main class="main-content" id="mainContent">
+       <!-- Hero Section -->
+       <section class="hero">
+           <div class="hero-content">
+               <div class="hero-text">
+                   <h1 class="hero-title">Welcome to <span class="gradient-text">InfinitePixels</span></h1>
+                   <p class="hero-subtitle">Discover endless gaming adventures in our vast digital universe</p>
+                   <button class="cta-button">Start Gaming</button>
+               </div>
+               <div class="hero-visual">
+                   <div class="floating-pixels">
+                       <div class="pixel"></div>
+                       <div class="pixel"></div>
+                       <div class="pixel"></div>
+                       <div class="pixel"></div>
+                       <div class="pixel"></div>
+                   </div>
+               </div>
+           </div>
+       </section>
 
-        <section class="game-spotlight">
-            <div class="spotlight-container">
-                <div class="spotlight-content">
-                    <div class="spotlight-text">
-                        <span class="spotlight-badge">Game Spotlight</span>
-                        <h2>Masked Special Forces</h2>
-                        <p>Enter the high-stakes world of Masked Special Forces — a fast-paced shooter where strategy meets firepower. Gear up, lock in, and dominate the arena. Do you have what it takes to win?</p>
-                        <div class="spotlight-features">
-                            <div class="feature">
-                                <span class="feature-icon">👥</span>
-                                <span>Massive Multiplayer</span>
-                            </div>
-                            <div class="feature">
-                                <span class="feature-icon">⌖</span>
-                                <span>Online Shooter</span>
-                            </div>
-                            <div class="feature">
-                                <span class="feature-icon">⚔️</span>
-                                <span>Epic Duels</span>
-                            </div>
-                        </div>
-                        <div class="spotlight-actions">
-                            <a href="games/maskedspecialforces.html" class="btn-primary">Play Now</a>
-                            <button class="btn-secondary" id="trailerBtn">Watch Trailer</button>
-                        </div>
-                    </div>
-                    <div class="spotlight-visual">
-                        <div class="spotlight-image">
-                            <div class="image-container">
-                                <img src="images/Masked Special Forces-512x340.jpg" alt="Masked Special Forces Game" class="game-image">
-                            </div>
-                            <div class="cosmic-particles">
-                                <div class="particle"></div>
-                                <div class="particle"></div>
-                                <div class="particle"></div>
-                                <div class="particle"></div>
-                                <div class="particle"></div>
-                                <div class="particle"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
 
-        <!-- Video Modal -->
-        <div class="modal-overlay" id="videoModal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3>Masked Special Forces - Official Trailer</h3>
-                    <button class="modal-close" id="closeModal">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div class="video-container">
-                        <video id="trailerVideo" width="100%" height="100%" controls>
-                            <source src="images/basketrandomrec.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
-                </div>
-            </div>
-        </div>
+       <!-- Featured Games Section -->
+       <section class="featured-games">
+           <h2 class="section-title">Featured Games</h2>
+           <div class="games-grid">
+               <div class="game-card" data-game="Paper io" data-video>
+                   <div class="game-image">
+                       <img src="images/paperioimage.jpg" alt="Paper io" class="space-theme game-thumbnail" />
+                       <video class="game-video" muted loop preload="metadata">
+                           <source src="images/paperiorec.mp4" type="video/mp4">
+                           <!-- fallback: <source src="images/paperiorec.mov" type="video/quicktime"> -->
+                           Your browser does not support the video tag.
+                       </video>
+                       <div class="game-overlay">
+                           <a href="games/paperio.html">
+                               <button class="play-btn">Play Now</button>
+                           </a>
+                       </div>
+                   </div>
+                   <div class="game-info">
+                       <h3>Paper io</h3>
+                       <p>Capture as much territory as possible</p>
+                   </div>
+               </div>
 
-        <!-- Popular Games Section -->
-        <section class="popular-games">
-            <h2 class="section-title">Currently Trending</h2>
-            <div class="games-grid">
-                <div class="game-card" data-game="space-colony">
-                    <div class="game-image">
-                        <img src="images/polytrackimage.png" alt="Space Colony" class="colony-theme" />
-                        <div class="game-overlay">
-                            <a href="games/polytrack.html">
-                                <button class="play-btn">Play Now</button>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Poly Track</h3>
-                    </div>
-                </div>
 
-                <div class="game-card" data-game="neon-strike">
-                    <div class="game-image">
-                        <img src="images/Draw Climber-512x340.jpg" alt="Neon Strike" class="neon-theme" />
-                        <div class="game-overlay">
-                            <a href="games/drawclimber.html">
-                                <button class="play-btn">Play Now</button>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Draw Climber</h3>
-                    </div>
-                </div>
+               <div class="game-card" data-game="cyber-runner" data-video>
+                   <div class="game-image">
+                       <img src="images/basketrandomimage.jpg" alt="Basket Random" class="cyber-theme game-thumbnail" />
+                       <video class="game-video" muted loop preload="metadata">
+                           <source src="images/basketrandomrec.mp4" type="video/mp4">
+                           <!-- fallback: <source src="images/basketrandomrec.mov" type="video/quicktime"> -->
+                           Your browser does not support the video tag.
+                       </video>
+                       <div class="game-overlay">
+                           <a href="games/basketrandom.html">
+                               <button class="play-btn">Play Now</button>
+                           </a>
+                       </div>
+                   </div>
+                   <div class="game-info">
+                       <h3>Basket Random</h3>
+                       <p>Fun two player basketball</p>
+                   </div>
+               </div>
 
-                <div class="game-card" data-game="quantum-puzzle">
-                    <div class="game-image">
-                        <img src="images/Parkour Block 3D Game-512x384.jpg" alt="Quantum Puzzle" class="puzzle-theme" />
-                        <div class="game-overlay">
-                            <a href="games/parkourblock3d.html">
-                                <button class="play-btn">Play Now</button>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Parkour Block 3D</h3>
-                    </div>
-                </div>
 
-                <div class="game-card" data-game="dragon-quest">
-                    <div class="game-image">
-                        <img src="images/Helix Jump-512x340.jpg" alt="Dragon Quest" class="dragon-theme" />
-                        <div class="game-overlay">
-                            <a href="games/tinyfishing.html">
-                                <button class="play-btn">Play Now</button>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Helix Jump</h3>
-                    </div>
-                </div>
+               <div class="game-card" data-game="mystic-realms" data-video>
+                   <div class="game-image">
+                       <img src="images/3dformularacingimage.jpg" alt="3D Formula Racing" class="fantasy-theme game-thumbnail" />
+                       <video class="game-video" muted loop preload="metadata">
+                           <source src="images/formularacingrec.mp4" type="video/mp4">
+                           <!-- fallback: <source src="images/formularacingrec.mov" type="video/quicktime"> -->
+                           Your browser does not support the video tag.
+                       </video>
+                       <div class="game-overlay">
+                           <a href="games/3dformularacing.html">
+                               <button class="play-btn">Play Now</button>
+                           </a>
+                       </div>
+                   </div>
+                   <div class="game-info">
+                       <h3>3D Formula Racing</h3>
+                       <p>Formula 1 racing simulator</p>
+                   </div>
+               </div>
 
-                <div class="game-card" data-game="space-colony">
-                    <div class="game-image">
-                        <img src="images/Rodeo Stampede   Sky Zoo-512x384.jpg" alt="Space Colony" class="colony-theme" />
-                        <div class="game-overlay">
-                            <a href="games/rodeostampede.html">
-                                <button class="play-btn">Play Now</button>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Rodeo Stampede</h3>
-                    </div>
-                </div>
 
-                <div class="game-card" data-game="space-colony">
-                    <div class="game-image">
-                        <img src="images/Cookie Clicker   clicker games-512x340.jpg" alt="Space Colony" class="colony-theme" />
-                        <div class="game-overlay">
-                            <a href="games/cookieclicker.html">
-                                <button class="play-btn">Play Now</button>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Cookie Clicker</h3>
-                    </div>
-                </div>
+               <div class="game-card" data-game="Fruit Merge" data-video>
+                   <div class="game-image">
+                       <img src="images/fruitmergeimage.jpg" alt="Fruit Merge" class="pixel-theme game-thumbnail" />
+                       <video class="game-video" muted loop preload="metadata">
+                           <source src="images/fruitmergerec.mp4" type="video/mp4">
+                           <!-- fallback: <source src="images/fruitmergerec.mov" type="video/quicktime"> -->
+                           Your browser does not support the video tag.
+                       </video>
+                       <div class="game-overlay">
+                           <a href="games/fruitmerge.html">
+                               <button class="play-btn">Play Now</button>
+                           </a>
+                       </div>
+                   </div>
+                   <div class="game-info">
+                       <h3>Fruit Merge</h3>
+                       <p>Drag and drop fruit</p>
+                   </div>
+               </div>
 
-                <div class="game-card" data-game="space-colony">
-                    <div class="game-image">
-                        <img src="images/Tiny Fishing   Idle Fishing Game-512x384.jpg" alt="Space Colony" class="colony-theme" />
-                        <div class="game-overlay">
-                            <a href="games/tinyfishing.html">
-                                <button class="play-btn">Play Now</button>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Tiny Fishing</h3>
-                    </div>
-                </div>
 
-                <div class="game-card" data-game="space-colony">
-                    <div class="game-image">
-                        <img src="images/cubearenaimage.jpg" alt="Space Colony" class="colony-theme" />
-                        <div class="game-overlay">
-                            <a href="games/cubearena2048.html">
-                                <button class="play-btn">Play Now</button>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="game-info">
-                        <h3>Cube Arena 2048</h3>
-                    </div>
-                </div>                
-            </div>
-        </section>
-        <!-- Footer Section -->
-        <footer class="site-footer">
-            <div class="footer-container">
-                <!-- Main Footer Content -->
-                <div class="footer-content">
-                    <!-- Logo and Company Info -->
-                    <div class="footer-brand">
-                        <div class="footer-logo">
-                            <div class="logo-icon">
-                                <!-- Use the current logo image instead of shapes -->
-                                <img src="images/infinitepixleslogo.webp" alt="InfinitePixels Logo" width="48" height="48" style="display:block;">
-                            </div>
-                            <div class="logo-text">
-                                <span class="company-name">InfinitePixels</span>
-                                <span class="company-tagline">Endless gaming adventures</span>
-                            </div>
-                        </div>
-                        <p class="footer-description">
-                            Discover endless entertainment with our premium collection of games. 
-                            From action-packed adventures to mind-bending puzzles, we bring you 
-                            the best gaming experiences.
-                        </p>
-                        <div class="social-links">
-                            <a href="#" class="social-link" aria-label="Discord">
-                                <svg viewBox="0 0 24 24" width="20" height="20">
-                                    <path fill="currentColor" d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.010c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.196.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
-                                </svg>
-                            </a>
-                            <a href="#" class="social-link" aria-label="Twitter">
-                                <svg viewBox="0 0 24 24" width="20" height="20">
-                                    <path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26l8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                                </svg>
-                            </a>
-                            <a href="#" class="social-link" aria-label="YouTube">
-                                <svg viewBox="0 0 24 24" width="20" height="20">
-                                    <path fill="currentColor" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                                </svg>
-                            </a>
-                            <a href="#" class="social-link" aria-label="Twitch">
-                                <svg viewBox="0 0 24 24" width="20" height="20">
-                                    <path fill="currentColor" d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>
-                                </svg>
-                            </a>
-                        </div>
-                    </div>
+               <div class="game-card" data-game="pixel-warriors" data-video>
+                   <div class="game-image">
+                       <img src="images/1v1lolimage.png" alt="1v1.LOL" class="pixel-theme game-thumbnail" />
+                       <video class="game-video" muted loop preload="metadata">
+                           <source src="images/1v1lolrec.mov" type="video/mp4">
+                           <!-- fallback: <source src="images/cube2048rec.mov" type="video/quicktime"> -->
+                           Your browser does not support the video tag.
+                       </video>
+                       <div class="game-overlay">
+                           <a href="games/1v1lol.html">
+                               <button class="play-btn">Play Now</button>
+                           </a>
+                       </div>
+                   </div>
+                   <div class="game-info">
+                       <h3>1v1.LOL</h3>
+                       <p>Intense pvp battles</p>
+                   </div>
+               </div>
+         
+               <div class="game-card" data-game="Subway Surfers" data-video>
+                   <div class="game-image">
+                       <img src="images/subwaysurfersimage.jpg" alt="Subway Surfers" class="pixel-theme game-thumbnail" />
+                       <video class="game-video" muted loop preload="metadata">
+                           <source src="images/subwaysurfersrec.mp4" type="video/mp4">
+                           <!-- fallback: <source src="images/subwaysurfersrec.mov" type="video/quicktime"> -->
+                           Your browser does not support the video tag.
+                       </video>
+                       <div class="game-overlay">
+                           <a href="games/subwaysurfers.html">
+                               <button class="play-btn">Play Now</button>
+                           </a>
+                       </div>
+                   </div>
+                   <div class="game-info">
+                       <h3>Subway Surfers</h3>
+                       <p>Endless runner dodging train obstacles</p>
+                   </div>
+               </div>               
+              
+           </div>
+       </section>
 
-                    <!-- Quick Links -->
-                    <div class="footer-links">
-                        <div class="link-column">
-                            <h4 class="link-title">Games</h4>
-                            <ul class="link-list">
-                                <li><a href="#" class="footer-link">All Games</a></li>
-                                <li><a href="#" class="footer-link">New Releases</a></li>
-                                <li><a href="#" class="footer-link">Popular Games</a></li>
-                                <li><a href="#" class="footer-link">Categories</a></li>
-                            </ul>
-                        </div>
 
-                        <div class="link-column">
-                            <h4 class="link-title">Support</h4>
-                            <ul class="link-list">
-                                <li><a href="#" class="footer-link">Contact Us</a></li>
-                                <li><a href="#" class="footer-link">Settings</a></li>
-                            </ul>
-                        </div>
+       <section class="game-spotlight">
+           <div class="spotlight-container">
+               <div class="spotlight-content">
+                   <div class="spotlight-text">
+                       <span class="spotlight-badge">Game Spotlight</span>
+                       <h2>Masked Special Forces</h2>
+                       <p>Enter the high-stakes world of Masked Special Forces — a fast-paced shooter where strategy meets firepower. Gear up, lock in, and dominate the arena. Do you have what it takes to win?</p>
+                       <div class="spotlight-features">
+                           <div class="feature">
+                               <span class="feature-icon">👥</span>
+                               <span>Massive Multiplayer</span>
+                           </div>
+                           <div class="feature">
+                               <span class="feature-icon">⌖</span>
+                               <span>Online Shooter</span>
+                           </div>
+                           <div class="feature">
+                               <span class="feature-icon">⚔️</span>
+                               <span>Epic Duels</span>
+                           </div>
+                       </div>
+                       <div class="spotlight-actions">
+                           <a href="games/maskedspecialforces.html" class="btn-primary">Play Now</a>
+                           <button class="btn-secondary" id="trailerBtn">Watch Trailer</button>
+                       </div>
+                   </div>
+                   <div class="spotlight-visual">
+                       <div class="spotlight-image">
+                           <div class="image-container">
+                               <img src="images/Masked Special Forces-512x340.jpg" alt="Masked Special Forces Game" class="game-image">
+                           </div>
+                           <div class="cosmic-particles">
+                               <div class="particle"></div>
+                               <div class="particle"></div>
+                               <div class="particle"></div>
+                               <div class="particle"></div>
+                               <div class="particle"></div>
+                               <div class="particle"></div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </section>
 
-                        <div class="link-column">
-                            <h4 class="link-title">Company</h4>
-                            <ul class="link-list">
-                                <li><a href="#" class="footer-link">About Us</a></li>
-                                <li><a href="#" class="footer-link">Privacy Policy</a></li>
-                                <li><a href="#" class="footer-link">Terms of Service</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Footer Bottom -->
-                <div class="footer-bottom">
-                    <div class="footer-bottom-content">
-                        <p class="copyright">
-                            © 2025 InfinitePixels. All rights reserved.
-                        </p>
-                        <div class="footer-bottom-links">
-                            <a href="#" class="bottom-link">Privacy</a>
-                            <a href="#" class="bottom-link">Terms</a>
-                            <a href="#" class="bottom-link">Cookies</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </main>
+       <!-- Video Modal -->
+       <div class="modal-overlay" id="videoModal">
+           <div class="modal-content">
+               <div class="modal-header">
+                   <h3>Masked Special Forces Trailer</h3>
+                   <button class="modal-close" id="closeModal">&times;</button>
+               </div>
+               <div class="modal-body">
+                   <div class="video-container">
+                       <video id="trailerVideo" width="100%" height="100%" controls>
+                           <source src="images/MSF Trailer.mp4" type="video/mp4">
+                           Your browser does not support the video tag.
+                       </video>
+                   </div>
+               </div>
+           </div>
+       </div>
 
-    <script src="javascript.js"></script>
-    <script>
-        // Video hover play/pause logic for featured games
-        document.querySelectorAll('.featured-games .game-card').forEach(card => {
-            const video = card.querySelector('.game-video');
-            if (!video) return;
-            card.addEventListener('mouseenter', () => {
-                video.currentTime = 0;
-                video.play();
-            });
-            card.addEventListener('mouseleave', () => {
-                video.pause();
-                video.currentTime = 0;
-            });
-        });
-    </script>
+
+       <!-- Popular Games Section -->
+       <section class="popular-games">
+           <h2 class="section-title">Currently Trending</h2>
+           <div class="games-grid">
+               <div class="game-card" data-game="space-colony">
+                   <div class="game-image">
+                       <img src="images/polytrackimage.png" alt="Space Colony" class="colony-theme" />
+                       <div class="game-overlay">
+                           <a href="games/polytrack.html">
+                               <button class="play-btn">Play Now</button>
+                           </a>
+                       </div>
+                   </div>
+                   <div class="game-info">
+                       <h3>Poly Track</h3>
+                   </div>
+               </div>
+
+
+               <div class="game-card" data-game="neon-strike">
+                   <div class="game-image">
+                       <img src="images/Draw Climber-512x340.jpg" alt="Neon Strike" class="neon-theme" />
+                       <div class="game-overlay">
+                           <a href="games/drawclimber.html">
+                               <button class="play-btn">Play Now</button>
+                           </a>
+                       </div>
+                   </div>
+                   <div class="game-info">
+                       <h3>Draw Climber</h3>
+                   </div>
+               </div>
+
+
+               <div class="game-card" data-game="quantum-puzzle">
+                   <div class="game-image">
+                       <img src="images/Parkour Block 3D Game-512x384.jpg" alt="Quantum Puzzle" class="puzzle-theme" />
+                       <div class="game-overlay">
+                           <a href="games/parkourblock3d.html">
+                               <button class="play-btn">Play Now</button>
+                           </a>
+                       </div>
+                   </div>
+                   <div class="game-info">
+                       <h3>Parkour Block 3D</h3>
+                   </div>
+               </div>
+
+
+               <div class="game-card" data-game="dragon-quest">
+                   <div class="game-image">
+                       <img src="images/Helix Jump-512x340.jpg" alt="Dragon Quest" class="dragon-theme" />
+                       <div class="game-overlay">
+                           <a href="games/tinyfishing.html">
+                               <button class="play-btn">Play Now</button>
+                           </a>
+                       </div>
+                   </div>
+                   <div class="game-info">
+                       <h3>Helix Jump</h3>
+                   </div>
+               </div>
+
+
+               <div class="game-card" data-game="space-colony">
+                   <div class="game-image">
+                       <img src="images/Rodeo Stampede   Sky Zoo-512x384.jpg" alt="Space Colony" class="colony-theme" />
+                       <div class="game-overlay">
+                           <a href="games/rodeostampede.html">
+                               <button class="play-btn">Play Now</button>
+                           </a>
+                       </div>
+                   </div>
+                   <div class="game-info">
+                       <h3>Rodeo Stampede</h3>
+                   </div>
+               </div>
+
+
+               <div class="game-card" data-game="space-colony">
+                   <div class="game-image">
+                       <img src="images/Cookie Clicker   clicker games-512x340.jpg" alt="Space Colony" class="colony-theme" />
+                       <div class="game-overlay">
+                           <a href="games/cookieclicker.html">
+                               <button class="play-btn">Play Now</button>
+                           </a>
+                       </div>
+                   </div>
+                   <div class="game-info">
+                       <h3>Cookie Clicker</h3>
+                   </div>
+               </div>
+
+
+               <div class="game-card" data-game="space-colony">
+                   <div class="game-image">
+                       <img src="images/Tiny Fishing   Idle Fishing Game-512x384.jpg" alt="Space Colony" class="colony-theme" />
+                       <div class="game-overlay">
+                           <a href="games/tinyfishing.html">
+                               <button class="play-btn">Play Now</button>
+                           </a>
+                       </div>
+                   </div>
+                   <div class="game-info">
+                       <h3>Tiny Fishing</h3>
+                   </div>
+               </div>
+
+
+               <div class="game-card" data-game="space-colony">
+                   <div class="game-image">
+                       <img src="images/cubearenaimage.jpg" alt="Space Colony" class="colony-theme" />
+                       <div class="game-overlay">
+                           <a href="games/cubearena2048.html">
+                               <button class="play-btn">Play Now</button>
+                           </a>
+                       </div>
+                   </div>
+                   <div class="game-info">
+                       <h3>Cube Arena 2048</h3>
+                   </div>
+               </div>               
+           </div>
+       </section>
+       <!-- Footer Section -->
+       <footer class="site-footer">
+           <div class="footer-container">
+               <!-- Main Footer Content -->
+               <div class="footer-content">
+                   <!-- Logo and Company Info -->
+                   <div class="footer-brand">
+                       <div class="footer-logo">
+                           <div class="logo-icon">
+                               <!-- Use the current logo image instead of shapes -->
+                               <img src="images/infinitepixleslogo.webp" alt="InfinitePixels Logo" width="48" height="48" style="display:block;">
+                           </div>
+                           <div class="logo-text">
+                               <span class="company-name">InfinitePixels</span>
+                               <span class="company-tagline">Endless gaming adventures</span>
+                           </div>
+                       </div>
+                       <p class="footer-description">
+                           Discover endless entertainment with our premium collection of games.
+                           From action-packed adventures to mind-bending puzzles, we bring you
+                           the best gaming experiences.
+                       </p>
+                       <div class="social-links">
+                           <a href="#" class="social-link" aria-label="Discord">
+                               <svg viewBox="0 0 24 24" width="20" height="20">
+                                   <path fill="currentColor" d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515a.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0a12.64 12.64 0 0 0-.617-1.25a.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057a19.9 19.9 0 0 0 5.993 3.03a.078.078 0 0 0 .084-.028a14.09 14.09 0 0 0 1.226-1.994a.076.076 0 0 0-.041-.106a13.107 13.107 0 0 1-1.872-.892a.077.077 0 0 1-.008-.128a10.2 10.2 0 0 0 .372-.292a.074.074 0 0 1 .077-.010c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.196.373.292a.077.077 0 0 1-.006.127a12.299 12.299 0 0 1-1.873.892a.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028a19.839 19.839 0 0 0 6.002-3.03a.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
+                               </svg>
+                           </a>
+                           <a href="#" class="social-link" aria-label="Twitter">
+                               <svg viewBox="0 0 24 24" width="20" height="20">
+                                   <path fill="currentColor" d="M18.244 2.25h3.308l-7.227 8.26l8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                               </svg>
+                           </a>
+                           <a href="#" class="social-link" aria-label="YouTube">
+                               <svg viewBox="0 0 24 24" width="20" height="20">
+                                   <path fill="currentColor" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                               </svg>
+                           </a>
+                           <a href="#" class="social-link" aria-label="Twitch">
+                               <svg viewBox="0 0 24 24" width="20" height="20">
+                                   <path fill="currentColor" d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>
+                               </svg>
+                           </a>
+                       </div>
+                   </div>
+
+
+                   <!-- Quick Links -->
+                   <div class="footer-links">
+                       <div class="link-column">
+                           <h4 class="link-title">Games</h4>
+                           <ul class="link-list">
+                               <li><a href="#" class="footer-link">All Games</a></li>
+                               <li><a href="#" class="footer-link">New Releases</a></li>
+                               <li><a href="#" class="footer-link">Popular Games</a></li>
+                               <li><a href="#" class="footer-link">Categories</a></li>
+                           </ul>
+                       </div>
+
+
+                       <div class="link-column">
+                           <h4 class="link-title">Support</h4>
+                           <ul class="link-list">
+                               <li><a href="#" class="footer-link">Contact Us</a></li>
+                               <li><a href="#" class="footer-link">Settings</a></li>
+                           </ul>
+                       </div>
+
+
+                       <div class="link-column">
+                           <h4 class="link-title">Company</h4>
+                           <ul class="link-list">
+                               <li><a href="#" class="footer-link">About Us</a></li>
+                               <li><a href="#" class="footer-link">Privacy Policy</a></li>
+                               <li><a href="#" class="footer-link">Terms of Service</a></li>
+                           </ul>
+                       </div>
+                   </div>
+               </div>
+
+
+               <!-- Footer Bottom -->
+               <div class="footer-bottom">
+                   <div class="footer-bottom-content">
+                       <p class="copyright">
+                           © 2025 InfinitePixels. All rights reserved.
+                       </p>
+                       <div class="footer-bottom-links">
+                           <a href="#" class="bottom-link">Privacy</a>
+                           <a href="#" class="bottom-link">Terms</a>
+                           <a href="#" class="bottom-link">Cookies</a>
+                       </div>
+                   </div>
+               </div>
+           </div>
+       </footer>
+   </main>
+
+
+   <script src="javascript.js"></script>
+   <script>
+       // Video hover play/pause logic for featured games
+       document.querySelectorAll('.featured-games .game-card').forEach(card => {
+           const video = card.querySelector('.game-video');
+           if (!video) return;
+           card.addEventListener('mouseenter', () => {
+               video.currentTime = 0;
+               video.play();
+           });
+           card.addEventListener('mouseleave', () => {
+               video.pause();
+               video.currentTime = 0;
+           });
+       });
+   </script>
 </body>
 </html>
