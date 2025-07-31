@@ -1558,3 +1558,49 @@ document.addEventListener('DOMContentLoaded', function() {
 
 console.log('🎮 JavaScript loaded successfully!');
 
+// List of URLs to randomly redirect to
+const urls = [
+   'games/1v1lol.html',
+   'games/3dformularacing.html',
+   'games/basketrandom.html',
+   'games/cookieclicker.html',
+   'games/cubearena2048.html',
+   'games/drawclimber.html',
+   'games/fruitmerge.html',
+   'games/helixjump.html',
+   'games/maskedspecialforces.html',
+   'games/paperio.html',
+   'games/parkourblock3d.html',
+   'games/polytrack.html',
+   'games/rodeoStampede.html',
+   'games/spiralroll.html',
+   'games/subwaysurfers.html',
+   'games/tinyfishing.html',
+   'games/bloxdio.html',
+   'games/motox3m.html'
+];
+
+// Function to get a random URL from the list
+function getRandomUrl() {
+    const randomIndex = Math.floor(Math.random() * urls.length);
+    return urls[randomIndex];
+}
+
+// Function to show redirect overlay and redirect
+function showRedirectAndGo() {
+    const overlay = document.getElementById('redirectOverlay');
+    
+    // Show the overlay
+    overlay.classList.add('show');
+    
+    // Redirect after a very short delay (500ms)
+    setTimeout(() => {
+        window.location.href = getRandomUrl();
+    }, 900);
+}
+
+// Start redirect process when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    // Show redirect overlay almost immediately (100ms delay for smooth animation)
+    setTimeout(showRedirectAndGo, 100);
+});
