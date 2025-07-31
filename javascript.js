@@ -9,15 +9,22 @@ const searchResults = document.getElementById('searchResults');
 
 // Sample Game Data (Replace with your actual data source)
 const gameData = [
-    { name: "Stellar Odyssey", category: "Space" },
-    { name: "Cyber Runner", category: "Cyberpunk" },
-    { name: "Mystic Realms", category: "Fantasy" },
-    { name: "Pixel Warriors", category: "Retro" },
-    { name: "Neon Strike", category: "Action" },
-    { name: "Quantum Puzzle", category: "Puzzle" },
-    { name: "Dragon Quest", category: "RPG" },
-    { name: "Space Colony", category: "Strategy" },
-    { name: "Cosmic Legends", category: "MMORPG" }
+    { name: "1v1 Lol", link: "games/1v1lol.html" },
+    { name: "3D Formula Racing", link: "games/3dformularacing.html" },
+    { name: "Basket Random", link: "games/basketrandom.html" },
+    { name: "Cookie Clicker", link: "games/cookieclicker.html" },
+    { name: "Cube Arena 2048", link: "games/cubearena2048.html" },
+    { name: "Draw Climber", link: "games/drawclimber.html" },
+    { name: "Fruit Merge", link: "games/fruitmerge.html" },
+    { name: "Helix Jump", link: "games/helixjump.html" },
+    { name: "Masked Special Forces", link: "games/maskedspecialforces.html" },
+    { name: "Paper Io", link: "games/paperio.html" },
+    { name: "Parkour Block 3D", link: "games/parkourblock3d.html" },
+    { name: "Poly Track", link: "games/polytrack.html" },
+    { name: "Rodeo Stampede", link: "games/rodeoStampede.html" },
+    { name: "Spiral Roll", link: "games/spiralroll.html" },
+    { name: "Subway Surfers", link: "games/subwaysurfers.html" },
+    { name: "Tiny Fishing", link: "games/tinyfishing.html" }
 ];
 
 // Sidebar functionality
@@ -260,9 +267,11 @@ function displaySearchResults(results) {
         results.forEach(game => {
             const resultElement = document.createElement('p');
             resultElement.textContent = game.name;
+            resultElement.style.cursor = 'pointer';
             resultElement.addEventListener('click', () => {
-                // Navigate to game
-                console.log(`Navigating to ${game.name}`);
+                if (game.link) {
+                    window.location.href = game.link;
+                }
                 searchResults.classList.remove('active');
                 searchInput.value = '';
             });
