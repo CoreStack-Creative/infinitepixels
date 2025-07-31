@@ -1682,7 +1682,7 @@ const allGamesDatabase = [
         name: "Parkour Block 3D",
         image: "images/parkourblock3dimage.jpg",
         url: "games/parkourblock3d.html",
-        tags: ["adventure", "3d", "platformer"]
+        tags: ["parkour", "3d", "platformer"]
     },
     {
         id: 12,
@@ -1703,7 +1703,7 @@ const allGamesDatabase = [
         name: "Spiral Roll",
         image: "images/spiralrollimage.jpg",
         url: "games/spiralroll.html",
-        tags: ["Platformer", "satisfying", "3d"]
+        tags: ["platformer", "satisfying", "3d"]
     },
     {
         id: 15,
