@@ -2355,7 +2355,7 @@ document.addEventListener('keydown', setupAudioContext, { once: true });
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = SettingsManager;
 } 
-// News Page JavaScript
+// News Page JavaScript - Updated for InfinitePixels
 class NewsManager {
     constructor() {
         this.articles = [];
@@ -2381,7 +2381,7 @@ class NewsManager {
 
     generateSampleData() {
         const categories = ['updates', 'patch-notes', 'events', 'community', 'esports'];
-        const tags = ['update', 'patch-notes', 'event', 'community', 'esports', 'maintenance'];
+        const tags = ['update', 'patch', 'event', 'community', 'esports', 'beta'];
         
         const sampleArticles = [
             {
@@ -2390,7 +2390,7 @@ class NewsManager {
                 summary: "Experience the biggest content update yet with new maps, characters, and game modes. Plus enhanced graphics and performance improvements.",
                 content: "This is the full article content for Major Update 2.5...",
                 category: "updates",
-                tags: ["update", "patch-notes"],
+                tags: ["update", "patch"],
                 date: new Date('2025-08-01'),
                 author: "Dev Team",
                 featured: true,
@@ -2432,7 +2432,7 @@ class NewsManager {
                 summary: "Quick hotfix addressing several reported issues including connection problems and UI glitches.",
                 content: "Hotfix details and patch notes...",
                 category: "patch-notes",
-                tags: ["patch-notes", "maintenance"],
+                tags: ["patch"],
                 date: new Date('2025-07-25'),
                 author: "Dev Team",
                 featured: false,
@@ -2460,7 +2460,7 @@ class NewsManager {
                 summary: "Sign up for our exclusive beta testing program and get early access to upcoming features and content.",
                 content: "Beta program information...",
                 category: "community",
-                tags: ["community", "update"],
+                tags: ["community", "beta"],
                 date: new Date('2025-07-20'),
                 author: "Beta Team",
                 featured: false,
@@ -2474,7 +2474,7 @@ class NewsManager {
                 summary: "Significant performance improvements across all platforms, reducing load times and increasing frame rates.",
                 content: "Performance update details...",
                 category: "updates",
-                tags: ["update", "patch-notes"],
+                tags: ["update", "patch"],
                 date: new Date('2025-07-18'),
                 author: "Tech Team",
                 featured: false,
@@ -2502,7 +2502,7 @@ class NewsManager {
                 summary: "Scheduled maintenance windows for the upcoming week to improve server stability and performance.",
                 content: "Maintenance schedule details...",
                 category: "updates",
-                tags: ["maintenance"],
+                tags: ["update"],
                 date: new Date('2025-07-12'),
                 author: "Infrastructure Team",
                 featured: false,
@@ -2532,9 +2532,9 @@ class NewsManager {
 
     setupEventListeners() {
         // View toggles
-        document.querySelectorAll('.view-toggle').forEach(btn => {
+        document.querySelectorAll('.news-view-toggle').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.view-toggle').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.news-view-toggle').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
                 this.currentView = e.target.dataset.view;
                 this.updateViewMode();
@@ -2542,49 +2542,53 @@ class NewsManager {
         });
 
         // Filter dropdown
-        const filterBtn = document.getElementById('filterBtn');
-        const filterMenu = document.getElementById('filterMenu');
+        const filterBtn = document.querySelector('.news-filter-btn');
+        const filterMenu = document.querySelector('.news-filter-menu');
         
-        filterBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            filterMenu.classList.toggle('active');
-        });
-
-        document.querySelectorAll('.filter-option').forEach(option => {
-            option.addEventListener('click', (e) => {
-                document.querySelectorAll('.filter-option').forEach(o => o.classList.remove('active'));
-                e.target.classList.add('active');
-                this.currentFilter = e.target.dataset.filter;
-                filterBtn.querySelector('span').textContent = e.target.textContent;
-                filterMenu.classList.remove('active');
-                this.applyFilters();
+        if (filterBtn && filterMenu) {
+            filterBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                filterMenu.classList.toggle('active');
             });
-        });
+
+            document.querySelectorAll('.news-filter-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    document.querySelectorAll('.news-filter-option').forEach(o => o.classList.remove('active'));
+                    e.target.classList.add('active');
+                    this.currentFilter = e.target.dataset.filter;
+                    filterBtn.querySelector('span').textContent = e.target.textContent;
+                    filterMenu.classList.remove('active');
+                    this.applyFilters();
+                });
+            });
+        }
 
         // Sort dropdown
-        const sortBtn = document.getElementById('sortBtn');
-        const sortMenu = document.getElementById('sortMenu');
+        const sortBtn = document.querySelector('.news-sort-btn');
+        const sortMenu = document.querySelector('.news-sort-menu');
         
-        sortBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            sortMenu.classList.toggle('active');
-        });
-
-        document.querySelectorAll('.sort-option').forEach(option => {
-            option.addEventListener('click', (e) => {
-                document.querySelectorAll('.sort-option').forEach(o => o.classList.remove('active'));
-                e.target.classList.add('active');
-                this.currentSort = e.target.dataset.sort;
-                sortBtn.querySelector('span').textContent = e.target.textContent;
-                sortMenu.classList.remove('active');
-                this.applyFilters();
+        if (sortBtn && sortMenu) {
+            sortBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sortMenu.classList.toggle('active');
             });
-        });
+
+            document.querySelectorAll('.news-sort-option').forEach(option => {
+                option.addEventListener('click', (e) => {
+                    document.querySelectorAll('.news-sort-option').forEach(o => o.classList.remove('active'));
+                    e.target.classList.add('active');
+                    this.currentSort = e.target.dataset.sort;
+                    sortBtn.querySelector('span').textContent = e.target.textContent;
+                    sortMenu.classList.remove('active');
+                    this.applyFilters();
+                });
+            });
+        }
 
         // Tags
-        document.querySelectorAll('.tag').forEach(tag => {
+        document.querySelectorAll('.news-tag').forEach(tag => {
             tag.addEventListener('click', (e) => {
-                document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.news-tag').forEach(t => t.classList.remove('active'));
                 e.target.classList.add('active');
                 this.currentTag = e.target.dataset.tag;
                 this.applyFilters();
@@ -2593,47 +2597,61 @@ class NewsManager {
 
         // Load more button
         const loadMoreBtn = document.getElementById('loadMoreBtn');
-        loadMoreBtn.addEventListener('click', () => {
-            this.loadMoreArticles();
-        });
+        if (loadMoreBtn) {
+            loadMoreBtn.addEventListener('click', () => {
+                this.loadMoreArticles();
+            });
+        }
 
         // Featured banner click
         const featuredBanner = document.getElementById('featuredBanner');
-        featuredBanner.addEventListener('click', () => {
-            const featuredArticle = this.articles.find(article => article.featured);
-            if (featuredArticle) {
-                this.openArticleModal(featuredArticle);
-            }
-        });
+        if (featuredBanner) {
+            featuredBanner.addEventListener('click', () => {
+                const featuredArticle = this.articles.find(article => article.featured);
+                if (featuredArticle) {
+                    this.openArticleModal(featuredArticle);
+                }
+            });
+        }
 
         // Modal close
         const modalClose = document.getElementById('modalClose');
-        const modalOverlay = document.getElementById('modalOverlay');
+        const modalOverlay = document.querySelector('.news-modal-overlay');
         
-        modalClose.addEventListener('click', () => this.closeArticleModal());
-        modalOverlay.addEventListener('click', () => this.closeArticleModal());
+        if (modalClose) {
+            modalClose.addEventListener('click', () => this.closeArticleModal());
+        }
+        
+        if (modalOverlay) {
+            modalOverlay.addEventListener('click', () => this.closeArticleModal());
+        }
 
         // Close dropdowns when clicking outside
         document.addEventListener('click', () => {
-            filterMenu.classList.remove('active');
-            sortMenu.classList.remove('active');
+            if (filterMenu) filterMenu.classList.remove('active');
+            if (sortMenu) sortMenu.classList.remove('active');
         });
 
         // Newsletter form
-        const newsletterForm = document.querySelector('.newsletter-form');
-        newsletterForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = e.target.querySelector('input[type="email"]').value;
-            if (email) {
-                this.showNotification('Thanks for subscribing! You\'ll receive updates soon.', 'success');
-                e.target.reset();
-            }
-        });
+        const newsletterForm = document.getElementById('newsletterForm');
+        if (newsletterForm) {
+            newsletterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const email = e.target.querySelector('input[type="email"]').value;
+                if (email) {
+                    this.showNotification('Thanks for subscribing! You\'ll receive updates soon.', 'success');
+                    e.target.reset();
+                }
+            });
+        }
     }
 
     setupSearch() {
         const searchInput = document.getElementById('globalSearch');
         const searchResults = document.getElementById('searchResults');
+        
+        if (!searchInput || !searchResults) return;
+        
         let searchTimeout;
 
         searchInput.addEventListener('input', (e) => {
@@ -2702,6 +2720,8 @@ class NewsManager {
                     return a.date - b.date;
                 case 'popular':
                     return b.views - a.views;
+                case 'trending':
+                    return b.likes - a.likes;
                 case 'newest':
                 default:
                     return b.date - a.date;
@@ -2726,15 +2746,19 @@ class NewsManager {
         const newsGrid = document.getElementById('newsGrid');
         const loadingSpinner = document.getElementById('loadingSpinner');
         
+        if (!newsGrid) return;
+        
         // Show loading
-        loadingSpinner.style.display = 'flex';
+        if (loadingSpinner) {
+            loadingSpinner.style.display = 'flex';
+        }
         
         setTimeout(() => {
             const articlesToShow = this.filteredArticles.slice(0, this.currentPage * this.articlesPerPage);
             
             if (articlesToShow.length === 0) {
                 newsGrid.innerHTML = `
-                    <div class="no-results">
+                    <div class="news-no-results">
                         <i class="fas fa-search"></i>
                         <h3>No articles found</h3>
                         <p>Try adjusting your filters or search terms</p>
@@ -2744,7 +2768,9 @@ class NewsManager {
                 newsGrid.innerHTML = articlesToShow.map(article => this.createArticleCard(article)).join('');
             }
             
-            loadingSpinner.style.display = 'none';
+            if (loadingSpinner) {
+                loadingSpinner.style.display = 'none';
+            }
             this.updateLoadMoreButton();
         }, 500);
     }
@@ -2772,7 +2798,7 @@ class NewsManager {
                         ${article.tags.map(tag => `<span class="news-card-tag" onclick="event.stopPropagation(); newsManager.filterByTag('${tag}')">#${tag}</span>`).join('')}
                     </div>
                     <div class="news-card-footer">
-                        <button class="read-more-btn" onclick="event.stopPropagation(); newsManager.openArticleModal(newsManager.articles.find(a => a.id === ${article.id}))">
+                        <button class="news-read-more-btn" onclick="event.stopPropagation(); newsManager.openArticleModal(newsManager.articles.find(a => a.id === ${article.id}))">
                             <span>Read More</span>
                             <i class="fas fa-arrow-right"></i>
                         </button>
@@ -2793,8 +2819,11 @@ class NewsManager {
     }
 
     filterByTag(tag) {
-        document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
-        document.querySelector(`[data-tag="${tag}"]`).classList.add('active');
+        document.querySelectorAll('.news-tag').forEach(t => t.classList.remove('active'));
+        const tagElement = document.querySelector(`[data-tag="${tag}"]`);
+        if (tagElement) {
+            tagElement.classList.add('active');
+        }
         this.currentTag = tag;
         this.applyFilters();
     }
@@ -2811,6 +2840,8 @@ class NewsManager {
 
     updateLoadMoreButton() {
         const loadMoreBtn = document.getElementById('loadMoreBtn');
+        if (!loadMoreBtn) return;
+        
         const totalArticles = this.filteredArticles.length;
         const currentlyShown = this.currentPage * this.articlesPerPage;
         
@@ -2819,7 +2850,10 @@ class NewsManager {
         } else {
             loadMoreBtn.style.display = 'flex';
             const remaining = totalArticles - currentlyShown;
-            loadMoreBtn.querySelector('span').textContent = `Load More Articles (${remaining} remaining)`;
+            const btnText = loadMoreBtn.querySelector('span');
+            if (btnText) {
+                btnText.textContent = `LOAD MORE (${remaining} remaining)`;
+            }
         }
     }
 
@@ -2830,16 +2864,18 @@ class NewsManager {
 
     renderTrendingList() {
         const trendingList = document.getElementById('trendingList');
+        if (!trendingList) return;
+        
         const trending = [...this.articles]
             .sort((a, b) => b.views - a.views)
             .slice(0, 5);
 
         trendingList.innerHTML = trending.map(article => `
-            <div class="trending-item" onclick="newsManager.openArticleModal(newsManager.articles.find(a => a.id === ${article.id}))">
-                <div class="trending-item-image"></div>
-                <div class="trending-item-content">
-                    <div class="trending-item-title">${article.title}</div>
-                    <div class="trending-item-date">${this.getTimeAgo(article.date)}</div>
+            <div class="news-trending-item" onclick="newsManager.openArticleModal(newsManager.articles.find(a => a.id === ${article.id}))">
+                <div class="news-trending-item-image"></div>
+                <div class="news-trending-item-content">
+                    <div class="news-trending-item-title">${article.title}</div>
+                    <div class="news-trending-item-date">${this.getTimeAgo(article.date)}</div>
                 </div>
             </div>
         `).join('');
@@ -2847,16 +2883,18 @@ class NewsManager {
 
     renderRecentList() {
         const recentList = document.getElementById('recentList');
+        if (!recentList) return;
+        
         const recent = [...this.articles]
             .sort((a, b) => b.date - a.date)
             .slice(0, 5);
 
         recentList.innerHTML = recent.map(article => `
-            <div class="recent-item" onclick="newsManager.openArticleModal(newsManager.articles.find(a => a.id === ${article.id}))">
-                <div class="recent-item-image"></div>
-                <div class="recent-item-content">
-                    <div class="recent-item-title">${article.title}</div>
-                    <div class="recent-item-date">${this.getTimeAgo(article.date)}</div>
+            <div class="news-recent-item" onclick="newsManager.openArticleModal(newsManager.articles.find(a => a.id === ${article.id}))">
+                <div class="news-recent-item-image"></div>
+                <div class="news-recent-item-content">
+                    <div class="news-recent-item-title">${article.title}</div>
+                    <div class="news-recent-item-date">${this.getTimeAgo(article.date)}</div>
                 </div>
             </div>
         `).join('');
@@ -2865,6 +2903,8 @@ class NewsManager {
     openArticleModal(article) {
         const modal = document.getElementById('articleModal');
         const modalArticle = document.getElementById('modalArticle');
+        
+        if (!modal || !modalArticle) return;
         
         modalArticle.innerHTML = `
             <div class="modal-article-header">
@@ -2906,8 +2946,10 @@ class NewsManager {
 
     closeArticleModal() {
         const modal = document.getElementById('articleModal');
-        modal.classList.remove('active');
-        document.body.style.overflow = 'auto';
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
     }
 
     showNotification(message, type = 'info') {
@@ -2945,7 +2987,9 @@ class NewsManager {
         setTimeout(() => {
             notification.style.transform = 'translateX(100%)';
             setTimeout(() => {
-                document.body.removeChild(notification);
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
             }, 300);
         }, 3000);
     }
@@ -2979,383 +3023,11 @@ class NewsManager {
     }
 }
 
-// Sidebar functionality (from your existing base.js)
-class SidebarManager {
-    constructor() {
-        this.sidebar = document.getElementById('sidebar');
-        this.sidebarToggle = document.getElementById('sidebarToggle');
-        this.init();
-    }
-
-    init() {
-        if (this.sidebarToggle) {
-            this.sidebarToggle.addEventListener('click', () => {
-                this.toggleSidebar();
-            });
-        }
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 768) {
-                if (!this.sidebar.contains(e.target) && !this.sidebarToggle.contains(e.target)) {
-                    this.closeSidebar();
-                }
-            }
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 768) {
-                this.sidebar.classList.remove('collapsed');
-            }
-        });
-    }
-
-    toggleSidebar() {
-        this.sidebar.classList.toggle('collapsed');
-        this.sidebarToggle.classList.toggle('selected');
-    }
-
-    closeSidebar() {
-        this.sidebar.classList.add('collapsed');
-        this.sidebarToggle.classList.remove('selected');
-    }
-}
-
-// Enhanced search functionality
-class SearchManager {
-    constructor() {
-        this.searchInput = document.getElementById('globalSearch');
-        this.searchResults = document.getElementById('searchResults');
-        this.searchHistory = [];
-        this.init();
-    }
-
-    init() {
-        if (!this.searchInput || !this.searchResults) return;
-
-        // Enhanced search with debouncing
-        let searchTimeout;
-        this.searchInput.addEventListener('input', (e) => {
-            clearTimeout(searchTimeout);
-            const query = e.target.value.trim();
-            
-            if (query.length === 0) {
-                this.hideResults();
-                return;
-            }
-
-            searchTimeout = setTimeout(() => {
-                this.performAdvancedSearch(query);
-            }, 200);
-        });
-
-        // Keyboard navigation
-        this.searchInput.addEventListener('keydown', (e) => {
-            this.handleKeyNavigation(e);
-        });
-
-        // Search suggestions
-        this.searchInput.addEventListener('focus', () => {
-            if (this.searchInput.value.trim().length === 0) {
-                this.showSearchSuggestions();
-            }
-        });
-    }
-
-    performAdvancedSearch(query) {
-        const results = newsManager.articles.filter(article => {
-            const searchText = `${article.title} ${article.summary} ${article.tags.join(' ')} ${article.category}`.toLowerCase();
-            return searchText.includes(query.toLowerCase());
-        });
-
-        this.displaySearchResults(results, query);
-    }
-
-    displaySearchResults(results, query) {
-        if (results.length === 0) {
-            this.searchResults.innerHTML = `
-                <div class="search-no-results">
-                    <p class="no-results">No results found for "${query}"</p>
-                    <p style="font-size: 0.8rem; color: #8a8aa8; margin-top: 8px;">Try different keywords or check spelling</p>
-                </div>
-            `;
-        } else {
-            this.searchResults.innerHTML = results.slice(0, 6).map(article => `
-                <div class="search-result-item" onclick="newsManager.openArticleModal(newsManager.articles.find(a => a.id === ${article.id}))">
-                    <div class="search-result-content">
-                        <div class="search-result-title">${this.highlightQuery(article.title, query)}</div>
-                        <div class="search-result-meta">
-                            <span class="search-result-category">${article.category}</span>
-                            <span class="search-result-date">${newsManager.getTimeAgo(article.date)}</span>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        this.showResults();
-    }
-
-    highlightQuery(text, query) {
-        const regex = new RegExp(`(${query})`, 'gi');
-        return text.replace(regex, '<mark style="background: rgba(138, 43, 226, 0.3); color: white; padding: 2px 4px; border-radius: 3px;">$1</mark>');
-    }
-
-    showSearchSuggestions() {
-        const suggestions = [
-            'update', 'patch notes', 'events', 'tournament', 'community',
-            'maintenance', 'new character', 'beta testing', 'performance'
-        ];
-
-        this.searchResults.innerHTML = `
-            <div class="search-suggestions">
-                <p style="color: #8a8aa8; font-size: 0.8rem; margin-bottom: 8px;">Popular searches:</p>
-                ${suggestions.slice(0, 5).map(suggestion => 
-                    `<div class="search-suggestion" onclick="document.getElementById('globalSearch').value='${suggestion}'; newsManager.searchManager.performAdvancedSearch('${suggestion}')">${suggestion}</div>`
-                ).join('')}
-            </div>
-        `;
-
-        this.showResults();
-    }
-
-    handleKeyNavigation(e) {
-        const items = this.searchResults.querySelectorAll('.search-result-item, .search-suggestion');
-        let currentIndex = Array.from(items).findIndex(item => item.classList.contains('highlighted'));
-
-        switch (e.key) {
-            case 'ArrowDown':
-                e.preventDefault();
-                currentIndex = Math.min(currentIndex + 1, items.length - 1);
-                this.highlightItem(items, currentIndex);
-                break;
-            case 'ArrowUp':
-                e.preventDefault();
-                currentIndex = Math.max(currentIndex - 1, 0);
-                this.highlightItem(items, currentIndex);
-                break;
-            case 'Enter':
-                e.preventDefault();
-                const highlighted = this.searchResults.querySelector('.highlighted');
-                if (highlighted) {
-                    highlighted.click();
-                }
-                break;
-            case 'Escape':
-                this.hideResults();
-                this.searchInput.blur();
-                break;
-        }
-    }
-
-    highlightItem(items, index) {
-        items.forEach(item => item.classList.remove('highlighted'));
-        if (items[index]) {
-            items[index].classList.add('highlighted');
-        }
-    }
-
-    showResults() {
-        this.searchResults.classList.add('active');
-    }
-
-    hideResults() {
-        this.searchResults.classList.remove('active');
-    }
-}
-
-// Animation and UI enhancements
-class UIEnhancer {
-    constructor() {
-        this.init();
-    }
-
-    init() {
-        this.setupScrollAnimations();
-        this.setupHoverEffects();
-        this.setupParallaxEffects();
-        this.setupLazyLoading();
-    }
-
-    setupScrollAnimations() {
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animation = 'slideInUp 0.6s ease forwards';
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        // Observe news cards as they're added
-        const observeNewsCards = () => {
-            document.querySelectorAll('.news-card:not([data-observed])').forEach(card => {
-                card.setAttribute('data-observed', 'true');
-                card.style.opacity = '0';
-                observer.observe(card);
-            });
-        };
-
-        // Initial observation
-        setTimeout(observeNewsCards, 100);
-
-        // Re-observe when new cards are added
-        const newsGrid = document.getElementById('newsGrid');
-        if (newsGrid) {
-            const gridObserver = new MutationObserver(observeNewsCards);
-            gridObserver.observe(newsGrid, { childList: true });
-        }
-    }
-
-    setupHoverEffects() {
-        // Add ripple effect to buttons
-        document.addEventListener('click', (e) => {
-            if (e.target.matches('.featured-btn, .load-more-btn, .read-more-btn')) {
-                this.createRipple(e);
-            }
-        });
-    }
-
-    createRipple(e) {
-        const button = e.target.closest('button');
-        const ripple = document.createElement('span');
-        const rect = button.getBoundingClientRect();
-        const size = Math.max(rect.width, rect.height);
-        const x = e.clientX - rect.left - size / 2;
-        const y = e.clientY - rect.top - size / 2;
-
-        ripple.style.cssText = `
-            position: absolute;
-            width: ${size}px;
-            height: ${size}px;
-            left: ${x}px;
-            top: ${y}px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transform: scale(0);
-            animation: ripple 0.6s linear;
-            pointer-events: none;
-        `;
-
-        button.style.position = 'relative';
-        button.style.overflow = 'hidden';
-        button.appendChild(ripple);
-
-        setTimeout(() => {
-            ripple.remove();
-        }, 600);
-    }
-
-    setupParallaxEffects() {
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const featuredBanner = document.querySelector('.featured-banner');
-            
-            if (featuredBanner) {
-                const rate = scrolled * -0.5;
-                featuredBanner.style.transform = `translateY(${rate}px)`;
-            }
-        });
-    }
-
-    setupLazyLoading() {
-        // Implement lazy loading for images when they're added
-        const imageObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const img = entry.target;
-                    if (img.dataset.src) {
-                        img.src = img.dataset.src;
-                        img.classList.remove('lazy');
-                        imageObserver.unobserve(img);
-                    }
-                }
-            });
-        });
-
-        document.querySelectorAll('img[data-src]').forEach(img => {
-            imageObserver.observe(img);
-        });
-    }
-}
-
-// Initialize everything when DOM is loaded
+// Initialize the news manager when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize main components
-    window.newsManager = new NewsManager();
-    window.sidebarManager = new SidebarManager();
-    window.searchManager = new SearchManager();
-    window.uiEnhancer = new UIEnhancer();
-
-    // Add search manager to news manager for cross-component communication
-    newsManager.searchManager = searchManager;
-
-    // Add custom CSS for search enhancements
-    const searchStyles = document.createElement('style');
-    searchStyles.textContent = `
-        .search-result-item {
-            padding: 12px;
-            cursor: pointer;
-            border-bottom: 1px solid rgba(138, 43, 226, 0.1);
-            transition: all 0.2s ease;
-        }
-        
-        .search-result-item:hover,
-        .search-result-item.highlighted {
-            background: rgba(138, 43, 226, 0.1);
-        }
-        
-        .search-result-title {
-            color: #ffffff;
-            font-weight: 600;
-            margin-bottom: 4px;
-            font-size: 0.9rem;
-        }
-        
-        .search-result-meta {
-            display: flex;
-            gap: 12px;
-            font-size: 0.8rem;
-            color: #8a8aa8;
-        }
-        
-        .search-result-category {
-            text-transform: capitalize;
-        }
-        
-        .search-suggestions {
-            padding: 8px 0;
-        }
-        
-        .search-suggestion {
-            padding: 8px 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border-radius: 4px;
-            margin: 2px 0;
-            color: #b8b8d4;
-        }
-        
-        .search-suggestion:hover,
-        .search-suggestion.highlighted {
-            background: rgba(138, 43, 226, 0.2);
-            color: white;
-        }
-        
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
-    `;
-    document.head.appendChild(searchStyles);
-
-    console.log('News page initialized successfully!');
+    // Check if we're on a page with news content
+    if (document.querySelector('.news-page-container')) {
+        window.newsManager = new NewsManager();
+        console.log('News page initialized successfully!');
+    }
 });
