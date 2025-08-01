@@ -2354,4 +2354,1008 @@ document.addEventListener('keydown', setupAudioContext, { once: true });
 // Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = SettingsManager;
+} 
+// News Page JavaScript
+class NewsManager {
+    constructor() {
+        this.articles = [];
+        this.filteredArticles = [];
+        this.currentFilter = 'all';
+        this.currentTag = 'all';
+        this.currentSort = 'newest';
+        this.currentView = 'grid';
+        this.articlesPerPage = 9;
+        this.currentPage = 1;
+        this.isLoading = false;
+        
+        this.init();
+    }
+
+    init() {
+        this.generateSampleData();
+        this.setupEventListeners();
+        this.renderArticles();
+        this.renderSidebarContent();
+        this.setupSearch();
+    }
+
+    generateSampleData() {
+        const categories = ['updates', 'patch-notes', 'events', 'community', 'esports'];
+        const tags = ['update', 'patch-notes', 'event', 'community', 'esports', 'maintenance'];
+        
+        const sampleArticles = [
+            {
+                id: 1,
+                title: "Major Update 2.5 Now Live",
+                summary: "Experience the biggest content update yet with new maps, characters, and game modes. Plus enhanced graphics and performance improvements.",
+                content: "This is the full article content for Major Update 2.5...",
+                category: "updates",
+                tags: ["update", "patch-notes"],
+                date: new Date('2025-08-01'),
+                author: "Dev Team",
+                featured: true,
+                views: 15420,
+                likes: 892,
+                image: null
+            },
+            {
+                id: 2,
+                title: "Summer Championship Tournament Announcement",
+                summary: "Join us for the biggest esports tournament of the year with a $500,000 prize pool and teams from around the world.",
+                content: "Full tournament details...",
+                category: "esports",
+                tags: ["event", "esports"],
+                date: new Date('2025-07-30'),
+                author: "Tournament Team",
+                featured: false,
+                views: 8745,
+                likes: 543,
+                image: null
+            },
+            {
+                id: 3,
+                title: "Community Spotlight: Player Creations",
+                summary: "Check out amazing player-created content, custom maps, and mods that are taking the community by storm.",
+                content: "Community content showcase...",
+                category: "community",
+                tags: ["community"],
+                date: new Date('2025-07-28'),
+                author: "Community Team",
+                featured: false,
+                views: 12350,
+                likes: 734,
+                image: null
+            },
+            {
+                id: 4,
+                title: "Hotfix 2.4.3 - Bug Fixes and Improvements",
+                summary: "Quick hotfix addressing several reported issues including connection problems and UI glitches.",
+                content: "Hotfix details and patch notes...",
+                category: "patch-notes",
+                tags: ["patch-notes", "maintenance"],
+                date: new Date('2025-07-25'),
+                author: "Dev Team",
+                featured: false,
+                views: 6890,
+                likes: 234,
+                image: null
+            },
+            {
+                id: 5,
+                title: "New Seasonal Event: Cyber Nexus",
+                summary: "Dive into a cyberpunk-themed seasonal event with exclusive rewards, new game modes, and limited-time cosmetics.",
+                content: "Seasonal event details...",
+                category: "events",
+                tags: ["event", "update"],
+                date: new Date('2025-07-22'),
+                author: "Event Team",
+                featured: false,
+                views: 18765,
+                likes: 1203,
+                image: null
+            },
+            {
+                id: 6,
+                title: "Beta Testing Program Now Open",
+                summary: "Sign up for our exclusive beta testing program and get early access to upcoming features and content.",
+                content: "Beta program information...",
+                category: "community",
+                tags: ["community", "update"],
+                date: new Date('2025-07-20'),
+                author: "Beta Team",
+                featured: false,
+                views: 9432,
+                likes: 567,
+                image: null
+            },
+            {
+                id: 7,
+                title: "Performance Optimization Update",
+                summary: "Significant performance improvements across all platforms, reducing load times and increasing frame rates.",
+                content: "Performance update details...",
+                category: "updates",
+                tags: ["update", "patch-notes"],
+                date: new Date('2025-07-18'),
+                author: "Tech Team",
+                featured: false,
+                views: 11200,
+                likes: 678,
+                image: null
+            },
+            {
+                id: 8,
+                title: "New Character Reveal: Echo",
+                summary: "Meet Echo, the latest addition to our roster with unique abilities and a compelling backstory.",
+                content: "Character reveal and abilities...",
+                category: "updates",
+                tags: ["update"],
+                date: new Date('2025-07-15'),
+                author: "Design Team",
+                featured: false,
+                views: 22100,
+                likes: 1456,
+                image: null
+            },
+            {
+                id: 9,
+                title: "Server Maintenance Schedule",
+                summary: "Scheduled maintenance windows for the upcoming week to improve server stability and performance.",
+                content: "Maintenance schedule details...",
+                category: "updates",
+                tags: ["maintenance"],
+                date: new Date('2025-07-12'),
+                author: "Infrastructure Team",
+                featured: false,
+                views: 5430,
+                likes: 123,
+                image: null
+            },
+            {
+                id: 10,
+                title: "Community Art Contest Winners",
+                summary: "Congratulations to the winners of our community art contest! Check out these amazing submissions.",
+                content: "Art contest results and gallery...",
+                category: "community",
+                tags: ["community", "event"],
+                date: new Date('2025-07-10'),
+                author: "Community Team",
+                featured: false,
+                views: 7890,
+                likes: 445,
+                image: null
+            }
+        ];
+
+        this.articles = sampleArticles;
+        this.filteredArticles = [...this.articles];
+    }
+
+    setupEventListeners() {
+        // View toggles
+        document.querySelectorAll('.view-toggle').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.view-toggle').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                this.currentView = e.target.dataset.view;
+                this.updateViewMode();
+            });
+        });
+
+        // Filter dropdown
+        const filterBtn = document.getElementById('filterBtn');
+        const filterMenu = document.getElementById('filterMenu');
+        
+        filterBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            filterMenu.classList.toggle('active');
+        });
+
+        document.querySelectorAll('.filter-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-option').forEach(o => o.classList.remove('active'));
+                e.target.classList.add('active');
+                this.currentFilter = e.target.dataset.filter;
+                filterBtn.querySelector('span').textContent = e.target.textContent;
+                filterMenu.classList.remove('active');
+                this.applyFilters();
+            });
+        });
+
+        // Sort dropdown
+        const sortBtn = document.getElementById('sortBtn');
+        const sortMenu = document.getElementById('sortMenu');
+        
+        sortBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            sortMenu.classList.toggle('active');
+        });
+
+        document.querySelectorAll('.sort-option').forEach(option => {
+            option.addEventListener('click', (e) => {
+                document.querySelectorAll('.sort-option').forEach(o => o.classList.remove('active'));
+                e.target.classList.add('active');
+                this.currentSort = e.target.dataset.sort;
+                sortBtn.querySelector('span').textContent = e.target.textContent;
+                sortMenu.classList.remove('active');
+                this.applyFilters();
+            });
+        });
+
+        // Tags
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('click', (e) => {
+                document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+                e.target.classList.add('active');
+                this.currentTag = e.target.dataset.tag;
+                this.applyFilters();
+            });
+        });
+
+        // Load more button
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        loadMoreBtn.addEventListener('click', () => {
+            this.loadMoreArticles();
+        });
+
+        // Featured banner click
+        const featuredBanner = document.getElementById('featuredBanner');
+        featuredBanner.addEventListener('click', () => {
+            const featuredArticle = this.articles.find(article => article.featured);
+            if (featuredArticle) {
+                this.openArticleModal(featuredArticle);
+            }
+        });
+
+        // Modal close
+        const modalClose = document.getElementById('modalClose');
+        const modalOverlay = document.getElementById('modalOverlay');
+        
+        modalClose.addEventListener('click', () => this.closeArticleModal());
+        modalOverlay.addEventListener('click', () => this.closeArticleModal());
+
+        // Close dropdowns when clicking outside
+        document.addEventListener('click', () => {
+            filterMenu.classList.remove('active');
+            sortMenu.classList.remove('active');
+        });
+
+        // Newsletter form
+        const newsletterForm = document.querySelector('.newsletter-form');
+        newsletterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = e.target.querySelector('input[type="email"]').value;
+            if (email) {
+                this.showNotification('Thanks for subscribing! You\'ll receive updates soon.', 'success');
+                e.target.reset();
+            }
+        });
+    }
+
+    setupSearch() {
+        const searchInput = document.getElementById('globalSearch');
+        const searchResults = document.getElementById('searchResults');
+        let searchTimeout;
+
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+            
+            if (query.length === 0) {
+                searchResults.classList.remove('active');
+                return;
+            }
+
+            searchTimeout = setTimeout(() => {
+                this.performSearch(query);
+            }, 300);
+        });
+
+        searchInput.addEventListener('focus', (e) => {
+            if (e.target.value.trim().length > 0) {
+                searchResults.classList.add('active');
+            }
+        });
+
+        searchInput.addEventListener('blur', () => {
+            setTimeout(() => {
+                searchResults.classList.remove('active');
+            }, 200);
+        });
+    }
+
+    performSearch(query) {
+        const searchResults = document.getElementById('searchResults');
+        const results = this.articles.filter(article => 
+            article.title.toLowerCase().includes(query.toLowerCase()) ||
+            article.summary.toLowerCase().includes(query.toLowerCase()) ||
+            article.tags.some(tag => tag.toLowerCase().includes(query.toLowerCase()))
+        );
+
+        if (results.length === 0) {
+            searchResults.innerHTML = '<p class="no-results">No articles found</p>';
+        } else {
+            searchResults.innerHTML = results.slice(0, 5).map(article => 
+                `<p onclick="newsManager.openArticleModal(newsManager.articles.find(a => a.id === ${article.id}))">${article.title}</p>`
+            ).join('');
+        }
+        
+        searchResults.classList.add('active');
+    }
+
+    applyFilters() {
+        let filtered = [...this.articles];
+
+        // Apply category filter
+        if (this.currentFilter !== 'all') {
+            filtered = filtered.filter(article => article.category === this.currentFilter);
+        }
+
+        // Apply tag filter
+        if (this.currentTag !== 'all') {
+            filtered = filtered.filter(article => article.tags.includes(this.currentTag));
+        }
+
+        // Apply sorting
+        filtered.sort((a, b) => {
+            switch (this.currentSort) {
+                case 'oldest':
+                    return a.date - b.date;
+                case 'popular':
+                    return b.views - a.views;
+                case 'newest':
+                default:
+                    return b.date - a.date;
+            }
+        });
+
+        this.filteredArticles = filtered;
+        this.currentPage = 1;
+        this.renderArticles();
+    }
+
+    updateViewMode() {
+        const newsGrid = document.getElementById('newsGrid');
+        if (this.currentView === 'list') {
+            newsGrid.classList.add('list-view');
+        } else {
+            newsGrid.classList.remove('list-view');
+        }
+    }
+
+    renderArticles() {
+        const newsGrid = document.getElementById('newsGrid');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        
+        // Show loading
+        loadingSpinner.style.display = 'flex';
+        
+        setTimeout(() => {
+            const articlesToShow = this.filteredArticles.slice(0, this.currentPage * this.articlesPerPage);
+            
+            if (articlesToShow.length === 0) {
+                newsGrid.innerHTML = `
+                    <div class="no-results">
+                        <i class="fas fa-search"></i>
+                        <h3>No articles found</h3>
+                        <p>Try adjusting your filters or search terms</p>
+                    </div>
+                `;
+            } else {
+                newsGrid.innerHTML = articlesToShow.map(article => this.createArticleCard(article)).join('');
+            }
+            
+            loadingSpinner.style.display = 'none';
+            this.updateLoadMoreButton();
+        }, 500);
+    }
+
+    createArticleCard(article) {
+        const timeAgo = this.getTimeAgo(article.date);
+        const categoryDisplay = article.category.replace('-', ' ').split(' ').map(word => 
+            word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ');
+
+        return `
+            <div class="news-card" onclick="newsManager.openArticleModal(newsManager.articles.find(a => a.id === ${article.id}))">
+                <div class="news-card-image"></div>
+                <div class="news-card-content">
+                    <div class="news-card-meta">
+                        <div class="news-card-date">
+                            <i class="fas fa-calendar"></i>
+                            ${timeAgo}
+                        </div>
+                        <div class="news-card-category">${categoryDisplay}</div>
+                    </div>
+                    <h3 class="news-card-title">${article.title}</h3>
+                    <p class="news-card-summary">${article.summary}</p>
+                    <div class="news-card-tags">
+                        ${article.tags.map(tag => `<span class="news-card-tag" onclick="event.stopPropagation(); newsManager.filterByTag('${tag}')">#${tag}</span>`).join('')}
+                    </div>
+                    <div class="news-card-footer">
+                        <button class="read-more-btn" onclick="event.stopPropagation(); newsManager.openArticleModal(newsManager.articles.find(a => a.id === ${article.id}))">
+                            <span>Read More</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <div class="news-card-stats">
+                            <div class="news-card-stat">
+                                <i class="fas fa-eye"></i>
+                                <span>${this.formatNumber(article.views)}</span>
+                            </div>
+                            <div class="news-card-stat">
+                                <i class="fas fa-heart"></i>
+                                <span>${this.formatNumber(article.likes)}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    filterByTag(tag) {
+        document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+        document.querySelector(`[data-tag="${tag}"]`).classList.add('active');
+        this.currentTag = tag;
+        this.applyFilters();
+    }
+
+    loadMoreArticles() {
+        const totalArticles = this.filteredArticles.length;
+        const currentlyShown = this.currentPage * this.articlesPerPage;
+        
+        if (currentlyShown < totalArticles) {
+            this.currentPage++;
+            this.renderArticles();
+        }
+    }
+
+    updateLoadMoreButton() {
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+        const totalArticles = this.filteredArticles.length;
+        const currentlyShown = this.currentPage * this.articlesPerPage;
+        
+        if (currentlyShown >= totalArticles) {
+            loadMoreBtn.style.display = 'none';
+        } else {
+            loadMoreBtn.style.display = 'flex';
+            const remaining = totalArticles - currentlyShown;
+            loadMoreBtn.querySelector('span').textContent = `Load More Articles (${remaining} remaining)`;
+        }
+    }
+
+    renderSidebarContent() {
+        this.renderTrendingList();
+        this.renderRecentList();
+    }
+
+    renderTrendingList() {
+        const trendingList = document.getElementById('trendingList');
+        const trending = [...this.articles]
+            .sort((a, b) => b.views - a.views)
+            .slice(0, 5);
+
+        trendingList.innerHTML = trending.map(article => `
+            <div class="trending-item" onclick="newsManager.openArticleModal(newsManager.articles.find(a => a.id === ${article.id}))">
+                <div class="trending-item-image"></div>
+                <div class="trending-item-content">
+                    <div class="trending-item-title">${article.title}</div>
+                    <div class="trending-item-date">${this.getTimeAgo(article.date)}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    renderRecentList() {
+        const recentList = document.getElementById('recentList');
+        const recent = [...this.articles]
+            .sort((a, b) => b.date - a.date)
+            .slice(0, 5);
+
+        recentList.innerHTML = recent.map(article => `
+            <div class="recent-item" onclick="newsManager.openArticleModal(newsManager.articles.find(a => a.id === ${article.id}))">
+                <div class="recent-item-image"></div>
+                <div class="recent-item-content">
+                    <div class="recent-item-title">${article.title}</div>
+                    <div class="recent-item-date">${this.getTimeAgo(article.date)}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    openArticleModal(article) {
+        const modal = document.getElementById('articleModal');
+        const modalArticle = document.getElementById('modalArticle');
+        
+        modalArticle.innerHTML = `
+            <div class="modal-article-header">
+                <div class="modal-article-meta">
+                    <span class="modal-article-category">${article.category.replace('-', ' ').toUpperCase()}</span>
+                    <span class="modal-article-date">${article.date.toLocaleDateString()}</span>
+                </div>
+                <h1 class="modal-article-title">${article.title}</h1>
+                <div class="modal-article-author">By ${article.author}</div>
+                <div class="modal-article-tags">
+                    ${article.tags.map(tag => `<span class="modal-article-tag">#${tag}</span>`).join('')}
+                </div>
+            </div>
+            <div class="modal-article-content">
+                <p>${article.summary}</p>
+                <br>
+                <p>${article.content}</p>
+                <br>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                <br>
+                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            </div>
+            <div class="modal-article-footer">
+                <div class="modal-article-stats">
+                    <span><i class="fas fa-eye"></i> ${this.formatNumber(article.views)} views</span>
+                    <span><i class="fas fa-heart"></i> ${this.formatNumber(article.likes)} likes</span>
+                </div>
+                <div class="modal-article-share">
+                    <button class="share-btn"><i class="fab fa-twitter"></i></button>
+                    <button class="share-btn"><i class="fab fa-facebook"></i></button>
+                    <button class="share-btn"><i class="fas fa-link"></i></button>
+                </div>
+            </div>
+        `;
+        
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    closeArticleModal() {
+        const modal = document.getElementById('articleModal');
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.style.cssText = `
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(30, 30, 63, 0.95);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+            z-index: 1500;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            box-shadow: 0 8px 24px rgba(138, 43, 226, 0.3);
+        `;
+        
+        notification.innerHTML = `
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}" style="color: ${type === 'success' ? '#4ade80' : type === 'error' ? '#ef4444' : '#7faafe'};"></i>
+                <span>${message}</span>
+            </div>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 100);
+        
+        setTimeout(() => {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+
+    getTimeAgo(date) {
+        const now = new Date();
+        const diffInSeconds = Math.floor((now - date) / 1000);
+        const diffInMinutes = Math.floor(diffInSeconds / 60);
+        const diffInHours = Math.floor(diffInMinutes / 60);
+        const diffInDays = Math.floor(diffInHours / 24);
+        const diffInWeeks = Math.floor(diffInDays / 7);
+        const diffInMonths = Math.floor(diffInDays / 30);
+
+        if (diffInSeconds < 60) return 'Just now';
+        if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+        if (diffInHours < 24) return `${diffInHours}h ago`;
+        if (diffInDays < 7) return `${diffInDays}d ago`;
+        if (diffInWeeks < 4) return `${diffInWeeks}w ago`;
+        if (diffInMonths < 12) return `${diffInMonths}mo ago`;
+        return `${Math.floor(diffInMonths / 12)}y ago`;
+    }
+
+    formatNumber(num) {
+        if (num >= 1000000) {
+            return (num / 1000000).toFixed(1) + 'M';
+        }
+        if (num >= 1000) {
+            return (num / 1000).toFixed(1) + 'K';
+        }
+        return num.toString();
+    }
 }
+
+// Sidebar functionality (from your existing base.js)
+class SidebarManager {
+    constructor() {
+        this.sidebar = document.getElementById('sidebar');
+        this.sidebarToggle = document.getElementById('sidebarToggle');
+        this.init();
+    }
+
+    init() {
+        if (this.sidebarToggle) {
+            this.sidebarToggle.addEventListener('click', () => {
+                this.toggleSidebar();
+            });
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                if (!this.sidebar.contains(e.target) && !this.sidebarToggle.contains(e.target)) {
+                    this.closeSidebar();
+                }
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                this.sidebar.classList.remove('collapsed');
+            }
+        });
+    }
+
+    toggleSidebar() {
+        this.sidebar.classList.toggle('collapsed');
+        this.sidebarToggle.classList.toggle('selected');
+    }
+
+    closeSidebar() {
+        this.sidebar.classList.add('collapsed');
+        this.sidebarToggle.classList.remove('selected');
+    }
+}
+
+// Enhanced search functionality
+class SearchManager {
+    constructor() {
+        this.searchInput = document.getElementById('globalSearch');
+        this.searchResults = document.getElementById('searchResults');
+        this.searchHistory = [];
+        this.init();
+    }
+
+    init() {
+        if (!this.searchInput || !this.searchResults) return;
+
+        // Enhanced search with debouncing
+        let searchTimeout;
+        this.searchInput.addEventListener('input', (e) => {
+            clearTimeout(searchTimeout);
+            const query = e.target.value.trim();
+            
+            if (query.length === 0) {
+                this.hideResults();
+                return;
+            }
+
+            searchTimeout = setTimeout(() => {
+                this.performAdvancedSearch(query);
+            }, 200);
+        });
+
+        // Keyboard navigation
+        this.searchInput.addEventListener('keydown', (e) => {
+            this.handleKeyNavigation(e);
+        });
+
+        // Search suggestions
+        this.searchInput.addEventListener('focus', () => {
+            if (this.searchInput.value.trim().length === 0) {
+                this.showSearchSuggestions();
+            }
+        });
+    }
+
+    performAdvancedSearch(query) {
+        const results = newsManager.articles.filter(article => {
+            const searchText = `${article.title} ${article.summary} ${article.tags.join(' ')} ${article.category}`.toLowerCase();
+            return searchText.includes(query.toLowerCase());
+        });
+
+        this.displaySearchResults(results, query);
+    }
+
+    displaySearchResults(results, query) {
+        if (results.length === 0) {
+            this.searchResults.innerHTML = `
+                <div class="search-no-results">
+                    <p class="no-results">No results found for "${query}"</p>
+                    <p style="font-size: 0.8rem; color: #8a8aa8; margin-top: 8px;">Try different keywords or check spelling</p>
+                </div>
+            `;
+        } else {
+            this.searchResults.innerHTML = results.slice(0, 6).map(article => `
+                <div class="search-result-item" onclick="newsManager.openArticleModal(newsManager.articles.find(a => a.id === ${article.id}))">
+                    <div class="search-result-content">
+                        <div class="search-result-title">${this.highlightQuery(article.title, query)}</div>
+                        <div class="search-result-meta">
+                            <span class="search-result-category">${article.category}</span>
+                            <span class="search-result-date">${newsManager.getTimeAgo(article.date)}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        this.showResults();
+    }
+
+    highlightQuery(text, query) {
+        const regex = new RegExp(`(${query})`, 'gi');
+        return text.replace(regex, '<mark style="background: rgba(138, 43, 226, 0.3); color: white; padding: 2px 4px; border-radius: 3px;">$1</mark>');
+    }
+
+    showSearchSuggestions() {
+        const suggestions = [
+            'update', 'patch notes', 'events', 'tournament', 'community',
+            'maintenance', 'new character', 'beta testing', 'performance'
+        ];
+
+        this.searchResults.innerHTML = `
+            <div class="search-suggestions">
+                <p style="color: #8a8aa8; font-size: 0.8rem; margin-bottom: 8px;">Popular searches:</p>
+                ${suggestions.slice(0, 5).map(suggestion => 
+                    `<div class="search-suggestion" onclick="document.getElementById('globalSearch').value='${suggestion}'; newsManager.searchManager.performAdvancedSearch('${suggestion}')">${suggestion}</div>`
+                ).join('')}
+            </div>
+        `;
+
+        this.showResults();
+    }
+
+    handleKeyNavigation(e) {
+        const items = this.searchResults.querySelectorAll('.search-result-item, .search-suggestion');
+        let currentIndex = Array.from(items).findIndex(item => item.classList.contains('highlighted'));
+
+        switch (e.key) {
+            case 'ArrowDown':
+                e.preventDefault();
+                currentIndex = Math.min(currentIndex + 1, items.length - 1);
+                this.highlightItem(items, currentIndex);
+                break;
+            case 'ArrowUp':
+                e.preventDefault();
+                currentIndex = Math.max(currentIndex - 1, 0);
+                this.highlightItem(items, currentIndex);
+                break;
+            case 'Enter':
+                e.preventDefault();
+                const highlighted = this.searchResults.querySelector('.highlighted');
+                if (highlighted) {
+                    highlighted.click();
+                }
+                break;
+            case 'Escape':
+                this.hideResults();
+                this.searchInput.blur();
+                break;
+        }
+    }
+
+    highlightItem(items, index) {
+        items.forEach(item => item.classList.remove('highlighted'));
+        if (items[index]) {
+            items[index].classList.add('highlighted');
+        }
+    }
+
+    showResults() {
+        this.searchResults.classList.add('active');
+    }
+
+    hideResults() {
+        this.searchResults.classList.remove('active');
+    }
+}
+
+// Animation and UI enhancements
+class UIEnhancer {
+    constructor() {
+        this.init();
+    }
+
+    init() {
+        this.setupScrollAnimations();
+        this.setupHoverEffects();
+        this.setupParallaxEffects();
+        this.setupLazyLoading();
+    }
+
+    setupScrollAnimations() {
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'slideInUp 0.6s ease forwards';
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe news cards as they're added
+        const observeNewsCards = () => {
+            document.querySelectorAll('.news-card:not([data-observed])').forEach(card => {
+                card.setAttribute('data-observed', 'true');
+                card.style.opacity = '0';
+                observer.observe(card);
+            });
+        };
+
+        // Initial observation
+        setTimeout(observeNewsCards, 100);
+
+        // Re-observe when new cards are added
+        const newsGrid = document.getElementById('newsGrid');
+        if (newsGrid) {
+            const gridObserver = new MutationObserver(observeNewsCards);
+            gridObserver.observe(newsGrid, { childList: true });
+        }
+    }
+
+    setupHoverEffects() {
+        // Add ripple effect to buttons
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('.featured-btn, .load-more-btn, .read-more-btn')) {
+                this.createRipple(e);
+            }
+        });
+    }
+
+    createRipple(e) {
+        const button = e.target.closest('button');
+        const ripple = document.createElement('span');
+        const rect = button.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+
+        ripple.style.cssText = `
+            position: absolute;
+            width: ${size}px;
+            height: ${size}px;
+            left: ${x}px;
+            top: ${y}px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        `;
+
+        button.style.position = 'relative';
+        button.style.overflow = 'hidden';
+        button.appendChild(ripple);
+
+        setTimeout(() => {
+            ripple.remove();
+        }, 600);
+    }
+
+    setupParallaxEffects() {
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const featuredBanner = document.querySelector('.featured-banner');
+            
+            if (featuredBanner) {
+                const rate = scrolled * -0.5;
+                featuredBanner.style.transform = `translateY(${rate}px)`;
+            }
+        });
+    }
+
+    setupLazyLoading() {
+        // Implement lazy loading for images when they're added
+        const imageObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    if (img.dataset.src) {
+                        img.src = img.dataset.src;
+                        img.classList.remove('lazy');
+                        imageObserver.unobserve(img);
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+        });
+    }
+}
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize main components
+    window.newsManager = new NewsManager();
+    window.sidebarManager = new SidebarManager();
+    window.searchManager = new SearchManager();
+    window.uiEnhancer = new UIEnhancer();
+
+    // Add search manager to news manager for cross-component communication
+    newsManager.searchManager = searchManager;
+
+    // Add custom CSS for search enhancements
+    const searchStyles = document.createElement('style');
+    searchStyles.textContent = `
+        .search-result-item {
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(138, 43, 226, 0.1);
+            transition: all 0.2s ease;
+        }
+        
+        .search-result-item:hover,
+        .search-result-item.highlighted {
+            background: rgba(138, 43, 226, 0.1);
+        }
+        
+        .search-result-title {
+            color: #ffffff;
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+        
+        .search-result-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 0.8rem;
+            color: #8a8aa8;
+        }
+        
+        .search-result-category {
+            text-transform: capitalize;
+        }
+        
+        .search-suggestions {
+            padding: 8px 0;
+        }
+        
+        .search-suggestion {
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 4px;
+            margin: 2px 0;
+            color: #b8b8d4;
+        }
+        
+        .search-suggestion:hover,
+        .search-suggestion.highlighted {
+            background: rgba(138, 43, 226, 0.2);
+            color: white;
+        }
+        
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    `;
+    document.head.appendChild(searchStyles);
+
+    console.log('News page initialized successfully!');
+});

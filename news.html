@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News - Gaming Platform</title>
+    <link rel="stylesheet" href="style.css"> <!-- Your existing base styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Top Bar (from your existing layout) -->
+    <div class="top-bar">
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="search-container">
+            <input type="text" id="globalSearch" placeholder="Search news...">
+            <button class="search-btn">
+                <i class="fas fa-search"></i>
+            </button>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+    </div>
+
+    <!-- Sidebar (from your existing layout) -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">🎮</div>
+                <h2>GameHub</h2>
+            </div>
+        </div>
+        
+        <ul class="nav-links">
+            <li><a href="#"><i class="icon fas fa-home"></i> Dashboard</a></li>
+            <li><a href="#" class="active"><i class="icon fas fa-newspaper"></i> News</a></li>
+            <li><a href="#"><i class="icon fas fa-gamepad"></i> Games</a></li>
+            <li><a href="#"><i class="icon fas fa-users"></i> Community</a></li>
+            <li><a href="#"><i class="icon fas fa-trophy"></i> Tournaments</a></li>
+            <li><a href="#"><i class="icon fas fa-cog"></i> Settings</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Featured Article Banner -->
+        <section class="featured-banner" id="featuredBanner">
+            <div class="featured-content">
+                <div class="featured-image">
+                    <div class="featured-overlay"></div>
+                </div>
+                <div class="featured-text">
+                    <span class="featured-tag">FEATURED</span>
+                    <h1 class="featured-title">Major Update 2.5 Now Live</h1>
+                    <p class="featured-summary">Experience the biggest content update yet with new maps, characters, and game modes. Plus enhanced graphics and performance improvements.</p>
+                    <div class="featured-meta">
+                        <span class="featured-date">
+                            <i class="fas fa-calendar"></i> August 1, 2025
+                        </span>
+                        <span class="featured-author">
+                            <i class="fas fa-user"></i> Dev Team
+                        </span>
+                    </div>
+                    <button class="featured-btn">
+                        <span>Read Full Article</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- News Controls -->
+        <section class="news-controls">
+            <div class="controls-left">
+                <h2 class="section-title">Latest News</h2>
+                <div class="view-toggles">
+                    <button class="view-toggle active" data-view="grid">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="view-toggle" data-view="list">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="controls-right">
+                <div class="filter-dropdown">
+                    <button class="filter-btn" id="filterBtn">
+                        <i class="fas fa-filter"></i>
+                        <span>All Categories</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="filter-menu" id="filterMenu">
+                        <div class="filter-option active" data-filter="all">All Categories</div>
+                        <div class="filter-option" data-filter="updates">Updates</div>
+                        <div class="filter-option" data-filter="patch-notes">Patch Notes</div>
+                        <div class="filter-option" data-filter="events">Events</div>
+                        <div class="filter-option" data-filter="community">Community</div>
+                        <div class="filter-option" data-filter="esports">Esports</div>
+                    </div>
+                </div>
+                
+                <div class="sort-dropdown">
+                    <button class="sort-btn" id="sortBtn">
+                        <i class="fas fa-sort"></i>
+                        <span>Newest First</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="sort-menu" id="sortMenu">
+                        <div class="sort-option active" data-sort="newest">Newest First</div>
+                        <div class="sort-option" data-sort="oldest">Oldest First</div>
+                        <div class="sort-option" data-sort="popular">Most Popular</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tags Filter -->
+        <section class="tags-section">
+            <div class="popular-tags">
+                <span class="tags-label">Popular Tags:</span>
+                <div class="tag-list">
+                    <button class="tag active" data-tag="all">#All</button>
+                    <button class="tag" data-tag="update">#Update</button>
+                    <button class="tag" data-tag="patch-notes">#PatchNotes</button>
+                    <button class="tag" data-tag="event">#Event</button>
+                    <button class="tag" data-tag="community">#Community</button>
+                    <button class="tag" data-tag="esports">#Esports</button>
+                    <button class="tag" data-tag="maintenance">#Maintenance</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- News Feed -->
+        <section class="news-feed">
+            <div class="news-grid" id="newsGrid">
+                <!-- News articles will be populated by JavaScript -->
+                <div class="loading-spinner" id="loadingSpinner">
+                    <div class="spinner"></div>
+                    <p>Loading news...</p>
+                </div>
+            </div>
+            
+            <!-- Load More Button -->
+            <div class="load-more-container">
+                <button class="load-more-btn" id="loadMoreBtn">
+                    <span>Load More Articles</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Sidebar Content -->
+        <aside class="news-sidebar">
+            <!-- Most Read Articles -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">
+                    <i class="fas fa-fire"></i>
+                    Most Read
+                </h3>
+                <div class="trending-list" id="trendingList">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Recent Updates -->
+            <div class="sidebar-widget">
+                <h3 class="widget-title">
+                    <i class="fas fa-clock"></i>
+                    Recent Updates
+                </h3>
+                <div class="recent-list" id="recentList">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Newsletter Signup -->
+            <div class="sidebar-widget newsletter-widget">
+                <h3 class="widget-title">
+                    <i class="fas fa-envelope"></i>
+                    Stay Updated
+                </h3>
+                <p>Get the latest news delivered to your inbox.</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="Enter your email">
+                    <button type="submit">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Article Modal -->
+    <div class="article-modal" id="articleModal">
+        <div class="modal-overlay" id="modalOverlay"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-article" id="modalArticle">
+                <!-- Article content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Include your existing base JavaScript -->
+    <script src="javascript.js"></script>
+</body>
+</html>
