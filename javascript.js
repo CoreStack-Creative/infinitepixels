@@ -3038,162 +3038,152 @@ document.addEventListener('DOMContentLoaded', () => {
 const cosmicCategoriesConstellations = {
     'shooter': {
         name: 'Shooter',
-        image: 'images/category-shooter.jpg',
+        image: 'images/msfimage.jpg',
         description: 'Intense shooting and combat games'
     },
     'action': {
         name: 'Action',
-        image: 'images/category-action.jpg',
+        image: 'images/1v1lolimage.jpg',
         description: 'Fast-paced action adventures'
     },
     'racing': {
         name: 'Racing',
-        image: 'images/category-racing.jpg',
+        image: 'images/3dformularacingimage.jpg',
         description: 'High-speed racing thrills'
     },
     'puzzle': {
         name: 'Puzzle',
-        image: 'images/category-puzzle.jpg',
+        image: 'images/drawclimberimage.jpg',
         description: 'Brain-bending puzzle challenges'
     },
     'platformer': {
         name: 'Platformer',
-        image: 'images/category-platformer.jpg',
+        image: 'images/subwaysurfersimage.jpg',
         description: 'Jumping and platform adventures'
     },
     'multiplayer': {
         name: 'Multiplayer',
-        image: 'images/category-multiplayer.jpg',
+        image: 'images/bloxdioimage.jpg',
         description: 'Play with friends online'
     },
     'io': {
-        name: 'IO',
-        image: 'images/category-io.jpg',
+        name: 'Io',
+        image: 'images/paperioimage.jpg',
         description: 'Competitive IO games'
     },
     'idle': {
         name: 'Idle',
-        image: 'images/category-idle.jpg',
+        image: 'images/tinyfishingimage.jpg',
         description: 'Relaxing idle experiences'
     },
     'sports': {
         name: 'Sports',
-        image: 'images/category-sports.jpg',
+        image: 'images/basketrandomimage.jpg',
         description: 'Sports and athletic games'
     },
     '3d': {
         name: '3D',
-        image: 'images/category-3d.jpg',
+        image: 'images/cubearenaimage.jpg',
         description: 'Immersive 3D experiences'
     },
     'arcade': {
         name: 'Arcade',
-        image: 'images/category-arcade.jpg',
+        image: 'images/helixjumpimage.jpg',
         description: 'Classic arcade fun'
     },
     'adventure': {
         name: 'Adventure',
-        image: 'images/category-adventure.jpg',
+        image: 'images/rodeostampedeimage.jpg',
         description: 'Epic adventure journeys'
     },
     'clicker': {
         name: 'Clicker',
-        image: 'images/category-clicker.jpg',
+        image: 'images/cookieclickerimage.jpg',
         description: 'Addictive clicking games'
     },
     'cars': {
         name: 'Cars',
-        image: 'images/category-cars.jpg',
+        image: 'images/polytrackimage.jpg',
         description: 'Car-based adventures'
     },
     '2 player': {
-        name: '2-Player',
-        image: 'images/category-2player.jpg',
+        name: '2 Player',
+        image: 'images/basketrandomimage.jpg',
         description: 'Two-player competitions'
     },
     'basketball': {
         name: 'Basketball',
-        image: 'images/category-basketball.jpg',
+        image: 'images/basketrandomimage.jpg',
         description: 'Basketball games and challenges'
     },
     '2048': {
         name: '2048',
-        image: 'images/category-2048.jpg',
+        image: 'images/cubearenaimage.jpg',
         description: '2048-style puzzle games'
     },
     'drawing': {
         name: 'Drawing',
-        image: 'images/category-drawing.jpg',
+        image: 'images/drawclimberimage.jpg',
         description: 'Creative drawing games'
     },
     'runner': {
         name: 'Runner',
-        image: 'images/category-runner.jpg',
+        image: 'images/tallmanrunimage.jpg',
         description: 'Endless running adventures'
-    },
-    'watermelon': {
-        name: 'Watermelon',
-        image: 'images/category-watermelon.jpg',
-        description: 'Fruit-themed games'
     },
     'fruit': {
         name: 'Fruit',
-        image: 'images/category-fruit.jpg',
+        image: 'images/fruitmergeimage.jpg',
         description: 'Fresh fruit games'
-    },
-    'jumping': {
-        name: 'Jumping',
-        image: 'images/category-jumping.jpg',
-        description: 'High-flying jump games'
     },
     'online': {
         name: 'Online',
-        image: 'images/category-online.jpg',
+        image: 'images/msfimage.jpg',
         description: 'Connected online experiences'
     },
     'strategy': {
         name: 'Strategy',
-        image: 'images/category-strategy.jpg',
+        image: 'images/paperioimage.jpg',
         description: 'Strategic thinking games'
     },
     'parkour': {
         name: 'Parkour',
-        image: 'images/category-parkour.jpg',
+        image: 'images/parkourblock3d.jpg',
         description: 'Parkour and free-running'
     },
     'animal': {
         name: 'Animal',
-        image: 'images/category-animal.jpg',
+        image: 'images/rodeostampedeimage.jpg',
         description: 'Animal-themed adventures'
     },
     'satisfying': {
         name: 'Satisfying',
-        image: 'images/category-satisfying.jpg',
+        image: 'images/spiralrollimage.jpg',
         description: 'Satisfying gameplay experiences'
     },
     'endless': {
         name: 'Endless',
-        image: 'images/category-endless.jpg',
+        image: 'images/subwaysurfersimage.jpg',
         description: 'Never-ending gameplay'
     },
     'fishing': {
         name: 'Fishing',
-        image: 'images/category-fishing.jpg',
+        image: 'images/tinyfishingimage.jpg',
         description: 'Fishing and aquatic games'
     },
     'bike': {
         name: 'Bike',
-        image: 'images/category-bike.jpg',
+        image: 'images/motox3mimage.jpg',
         description: 'Motorcycle and bike games'
     },
     'levels': {
         name: 'Levels',
-        image: 'images/category-levels.jpg',
+        image: 'images/motox3mimage.jpg',
         description: 'Level-based progression games'
     },
     'cooking': {
         name: 'Cooking',
-        image: 'images/category-cooking.jpg',
+        image: 'images/cookieclickerimage.jpg',
         description: 'Cooking and food games'
     }
 };
@@ -3256,10 +3246,12 @@ function cosmicCategoriesNavigateToGame(url) {
 
 // Create category card HTML
 function cosmicCategoriesCreateConstellationCard(category, categoryData, gameCount) {
-    const categoryImage = cosmicCategoriesFallbackImages[category] || cosmicCategoriesFallbackImages.default;
+    const categoryImage = categoryData.image || cosmicCategoriesFallbackImages.default;
     
     return `
-        <div class="cosmic-categories-constellation-card" onclick="cosmicCategoriesToggleDimension('${category}')">
+        <div class="cosmic-categories-constellation-card" 
+             onclick="cosmicCategoriesToggleDimension('${category}')"
+             style="--category-bg-image: url('${categoryImage}')">
             <div class="cosmic-categories-star-header">
                 <img src="${categoryImage}" 
                      alt="${categoryData.name}" 
@@ -3346,7 +3338,7 @@ function cosmicCategoriesOpenModal(category) {
     // Set modal content
     document.getElementById('cosmicModalCategoryName').textContent = categoryData.name;
     const iconImg = document.getElementById('cosmicModalCategoryIcon');
-    iconImg.src = cosmicCategoriesFallbackImages[category] || cosmicCategoriesFallbackImages.default;
+    iconImg.src = categoryData.image || cosmicCategoriesFallbackImages.default;
     iconImg.alt = categoryData.name;
     
     // Store current state
