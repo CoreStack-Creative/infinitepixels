@@ -1654,14 +1654,14 @@ const allGamesDatabase = [
         name: "Fruit Merge",
         image: "images/fruitmergeimage.jpg",
         url: "games/fruitmerge.html",
-        tags: ["watermelon", "puzzle", "fruit"]
+        tags: ["satisfying", "puzzle", "fruit"]
     },
     {
         id: 8,
         name: "Helix Jump",
         image: "images/helixjumpimage.jpg",
         url: "games/helixjump.html",
-        tags: ["arcade", "jumping", "platformer"]
+        tags: ["arcade", "endless", "platformer"]
     },
     {
         id: 9,
@@ -3138,7 +3138,7 @@ const cosmicCategoriesConstellations = {
     },
     'online': {
         name: 'Online',
-        image: 'images/msfimage.jpg',
+        image: 'images/maskedspecialforcesimage.jpg',
         description: 'Connected online experiences'
     },
     'strategy': {
@@ -3148,7 +3148,7 @@ const cosmicCategoriesConstellations = {
     },
     'parkour': {
         name: 'Parkour',
-        image: 'images/parkourblock3d.jpg',
+        image: 'images/parkourblock3dimage.jpg',
         description: 'Parkour and free-running'
     },
     'animal': {
