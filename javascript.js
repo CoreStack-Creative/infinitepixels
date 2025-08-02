@@ -37,7 +37,8 @@ const gameData = [
    { name: "Ice Fishing", link: "games/icefishing.html" },
    { name: "Stick Fighter 3D", link: "games/stickfighter3d.html" },
    { name: "Papas Burgeria", link: "games/papasburgeria.html" },
-   { name: "Bullet Army Run", link: "games/bulletarmyrun.html" }
+   { name: "Bullet Army Run", link: "games/bulletarmyrun.html" },
+   { name: "Ninja Arashi", link: "games/ninjaarashi.html" }
 ];
 
 
@@ -1816,6 +1817,13 @@ const allGamesDatabase = [
         image: "images/bulletarmyrunimage.jpg",
         url: "games/bulletarmyrun.html",
         tags: ["levels", "runner", "arcade"]
+    },
+    {
+        id: 28,
+        name: "Ninja Arashi",
+        image: "images/ninjaarashiimage.jpg",
+        url: "games/ninjaarashi.html",
+        tags: ["adventure", "action", "platformer"]
     }
 ];
 
@@ -3170,7 +3178,7 @@ const cosmicCategoriesConstellations = {
     },
     'adventure': {
         name: 'Adventure',
-        image: 'images/rodeostampedeimage.jpg',
+        image: 'images/ninjaarashiimage.jpg',
         description: 'Epic adventure journeys'
     },
     'clicker': {
