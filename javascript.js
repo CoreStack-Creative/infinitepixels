@@ -1599,6 +1599,10 @@ function showRedirectAndGo() {
     }, 900);
 }
 
+document.addEventListener('DOMContentLoaded', function() {
+    // Any other code that uses DOM elements should go here too
+});
+
 // Start redirect process when page loads
 document.addEventListener('DOMContentLoaded', () => {
     // Show redirect overlay almost immediately (100ms delay for smooth animation)
@@ -3525,20 +3529,111 @@ if (document.readyState === 'loading') {
     setTimeout(cosmicCategoriesInitializeUniverse, 100);
 }
 
-// About Page Interactions JavaScript
+// About Page Interactions JavaScript - OPTIMIZED VERSION
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize about page animations
-    initAboutScrollAnimations();
-    initAboutScrollAnimations();
-    initAboutFloatingElements();
-    initAboutInfinityAnimation();
+    // Only initialize about page functionality if we're on the about page
+    if (document.querySelector('.about-hero-banner') || document.querySelector('.about-page-container')) {
+        console.log('About page detected - initializing...');
+        
+        // Ensure animations are added first
+        ensureAboutAnimations();
+        
+        // Initialize all functions
+        initAboutScrollAnimations();
+        initAboutFloatingElements();
+        initAboutInfinityAnimation();
+        initAboutStaggeredAnimations();
+        initAboutHoverEffects();
+        initAboutThemeObserver();
+        
+        // Update theme colors after a brief delay
+        setTimeout(() => {
+            updateAboutFloatingElementsForTheme();
+        }, 50);
+    }
 });
+
+// Add CSS animations first - moved to top priority
+function ensureAboutAnimations() {
+    // Check if animations already exist
+    if (document.querySelector('#aboutPageAnimations')) return;
+    
+    const aboutAnimationStyles = document.createElement('style');
+    aboutAnimationStyles.id = 'aboutPageAnimations';
+    aboutAnimationStyles.textContent = `
+        @keyframes aboutPixelFloat {
+            0%, 100% { 
+                transform: translateY(0px) rotate(0deg);
+                opacity: 0.6;
+            }
+            33% { 
+                transform: translateY(-20px) rotate(120deg);
+                opacity: 1;
+            }
+            66% { 
+                transform: translateY(10px) rotate(240deg);
+                opacity: 0.8;
+            }
+        }
+        
+        .about-animate {
+            animation: aboutSlideInUp 0.8s ease-out forwards;
+        }
+        
+        @keyframes aboutSlideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .about-content-card {
+            transition: all 0.3s ease-out;
+        }
+        
+        .about-metric-box {
+            transition: all 0.3s ease-out;
+        }
+        
+        .about-floating-pixel {
+            will-change: transform;
+        }
+        
+        /* Ensure hero banner is visible */
+        .about-hero-banner {
+            position: relative;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+        }
+        
+        .about-hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+    `;
+    
+    document.head.appendChild(aboutAnimationStyles);
+}
 
 // Scroll-triggered animations for about page
 function initAboutScrollAnimations() {
     const aboutContentCards = document.querySelectorAll('.about-content-card');
     const aboutMetricBoxes = document.querySelectorAll('.about-metric-box');
+    
+    // Only proceed if elements exist
+    if (aboutContentCards.length === 0 && aboutMetricBoxes.length === 0) {
+        console.log('No about page elements found for scroll animations');
+        return;
+    }
     
     const aboutObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -3569,7 +3664,9 @@ function initAboutScrollAnimations() {
 // Counter animation for about page statistics
 function animateAboutCounter(element) {
     const target = parseInt(element.getAttribute('data-target'));
-    const duration = 2000; // 2 seconds
+    if (isNaN(target)) return;
+    
+    const duration = 2000;
     const steps = 60;
     const increment = target / steps;
     let current = 0;
@@ -3581,7 +3678,6 @@ function animateAboutCounter(element) {
             clearInterval(aboutTimer);
         }
         
-        // Format large numbers with commas
         const displayValue = Math.floor(current);
         element.textContent = formatAboutNumber(displayValue);
     }, duration / steps);
@@ -3592,19 +3688,29 @@ function formatAboutNumber(num) {
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-// Create floating elements animation for about page
+// Create floating elements animation for about page - FIXED
 function initAboutFloatingElements() {
-    const aboutHeroBanner = document.querySelector('.about-hero-banner');
+    // Try both the container and the specific floating elements div
+    let container = document.querySelector('.about-floating-elements') || document.querySelector('.about-hero-banner');
+    
+    if (!container) {
+        console.log('About hero banner not found - skipping floating elements');
+        return;
+    }
+    
     const aboutPixelColors = ['#ba68c8', '#42a5f5', '#8e24aa', '#1976d2', '#6a1b9a'];
     
-    // Create additional floating elements
+    // Create floating elements
     for (let i = 0; i < 12; i++) {
-        createAboutFloatingElement(aboutHeroBanner, aboutPixelColors[i % aboutPixelColors.length], i);
+        createAboutFloatingElement(container, aboutPixelColors[i % aboutPixelColors.length], i);
     }
 }
 
 function createAboutFloatingElement(container, color, index) {
+    if (!container) return;
+    
     const aboutPixel = document.createElement('div');
+    aboutPixel.className = 'about-floating-pixel';
     aboutPixel.style.cssText = `
         position: absolute;
         width: ${Math.random() * 10 + 6}px;
@@ -3627,38 +3733,105 @@ function createAboutFloatingElement(container, color, index) {
 // Initialize infinity symbol animation
 function initAboutInfinityAnimation() {
     const infinitySymbol = document.querySelector('.about-infinity-symbol');
-    if (infinitySymbol) {
-        // Add additional animation on scroll
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const rate = scrolled * -0.1;
-            infinitySymbol.style.transform = `rotate(${rate}deg)`;
-        });
+    if (!infinitySymbol) {
+        console.log('Infinity symbol not found');
+        return;
     }
+    
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            requestAnimationFrame(() => {
+                const scrolled = window.pageYOffset;
+                const rate = scrolled * -0.1;
+                infinitySymbol.style.transform = `rotate(${rate}deg)`;
+                ticking = false;
+            });
+            ticking = true;
+        }
+    });
+}
+
+// Add staggered animation entrance for content cards
+function initAboutStaggeredAnimations() {
+    const aboutCards = document.querySelectorAll('.about-content-card');
+    
+    if (aboutCards.length === 0) {
+        console.log('No about content cards found for staggered animations');
+        return;
+    }
+    
+    aboutCards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.2}s`;
+    });
+}
+
+// Add interactive hover effects to content cards
+function initAboutHoverEffects() {
+    // Content cards hover effects
+    document.querySelectorAll('.about-content-card').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-15px) scale(1.03)';
+            this.style.transition = 'all 0.3s ease-out';
+            this.style.boxShadow = '0 25px 60px rgba(138, 43, 226, 0.4)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+            this.style.boxShadow = '';
+        });
+    });
+
+    // Metric boxes hover effects
+    document.querySelectorAll('.about-metric-box').forEach(metricBox => {
+        metricBox.addEventListener('mouseenter', function() {
+            this.style.boxShadow = '0 20px 60px rgba(138, 43, 226, 0.5)';
+            this.style.transform = 'scale(1.08)';
+            this.style.transition = 'all 0.3s ease-out';
+            this.style.borderColor = '#8a2be2';
+        });
+        
+        metricBox.addEventListener('mouseleave', function() {
+            this.style.boxShadow = '';
+            this.style.transform = 'scale(1)';
+            this.style.borderColor = 'rgba(138, 43, 226, 0.3)';
+        });
+    });
 }
 
 // Parallax scrolling effect for about hero section
+let aboutScrollTicking = false;
 window.addEventListener('scroll', function() {
-    const scrolled = window.pageYOffset;
-    const aboutHeroContent = document.querySelector('.about-hero-content');
-    const aboutFloatingElements = document.querySelectorAll('.about-hero-banner > div[style*="position: absolute"]');
-    const aboutInfinityBackdrop = document.querySelector('.about-infinity-backdrop');
-    
-    // Parallax effect for hero content
-    if (aboutHeroContent) {
-        aboutHeroContent.style.transform = `translateY(${scrolled * 0.3}px)`;
+    if (!aboutScrollTicking) {
+        requestAnimationFrame(() => {
+            const scrolled = window.pageYOffset;
+            const aboutHeroContent = document.querySelector('.about-hero-content');
+            const aboutFloatingElements = document.querySelectorAll('.about-floating-pixel');
+            const aboutInfinityBackdrop = document.querySelector('.about-infinity-backdrop');
+            
+            // Parallax effect for hero content
+            if (aboutHeroContent) {
+                aboutHeroContent.style.transform = `translateY(${scrolled * 0.3}px)`;
+            }
+            
+            // Parallax effect for infinity backdrop
+            if (aboutInfinityBackdrop) {
+                aboutInfinityBackdrop.style.transform = `translate(-50%, -50%) translateY(${scrolled * 0.2}px)`;
+            }
+            
+            // Parallax effect for floating elements
+            aboutFloatingElements.forEach((element, index) => {
+                const speed = 0.1 + (index * 0.03);
+                const currentTransform = element.style.transform || '';
+                const cleanTransform = currentTransform.replace(/translateY\([^)]*\)/g, '');
+                element.style.transform = `${cleanTransform} translateY(${scrolled * speed}px)`;
+            });
+            
+            revealAboutOnScroll();
+            aboutScrollTicking = false;
+        });
+        aboutScrollTicking = true;
     }
-    
-    // Parallax effect for infinity backdrop
-    if (aboutInfinityBackdrop) {
-        aboutInfinityBackdrop.style.transform = `translate(-50%, -50%) translateY(${scrolled * 0.2}px)`;
-    }
-    
-    // Parallax effect for floating elements
-    aboutFloatingElements.forEach((element, index) => {
-        const speed = 0.1 + (index * 0.03);
-        element.style.transform = `translateY(${scrolled * speed}px)`;
-    });
 });
 
 // Smooth reveal animation for content cards on scroll
@@ -3675,93 +3848,39 @@ function revealAboutOnScroll() {
     });
 }
 
-// Throttled scroll event for better performance
-let aboutTicking = false;
-window.addEventListener('scroll', function() {
-    if (!aboutTicking) {
-        requestAnimationFrame(revealAboutOnScroll);
-        aboutTicking = true;
-        setTimeout(() => { aboutTicking = false; }, 16);
-    }
-});
-
-// Add interactive hover effects to content cards
-document.querySelectorAll('.about-content-card').forEach(card => {
-    card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-15px) scale(1.03)';
-        this.style.transition = 'all 0.3s ease-out';
-        this.style.boxShadow = '0 25px 60px rgba(138, 43, 226, 0.4)';
-    });
-    
-    card.addEventListener('mouseleave', function() {
-        this.style.transform = 'translateY(0) scale(1)';
-        this.style.boxShadow = '';
-    });
-});
-
-// Add glow effect on hover for metric boxes
-document.querySelectorAll('.about-metric-box').forEach(metricBox => {
-    metricBox.addEventListener('mouseenter', function() {
-        this.style.boxShadow = '0 20px 60px rgba(138, 43, 226, 0.5)';
-        this.style.transform = 'scale(1.08)';
-        this.style.transition = 'all 0.3s ease-out';
-        this.style.borderColor = '#8a2be2';
-    });
-    
-    metricBox.addEventListener('mouseleave', function() {
-        this.style.boxShadow = '';
-        this.style.transform = 'scale(1)';
-        this.style.borderColor = 'rgba(138, 43, 226, 0.3)';
-    });
-});
-
-// Add typing effect to about hero title (optional enhancement)
-function aboutTypeWriter(element, text, speed = 100) {
-    let i = 0;
-    element.innerHTML = '';
-    
-    function aboutType() {
-        if (i < text.length) {
-            element.innerHTML += text.charAt(i);
-            i++;
-            setTimeout(aboutType, speed);
-        }
-    }
-    
-    aboutType();
-}
-
-// Add staggered animation entrance for content cards
-function initAboutStaggeredAnimations() {
-    const aboutCards = document.querySelectorAll('.about-content-card');
-    
-    aboutCards.forEach((card, index) => {
-        card.style.animationDelay = `${index * 0.2}s`;
-    });
-}
-
-// Initialize staggered animations
-initAboutStaggeredAnimations();
-
-// Add enhanced floating elements that respond to mouse movement
+// Enhanced mouse movement for floating elements
+let mouseMoveThrottled = false;
 document.addEventListener('mousemove', function(e) {
-    const aboutFloatingElements = document.querySelectorAll('.about-hero-banner > div[style*="position: absolute"]');
-    const mouseX = e.clientX / window.innerWidth;
-    const mouseY = e.clientY / window.innerHeight;
-    
-    aboutFloatingElements.forEach((element, index) => {
-        const speed = (index + 1) * 0.02;
-        const x = (mouseX - 0.5) * speed * 50;
-        const y = (mouseY - 0.5) * speed * 50;
-        
-        element.style.transform += ` translate(${x}px, ${y}px)`;
-    });
+    if (!mouseMoveThrottled) {
+        requestAnimationFrame(() => {
+            const aboutFloatingElements = document.querySelectorAll('.about-floating-pixel');
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            aboutFloatingElements.forEach((element, index) => {
+                const speed = (index + 1) * 0.02;
+                const x = (mouseX - 0.5) * speed * 50;
+                const y = (mouseY - 0.5) * speed * 50;
+                
+                const existingTransform = element.style.transform || '';
+                const baseTransform = existingTransform.replace(/translate\([^)]*\)/g, '');
+                element.style.transform = `${baseTransform} translate(${x}px, ${y}px)`;
+            });
+            mouseMoveThrottled = false;
+        });
+        mouseMoveThrottled = true;
+    }
 });
 
-// Add theme-aware color updates for floating elements
+// Theme-aware color updates for floating elements
 function updateAboutFloatingElementsForTheme() {
     const isLightTheme = document.body.classList.contains('light-theme');
-    const aboutFloatingElements = document.querySelectorAll('.about-hero-banner > div[style*="position: absolute"]');
+    const aboutFloatingElements = document.querySelectorAll('.about-floating-pixel');
+    
+    if (aboutFloatingElements.length === 0) {
+        console.log('No floating elements found for theme update');
+        return;
+    }
     
     const lightColors = ['#6a1b9a', '#1565c0', '#8e24aa', '#1976d2', '#4a148c'];
     const darkColors = ['#ba68c8', '#42a5f5', '#8e24aa', '#1976d2', '#6a1b9a'];
@@ -3775,20 +3894,53 @@ function updateAboutFloatingElementsForTheme() {
     });
 }
 
-// Listen for theme changes
-const themeObserver = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-            updateAboutFloatingElementsForTheme();
-        }
-    });
-});
+// Theme observer with better error handling
+function initAboutThemeObserver() {
+    try {
+        const themeObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    updateAboutFloatingElementsForTheme();
+                }
+            });
+        });
 
-// Start observing theme changes
-themeObserver.observe(document.body, {
-    attributes: true,
-    attributeFilter: ['class']
-});
+        themeObserver.observe(document.body, {
+            attributes: true,
+            attributeFilter: ['class']
+        });
+    } catch (error) {
+        console.warn('Could not initialize theme observer:', error);
+    }
+}
 
-// Initialize theme-aware elements
-updateAboutFloatingElementsForTheme();
+// Debug function
+function debugAboutPageElements() {
+    console.log('=== About Page Debug Info ===');
+    console.log('Hero banner:', document.querySelector('.about-hero-banner') ? 'Found' : 'Not found');
+    console.log('Hero content:', document.querySelector('.about-hero-content') ? 'Found' : 'Not found');
+    console.log('Floating elements container:', document.querySelector('.about-floating-elements') ? 'Found' : 'Not found');
+    console.log('Content cards:', document.querySelectorAll('.about-content-card').length);
+    console.log('Metric boxes:', document.querySelectorAll('.about-metric-box').length);
+    console.log('Infinity symbol:', document.querySelector('.about-infinity-symbol') ? 'Found' : 'Not found');
+    console.log('Page container:', document.querySelector('.about-page-container') ? 'Found' : 'Not found');
+    console.log('Body classes:', document.body.className);
+    console.log('===============================');
+}
+
+// Run debug after a short delay
+setTimeout(debugAboutPageElements, 100);
+
+// Cleanup function
+function cleanupAboutPage() {
+    console.log('About page cleanup performed');
+}
+
+// Export utilities
+if (typeof window !== 'undefined') {
+    window.aboutPageUtils = {
+        debug: debugAboutPageElements,
+        cleanup: cleanupAboutPage,
+        updateTheme: updateAboutFloatingElementsForTheme
+    };
+}

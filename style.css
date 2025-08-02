@@ -3,6 +3,7 @@
    margin: 0;
    padding: 0;
    box-sizing: border-box;
+}
 
 
 body {
@@ -7404,7 +7405,7 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     }
 }
 
-/* About Page Visuals CSS */
+/* About Page Visuals CSS - Production Ready */
 :root {
     --accent-color: #8a2be2;
     --bg-secondary: #1a1a2e;
@@ -7428,18 +7429,32 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     z-index: 1;
 }
 
-/* Hero Banner */
-.about-hero-banner {
+/* About Page Container */
+.about-page-container {
+    width: 100%;
     min-height: 100vh;
-    background: var(--about-gradient-cosmic);
-    display: flex;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Hero Banner - Fixed for guaranteed visibility */
+.about-hero-banner {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    min-height: 100vh;
+    height: 100vh;
+    width: 100%;
     align-items: center;
     justify-content: center;
     position: relative;
-    overflow: hidden;
+    background: var(--about-gradient-cosmic);
+    background-attachment: fixed;
     margin: 0;
     padding: 0;
-    width: 100%;
+    overflow: hidden;
+    transform: translateZ(0);
+    will-change: transform;
 }
 
 /* Infinity Backdrop */
@@ -7454,6 +7469,7 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     max-height: 400px;
     z-index: 1;
     opacity: 0.8;
+    pointer-events: none;
 }
 
 .about-infinity-symbol {
@@ -7462,6 +7478,7 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     color: rgba(255, 255, 255, 0.1);
     animation: aboutInfinityPulse 8s ease-in-out infinite;
     filter: drop-shadow(0 0 20px rgba(138, 43, 226, 0.3));
+    display: block;
 }
 
 @keyframes aboutInfinityPulse {
@@ -7475,54 +7492,67 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     }
 }
 
+/* Hero Content - Fixed for guaranteed visibility */
 .about-hero-content {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     text-align: center;
     z-index: 10;
     position: relative;
     padding: 2rem;
     max-width: 800px;
     width: 100%;
+    min-height: 200px;
     background: rgba(0, 0, 0, 0.2);
     border-radius: 20px;
     backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    transform: translateZ(0);
 }
 
+/* Main Title - Fixed for guaranteed visibility */
 .about-main-title {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     font-size: 4rem;
     font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 1rem;
     background: linear-gradient(135deg, #ffffff, var(--about-purple-light));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 1rem;
-    animation: aboutTitleEntrance 2s ease-out;
-    line-height: 1.2;
-    display: block;
     position: relative;
     z-index: 10;
+    animation: aboutTitleEntrance 2s ease-out;
+    transform: translateZ(0);
 }
 
 /* Fallback for browsers that don't support background-clip */
 @supports not (-webkit-background-clip: text) {
     .about-main-title {
-        color: #ffffff;
-        background: none;
+        color: #ffffff !important;
+        background: none !important;
     }
 }
 
+/* Hero Tagline - Fixed for guaranteed visibility */
 .about-hero-tagline {
+    display: block !important;
+    visibility: visible !important;
     font-size: 1.5rem;
-    color: rgba(255, 255, 255, 0.9);
-    opacity: 0;
-    animation: aboutTaglineReveal 2s ease-out 0.5s forwards;
     line-height: 1.4;
-    display: block;
+    color: rgba(255, 255, 255, 0.9);
     position: relative;
     z-index: 10;
+    opacity: 0;
+    animation: aboutTaglineReveal 2s ease-out 0.5s forwards;
+    transform: translateZ(0);
 }
 
-/* Floating Elements Animation */
+/* Floating Elements Container - Fixed */
 .about-floating-elements {
     position: absolute;
     width: 100%;
@@ -7530,6 +7560,9 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     top: 0;
     left: 0;
     z-index: 1;
+    pointer-events: none;
+    display: block !important;
+    visibility: visible !important;
 }
 
 .about-floating-elements::before,
@@ -7542,6 +7575,7 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     border-radius: 50%;
     animation: aboutPixelFloat 6s infinite ease-in-out;
     box-shadow: 0 0 20px currentColor;
+    display: block;
 }
 
 .about-floating-elements::before {
@@ -7734,6 +7768,23 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     letter-spacing: 1px;
 }
 
+/* Override any potential conflicts */
+.about-hero-banner * {
+    box-sizing: border-box;
+}
+
+/* Ensure no parent elements hide the banner */
+body, html {
+    margin: 0;
+    padding: 0;
+}
+
+/* Override any potential navigation/header conflicts */
+.about-hero-banner {
+    margin-top: 0 !important;
+    top: 0;
+}
+
 /* Animations */
 @keyframes aboutTitleEntrance {
     0% {
@@ -7775,6 +7826,49 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     50% {
         transform: translateY(-10px);
     }
+}
+
+/* Enhanced JavaScript-generated animations */
+@keyframes aboutPixelFloat {
+    0%, 100% { 
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.6;
+    }
+    33% { 
+        transform: translateY(-20px) rotate(120deg);
+        opacity: 1;
+    }
+    66% { 
+        transform: translateY(10px) rotate(240deg);
+        opacity: 0.8;
+    }
+}
+
+.about-animate {
+    animation: aboutSlideInUp 0.8s ease-out forwards;
+}
+
+@keyframes aboutSlideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.about-content-card {
+    transition: all 0.3s ease-out;
+}
+
+.about-metric-box {
+    transition: all 0.3s ease-out;
+}
+
+.about-floating-pixel {
+    will-change: transform;
 }
 
 /* Light Theme Adjustments */
