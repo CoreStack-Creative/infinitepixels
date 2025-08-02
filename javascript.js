@@ -30,7 +30,14 @@ const gameData = [
    { name: "Moto X3M", link: "games/motox3m.html" },
    { name: "Tall Man Run", link: "games/tallmanrun.html" },
    { name: "Happy Wheels", link: "games/happywheels.html" },
-   { name: "Madalin Stunt Cars Pro", link: "games/madalinstuntcarspro.html" }
+   { name: "Madalin Stunt Cars Pro", link: "games/madalinstuntcarspro.html" },
+   { name: "Fall Cars: Hexagon", link: "games/fallcarshexagon.html" },
+   { name: "Fruit Ninja", link: "games/fruitninja.html" },
+   { name: "Ball 2048", link: "games/ball2048.html" },
+   { name: "Ice Fishing", link: "games/icefishing.html" },
+   { name: "Stick Fighter 3D", link: "games/stickfighter3d.html" },
+   { name: "Papas Burgeria", link: "games/papasburgeria.html" },
+   { name: "Bullet Army Run", link: "games/bulletarmyrun.html" }
 ];
 
 
@@ -1760,6 +1767,55 @@ const allGamesDatabase = [
         image: "images/madalinstuntcarsproimage.jpg",
         url: "games/madalinstuntcarspro.html",
         tags: ["multiplayer", "racing", "cars"]
+    },
+    {
+        id: 22,
+        name: "Ice Fishing",
+        image: "images/icefishingimage.jpg",
+        url: "games/icefishing.html",
+        tags: ["fishing", "3d", "sports"]
+    },
+    {
+        id: 23,
+        name: "Stick Fighter 3D",
+        image: "images/stickfighter3dimage.jpg",
+        url: "games/stickfighter3d.html",
+        tags: ["action", "3d", "2 player"]
+    },
+    {
+        id: 24,
+        name: "Fruit Ninja",
+        image: "images/fruitninjaimage.jpg",
+        url: "games/fruitninja.html",
+        tags: ["fruit", "satisfying", "arcade"]
+    },
+    {
+        id: 25,
+        name: "Fall Cars: Hexagon",
+        image: "images/fallcarshexagonimage.jpg",
+        url: "games/fallcarshexagon.html",
+        tags: ["cars", "2 player", "platformer"]
+    },
+    {
+        id: 26,
+        name: "Ball 2048",
+        image: "images/ball2048image.jpg",
+        url: "games/ball2048.html",
+        tags: ["2048", "levels", "runner"]
+    },
+    {
+        id: 26,
+        name: "Papas Burgeria",
+        image: "images/papasburgeriaimage.jpg",
+        url: "games/papasburgeria.html",
+        tags: ["cooking", "clicker", "arcade"]
+    },
+    {
+        id: 27,
+        name: "Bullet Army Run",
+        image: "images/bulletarmyrunimage.jpg",
+        url: "games/bulletarmyrun.html",
+        tags: ["levels", "runner", "arcade"]
     }
 ];
 
@@ -3124,12 +3180,12 @@ const cosmicCategoriesConstellations = {
     },
     'cars': {
         name: 'Cars',
-        image: 'images/polytrackimage.jpg',
+        image: 'images/madalinstuntcarsproimage.jpg',
         description: 'Car-based adventures'
     },
     '2 player': {
         name: '2 Player',
-        image: 'images/basketrandomimage.jpg',
+        image: 'images/stickfighter3dimage.jpg',
         description: 'Two-player competitions'
     },
     'basketball': {
@@ -3139,7 +3195,7 @@ const cosmicCategoriesConstellations = {
     },
     '2048': {
         name: '2048',
-        image: 'images/cubearenaimage.jpg',
+        image: 'images/ball2048image.jpg',
         description: '2048-style puzzle games'
     },
     'drawing': {
@@ -3189,7 +3245,7 @@ const cosmicCategoriesConstellations = {
     },
     'fishing': {
         name: 'Fishing',
-        image: 'images/tinyfishingimage.jpg',
+        image: 'images/icefishingimage.jpg',
         description: 'Fishing and aquatic games'
     },
     'bike': {
@@ -3199,12 +3255,12 @@ const cosmicCategoriesConstellations = {
     },
     'levels': {
         name: 'Levels',
-        image: 'images/motox3mimage.jpg',
+        image: 'images/bulletarmyrunimage.jpg',
         description: 'Level-based progression games'
     },
     'cooking': {
         name: 'Cooking',
-        image: 'images/cookieclickerimage.jpg',
+        image: 'images/papasburgeriaimage.jpg',
         description: 'Cooking and food games'
     }
 };
