@@ -7410,10 +7410,15 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     --bg-secondary: #1a1a2e;
     --about-text-primary: #ffffff;
     --about-text-secondary: #b8b8ff;
-    --about-gradient-rocket: linear-gradient(135deg, var(--accent-color), #ff6b6b);
-    --about-gradient-ocean: linear-gradient(135deg, #4ecdc4, var(--accent-color));
-    --about-gradient-sunset: linear-gradient(135deg, #ffd93d, #ff6b6b);
-    --about-gradient-sky: linear-gradient(135deg, #74b9ff, #0984e3);
+    --about-purple-deep: #6a1b9a;
+    --about-purple-medium: #8e24aa;
+    --about-purple-light: #ba68c8;
+    --about-blue-deep: #1565c0;
+    --about-blue-medium: #1976d2;
+    --about-blue-light: #42a5f5;
+    --about-gradient-cosmic: linear-gradient(135deg, var(--about-purple-deep), var(--about-blue-medium));
+    --about-gradient-nebula: linear-gradient(135deg, var(--about-blue-deep), var(--about-purple-medium));
+    --about-gradient-aurora: linear-gradient(135deg, var(--about-purple-light), var(--about-blue-light));
     --about-glow-purple: 0 10px 40px rgba(138, 43, 226, 0.3);
 }
 
@@ -7426,7 +7431,7 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
 /* Hero Banner */
 .about-hero-banner {
     min-height: 100vh;
-    background: linear-gradient(135deg, var(--bg-secondary), #16213e);
+    background: var(--about-gradient-cosmic);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -7437,6 +7442,39 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     width: 100%;
 }
 
+/* Infinity Backdrop */
+.about-infinity-backdrop {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 80vw;
+    height: 40vh;
+    max-width: 800px;
+    max-height: 400px;
+    z-index: 1;
+    opacity: 0.8;
+}
+
+.about-infinity-symbol {
+    width: 100%;
+    height: 100%;
+    color: rgba(255, 255, 255, 0.1);
+    animation: aboutInfinityPulse 8s ease-in-out infinite;
+    filter: drop-shadow(0 0 20px rgba(138, 43, 226, 0.3));
+}
+
+@keyframes aboutInfinityPulse {
+    0%, 100% {
+        transform: scale(1) rotate(0deg);
+        opacity: 0.1;
+    }
+    50% {
+        transform: scale(1.1) rotate(2deg);
+        opacity: 0.2;
+    }
+}
+
 .about-hero-content {
     text-align: center;
     z-index: 10;
@@ -7444,15 +7482,16 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     padding: 2rem;
     max-width: 800px;
     width: 100%;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(0, 0, 0, 0.2);
     border-radius: 20px;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .about-main-title {
     font-size: 4rem;
     font-weight: 900;
-    background: linear-gradient(135deg, #8a2be2, #ff6b6b);
+    background: linear-gradient(135deg, #ffffff, var(--about-purple-light));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -7467,15 +7506,15 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
 /* Fallback for browsers that don't support background-clip */
 @supports not (-webkit-background-clip: text) {
     .about-main-title {
-        color: #8a2be2;
+        color: #ffffff;
         background: none;
     }
 }
 
 .about-hero-tagline {
     font-size: 1.5rem;
-    color: #b8b8ff;
-    opacity: 1;
+    color: rgba(255, 255, 255, 0.9);
+    opacity: 0;
     animation: aboutTaglineReveal 2s ease-out 0.5s forwards;
     line-height: 1.4;
     display: block;
@@ -7499,7 +7538,7 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     position: absolute;
     width: 8px;
     height: 8px;
-    background: var(--accent-color);
+    background: var(--about-purple-light);
     border-radius: 50%;
     animation: aboutPixelFloat 6s infinite ease-in-out;
     box-shadow: 0 0 20px currentColor;
@@ -7515,7 +7554,7 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     top: 60%;
     right: 15%;
     animation-delay: 3s;
-    background: #ff6b6b;
+    background: var(--about-blue-light);
 }
 
 /* Content Cards */
@@ -7528,7 +7567,7 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     position: relative;
     overflow: hidden;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(138, 43, 226, 0.2);
     transform: translateY(50px);
     opacity: 0;
     transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -7558,99 +7597,101 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     animation: aboutSymbolPulse 2s infinite ease-in-out;
 }
 
-/* Individual Card Styles */
+/* Individual Card Styles with Purple/Blue Theme */
 .about-mission-card {
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(255, 107, 107, 0.2));
-    box-shadow: var(--about-glow-purple);
+    background: linear-gradient(135deg, rgba(106, 27, 154, 0.3), rgba(25, 101, 192, 0.2));
+    box-shadow: 0 15px 50px rgba(106, 27, 154, 0.4);
 }
 
 .about-mission-card .about-card-symbol {
-    color: #ff6b6b;
+    color: var(--about-purple-light);
 }
 
 .about-vision-card {
-    background: linear-gradient(135deg, rgba(78, 205, 196, 0.2), rgba(138, 43, 226, 0.2));
-    box-shadow: 0 10px 40px rgba(78, 205, 196, 0.3);
+    background: linear-gradient(135deg, rgba(25, 101, 192, 0.3), rgba(142, 36, 170, 0.2));
+    box-shadow: 0 15px 50px rgba(25, 101, 192, 0.4);
 }
 
 .about-vision-card .about-card-symbol {
-    color: #4ecdc4;
+    color: var(--about-blue-light);
 }
 
 .about-values-card {
-    background: linear-gradient(135deg, rgba(255, 217, 61, 0.2), rgba(255, 107, 107, 0.2));
-    box-shadow: 0 10px 40px rgba(255, 217, 61, 0.3);
+    background: linear-gradient(135deg, rgba(186, 104, 200, 0.2), rgba(66, 165, 245, 0.2));
+    box-shadow: 0 15px 50px rgba(186, 104, 200, 0.3);
 }
 
 .about-values-card .about-card-symbol {
-    color: #ffd93d;
+    color: var(--about-purple-medium);
 }
 
 .about-excellence-card {
-    background: linear-gradient(135deg, rgba(116, 185, 255, 0.2), rgba(9, 132, 227, 0.2));
-    box-shadow: 0 10px 40px rgba(116, 185, 255, 0.3);
+    background: linear-gradient(135deg, rgba(66, 165, 245, 0.3), rgba(106, 27, 154, 0.2));
+    box-shadow: 0 15px 50px rgba(66, 165, 245, 0.4);
 }
 
 .about-excellence-card .about-card-symbol {
-    color: #74b9ff;
+    color: var(--about-blue-medium);
 }
 
 .about-innovation-card {
-    background: linear-gradient(135deg, rgba(253, 203, 110, 0.2), rgba(255, 107, 107, 0.2));
-    box-shadow: 0 10px 40px rgba(253, 203, 110, 0.3);
+    background: linear-gradient(135deg, rgba(142, 36, 170, 0.3), rgba(66, 165, 245, 0.2));
+    box-shadow: 0 15px 50px rgba(142, 36, 170, 0.4);
 }
 
 .about-innovation-card .about-card-symbol {
-    color: #fdcb6e;
+    color: var(--about-purple-light);
 }
 
 .about-destiny-card {
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.3), rgba(116, 185, 255, 0.3));
-    box-shadow: 0 10px 40px rgba(138, 43, 226, 0.4);
+    background: linear-gradient(135deg, rgba(106, 27, 154, 0.4), rgba(25, 118, 210, 0.3));
+    box-shadow: 0 15px 50px rgba(138, 43, 226, 0.5);
 }
 
 .about-destiny-card .about-card-symbol {
     color: var(--accent-color);
 }
 
-/* Section Areas */
-.about-mission-area,
-.about-vision-zone,
-.about-values-segment,
-.about-excellence-panel,
-.about-innovation-district,
-.about-destiny-realm {
+/* Section Areas with Purple/Blue Gradients */
+.about-mission-area {
+    background: linear-gradient(135deg, #1a1a2e, #2d1b69);
     padding: 5rem 2rem;
     position: relative;
 }
 
-.about-mission-area {
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
-}
-
 .about-vision-zone {
-    background: linear-gradient(135deg, #16213e, #0f3460);
+    background: linear-gradient(135deg, #2d1b69, #1e3a8a);
+    padding: 5rem 2rem;
+    position: relative;
 }
 
 .about-values-segment {
-    background: linear-gradient(135deg, #0f3460, #16213e);
+    background: linear-gradient(135deg, #1e3a8a, #312e81);
+    padding: 5rem 2rem;
+    position: relative;
 }
 
 .about-excellence-panel {
-    background: linear-gradient(135deg, #16213e, #1a1a2e);
+    background: linear-gradient(135deg, #312e81, #2d1b69);
+    padding: 5rem 2rem;
+    position: relative;
 }
 
 .about-innovation-district {
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    background: linear-gradient(135deg, #2d1b69, #1a1a2e);
+    padding: 5rem 2rem;
+    position: relative;
 }
 
 .about-destiny-realm {
-    background: linear-gradient(135deg, #16213e, #0f3460);
+    background: linear-gradient(135deg, #1a1a2e, #1e3a8a);
+    padding: 5rem 2rem;
+    position: relative;
 }
 
 /* Metrics Showcase */
 .about-metrics-showcase {
-    background: var(--bg-secondary);
+    background: linear-gradient(135deg, #1e3a8a, #312e81);
     padding: 6rem 2rem;
 }
 
@@ -7666,11 +7707,12 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     text-align: center;
     padding: 2rem;
     border-radius: 15px;
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(255, 107, 107, 0.1));
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(135deg, rgba(106, 27, 154, 0.2), rgba(25, 101, 192, 0.2));
+    border: 1px solid rgba(138, 43, 226, 0.3);
     transform: scale(0.9);
     opacity: 0;
     transition: all 0.8s ease-out;
+    backdrop-filter: blur(10px);
 }
 
 .about-metric-box.about-animate {
@@ -7681,7 +7723,7 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
 .about-metric-value {
     font-size: 3rem;
     font-weight: 900;
-    color: var(--accent-color);
+    color: var(--about-purple-light);
     margin-bottom: 0.5rem;
 }
 
@@ -7735,6 +7777,121 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     }
 }
 
+/* Light Theme Adjustments */
+body.light-theme .about-hero-banner {
+    background: linear-gradient(135deg, #e8eaf6, #f3e5f5);
+}
+
+body.light-theme .about-infinity-symbol {
+    color: rgba(106, 27, 154, 0.15);
+}
+
+body.light-theme .about-hero-content {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(138, 43, 226, 0.2);
+}
+
+body.light-theme .about-main-title {
+    background: linear-gradient(135deg, var(--about-purple-deep), var(--about-blue-medium));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+body.light-theme .about-hero-tagline {
+    color: #5e35b1;
+}
+
+body.light-theme .about-mission-area {
+    background: linear-gradient(135deg, #f5f5f5, #ede7f6);
+}
+
+body.light-theme .about-vision-zone {
+    background: linear-gradient(135deg, #ede7f6, #e3f2fd);
+}
+
+body.light-theme .about-values-segment {
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+}
+
+body.light-theme .about-excellence-panel {
+    background: linear-gradient(135deg, #f3e5f5, #ede7f6);
+}
+
+body.light-theme .about-innovation-district {
+    background: linear-gradient(135deg, #ede7f6, #f5f5f5);
+}
+
+body.light-theme .about-destiny-realm {
+    background: linear-gradient(135deg, #f5f5f5, #e3f2fd);
+}
+
+body.light-theme .about-metrics-showcase {
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+}
+
+body.light-theme .about-content-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(138, 43, 226, 0.2);
+    box-shadow: 0 8px 32px rgba(106, 27, 154, 0.1);
+}
+
+body.light-theme .about-content-card h2 {
+    color: #4a148c;
+}
+
+body.light-theme .about-content-card p {
+    color: #6a1b9a;
+}
+
+body.light-theme .about-mission-card {
+    background: linear-gradient(135deg, rgba(106, 27, 154, 0.1), rgba(25, 101, 192, 0.05));
+    box-shadow: 0 8px 32px rgba(106, 27, 154, 0.15);
+}
+
+body.light-theme .about-vision-card {
+    background: linear-gradient(135deg, rgba(25, 101, 192, 0.1), rgba(142, 36, 170, 0.05));
+    box-shadow: 0 8px 32px rgba(25, 101, 192, 0.15);
+}
+
+body.light-theme .about-values-card {
+    background: linear-gradient(135deg, rgba(186, 104, 200, 0.08), rgba(66, 165, 245, 0.05));
+    box-shadow: 0 8px 32px rgba(186, 104, 200, 0.12);
+}
+
+body.light-theme .about-excellence-card {
+    background: linear-gradient(135deg, rgba(66, 165, 245, 0.1), rgba(106, 27, 154, 0.05));
+    box-shadow: 0 8px 32px rgba(66, 165, 245, 0.15);
+}
+
+body.light-theme .about-innovation-card {
+    background: linear-gradient(135deg, rgba(142, 36, 170, 0.1), rgba(66, 165, 245, 0.05));
+    box-shadow: 0 8px 32px rgba(142, 36, 170, 0.15);
+}
+
+body.light-theme .about-destiny-card {
+    background: linear-gradient(135deg, rgba(106, 27, 154, 0.12), rgba(25, 118, 210, 0.08));
+    box-shadow: 0 8px 32px rgba(138, 43, 226, 0.2);
+}
+
+body.light-theme .about-metric-box {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(138, 43, 226, 0.2);
+    box-shadow: 0 8px 32px rgba(106, 27, 154, 0.1);
+}
+
+body.light-theme .about-metric-value {
+    color: var(--about-purple-deep);
+}
+
+body.light-theme .about-metric-description {
+    color: #5e35b1;
+}
+
+body.light-theme .about-card-symbol {
+    filter: brightness(0.8);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .about-main-title {
@@ -7774,6 +7931,11 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     .about-destiny-realm {
         padding: 3rem 1rem;
     }
+    
+    .about-infinity-backdrop {
+        width: 90vw;
+        height: 30vh;
+    }
 }
 
 /* Smooth scrolling behavior */
@@ -7797,4 +7959,13 @@ html {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #9b3ad6;
+}
+
+/* Light theme scrollbar */
+body.light-theme ::-webkit-scrollbar-track {
+    background: #f5f5f5;
+}
+
+body.light-theme ::-webkit-scrollbar-thumb {
+    background: var(--about-purple-medium);
 }

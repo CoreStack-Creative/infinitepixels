@@ -3530,8 +3530,9 @@ if (document.readyState === 'loading') {
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize about page animations
     initAboutScrollAnimations();
-    initAboutCounterAnimations();
+    initAboutScrollAnimations();
     initAboutFloatingElements();
+    initAboutInfinityAnimation();
 });
 
 // Scroll-triggered animations for about page
@@ -3594,10 +3595,10 @@ function formatAboutNumber(num) {
 // Create floating elements animation for about page
 function initAboutFloatingElements() {
     const aboutHeroBanner = document.querySelector('.about-hero-banner');
-    const aboutPixelColors = ['#8a2be2', '#ff6b6b', '#4ecdc4', '#ffd93d', '#74b9ff'];
+    const aboutPixelColors = ['#ba68c8', '#42a5f5', '#8e24aa', '#1976d2', '#6a1b9a'];
     
     // Create additional floating elements
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 12; i++) {
         createAboutFloatingElement(aboutHeroBanner, aboutPixelColors[i % aboutPixelColors.length], i);
     }
 }
@@ -3606,36 +3607,56 @@ function createAboutFloatingElement(container, color, index) {
     const aboutPixel = document.createElement('div');
     aboutPixel.style.cssText = `
         position: absolute;
-        width: ${Math.random() * 8 + 4}px;
-        height: ${Math.random() * 8 + 4}px;
+        width: ${Math.random() * 10 + 6}px;
+        height: ${Math.random() * 10 + 6}px;
         background: ${color};
         border-radius: 50%;
         pointer-events: none;
-        z-index: 1;
+        z-index: 2;
         animation: aboutPixelFloat ${6 + Math.random() * 4}s infinite ease-in-out;
-        animation-delay: ${index * 0.8}s;
+        animation-delay: ${index * 0.6}s;
         top: ${Math.random() * 80 + 10}%;
         left: ${Math.random() * 80 + 10}%;
         opacity: ${0.6 + Math.random() * 0.4};
+        box-shadow: 0 0 15px ${color};
     `;
     
     container.appendChild(aboutPixel);
+}
+
+// Initialize infinity symbol animation
+function initAboutInfinityAnimation() {
+    const infinitySymbol = document.querySelector('.about-infinity-symbol');
+    if (infinitySymbol) {
+        // Add additional animation on scroll
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const rate = scrolled * -0.1;
+            infinitySymbol.style.transform = `rotate(${rate}deg)`;
+        });
+    }
 }
 
 // Parallax scrolling effect for about hero section
 window.addEventListener('scroll', function() {
     const scrolled = window.pageYOffset;
     const aboutHeroContent = document.querySelector('.about-hero-content');
-    const aboutFloatingElements = document.querySelectorAll('.about-floating-elements > div, .about-hero-banner > div[style*="position: absolute"]');
+    const aboutFloatingElements = document.querySelectorAll('.about-hero-banner > div[style*="position: absolute"]');
+    const aboutInfinityBackdrop = document.querySelector('.about-infinity-backdrop');
     
     // Parallax effect for hero content
     if (aboutHeroContent) {
         aboutHeroContent.style.transform = `translateY(${scrolled * 0.3}px)`;
     }
     
+    // Parallax effect for infinity backdrop
+    if (aboutInfinityBackdrop) {
+        aboutInfinityBackdrop.style.transform = `translate(-50%, -50%) translateY(${scrolled * 0.2}px)`;
+    }
+    
     // Parallax effect for floating elements
     aboutFloatingElements.forEach((element, index) => {
-        const speed = 0.1 + (index * 0.05);
+        const speed = 0.1 + (index * 0.03);
         element.style.transform = `translateY(${scrolled * speed}px)`;
     });
 });
@@ -3667,26 +3688,30 @@ window.addEventListener('scroll', function() {
 // Add interactive hover effects to content cards
 document.querySelectorAll('.about-content-card').forEach(card => {
     card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-10px) scale(1.02)';
+        this.style.transform = 'translateY(-15px) scale(1.03)';
         this.style.transition = 'all 0.3s ease-out';
+        this.style.boxShadow = '0 25px 60px rgba(138, 43, 226, 0.4)';
     });
     
     card.addEventListener('mouseleave', function() {
         this.style.transform = 'translateY(0) scale(1)';
+        this.style.boxShadow = '';
     });
 });
 
 // Add glow effect on hover for metric boxes
 document.querySelectorAll('.about-metric-box').forEach(metricBox => {
     metricBox.addEventListener('mouseenter', function() {
-        this.style.boxShadow = '0 15px 50px rgba(138, 43, 226, 0.4)';
-        this.style.transform = 'scale(1.05)';
+        this.style.boxShadow = '0 20px 60px rgba(138, 43, 226, 0.5)';
+        this.style.transform = 'scale(1.08)';
         this.style.transition = 'all 0.3s ease-out';
+        this.style.borderColor = '#8a2be2';
     });
     
     metricBox.addEventListener('mouseleave', function() {
-        this.style.boxShadow = 'none';
+        this.style.boxShadow = '';
         this.style.transform = 'scale(1)';
+        this.style.borderColor = 'rgba(138, 43, 226, 0.3)';
     });
 });
 
@@ -3706,13 +3731,6 @@ function aboutTypeWriter(element, text, speed = 100) {
     aboutType();
 }
 
-// Initialize typing effect for about hero title (uncomment to enable)
-// const aboutMainTitle = document.querySelector('.about-main-title');
-// if (aboutMainTitle) {
-//     const aboutTitleText = aboutMainTitle.textContent;
-//     aboutTypeWriter(aboutMainTitle, aboutTitleText, 80);
-// }
-
 // Add staggered animation entrance for content cards
 function initAboutStaggeredAnimations() {
     const aboutCards = document.querySelectorAll('.about-content-card');
@@ -3724,3 +3742,53 @@ function initAboutStaggeredAnimations() {
 
 // Initialize staggered animations
 initAboutStaggeredAnimations();
+
+// Add enhanced floating elements that respond to mouse movement
+document.addEventListener('mousemove', function(e) {
+    const aboutFloatingElements = document.querySelectorAll('.about-hero-banner > div[style*="position: absolute"]');
+    const mouseX = e.clientX / window.innerWidth;
+    const mouseY = e.clientY / window.innerHeight;
+    
+    aboutFloatingElements.forEach((element, index) => {
+        const speed = (index + 1) * 0.02;
+        const x = (mouseX - 0.5) * speed * 50;
+        const y = (mouseY - 0.5) * speed * 50;
+        
+        element.style.transform += ` translate(${x}px, ${y}px)`;
+    });
+});
+
+// Add theme-aware color updates for floating elements
+function updateAboutFloatingElementsForTheme() {
+    const isLightTheme = document.body.classList.contains('light-theme');
+    const aboutFloatingElements = document.querySelectorAll('.about-hero-banner > div[style*="position: absolute"]');
+    
+    const lightColors = ['#6a1b9a', '#1565c0', '#8e24aa', '#1976d2', '#4a148c'];
+    const darkColors = ['#ba68c8', '#42a5f5', '#8e24aa', '#1976d2', '#6a1b9a'];
+    
+    const colors = isLightTheme ? lightColors : darkColors;
+    
+    aboutFloatingElements.forEach((element, index) => {
+        const color = colors[index % colors.length];
+        element.style.background = color;
+        element.style.boxShadow = `0 0 15px ${color}`;
+    });
+}
+
+// Listen for theme changes
+const themeObserver = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            updateAboutFloatingElementsForTheme();
+        }
+    });
+});
+
+// Start observing theme changes
+themeObserver.observe(document.body, {
+    attributes: true,
+    attributeFilter: ['class']
+});
+
+// Initialize theme-aware elements
+updateAboutFloatingElementsForTheme();

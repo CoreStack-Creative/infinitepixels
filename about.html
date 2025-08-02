@@ -92,11 +92,20 @@
     <main class="main-content" id="mainContent">
         <!-- Hero Section -->
         <section class="about-hero-banner">
+            <div class="about-infinity-backdrop">
+                <svg class="about-infinity-symbol" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M100 100 C100 50, 150 50, 200 100 C250 150, 300 150, 300 100 C300 50, 250 50, 200 100 C150 150, 100 150, 100 100 Z" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          stroke-width="3" 
+                          opacity="0.15"/>
+                </svg>
+            </div>
             <div class="about-hero-content">
-                <div class="about-floating-elements"></div>
                 <h1 class="about-main-title">About InfinitePixels</h1>
                 <p class="about-hero-tagline">Where Gaming Dreams Come to Life</p>
             </div>
+            <div class="about-floating-elements"></div> <!-- Move this outside hero-content -->
         </section>
 
         <!-- Mission Section -->
