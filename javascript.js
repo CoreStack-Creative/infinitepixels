@@ -3037,162 +3037,162 @@ document.addEventListener('DOMContentLoaded', () => {
 // Category definitions with cosmic themes and images
 const cosmicCategoriesConstellations = {
     'shooter': {
-        name: 'Combat Zone',
+        name: 'Shooter',
         image: 'images/category-shooter.jpg',
         description: 'Intense shooting and combat games'
     },
     'action': {
-        name: 'Action Arena',
+        name: 'Action',
         image: 'images/category-action.jpg',
         description: 'Fast-paced action adventures'
     },
     'racing': {
-        name: 'Speed Dimension',
+        name: 'Racing',
         image: 'images/category-racing.jpg',
         description: 'High-speed racing thrills'
     },
     'puzzle': {
-        name: 'Mind Palace',
+        name: 'Puzzle',
         image: 'images/category-puzzle.jpg',
         description: 'Brain-bending puzzle challenges'
     },
     'platformer': {
-        name: 'Jump Nexus',
+        name: 'Platformer',
         image: 'images/category-platformer.jpg',
         description: 'Jumping and platform adventures'
     },
     'multiplayer': {
-        name: 'Social Galaxy',
+        name: 'Multiplayer',
         image: 'images/category-multiplayer.jpg',
         description: 'Play with friends online'
     },
     'io': {
-        name: 'IO Universe',
+        name: 'IO',
         image: 'images/category-io.jpg',
         description: 'Competitive IO games'
     },
     'idle': {
-        name: 'Zen Garden',
+        name: 'Idle',
         image: 'images/category-idle.jpg',
         description: 'Relaxing idle experiences'
     },
     'sports': {
-        name: 'Athletic Arena',
+        name: 'Sports',
         image: 'images/category-sports.jpg',
         description: 'Sports and athletic games'
     },
     '3d': {
-        name: '3D Cosmos',
+        name: '3D',
         image: 'images/category-3d.jpg',
         description: 'Immersive 3D experiences'
     },
     'arcade': {
-        name: 'Retro Realm',
+        name: 'Arcade',
         image: 'images/category-arcade.jpg',
         description: 'Classic arcade fun'
     },
     'adventure': {
-        name: 'Quest Portal',
+        name: 'Adventure',
         image: 'images/category-adventure.jpg',
         description: 'Epic adventure journeys'
     },
     'clicker': {
-        name: 'Click Dimension',
+        name: 'Clicker',
         image: 'images/category-clicker.jpg',
         description: 'Addictive clicking games'
     },
     'cars': {
-        name: 'Motor Realm',
+        name: 'Cars',
         image: 'images/category-cars.jpg',
         description: 'Car-based adventures'
     },
     '2 player': {
-        name: 'Duo Arena',
+        name: '2-Player',
         image: 'images/category-2player.jpg',
         description: 'Two-player competitions'
     },
     'basketball': {
-        name: 'Court Champions',
+        name: 'Basketball',
         image: 'images/category-basketball.jpg',
         description: 'Basketball games and challenges'
     },
     '2048': {
-        name: 'Number Nexus',
+        name: '2048',
         image: 'images/category-2048.jpg',
         description: '2048-style puzzle games'
     },
     'drawing': {
-        name: 'Art Studio',
+        name: 'Drawing',
         image: 'images/category-drawing.jpg',
         description: 'Creative drawing games'
     },
     'runner': {
-        name: 'Speed Trail',
+        name: 'Runner',
         image: 'images/category-runner.jpg',
         description: 'Endless running adventures'
     },
     'watermelon': {
-        name: 'Fruit Paradise',
+        name: 'Watermelon',
         image: 'images/category-watermelon.jpg',
         description: 'Fruit-themed games'
     },
     'fruit': {
-        name: 'Orchard World',
+        name: 'Fruit',
         image: 'images/category-fruit.jpg',
         description: 'Fresh fruit games'
     },
     'jumping': {
-        name: 'Leap Dimension',
+        name: 'Jumping',
         image: 'images/category-jumping.jpg',
         description: 'High-flying jump games'
     },
     'online': {
-        name: 'Network Hub',
+        name: 'Online',
         image: 'images/category-online.jpg',
         description: 'Connected online experiences'
     },
     'strategy': {
-        name: 'Tactical Core',
+        name: 'Strategy',
         image: 'images/category-strategy.jpg',
         description: 'Strategic thinking games'
     },
     'parkour': {
-        name: 'Free Runner',
+        name: 'Parkour',
         image: 'images/category-parkour.jpg',
         description: 'Parkour and free-running'
     },
     'animal': {
-        name: 'Wildlife Zone',
+        name: 'Animal',
         image: 'images/category-animal.jpg',
         description: 'Animal-themed adventures'
     },
     'satisfying': {
-        name: 'Zen Flow',
+        name: 'Satisfying',
         image: 'images/category-satisfying.jpg',
         description: 'Satisfying gameplay experiences'
     },
     'endless': {
-        name: 'Infinite Loop',
+        name: 'Endless',
         image: 'images/category-endless.jpg',
         description: 'Never-ending gameplay'
     },
     'fishing': {
-        name: 'Angler\'s Cove',
+        name: 'Fishing',
         image: 'images/category-fishing.jpg',
         description: 'Fishing and aquatic games'
     },
     'bike': {
-        name: 'Cycle Circuit',
+        name: 'Bike',
         image: 'images/category-bike.jpg',
         description: 'Motorcycle and bike games'
     },
     'levels': {
-        name: 'Stage Select',
+        name: 'Levels',
         image: 'images/category-levels.jpg',
         description: 'Level-based progression games'
     },
     'cooking': {
-        name: 'Chef\'s Kitchen',
+        name: 'Cooking',
         image: 'images/category-cooking.jpg',
         description: 'Cooking and food games'
     }
