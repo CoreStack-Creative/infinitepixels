@@ -6837,7 +6837,7 @@ html {
 
 .cosmic-categories-universe-container {
     padding: 2rem;
-    background: linear-gradient(135deg, #1a0b2e 0%, #16213e 50%, #0f3460 100%);
+    background: var(--bg-primary);
     min-height: 100vh;
     position: relative;
     overflow: hidden;
@@ -6867,8 +6867,8 @@ html {
 }
 
 .cosmic-categories-modal-container {
-    background: linear-gradient(145deg, rgba(26, 11, 46, 0.95), rgba(22, 33, 62, 0.95));
-    border: 2px solid rgba(138, 43, 226, 0.5);
+    background: var(--bg-secondary);
+    border: 2px solid var(--accent-color);
     border-radius: 25px;
     width: 90%;
     height: 85%;
@@ -6877,10 +6877,7 @@ html {
     position: relative;
     overflow: hidden;
     backdrop-filter: blur(20px);
-    box-shadow: 
-        0 25px 80px rgba(138, 43, 226, 0.3),
-        0 0 100px rgba(75, 0, 130, 0.2),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 0 25px 80px rgba(138, 43, 226, 0.3);
     transform: scale(0.8) translateY(50px);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -6891,8 +6888,8 @@ html {
 
 .cosmic-categories-modal-header {
     padding: 2rem;
-    border-bottom: 2px solid rgba(138, 43, 226, 0.3);
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(75, 0, 130, 0.1));
+    border-bottom: 2px solid var(--accent-color);
+    background: var(--bg-secondary);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -6902,7 +6899,7 @@ html {
 .cosmic-categories-modal-title {
     font-size: 2.5rem;
     font-weight: bold;
-    color: #ffffff;
+    color: var(--text-primary);
     margin: 0;
     display: flex;
     align-items: center;
@@ -6913,12 +6910,12 @@ html {
     width: 50px;
     height: 50px;
     border-radius: 12px;
-    border: 2px solid rgba(138, 43, 226, 0.6);
+    border: 2px solid var(--accent-color, #8a2be2);
     box-shadow: 0 8px 25px rgba(138, 43, 226, 0.3);
 }
 
 .cosmic-categories-modal-close {
-    background: linear-gradient(45deg, #8a2be2, #4b0082);
+    background: var(--accent-color, #8a2be2);
     border: none;
     border-radius: 50%;
     width: 50px;
@@ -6950,7 +6947,7 @@ html {
     padding: 2rem;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(138, 43, 226, 0.5) rgba(75, 0, 130, 0.2);
+    scrollbar-color: var(--accent-color, #8a2be2) var(--bg-secondary, #1e1e3f);
 }
 
 .cosmic-categories-modal-games-container::-webkit-scrollbar {
@@ -6958,12 +6955,12 @@ html {
 }
 
 .cosmic-categories-modal-games-container::-webkit-scrollbar-track {
-    background: rgba(75, 0, 130, 0.2);
+    background: var(--bg-secondary, #1e1e3f);
     border-radius: 10px;
 }
 
 .cosmic-categories-modal-games-container::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, #8a2be2, #4b0082);
+    background: var(--accent-color, #8a2be2);
     border-radius: 10px;
 }
 
@@ -6980,16 +6977,16 @@ html {
     align-items: center;
     justify-content: center;
     gap: 1rem;
-    border-top: 1px solid rgba(138, 43, 226, 0.3);
-    background: linear-gradient(180deg, transparent, rgba(138, 43, 226, 0.05));
+    border-top: 1px solid var(--accent-color, #8a2be2);
+    background: var(--bg-secondary, #1e1e3f);
 }
 
 .cosmic-categories-pagination-button {
-    background: linear-gradient(45deg, rgba(138, 43, 226, 0.2), rgba(75, 0, 130, 0.2));
-    border: 2px solid rgba(138, 43, 226, 0.4);
+    background: var(--bg-secondary, #1e1e3f);
+    border: 2px solid var(--accent-color, #8a2be2);
     border-radius: 12px;
     padding: 0.8rem 1.5rem;
-    color: white;
+    color: var(--text-primary, white);
     cursor: pointer;
     transition: all 0.3s ease;
     font-weight: 600;
@@ -6997,8 +6994,8 @@ html {
 }
 
 .cosmic-categories-pagination-button:hover:not(:disabled) {
-    background: linear-gradient(45deg, rgba(138, 43, 226, 0.4), rgba(75, 0, 130, 0.4));
-    border-color: rgba(138, 43, 226, 0.8);
+    background: var(--accent-color, #8a2be2);
+    color: white;
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(138, 43, 226, 0.3);
 }
@@ -7009,13 +7006,13 @@ html {
 }
 
 .cosmic-categories-pagination-button.cosmic-categories-active-page {
-    background: linear-gradient(45deg, #8a2be2, #4b0082);
-    border-color: rgba(138, 43, 226, 0.8);
+    background: var(--accent-color, #8a2be2);
+    color: white;
     box-shadow: 0 5px 20px rgba(138, 43, 226, 0.4);
 }
 
 .cosmic-categories-page-info {
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text-secondary);
     font-size: 1rem;
     font-weight: 500;
     margin: 0 1rem;
@@ -7024,7 +7021,7 @@ html {
 .cosmic-categories-modal-no-games {
     text-align: center;
     padding: 4rem 2rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--text-secondary);
     font-size: 1.2rem;
     font-style: italic;
 }
@@ -7038,8 +7035,7 @@ html {
     height: 100%;
     background: 
         radial-gradient(circle at 20% 30%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, rgba(75, 0, 130, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.05) 0%, transparent 30%);
+        radial-gradient(circle at 80% 70%, rgba(75, 0, 130, 0.1) 0%, transparent 50%);
     animation: cosmic-categories-star-pulse 8s ease-in-out infinite alternate;
     pointer-events: none;
 }
@@ -7064,22 +7060,18 @@ html {
 }
 
 .cosmic-categories-title-glow {
-    background: linear-gradient(45deg, #8a2be2, #4b0082, #8a2be2);
-    background-size: 200% 200%;
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: var(--accent-color);
     animation: cosmic-categories-title-flow 3s ease-in-out infinite;
     filter: drop-shadow(0 0 20px rgba(138, 43, 226, 0.5));
 }
 
 @keyframes cosmic-categories-title-flow {
-    0%, 100% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
 }
 
 .cosmic-categories-subtitle-shimmer {
-    color: #b8b8ff;
+    color: var(--text-secondary);
     font-size: 1.2rem;
     opacity: 0.9;
     animation: cosmic-categories-shimmer 2s ease-in-out infinite alternate;
@@ -7101,7 +7093,7 @@ html {
 }
 
 .cosmic-categories-constellation-card {
-    background: linear-gradient(145deg, rgba(138, 43, 226, 0.15), rgba(75, 0, 130, 0.15));
+    background: var(--bg-secondary);
     border: 2px solid transparent;
     border-radius: 20px;
     padding: 0;
@@ -7110,9 +7102,7 @@ html {
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     backdrop-filter: blur(10px);
-    box-shadow: 
-        0 8px 32px rgba(138, 43, 226, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(138, 43, 226, 0.1);
 }
 
 .cosmic-categories-constellation-card::before {
@@ -7153,25 +7143,20 @@ html {
 
 .cosmic-categories-constellation-card:hover {
     transform: translateY(-8px) scale(1.02);
-    border-color: rgba(138, 43, 226, 0.5);
-    box-shadow: 
-        0 20px 40px rgba(138, 43, 226, 0.2),
-        0 0 60px rgba(75, 0, 130, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    border-color: var(--accent-color, #8a2be2);
+    box-shadow: 0 20px 40px rgba(138, 43, 226, 0.2);
 }
 
 .cosmic-categories-constellation-card.cosmic-categories-active-dimension {
-    border-color: rgba(138, 43, 226, 0.8);
-    box-shadow: 
-        0 12px 48px rgba(138, 43, 226, 0.3),
-        0 0 80px rgba(75, 0, 130, 0.4);
+    border-color: var(--accent-color, #8a2be2);
+    box-shadow: 0 12px 48px rgba(138, 43, 226, 0.3);
 }
 
 .cosmic-categories-star-header {
     position: relative;
     padding: 1.5rem;
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.2), rgba(75, 0, 130, 0.2));
-    border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--accent-color);
     z-index: 3;
 }
 
@@ -7180,14 +7165,14 @@ html {
     height: 60px;
     border-radius: 15px;
     object-fit: cover;
-    border: 3px solid rgba(138, 43, 226, 0.4);
+    border: 3px solid var(--accent-color, #8a2be2);
     margin-bottom: 1rem;
     transition: all 0.3s ease;
     box-shadow: 0 8px 25px rgba(138, 43, 226, 0.2);
 }
 
 .cosmic-categories-constellation-card:hover .cosmic-categories-stellar-image {
-    border-color: rgba(138, 43, 226, 0.8);
+    border-color: var(--accent-color, #8a2be2);
     transform: scale(1.1) rotate(5deg);
     box-shadow: 0 12px 35px rgba(138, 43, 226, 0.4);
 }
@@ -7195,14 +7180,14 @@ html {
 .cosmic-categories-cosmic-name {
     font-size: 1.8rem;
     font-weight: bold;
-    color: #ffffff;
+    color: var(--text-primary);
     margin: 0 0 0.5rem;
     text-shadow: 0 2px 10px rgba(138, 43, 226, 0.3);
 }
 
 .cosmic-categories-game-count-badge {
     display: inline-block;
-    background: linear-gradient(45deg, #8a2be2, #4b0082);
+    background: var(--accent-color, #8a2be2);
     color: white;
     padding: 0.3rem 0.8rem;
     border-radius: 20px;
@@ -7226,7 +7211,7 @@ html {
 }
 
 .cosmic-categories-game-nebula-card {
-    background: linear-gradient(145deg, rgba(138, 43, 226, 0.1), rgba(75, 0, 130, 0.1));
+    background: var(--bg-secondary);
     border: 2px solid rgba(138, 43, 226, 0.2);
     border-radius: 15px;
     padding: 1rem;
@@ -7256,10 +7241,8 @@ html {
 
 .cosmic-categories-game-nebula-card:hover {
     transform: translateY(-5px);
-    border-color: rgba(138, 43, 226, 0.6);
-    box-shadow: 
-        0 15px 35px rgba(138, 43, 226, 0.2),
-        0 0 40px rgba(75, 0, 130, 0.1);
+    border-color: var(--accent-color, #8a2be2);
+    box-shadow: 0 15px 35px rgba(138, 43, 226, 0.2);
 }
 
 .cosmic-categories-game-star-image {
@@ -7274,14 +7257,14 @@ html {
 
 .cosmic-categories-game-nebula-card:hover .cosmic-categories-game-star-image {
     transform: scale(1.05);
-    border-color: rgba(138, 43, 226, 0.6);
+    border-color: var(--accent-color, #8a2be2);
     box-shadow: 0 8px 25px rgba(138, 43, 226, 0.3);
 }
 
 .cosmic-categories-game-title-aurora {
     font-size: 1rem;
     font-weight: 600;
-    color: #ffffff;
+    color: var(--text-primary);
     margin: 0;
     text-shadow: 0 2px 8px rgba(138, 43, 226, 0.2);
     position: relative;
@@ -7291,9 +7274,52 @@ html {
 .cosmic-categories-void-message {
     text-align: center;
     padding: 3rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--text-secondary);
     font-size: 1.1rem;
     font-style: italic;
+}
+
+/* Light theme adjustments */
+body.theme-light .cosmic-categories-universe-container {
+    background: var(--bg-primary, #f5f5f5);
+}
+
+body.theme-light .cosmic-categories-modal-container {
+    background: var(--bg-secondary, #ffffff);
+    border-color: var(--accent-color, #8a2be2);
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.1);
+}
+
+body.theme-light .cosmic-categories-constellation-card {
+    background: var(--bg-secondary, #ffffff);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+body.theme-light .cosmic-categories-star-header {
+    background: var(--bg-primary, #f5f5f5);
+}
+
+body.theme-light .cosmic-categories-game-nebula-card {
+    background: var(--bg-secondary, #ffffff);
+}
+
+body.theme-light .cosmic-categories-modal-pagination {
+    background: var(--bg-secondary, #ffffff);
+}
+
+body.theme-light .cosmic-categories-pagination-button {
+    background: var(--bg-secondary, #ffffff);
+    color: var(--text-primary, #333333);
+}
+
+body.theme-light .cosmic-categories-pagination-button:hover:not(:disabled) {
+    background: var(--accent-color, #8a2be2);
+    color: white;
+}
+
+body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-page {
+    background: var(--accent-color, #8a2be2);
+    color: white;
 }
 
 /* Responsive Design */
