@@ -3031,3 +3031,504 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('News page initialized successfully!');
     }
 });
+
+// Categories Cosmic Engine - Uniquely Named for No Conflicts
+
+// Category definitions with cosmic themes and images
+const cosmicCategoriesConstellations = {
+    'shooter': {
+        name: 'Combat Zone',
+        image: 'images/category-shooter.jpg',
+        description: 'Intense shooting and combat games'
+    },
+    'action': {
+        name: 'Action Arena',
+        image: 'images/category-action.jpg',
+        description: 'Fast-paced action adventures'
+    },
+    'racing': {
+        name: 'Speed Dimension',
+        image: 'images/category-racing.jpg',
+        description: 'High-speed racing thrills'
+    },
+    'puzzle': {
+        name: 'Mind Palace',
+        image: 'images/category-puzzle.jpg',
+        description: 'Brain-bending puzzle challenges'
+    },
+    'platformer': {
+        name: 'Jump Nexus',
+        image: 'images/category-platformer.jpg',
+        description: 'Jumping and platform adventures'
+    },
+    'multiplayer': {
+        name: 'Social Galaxy',
+        image: 'images/category-multiplayer.jpg',
+        description: 'Play with friends online'
+    },
+    'io': {
+        name: 'IO Universe',
+        image: 'images/category-io.jpg',
+        description: 'Competitive IO games'
+    },
+    'idle': {
+        name: 'Zen Garden',
+        image: 'images/category-idle.jpg',
+        description: 'Relaxing idle experiences'
+    },
+    'sports': {
+        name: 'Athletic Arena',
+        image: 'images/category-sports.jpg',
+        description: 'Sports and athletic games'
+    },
+    '3d': {
+        name: '3D Cosmos',
+        image: 'images/category-3d.jpg',
+        description: 'Immersive 3D experiences'
+    },
+    'arcade': {
+        name: 'Retro Realm',
+        image: 'images/category-arcade.jpg',
+        description: 'Classic arcade fun'
+    },
+    'adventure': {
+        name: 'Quest Portal',
+        image: 'images/category-adventure.jpg',
+        description: 'Epic adventure journeys'
+    },
+    'clicker': {
+        name: 'Click Dimension',
+        image: 'images/category-clicker.jpg',
+        description: 'Addictive clicking games'
+    },
+    'cars': {
+        name: 'Motor Realm',
+        image: 'images/category-cars.jpg',
+        description: 'Car-based adventures'
+    },
+    '2 player': {
+        name: 'Duo Arena',
+        image: 'images/category-2player.jpg',
+        description: 'Two-player competitions'
+    },
+    'basketball': {
+        name: 'Court Champions',
+        image: 'images/category-basketball.jpg',
+        description: 'Basketball games and challenges'
+    },
+    '2048': {
+        name: 'Number Nexus',
+        image: 'images/category-2048.jpg',
+        description: '2048-style puzzle games'
+    },
+    'drawing': {
+        name: 'Art Studio',
+        image: 'images/category-drawing.jpg',
+        description: 'Creative drawing games'
+    },
+    'runner': {
+        name: 'Speed Trail',
+        image: 'images/category-runner.jpg',
+        description: 'Endless running adventures'
+    },
+    'watermelon': {
+        name: 'Fruit Paradise',
+        image: 'images/category-watermelon.jpg',
+        description: 'Fruit-themed games'
+    },
+    'fruit': {
+        name: 'Orchard World',
+        image: 'images/category-fruit.jpg',
+        description: 'Fresh fruit games'
+    },
+    'jumping': {
+        name: 'Leap Dimension',
+        image: 'images/category-jumping.jpg',
+        description: 'High-flying jump games'
+    },
+    'online': {
+        name: 'Network Hub',
+        image: 'images/category-online.jpg',
+        description: 'Connected online experiences'
+    },
+    'strategy': {
+        name: 'Tactical Core',
+        image: 'images/category-strategy.jpg',
+        description: 'Strategic thinking games'
+    },
+    'parkour': {
+        name: 'Free Runner',
+        image: 'images/category-parkour.jpg',
+        description: 'Parkour and free-running'
+    },
+    'animal': {
+        name: 'Wildlife Zone',
+        image: 'images/category-animal.jpg',
+        description: 'Animal-themed adventures'
+    },
+    'satisfying': {
+        name: 'Zen Flow',
+        image: 'images/category-satisfying.jpg',
+        description: 'Satisfying gameplay experiences'
+    },
+    'endless': {
+        name: 'Infinite Loop',
+        image: 'images/category-endless.jpg',
+        description: 'Never-ending gameplay'
+    },
+    'fishing': {
+        name: 'Angler\'s Cove',
+        image: 'images/category-fishing.jpg',
+        description: 'Fishing and aquatic games'
+    },
+    'bike': {
+        name: 'Cycle Circuit',
+        image: 'images/category-bike.jpg',
+        description: 'Motorcycle and bike games'
+    },
+    'levels': {
+        name: 'Stage Select',
+        image: 'images/category-levels.jpg',
+        description: 'Level-based progression games'
+    },
+    'cooking': {
+        name: 'Chef\'s Kitchen',
+        image: 'images/category-cooking.jpg',
+        description: 'Cooking and food games'
+    }
+};
+
+// Fallback images for categories without specific images
+const cosmicCategoriesFallbackImages = {
+    'shooter': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJzaG9vdGVyLWdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM4YTJiZTIiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM0YjAwODIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0idXJsKCNzaG9vdGVyLWdyYWQpIi8+PHBhdGggZD0iTTEwMCA1MEw3MCA4MEwxMzAgODBMMTAwIDUwWiIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC44Ii8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTUwIiByPSIyMCIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC42Ii8+PC9zdmc+',
+    'action': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJhY3Rpb24tZ3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzhhMmJlMiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRiMDA4MiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI2FjdGlvbi1ncmFkKSIvPjxwb2x5Z29uIHBvaW50cz0iMTAwLDUwIDEzMCw4MCA3MCw4MCIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC44Ii8+PHJlY3QgeD0iODAiIHk9IjEyMCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjMwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjYiLz48L3N2Zz4=',
+    'racing': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJyYWNpbmctZ3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzhhMmJlMiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRiMDA4MiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI3JhY2luZy1ncmFkKSIvPjxlbGxpcHNlIGN4PSIxMDAiIGN5PSIxMDAiIHJ4PSI2MCIgcnk9IjMwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjgiLz48Y2lyY2xlIGN4PSI3MCIgY3k9IjEyMCIgcj0iMTAiIGZpbGw9IiNmZmYiLz48Y2lyY2xlIGN4PSIxMzAiIGN5PSIxMjAiIHI9IjEwIiBmaWxsPSIjZmZmIi8+PC9zdmc+',
+    'puzzle': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJwdXp6bGUtZ3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzhhMmJlMiIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iIzRiMDA4MiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiBmaWxsPSJ1cmwoI3B1enpsZS1ncmFkKSIvPjxyZWN0IHg9IjUwIiB5PSI1MCIgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjgiLz48cmVjdCB4PSIxMTAiIHk9IjUwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuNiIvPjxyZWN0IHg9IjUwIiB5PSIxMTAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC42Ii8+PHJlY3QgeD0iMTEwIiB5PSIxMTAiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC44Ii8+PC9zdmc+',
+    'platformer': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJwbGF0Zm9ybWVyLWdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM4YTJiZTIiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM0YjAwODIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0idXJsKCNwbGF0Zm9ybWVyLWdyYWQpIi8+PHJlY3QgeD0iMjAiIHk9IjE2MCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjgiLz48cmVjdCB4PSIxMjAiIHk9IjEyMCIgd2lkdGg9IjYwIiBoZWlnaHQ9IjIwIiBmaWxsPSIjZmZmIiBvcGFjaXR5PSIwLjgiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjE0MCIgcj0iMTUiIGZpbGw9IiNmZmYiIG9wYWNpdHk9IjAuOSIvPjwvc3ZnPg==',
+    'default': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgdmlld0JveD0iMCAwIDIwMCAyMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJkZWZhdWx0LWdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiM4YTJiZTIiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiM0YjAwODIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0idXJsKCNkZWZhdWx0LWdyYWQpIi8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI0MCIgZmlsbD0iI2ZmZiIgb3BhY2l0eT0iMC44Ii8+PC9zdmc+'
+};
+
+// Get unique categories from games database
+function cosmicCategoriesExtractConstellations() {
+    const uniqueTags = new Set();
+    
+    if (typeof allGamesDatabase !== 'undefined') {
+        allGamesDatabase.forEach(game => {
+            if (game.tags && Array.isArray(game.tags)) {
+                game.tags.forEach(tag => uniqueTags.add(tag.toLowerCase()));
+            }
+        });
+    }
+    
+    return Array.from(uniqueTags).sort();
+}
+
+// Filter games by category
+function cosmicCategoriesFilterGamesByConstellation(category) {
+    if (typeof allGamesDatabase === 'undefined') {
+        return [];
+    }
+    
+    return allGamesDatabase.filter(game => 
+        game.tags && game.tags.some(tag => 
+            tag.toLowerCase() === category.toLowerCase()
+        )
+    );
+}
+
+// Create game card HTML
+function cosmicCategoriesCreateGameNebulaCard(game) {
+    return `
+        <div class="cosmic-categories-game-nebula-card" onclick="cosmicCategoriesNavigateToGame('${game.url}')">
+            <img src="${game.image}" 
+                 alt="${game.name}" 
+                 class="cosmic-categories-game-star-image"
+                 onerror="this.src='${cosmicCategoriesFallbackImages.default}'">
+            <h4 class="cosmic-categories-game-title-aurora">${game.name}</h4>
+        </div>
+    `;
+}
+
+// Navigate to game
+function cosmicCategoriesNavigateToGame(url) {
+    window.location.href = url;
+}
+
+// Create category card HTML
+function cosmicCategoriesCreateConstellationCard(category, categoryData, gameCount) {
+    const categoryImage = cosmicCategoriesFallbackImages[category] || cosmicCategoriesFallbackImages.default;
+    
+    return `
+        <div class="cosmic-categories-constellation-card" onclick="cosmicCategoriesToggleDimension('${category}')">
+            <div class="cosmic-categories-star-header">
+                <img src="${categoryImage}" 
+                     alt="${categoryData.name}" 
+                     class="cosmic-categories-stellar-image"
+                     onerror="this.src='${cosmicCategoriesFallbackImages.default}'">
+                <h3 class="cosmic-categories-cosmic-name">${categoryData.name}</h3>
+                <span class="cosmic-categories-game-count-badge">${gameCount} ${gameCount === 1 ? 'Game' : 'Games'}</span>
+            </div>
+            <div class="cosmic-categories-expansion-portal" id="cosmic-portal-${category}">
+                <div class="cosmic-categories-games-cosmos" id="cosmic-games-${category}">
+                    <!-- Games will be loaded here -->
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Configuration
+const COSMIC_CATEGORIES_GAMES_PER_PAGE = 12;
+
+// Modal state
+let cosmicCategoriesCurrentModal = null;
+let cosmicCategoriesCurrentPage = 1;
+let cosmicCategoriesCurrentGames = [];
+
+// Create modal HTML
+function cosmicCategoriesCreateModal() {
+    return `
+        <div class="cosmic-categories-modal-overlay" id="cosmicCategoriesModalOverlay">
+            <div class="cosmic-categories-modal-container">
+                <div class="cosmic-categories-modal-header">
+                    <h2 class="cosmic-categories-modal-title">
+                        <img src="" alt="" class="cosmic-categories-modal-category-icon" id="cosmicModalCategoryIcon">
+                        <span id="cosmicModalCategoryName">Category</span>
+                    </h2>
+                    <button class="cosmic-categories-modal-close" onclick="cosmicCategoriesCloseModal()">
+                        ✕
+                    </button>
+                </div>
+                <div class="cosmic-categories-modal-body">
+                    <div class="cosmic-categories-modal-games-container">
+                        <div class="cosmic-categories-modal-games-grid" id="cosmicModalGamesGrid">
+                            <!-- Games will be loaded here -->
+                        </div>
+                    </div>
+                    <div class="cosmic-categories-modal-pagination" id="cosmicModalPagination">
+                        <!-- Pagination will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Open modal with category games
+function cosmicCategoriesOpenModal(category) {
+    // Ensure modal exists
+    let modalOverlay = document.getElementById('cosmicCategoriesModalOverlay');
+    if (!modalOverlay) {
+        document.body.insertAdjacentHTML('beforeend', cosmicCategoriesCreateModal());
+        modalOverlay = document.getElementById('cosmicCategoriesModalOverlay');
+        
+        // Close modal when clicking overlay
+        modalOverlay.addEventListener('click', function(e) {
+            if (e.target === modalOverlay) {
+                cosmicCategoriesCloseModal();
+            }
+        });
+        
+        // Close modal with escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modalOverlay.classList.contains('cosmic-categories-modal-active')) {
+                cosmicCategoriesCloseModal();
+            }
+        });
+    }
+    
+    // Get games for this category
+    const games = cosmicCategoriesFilterGamesByConstellation(category);
+    const categoryData = cosmicCategoriesConstellations[category] || {
+        name: category.charAt(0).toUpperCase() + category.slice(1)
+    };
+    
+    // Set modal content
+    document.getElementById('cosmicModalCategoryName').textContent = categoryData.name;
+    const iconImg = document.getElementById('cosmicModalCategoryIcon');
+    iconImg.src = cosmicCategoriesFallbackImages[category] || cosmicCategoriesFallbackImages.default;
+    iconImg.alt = categoryData.name;
+    
+    // Store current state
+    cosmicCategoriesCurrentModal = category;
+    cosmicCategoriesCurrentGames = games;
+    cosmicCategoriesCurrentPage = 1;
+    
+    // Render games and pagination
+    cosmicCategoriesRenderModalPage();
+    
+    // Show modal
+    modalOverlay.classList.add('cosmic-categories-modal-active');
+    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+// Close modal
+function cosmicCategoriesCloseModal() {
+    const modalOverlay = document.getElementById('cosmicCategoriesModalOverlay');
+    if (modalOverlay) {
+        modalOverlay.classList.remove('cosmic-categories-modal-active');
+        document.body.style.overflow = ''; // Restore scrolling
+        
+        // Reset state
+        cosmicCategoriesCurrentModal = null;
+        cosmicCategoriesCurrentPage = 1;
+        cosmicCategoriesCurrentGames = [];
+    }
+}
+
+// Render current page of games
+function cosmicCategoriesRenderModalPage() {
+    const gamesGrid = document.getElementById('cosmicModalGamesGrid');
+    const pagination = document.getElementById('cosmicModalPagination');
+    
+    if (!gamesGrid || !pagination) return;
+    
+    const totalGames = cosmicCategoriesCurrentGames.length;
+    const totalPages = Math.ceil(totalGames / COSMIC_CATEGORIES_GAMES_PER_PAGE);
+    const startIndex = (cosmicCategoriesCurrentPage - 1) * COSMIC_CATEGORIES_GAMES_PER_PAGE;
+    const endIndex = startIndex + COSMIC_CATEGORIES_GAMES_PER_PAGE;
+    const currentPageGames = cosmicCategoriesCurrentGames.slice(startIndex, endIndex);
+    
+    // Render games
+    if (currentPageGames.length > 0) {
+        gamesGrid.innerHTML = currentPageGames.map(cosmicCategoriesCreateModalGameCard).join('');
+    } else {
+        gamesGrid.innerHTML = '<div class="cosmic-categories-modal-no-games">No games found in this dimension...</div>';
+    }
+    
+    // Render pagination
+    if (totalPages > 1) {
+        pagination.innerHTML = cosmicCategoriesCreatePaginationHTML(totalPages);
+        pagination.style.display = 'flex';
+    } else {
+        pagination.style.display = 'none';
+    }
+}
+
+// Create modal game card
+function cosmicCategoriesCreateModalGameCard(game) {
+    return `
+        <div class="cosmic-categories-game-nebula-card" onclick="cosmicCategoriesNavigateToGame('${game.url}')">
+            <img src="${game.image}" 
+                 alt="${game.name}" 
+                 class="cosmic-categories-game-star-image"
+                 onerror="this.src='${cosmicCategoriesFallbackImages.default}'">
+            <h4 class="cosmic-categories-game-title-aurora">${game.name}</h4>
+        </div>
+    `;
+}
+
+// Create pagination HTML
+function cosmicCategoriesCreatePaginationHTML(totalPages) {
+    let paginationHTML = '';
+    
+    // Previous button
+    paginationHTML += `
+        <button class="cosmic-categories-pagination-button" 
+                onclick="cosmicCategoriesChangePage(${cosmicCategoriesCurrentPage - 1})"
+                ${cosmicCategoriesCurrentPage === 1 ? 'disabled' : ''}>
+            ‹ Previous
+        </button>
+    `;
+    
+    // Page numbers
+    for (let i = 1; i <= totalPages; i++) {
+        const isActive = i === cosmicCategoriesCurrentPage;
+        paginationHTML += `
+            <button class="cosmic-categories-pagination-button ${isActive ? 'cosmic-categories-active-page' : ''}" 
+                    onclick="cosmicCategoriesChangePage(${i})">
+                ${i}
+            </button>
+        `;
+    }
+    
+    // Next button
+    paginationHTML += `
+        <button class="cosmic-categories-pagination-button" 
+                onclick="cosmicCategoriesChangePage(${cosmicCategoriesCurrentPage + 1})"
+                ${cosmicCategoriesCurrentPage === totalPages ? 'disabled' : ''}>
+            Next ›
+        </button>
+    `;
+    
+    // Page info
+    const startItem = (cosmicCategoriesCurrentPage - 1) * COSMIC_CATEGORIES_GAMES_PER_PAGE + 1;
+    const endItem = Math.min(cosmicCategoriesCurrentPage * COSMIC_CATEGORIES_GAMES_PER_PAGE, cosmicCategoriesCurrentGames.length);
+    
+    paginationHTML += `
+        <div class="cosmic-categories-page-info">
+            ${startItem}-${endItem} of ${cosmicCategoriesCurrentGames.length} games
+        </div>
+    `;
+    
+    return paginationHTML;
+}
+
+// Change page
+function cosmicCategoriesChangePage(newPage) {
+    const totalPages = Math.ceil(cosmicCategoriesCurrentGames.length / COSMIC_CATEGORIES_GAMES_PER_PAGE);
+    
+    if (newPage < 1 || newPage > totalPages) return;
+    
+    cosmicCategoriesCurrentPage = newPage;
+    cosmicCategoriesRenderModalPage();
+    
+    // Scroll to top of games grid
+    const gamesContainer = document.querySelector('.cosmic-categories-modal-games-container');
+    if (gamesContainer) {
+        gamesContainer.scrollTop = 0;
+    }
+}
+
+// Update the toggle function to open modal instead
+function cosmicCategoriesToggleDimension(category) {
+    cosmicCategoriesOpenModal(category);
+}
+
+// Initialize categories page
+function cosmicCategoriesInitializeUniverse() {
+    const categoriesGrid = document.getElementById('categoriesGrid');
+    if (!categoriesGrid) return;
+    
+    const categories = cosmicCategoriesExtractConstellations();
+    
+    if (categories.length === 0) {
+        categoriesGrid.innerHTML = '<div class="cosmic-categories-void-message">No categories available. The universe is still expanding...</div>';
+        return;
+    }
+    
+    let categoriesHTML = '';
+    
+    categories.forEach(category => {
+        const games = cosmicCategoriesFilterGamesByConstellation(category);
+        const gameCount = games.length;
+        
+        if (gameCount > 0) {
+            const categoryData = cosmicCategoriesConstellations[category] || {
+                name: category.charAt(0).toUpperCase() + category.slice(1),
+                description: `${category} games`
+            };
+            
+            categoriesHTML += cosmicCategoriesCreateConstellationCard(category, categoryData, gameCount);
+        }
+    });
+    
+    if (categoriesHTML) {
+        categoriesGrid.innerHTML = categoriesHTML;
+    } else {
+        categoriesGrid.innerHTML = '<div class="cosmic-categories-void-message">No games available in any category yet...</div>';
+    }
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Small delay to ensure allGamesDatabase is loaded
+    setTimeout(cosmicCategoriesInitializeUniverse, 100);
+});
+
+// Also initialize if script loads after DOM
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', cosmicCategoriesInitializeUniverse);
+} else {
+    setTimeout(cosmicCategoriesInitializeUniverse, 100);
+}

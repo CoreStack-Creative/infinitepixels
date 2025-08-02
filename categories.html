@@ -7,7 +7,6 @@
     <title>Categories - InfinitePixels</title>
     <link rel="icon" href="images/infinitepixlesfav.png" type="image/x-icon">
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="redirect-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
@@ -33,7 +32,7 @@
                 </a>
             </li>
             <li>
-                <a href="games.html" class="active">
+                <a href="games.html">
                     <i class="icon">
                         <img src="images/games.png" alt="Games" width="20" height="20">
                     </i>
@@ -49,7 +48,7 @@
                 </a>
             </li>
             <li>
-                <a href="categories.html">
+                <a href="categories.html" class="active">
                     <i class="icon">
                         <img src="images/grid.png" alt="Categories" width="20" height="20">
                     </i>
@@ -75,7 +74,20 @@
         </ul>
     </nav>
 
-    <main class="main-content" id="mainContent"></main>
+    <main class="main-content" id="mainContent">
+        <div class="cosmic-categories-universe-container">
+            <div class="cosmic-categories-stellar-header">
+                <h1 class="cosmic-categories-nebula-title">
+                    <span class="cosmic-categories-title-glow">Game Categories</span>
+                </h1>
+                <p class="cosmic-categories-subtitle-shimmer">Explore our cosmic collection of games by category</p>
+            </div>
+
+            <div class="cosmic-categories-galaxy-grid" id="categoriesGrid">
+                <!-- Categories will be dynamically generated here -->
+            </div>
+        </div>
+    </main>
 
     <script src="javascript.js"></script>
 </body>
