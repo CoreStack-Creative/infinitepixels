@@ -3524,3 +3524,203 @@ if (document.readyState === 'loading') {
 } else {
     setTimeout(cosmicCategoriesInitializeUniverse, 100);
 }
+
+// About Page Interactions JavaScript
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize about page animations
+    initAboutScrollAnimations();
+    initAboutCounterAnimations();
+    initAboutFloatingElements();
+});
+
+// Scroll-triggered animations for about page
+function initAboutScrollAnimations() {
+    const aboutContentCards = document.querySelectorAll('.about-content-card');
+    const aboutMetricBoxes = document.querySelectorAll('.about-metric-box');
+    
+    const aboutObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('about-animate');
+                
+                // Trigger counter animation for metric boxes
+                if (entry.target.classList.contains('about-metric-box')) {
+                    const metricValue = entry.target.querySelector('.about-metric-value');
+                    if (metricValue && !metricValue.classList.contains('about-counted')) {
+                        animateAboutCounter(metricValue);
+                        metricValue.classList.add('about-counted');
+                    }
+                }
+            }
+        });
+    }, {
+        threshold: 0.3,
+        rootMargin: '0px 0px -50px 0px'
+    });
+
+    // Observe all content cards and metric boxes
+    [...aboutContentCards, ...aboutMetricBoxes].forEach(item => {
+        aboutObserver.observe(item);
+    });
+}
+
+// Counter animation for about page statistics
+function animateAboutCounter(element) {
+    const target = parseInt(element.getAttribute('data-target'));
+    const duration = 2000; // 2 seconds
+    const steps = 60;
+    const increment = target / steps;
+    let current = 0;
+    
+    const aboutTimer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+            current = target;
+            clearInterval(aboutTimer);
+        }
+        
+        // Format large numbers with commas
+        const displayValue = Math.floor(current);
+        element.textContent = formatAboutNumber(displayValue);
+    }, duration / steps);
+}
+
+// Format numbers with commas for readability
+function formatAboutNumber(num) {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// Create floating elements animation for about page
+function initAboutFloatingElements() {
+    const aboutHeroBanner = document.querySelector('.about-hero-banner');
+    const aboutPixelColors = ['#8a2be2', '#ff6b6b', '#4ecdc4', '#ffd93d', '#74b9ff'];
+    
+    // Create additional floating elements
+    for (let i = 0; i < 8; i++) {
+        createAboutFloatingElement(aboutHeroBanner, aboutPixelColors[i % aboutPixelColors.length], i);
+    }
+}
+
+function createAboutFloatingElement(container, color, index) {
+    const aboutPixel = document.createElement('div');
+    aboutPixel.style.cssText = `
+        position: absolute;
+        width: ${Math.random() * 8 + 4}px;
+        height: ${Math.random() * 8 + 4}px;
+        background: ${color};
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 1;
+        animation: aboutPixelFloat ${6 + Math.random() * 4}s infinite ease-in-out;
+        animation-delay: ${index * 0.8}s;
+        top: ${Math.random() * 80 + 10}%;
+        left: ${Math.random() * 80 + 10}%;
+        opacity: ${0.6 + Math.random() * 0.4};
+    `;
+    
+    container.appendChild(aboutPixel);
+}
+
+// Parallax scrolling effect for about hero section
+window.addEventListener('scroll', function() {
+    const scrolled = window.pageYOffset;
+    const aboutHeroContent = document.querySelector('.about-hero-content');
+    const aboutFloatingElements = document.querySelectorAll('.about-floating-elements > div, .about-hero-banner > div[style*="position: absolute"]');
+    
+    // Parallax effect for hero content
+    if (aboutHeroContent) {
+        aboutHeroContent.style.transform = `translateY(${scrolled * 0.3}px)`;
+    }
+    
+    // Parallax effect for floating elements
+    aboutFloatingElements.forEach((element, index) => {
+        const speed = 0.1 + (index * 0.05);
+        element.style.transform = `translateY(${scrolled * speed}px)`;
+    });
+});
+
+// Smooth reveal animation for content cards on scroll
+function revealAboutOnScroll() {
+    const aboutContentCards = document.querySelectorAll('.about-content-card:not(.about-animate)');
+    
+    aboutContentCards.forEach(card => {
+        const cardTop = card.getBoundingClientRect().top;
+        const cardVisible = 150;
+        
+        if (cardTop < window.innerHeight - cardVisible) {
+            card.classList.add('about-animate');
+        }
+    });
+}
+
+// Throttled scroll event for better performance
+let aboutTicking = false;
+window.addEventListener('scroll', function() {
+    if (!aboutTicking) {
+        requestAnimationFrame(revealAboutOnScroll);
+        aboutTicking = true;
+        setTimeout(() => { aboutTicking = false; }, 16);
+    }
+});
+
+// Add interactive hover effects to content cards
+document.querySelectorAll('.about-content-card').forEach(card => {
+    card.addEventListener('mouseenter', function() {
+        this.style.transform = 'translateY(-10px) scale(1.02)';
+        this.style.transition = 'all 0.3s ease-out';
+    });
+    
+    card.addEventListener('mouseleave', function() {
+        this.style.transform = 'translateY(0) scale(1)';
+    });
+});
+
+// Add glow effect on hover for metric boxes
+document.querySelectorAll('.about-metric-box').forEach(metricBox => {
+    metricBox.addEventListener('mouseenter', function() {
+        this.style.boxShadow = '0 15px 50px rgba(138, 43, 226, 0.4)';
+        this.style.transform = 'scale(1.05)';
+        this.style.transition = 'all 0.3s ease-out';
+    });
+    
+    metricBox.addEventListener('mouseleave', function() {
+        this.style.boxShadow = 'none';
+        this.style.transform = 'scale(1)';
+    });
+});
+
+// Add typing effect to about hero title (optional enhancement)
+function aboutTypeWriter(element, text, speed = 100) {
+    let i = 0;
+    element.innerHTML = '';
+    
+    function aboutType() {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(aboutType, speed);
+        }
+    }
+    
+    aboutType();
+}
+
+// Initialize typing effect for about hero title (uncomment to enable)
+// const aboutMainTitle = document.querySelector('.about-main-title');
+// if (aboutMainTitle) {
+//     const aboutTitleText = aboutMainTitle.textContent;
+//     aboutTypeWriter(aboutMainTitle, aboutTitleText, 80);
+// }
+
+// Add staggered animation entrance for content cards
+function initAboutStaggeredAnimations() {
+    const aboutCards = document.querySelectorAll('.about-content-card');
+    
+    aboutCards.forEach((card, index) => {
+        card.style.animationDelay = `${index * 0.2}s`;
+    });
+}
+
+// Initialize staggered animations
+initAboutStaggeredAnimations();
