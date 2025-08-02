@@ -27,7 +27,10 @@ const gameData = [
    { name: "Subway Surfers", link: "games/subwaysurfers.html" },
    { name: "Tiny Fishing", link: "games/tinyfishing.html" },
    { name: "Bloxd io", link: "games/bloxdio.html" },
-   { name: "Moto X3M", link: "games/motox3m.html" }
+   { name: "Moto X3M", link: "games/motox3m.html" },
+   { name: "Tall Man Run", link: "games/tallmanrun.html" },
+   { name: "Happy Wheels", link: "games/happywheels.html" },
+   { name: "Madalin Stunt Cars Pro", link: "games/madalinstuntcarspro.html" }
 ];
 
 
@@ -1737,12 +1740,26 @@ const allGamesDatabase = [
         url: "games/motox3m.html",
         tags: ["bike", "racing", "levels"]
     },
-{
+    {
         id: 19,
         name: "Tall Man Run",
         image: "images/tallmanrunimage.jpg",
         url: "games/tallmanrun.html",
         tags: ["3d", "platformer", "runner"]
+    },
+    {
+        id: 20,
+        name: "Happy Wheels",
+        image: "images/happywheelsimage.jpg",
+        url: "games/happywheels.html",
+        tags: ["adventure", "racing", "sports"]
+    },
+    {
+        id: 21,
+        name: "Madalin Stunt Cars Pro",
+        image: "images/madalinstuntcarsproimage.jpg",
+        url: "games/madalinstuntcarspro.html",
+        tags: ["multiplayer", "racing", "cars"]
     }
 ];
 
@@ -3082,7 +3099,7 @@ const cosmicCategoriesConstellations = {
     },
     'sports': {
         name: 'Sports',
-        image: 'images/basketrandomimage.jpg',
+        image: 'images/happywheelsimage.jpg',
         description: 'Sports and athletic games'
     },
     '3d': {
