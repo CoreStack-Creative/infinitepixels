@@ -1797,86 +1797,173 @@ body {
 }
 
 
+/* Related Games Styling */
 .related-games {
-   background: rgba(30, 30, 63, 0.6);
-   border-radius: 15px;
-   padding: 20px;
-   border: 1px solid rgba(138, 43, 226, 0.2);
-   backdrop-filter: blur(10px);
+    background: rgba(30, 30, 63, 0.6);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid rgba(138, 43, 226, 0.2);
+    backdrop-filter: blur(10px);
 }
-
 
 .related-games h3 {
-   color: #ffffff;
-   font-size: 1.3rem;
-   margin-bottom: 20px;
-   font-weight: 600;
+    color: #ffffff;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
+.related-games h3::before {
+    content: "🎮";
+    font-size: 1.2em;
+}
+
+.related-games-grid {
+    display: grid;
+    gap: 12px;
+}
 
 .game-item {
-   display: flex;
-   gap: 12px;
-   padding: 10px;
-   border-radius: 10px;
-   cursor: pointer;
-   transition: all 0.3s ease;
-   margin-bottom: 10px;
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(138, 43, 226, 0.1);
+    position: relative;
+    overflow: hidden;
 }
 
+.game-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(138, 43, 226, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.game-item:hover::before {
+    left: 100%;
+}
 
 .game-item:hover {
-   background: rgba(138, 43, 226, 0.1);
-   transform: translateX(5px);
+    background: rgba(138, 43, 226, 0.15);
+    transform: translateX(5px);
+    border-color: rgba(138, 43, 226, 0.3);
 }
-
 
 .game-thumbnail {
-   width: 50px;
-   height: 50px;
-   border-radius: 8px;
-   flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border: 2px solid rgba(138, 43, 226, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
-
-.slither-theme {
-   background: linear-gradient(45deg, #4CAF50, #8BC34A);
+.game-thumbnail::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, rgba(138, 43, 226, 0.1), rgba(30, 30, 63, 0.1));
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-
-.agar-theme {
-   background: linear-gradient(45deg, #FF5722, #FF9800);
+.game-item:hover .game-thumbnail::after {
+    opacity: 1;
 }
 
-
-.hole-theme {
-   background: linear-gradient(45deg, #2196F3, #03DAC6);
+.game-item:hover .game-thumbnail {
+    border-color: rgba(138, 43, 226, 0.5);
+    transform: scale(1.05);
 }
 
-
-.wings-theme {
-   background: linear-gradient(45deg, #9C27B0, #E91E63);
+.game-details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
-
-
-.zombs-theme {
-   background: linear-gradient(45deg, #795548, #FF5722);
-}
-
 
 .game-details h4 {
-   color: #ffffff;
-   font-size: 0.95rem;
-   font-weight: 600;
-   margin-bottom: 4px;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+    transition: color 0.3s ease;
 }
 
+.game-item:hover .game-details h4 {
+    color: #bb86fc;
+}
 
 .game-details p {
-   color: #b8b8d4;
-   font-size: 0.8rem;
+    color: #b8b8d4;
+    font-size: 0.8rem;
+    margin: 0;
 }
 
+.game-tags {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+}
+
+.tag {
+    background: rgba(138, 43, 226, 0.2);
+    color: #bb86fc;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    border: 1px solid rgba(138, 43, 226, 0.3);
+}
+
+.loading {
+    text-align: center;
+    color: #b8b8d4;
+    padding: 20px;
+}
+
+.no-games {
+    text-align: center;
+    color: #b8b8d4;
+    padding: 20px;
+    font-style: italic;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .related-games {
+        padding: 15px;
+    }
+    
+    .game-item {
+        padding: 10px;
+    }
+    
+    .game-thumbnail {
+        width: 45px;
+        height: 45px;
+    }
+}
 
 /* Share Modal */
 .share-modal {

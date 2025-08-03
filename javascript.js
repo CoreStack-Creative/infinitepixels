@@ -4073,3 +4073,306 @@ if (typeof window !== 'undefined') {
         updateTheme: updateAboutFloatingElementsForTheme
     };
 }
+
+/**
+ * Related Games System
+ * Dynamically displays games with similar tags to the current game
+ */
+
+/**
+ * Finds games with similar tags to the current game
+ * @param {string} currentGameName - Name of the current game
+ * @param {number} maxResults - Maximum number of related games to return
+ * @returns {Array} Array of related games
+ */
+function findRelatedGames(currentGameName, maxResults = 5) {
+    // Find the current game
+    const currentGame = allGamesDatabase.find(game => 
+        game.name.toLowerCase() === currentGameName.toLowerCase()
+    );
+    
+    if (!currentGame) {
+        console.warn(`Game "${currentGameName}" not found in database`);
+        return [];
+    }
+    
+    const currentTags = currentGame.tags;
+    
+    // Calculate similarity scores for all other games
+    const gamesWithScores = allGamesDatabase
+        .filter(game => game.id !== currentGame.id) // Exclude current game
+        .map(game => {
+            const commonTags = game.tags.filter(tag => currentTags.includes(tag));
+            const score = commonTags.length;
+            return {
+                ...game,
+                similarityScore: score,
+                commonTags: commonTags
+            };
+        })
+        .filter(game => game.similarityScore > 0) // Only games with at least one matching tag
+        .sort((a, b) => {
+            // Sort by similarity score first, then by name for consistency
+            if (b.similarityScore !== a.similarityScore) {
+                return b.similarityScore - a.similarityScore;
+            }
+            return a.name.localeCompare(b.name);
+        })
+        .slice(0, maxResults);
+    
+    return gamesWithScores;
+}
+
+/**
+ * Converts relative image paths to absolute URLs
+ * @param {string} imagePath - Relative image path from the database
+ * @returns {string} Absolute image URL
+ */
+function getAbsoluteImageUrl(imagePath) {
+    // If already absolute, return as is
+    if (imagePath.startsWith('http') || imagePath.startsWith('//')) {
+        return imagePath;
+    }
+    
+    // If starts with /, it's absolute from root
+    if (imagePath.startsWith('/')) {
+        return imagePath;
+    }
+    
+    // Convert relative path to absolute URL
+    const protocol = window.location.protocol;
+    const hostname = window.location.hostname;
+    const port = window.location.port ? ':' + window.location.port : '';
+    return `${protocol}//${hostname}${port}/${imagePath}`;
+}
+
+/**
+ * Renders the related games section
+ * @param {string} currentGameName - Name of the current game
+ */
+function showRelatedGames(currentGameName) {
+    const container = document.getElementById('relatedGamesContainer');
+    if (!container) {
+        console.error('Related games container not found');
+        return;
+    }
+    
+    const relatedGames = findRelatedGames(currentGameName, 6);
+    
+    if (relatedGames.length === 0) {
+        container.innerHTML = `
+            <h3>Related Games</h3>
+            <div class="no-games">No similar games found</div>
+        `;
+        return;
+    }
+    
+    const gamesHTML = relatedGames.map(game => {
+        const absoluteImageUrl = getAbsoluteImageUrl(game.image);
+        return `
+            <div class="game-item" data-game="${game.name.toLowerCase().replace(/\s+/g, '-')}" onclick="navigateToGame('${game.url}')">
+                <div class="game-thumbnail" style="background-image: url('${absoluteImageUrl}')"></div>
+                <div class="game-details">
+                    <h4>${game.name}</h4>
+                    <p>Match: ${game.similarityScore} tag${game.similarityScore > 1 ? 's' : ''}</p>
+                    <div class="game-tags">
+                        ${game.commonTags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    container.innerHTML = `
+        <h3>Related Games</h3>
+        <div class="related-games-grid">
+            ${gamesHTML}
+        </div>
+    `;
+}
+
+/**
+ * Navigates to a game page
+ * @param {string} gameUrl - URL of the game
+ */
+function navigateToGame(gameUrl) {
+    let finalUrl = gameUrl;
+    
+    // Check if URL is already absolute
+    if (gameUrl.startsWith('http') || gameUrl.startsWith('//')) {
+        finalUrl = gameUrl;
+    } else if (gameUrl.startsWith('/')) {
+        // Already absolute from root, keep as is
+        finalUrl = gameUrl;
+    } else if (gameUrl.startsWith('games/')) {
+        // Convert to absolute URL with full domain
+        const protocol = window.location.protocol;
+        const hostname = window.location.hostname;
+        const port = window.location.port ? ':' + window.location.port : '';
+        finalUrl = `${protocol}//${hostname}${port}/${gameUrl}`;
+    } else {
+        // For any other relative URL, make it absolute
+        const protocol = window.location.protocol;
+        const hostname = window.location.hostname;
+        const port = window.location.port ? ':' + window.location.port : '';
+        finalUrl = `${protocol}//${hostname}${port}/${gameUrl}`;
+    }
+    
+    // Navigate to the game page
+    window.location.href = finalUrl;
+}
+
+/**
+ * Gets the current game name from various sources
+ * You can customize this function based on how you store the current game info
+ * @returns {string|null} Current game name or null if not found
+ */
+function getCurrentGameName() {
+    // Method 1: From data attribute on body
+    const bodyGameName = document.body.dataset.currentGame;
+    if (bodyGameName) return bodyGameName;
+    
+    // Method 2: From page title (assuming format like "Game Name - Your Site")
+    const titleMatch = document.title.match(/^([^-]+)/);
+    if (titleMatch) {
+        const titleGameName = titleMatch[1].trim();
+        // Check if this matches any game in our database
+        const foundGame = allGamesDatabase.find(game => 
+            game.name.toLowerCase() === titleGameName.toLowerCase()
+        );
+        if (foundGame) return foundGame.name;
+    }
+    
+    // Method 3: From URL path (assuming format like /games/gamename.html)
+    const urlPath = window.location.pathname;
+    const urlMatch = urlPath.match(/\/games\/([^\/]+)\.html$/);
+    if (urlMatch) {
+        const urlGameName = urlMatch[1];
+        // Try to find matching game by URL
+        const foundGame = allGamesDatabase.find(game => 
+            game.url.includes(urlGameName)
+        );
+        if (foundGame) return foundGame.name;
+    }
+    
+    // Method 4: From meta tag
+    const metaGame = document.querySelector('meta[name="game-name"]');
+    if (metaGame) return metaGame.content;
+    
+    return null;
+}
+
+/**
+ * Initialize related games for the current page
+ * Call this function when the page loads
+ */
+function initializeRelatedGames() {
+    const currentGameName = getCurrentGameName();
+    
+    if (currentGameName) {
+        showRelatedGames(currentGameName);
+    } else {
+        // Fallback: show a random selection of games
+        showRandomGames();
+    }
+}
+
+/**
+ * Shows a random selection of games when current game can't be determined
+ * @param {number} count - Number of random games to show
+ */
+function showRandomGames(count = 6) {
+    const container = document.getElementById('relatedGamesContainer');
+    if (!container) return;
+    
+    // Get random games
+    const shuffled = [...allGamesDatabase].sort(() => Math.random() - 0.5);
+    const randomGames = shuffled.slice(0, count);
+    
+    const gamesHTML = randomGames.map(game => {
+        const absoluteImageUrl = getAbsoluteImageUrl(game.image);
+        return `
+            <div class="game-item" data-game="${game.name.toLowerCase().replace(/\s+/g, '-')}" onclick="navigateToGame('${game.url}')">
+                <div class="game-thumbnail" style="background-image: url('${absoluteImageUrl}')"></div>
+                <div class="game-details">
+                    <h4>${game.name}</h4>
+                    <p>Try this game!</p>
+                    <div class="game-tags">
+                        ${game.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+    
+    container.innerHTML = `
+        <h3>More Games</h3>
+        <div class="related-games-grid">
+            ${gamesHTML}
+        </div>
+    `;
+}
+
+/**
+ * Advanced function to find related games by multiple criteria
+ * @param {string} currentGameName - Name of the current game
+ * @param {Object} options - Configuration options
+ * @returns {Array} Array of related games
+ */
+function findAdvancedRelatedGames(currentGameName, options = {}) {
+    const {
+        maxResults = 6,
+        minSimilarityScore = 1,
+        prioritizeExactMatches = true,
+        includePartialMatches = true
+    } = options;
+    
+    const currentGame = allGamesDatabase.find(game => 
+        game.name.toLowerCase() === currentGameName.toLowerCase()
+    );
+    
+    if (!currentGame) return [];
+    
+    const currentTags = currentGame.tags;
+    
+    let candidates = allGamesDatabase
+        .filter(game => game.id !== currentGame.id)
+        .map(game => {
+            const exactMatches = game.tags.filter(tag => currentTags.includes(tag));
+            const score = exactMatches.length;
+            
+            return {
+                ...game,
+                similarityScore: score,
+                commonTags: exactMatches,
+                isExactMatch: score === currentTags.length && score === game.tags.length
+            };
+        })
+        .filter(game => game.similarityScore >= minSimilarityScore);
+    
+    // Sort by priority: exact matches first, then by similarity score
+    candidates.sort((a, b) => {
+        if (prioritizeExactMatches && a.isExactMatch !== b.isExactMatch) {
+            return b.isExactMatch - a.isExactMatch;
+        }
+        if (a.similarityScore !== b.similarityScore) {
+            return b.similarityScore - a.similarityScore;
+        }
+        return a.name.localeCompare(b.name);
+    });
+    
+    return candidates.slice(0, maxResults);
+}
+
+// Auto-initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', initializeRelatedGames);
+
+// Also provide a manual initialization function for dynamic content
+window.RelatedGames = {
+    show: showRelatedGames,
+    find: findRelatedGames,
+    findAdvanced: findAdvancedRelatedGames,
+    init: initializeRelatedGames,
+    showRandom: showRandomGames,
+    getCurrentGame: getCurrentGameName
+};
