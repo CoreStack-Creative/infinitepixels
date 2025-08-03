@@ -38,6 +38,12 @@ const gameData = [
    { name: "Stick Fighter 3D", link: "games/stickfighter3d.html" },
    { name: "Papas Burgeria", link: "games/papasburgeria.html" },
    { name: "Bullet Army Run", link: "games/bulletarmyrun.html" },
+   { name: "Survival Race", link: "games/survivalrace.html" },
+   { name: "Block Stack 3D", link: "games/blockstack3d.html" },
+   { name: "Rocket Bikes Highway Race", link: "games/rocketbikeshighwayrace.html" },
+   { name: "Offroad Cycle 3D", link: "games/offroadcycle3d.html" },
+   { name: "Funny Shooter 2", link: "games/funnyshooter2.html" },
+   { name: "Draw the Car Path", link: "games/drawthecarpath.html" },
    { name: "Ninja Arashi", link: "games/ninjaarashi.html" }
 ];
 
@@ -1824,6 +1830,48 @@ const allGamesDatabase = [
         image: "images/ninjaarashiimage.jpg",
         url: "games/ninjaarashi.html",
         tags: ["adventure", "action", "platformer"]
+    },
+    {
+        id: 28,
+        name: "Funny Shooter 2",
+        image: "images/funnyshooter2image.jpg",
+        url: "games/funnyshooter2.html",
+        tags: ["shooter", "action", "3d"]
+    },
+    {
+        id: 29,
+        name: "Survival Race",
+        image: "images/survivalraceimage.jpg",
+        url: "games/survivalrace.html",
+        tags: ["racing", "multiplayer", "platformer"]
+    },
+    {
+        id: 30,
+        name: "Offroad Cycle 3D",
+        image: "images/offroadcycle3dimage.jpg",
+        url: "games/offroadcycle.html",
+        tags: ["racing", "bike", "3d"]
+    },
+    {
+        id: 31,
+        name: "Rocket Bike Highway Race",
+        image: "images/rocketbikeshighwayraceimage.jpg",
+        url: "games/rocketbikeshighwayrace.html",
+        tags: ["racing", "bike", "3d"]
+    },
+    {
+        id: 32,
+        name: "Block Stack 3D",
+        image: "images/blockstack3dimage.jpg",
+        url: "games/blockstack3d.html",
+        tags: ["3d", "puzzle", "endless"]
+    },
+    {
+        id: 33,
+        name: "Draw the Car Path",
+        image: "images/drawthecarpathimage.jpg",
+        url: "games/drawthecarpath.html",
+        tags: ["drawing", "puzzle", "levels"]
     }
 ];
 
@@ -3168,7 +3216,7 @@ const cosmicCategoriesConstellations = {
     },
     '3d': {
         name: '3D',
-        image: 'images/cubearenaimage.jpg',
+        image: 'images/blockstack3dimage.jpg',
         description: 'Immersive 3D experiences'
     },
     'arcade': {
@@ -3208,7 +3256,7 @@ const cosmicCategoriesConstellations = {
     },
     'drawing': {
         name: 'Drawing',
-        image: 'images/drawclimberimage.jpg',
+        image: 'images/drawthecarpathimage.jpg',
         description: 'Creative drawing games'
     },
     'runner': {
@@ -3258,7 +3306,7 @@ const cosmicCategoriesConstellations = {
     },
     'bike': {
         name: 'Bike',
-        image: 'images/motox3mimage.jpg',
+        image: 'images/rocketbikeshighwayraceimage.jpg',
         description: 'Motorcycle and bike games'
     },
     'levels': {
