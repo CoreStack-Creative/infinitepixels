@@ -22,7 +22,7 @@ const gameData = [
    { name: "Paper Io", link: "games/paperio.html" },
    { name: "Parkour Block 3D", link: "games/parkourblock3d.html" },
    { name: "Poly Track", link: "games/polytrack.html" },
-   { name: "Rodeo Stampede", link: "games/rodeoStampede.html" },
+   { name: "Rodeo Stampede", link: "games/rodeostampede.html" },
    { name: "Spiral Roll", link: "games/spiralroll.html" },
    { name: "Subway Surfers", link: "games/subwaysurfers.html" },
    { name: "Tiny Fishing", link: "games/tinyfishing.html" },
