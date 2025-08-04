@@ -1872,6 +1872,34 @@ const allGamesDatabase = [
         image: "images/drawthecarpathimage.jpg",
         url: "games/drawthecarpath.html",
         tags: ["drawing", "puzzle", "levels"]
+    },
+    {
+        id: 34,
+        name: "Shell Shockers",
+        image: "images/shellshockersimage.jpg",
+        url: "games/shellshockers.html",
+        tags: ["shooter", "io", "multiplayer"]
+    },
+    {
+        id: 35,
+        name: "Smash Karts",
+        image: "images/smashkartsimage.jpg",
+        url: "games/smashkarts.html",
+        tags: ["racing", "action", "multiplayer"]
+    },
+    {
+        id: 36,
+        name: "Ships 3D",
+        image: "images/ships3dimage.jpg",
+        url: "games/ships3d.html",
+        tags: ["3d", "action", "multiplayer"]
+    },
+    {
+        id: 37,
+        name: "Goober Dash",
+        image: "images/gooberdashimage.jpg",
+        url: "games/gooberdash.html",
+        tags: ["io", "platformer", "multiplayer"]
     }
 ];
 
