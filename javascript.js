@@ -372,9 +372,6 @@ async function enterNativeFullscreen() {
            await element.msRequestFullscreen();
        }
        
-       // Create fullscreen overlay after entering fullscreen
-       createFullscreenOverlay();
-       
    } catch (error) {
        console.error('Error entering fullscreen:', error);
    }
