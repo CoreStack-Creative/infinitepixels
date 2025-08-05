@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
     <meta name="google-adsense-account" content="ca-pub-8164325902033897">
-    <title>Paper.io - InfinitePixels</title>
+    <title>Archery King 3D - InfinitePixels</title>
     <link rel="icon" href="../images/infinitepixlesfav.png" type="image/x-icon">
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0YQ8BM0QCT"></script>
@@ -108,7 +108,7 @@
                 <div class="game-container" id="gameContainer">
                     <iframe
                         id="gameFrame"
-                        src="https://html5.gamemonetize.co/1skj7a1hu68a1p31ag4ywljq4gb18oma/"
+                        src="https://html5.gamemonetize.co/8zxe2n90tqn7nbpp6z3fqdq1xinsh5j4/"
                         width="100%"
                         height="600"
                         frameborder="0"
@@ -120,7 +120,7 @@
                     <!-- Game Control Bar -->
                     <div class="game-control-bar" id="gameControlBar">
                         <div class="game-title">
-                            <h2>Paper.io</h2>
+                            <h2>Archery King 3D</h2>
                         </div>
                         <div class="game-controls" style="display: flex; align-items: center; gap: 18px;">
                             <!-- Remove feedback-inline section from here -->
@@ -163,12 +163,12 @@
                             </div>
                         </div>
                     </div>
-                    <p>Conquer as much territory as possible in this addictive multiplayer game! Draw lines to expand your area while avoiding other players. The bigger your territory, the higher you'll rank on the leaderboard. Be strategic and quick to dominate the paper world!</p>
+                    <p>Archery is an archery game that can take you into the world of this amazing modern sport! With the addition of new modes, you won't get bored in this game: compete against players from all over the world or complete the missions solo, and improve your archery skills either way!</p>
                     
                     <div class="game-genres">
-                        <span class="genre-tag">Multiplayer</span>
+                        <span class="genre-tag">3D</span>
+                        <span class="genre-tag">Sports</span>
                         <span class="genre-tag">Strategy</span>
-                        <span class="genre-tag">IO</span>
                     </div>
                 </div>
 
@@ -228,7 +228,7 @@
             <div class="modal-body">
                 <p>Share this game with your friends!</p>
                 <div class="share-link-container">
-                    <input type="text" id="shareLink" value="https://infinite-pixels.com/games/paperio.html" readonly>
+                    <input type="text" id="shareLink" value="https://infinitepixels.com/games/archeryking3d.html" readonly>
                     <button class="copy-btn" id="copyBtn">Copy</button>
                 </div>
                 <div class="share-message" id="shareMessage">Link copied to clipboard!</div>
@@ -245,7 +245,7 @@
         const voteLock = document.getElementById('voteLock');
 
         // Only allow one vote per session
-        let voted = sessionStorage.getItem('paperioVoted') === '1';
+        let voted = sessionStorage.getItem('archeryking3dVoted') === '1';
 
         function createFloatingThumbs(type, originBtn) {
             if (!floatingThumbs) return;
@@ -327,14 +327,14 @@
                 if (voted) return;
                 lockVoting();
                 createFloatingThumbs('up', thumbsUpBtn);
-                sessionStorage.setItem('paperioVoted', '1');
+                sessionStorage.setItem('archeryking3dVoted', '1');
                 voted = true;
             });
             thumbsDownBtn.addEventListener('click', function() {
                 if (voted) return;
                 lockVoting();
                 createFloatingThumbs('down', thumbsDownBtn);
-                sessionStorage.setItem('paperioVoted', '1');
+                sessionStorage.setItem('archeryking3dVoted', '1');
                 voted = true;
             });
         }
