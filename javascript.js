@@ -332,17 +332,16 @@ function displaySearchResults(results) {
 }
 
 
-// Fullscreen functionality - Native browser fullscreen with custom overlay
+// Fullscreen functionality - Native browser fullscreen on game container
+
+
 if (fullscreenBtn) {
    fullscreenBtn.addEventListener('click', toggleFullscreen);
 } else {
    console.log('Fullscreen button not found');
 }
 
-let fullscreenOverlay = null;
-let fullscreenControlBar = null;
-let originalGameParent = null;
-let originalGameStyles = {};
+let exitNotification = null;
 
 function toggleFullscreen() {
    if (!gameContainer || !fullscreenBtn) {
@@ -359,8 +358,8 @@ function toggleFullscreen() {
 
 async function enterNativeFullscreen() {
    try {
-       // Request fullscreen on the document body or a specific element
-       const element = document.documentElement;
+       // Request fullscreen directly on the game container
+       const element = gameContainer;
        
        if (element.requestFullscreen) {
            await element.requestFullscreen();
@@ -389,29 +388,14 @@ function exitNativeFullscreen() {
    }
 }
 
-function createFullscreenOverlay() {
-   // Remove existing overlay if any
-   removeFullscreenOverlay();
+function showExitNotification() {
+   // Remove existing notification if any
+   removeExitNotification();
    
-   // Create main fullscreen overlay
-   fullscreenOverlay = document.createElement('div');
-   fullscreenOverlay.id = 'fullscreenGameOverlay';
-   fullscreenOverlay.style.cssText = `
+   // Create the exit notification
+   exitNotification = document.createElement('div');
+   exitNotification.style.cssText = `
        position: fixed;
-       top: 0;
-       left: 0;
-       width: 100vw;
-       height: 100vh;
-       background: #000;
-       z-index: 999999;
-       display: flex;
-       flex-direction: column;
-   `;
-   
-   // Create the exit notification bar (like in your image)
-   const exitBar = document.createElement('div');
-   exitBar.style.cssText = `
-       position: absolute;
        top: 50%;
        left: 50%;
        transform: translateX(-50%) translateY(-50%);
@@ -421,87 +405,35 @@ function createFullscreenOverlay() {
        border-radius: 4px;
        font-size: 14px;
        font-family: Arial, sans-serif;
-       z-index: 1000001;
+       z-index: 10001;
        pointer-events: none;
        opacity: 0;
        transition: opacity 0.3s ease;
    `;
-   exitBar.textContent = `${window.location.hostname} — To exit full screen, press esc`;
+   exitNotification.textContent = `${window.location.hostname} — To exit full screen, press esc`;
    
-   // Move the existing game iframe to fullscreen (instead of cloning)
-   const gameFrame = document.getElementById('gameFrame') || gameContainer.querySelector('iframe');
-   if (gameFrame) {
-       // Store original parent and styles for restoration
-       originalGameParent = gameFrame.parentNode;
-       originalGameStyles = {
-           width: gameFrame.style.width,
-           height: gameFrame.style.height,
-           border: gameFrame.style.border,
-           background: gameFrame.style.background,
-           position: gameFrame.style.position,
-           top: gameFrame.style.top,
-           left: gameFrame.style.left,
-           zIndex: gameFrame.style.zIndex
-       };
-       
-       // Apply fullscreen styles to the existing iframe
-       gameFrame.style.cssText = `
-           width: 100vw;
-           height: 100vh;
-           border: none;
-           background: #000;
-           position: relative;
-           top: auto;
-           left: auto;
-           z-index: auto;
-       `;
-       
-       // Move the iframe to the fullscreen overlay
-       fullscreenOverlay.appendChild(gameFrame);
-   }
+   // Add to document
+   document.body.appendChild(exitNotification);
    
-   // Add elements to overlay
-   fullscreenOverlay.appendChild(exitBar);
-   document.body.appendChild(fullscreenOverlay);
-   
-   // Show exit bar briefly
+   // Show notification briefly
    setTimeout(() => {
-       exitBar.style.opacity = '1';
+       if (exitNotification) {
+           exitNotification.style.opacity = '1';
+       }
    }, 100);
    
    setTimeout(() => {
-       exitBar.style.opacity = '0';
+       if (exitNotification) {
+           exitNotification.style.opacity = '0';
+       }
    }, 3000);
-   
-   // Update button text
-   fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i><span>Exit Fullscreen</span>';
-   isFullscreen = true;
 }
 
-function removeFullscreenOverlay() {
-   if (fullscreenOverlay) {
-       // Move the game iframe back to its original location
-       const gameFrame = fullscreenOverlay.querySelector('iframe');
-       if (gameFrame && originalGameParent) {
-           // Restore original styles
-           Object.keys(originalGameStyles).forEach(property => {
-               gameFrame.style[property] = originalGameStyles[property];
-           });
-           
-           // Move iframe back to original parent
-           originalGameParent.appendChild(gameFrame);
-       }
-       
-       // Remove the fullscreen overlay
-       document.body.removeChild(fullscreenOverlay);
-       fullscreenOverlay = null;
-       originalGameParent = null;
-       originalGameStyles = {};
+function removeExitNotification() {
+   if (exitNotification && document.body.contains(exitNotification)) {
+       document.body.removeChild(exitNotification);
+       exitNotification = null;
    }
-   
-   // Reset button text
-   fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i><span>Fullscreen</span>';
-   isFullscreen = false;
 }
 
 // Listen for fullscreen change events
@@ -511,23 +443,62 @@ document.addEventListener('mozfullscreenchange', handleFullscreenChange);
 document.addEventListener('msfullscreenchange', handleFullscreenChange);
 
 function handleFullscreenChange() {
-   if (!document.fullscreenElement && 
-       !document.webkitFullscreenElement && 
-       !document.mozFullScreenElement && 
-       !document.msFullscreenElement) {
+   if (document.fullscreenElement || 
+       document.webkitFullscreenElement || 
+       document.mozFullScreenElement || 
+       document.msFullscreenElement) {
+       // Entered fullscreen
+       isFullscreen = true;
+       fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i><span>Exit Fullscreen</span>';
+       
+       // Add CSS to make the game fill the fullscreen container
+       const gameFrame = document.getElementById('gameFrame');
+       if (gameFrame) {
+           gameFrame.style.width = '100%';
+           gameFrame.style.height = '100vh';
+       }
+       
+       // Hide other elements in the container during fullscreen
+       const controlBar = document.getElementById('gameControlBar');
+       const collapseArrow = document.getElementById('collapseArrow');
+       
+       if (controlBar) controlBar.style.display = 'none';
+       if (collapseArrow) collapseArrow.style.display = 'none';
+       
+       // Show exit notification
+       showExitNotification();
+       
+   } else {
        // Exited fullscreen
-       removeFullscreenOverlay();
+       isFullscreen = false;
+       fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i><span>Fullscreen</span>';
+       
+       // Restore original game styles
+       const gameFrame = document.getElementById('gameFrame');
+       if (gameFrame) {
+           gameFrame.style.width = '100%';
+           gameFrame.style.height = '600px';
+       }
+       
+       // Show other elements again
+       const controlBar = document.getElementById('gameControlBar');
+       const collapseArrow = document.getElementById('collapseArrow');
+       
+       if (controlBar) controlBar.style.display = '';
+       if (collapseArrow) collapseArrow.style.display = '';
+       
+       // Remove exit notification
+       removeExitNotification();
    }
 }
 
 // Show fullscreen exit message (keeping your original function for compatibility)
 function showFullscreenMessage() {
-   // This is now handled by the exit bar in createFullscreenOverlay
-   // Keeping function for compatibility with existing code
+   showExitNotification();
 }
 
 function removeFullscreenMessage() {
-   // Handled by removeFullscreenOverlay
+   removeExitNotification();
 }
 
 // Collapse arrow functionality (simplified for native fullscreen)
