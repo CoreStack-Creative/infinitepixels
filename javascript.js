@@ -1971,7 +1971,7 @@ const allGamesDatabase = [
         id: 30,
         name: "Offroad Cycle 3D",
         image: "images/offroadcycle3dimage.jpg",
-        url: "games/offroadcycle.html",
+        url: "games/offroadcycle3d.html",
         tags: ["racing", "bike", "3d"]
     },
     {
