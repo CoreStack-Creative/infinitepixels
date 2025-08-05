@@ -2065,7 +2065,7 @@ const allGamesDatabase = [
         name: "Scooter Touchgrind", 
         image: "images/scootertouchgrindimage.jpg",
         url: "games/scootertouchgrind.html",
-        tags: ["Sports", "3D", "Driving"]
+        tags: ["sports", "3d", "racing"]
     }
 
 
