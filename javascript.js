@@ -52,7 +52,8 @@ const gameData = [
    { name: "Golf Clash", link: "/games/golfclash.html" }, 
    { name: "Similing Glass", link: "/games/similingglass.html" },
    { name: "Crowdy City IO", link: "/games/crowdycityio.html" }, 
-   { name: "Archery King 3D", link: "/games/archeryking3d.html" }
+   { name: "Archery King 3D", link: "/games/archeryking3d.html" },
+   { name: "Scooter Touchgrind", link: "/games/scootertouchgrind.html" }
 ];
 
 
@@ -2054,7 +2055,14 @@ const allGamesDatabase = [
         image: "images/archeryking3dimage.jpg",
         url: "games/arecheryking3d.html",
         tags: ["3d", "strategy", "sports"]
-    },
+    }, 
+    {
+        id: 42, 
+        name: "Scooter Touchgrind", 
+        image: "images/scootertouchgrindimage.jpg",
+        url: "games/scootertouchgrind.html",
+        tags: ["Sports", "3D", "Driving"]
+    }
 
 
 
