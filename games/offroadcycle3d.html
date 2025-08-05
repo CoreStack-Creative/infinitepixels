@@ -220,7 +220,7 @@
     <div class="share-modal" id="shareModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Share Paper.io</h3>
+                <h3>Share</h3>
                 <button class="close-btn" id="closeModal">
                     <i class="fas fa-times"></i>
                 </button>
@@ -228,7 +228,7 @@
             <div class="modal-body">
                 <p>Share this game with your friends!</p>
                 <div class="share-link-container">
-                    <input type="text" id="shareLink" value="https://infinitepixels.com/paperio" readonly>
+                    <input type="text" id="shareLink" value="https://infinitepixels.com/games/offroadcycle3d.html" readonly>
                     <button class="copy-btn" id="copyBtn">Copy</button>
                 </div>
                 <div class="share-message" id="shareMessage">Link copied to clipboard!</div>
@@ -245,7 +245,7 @@
         const voteLock = document.getElementById('voteLock');
 
         // Only allow one vote per session
-        let voted = sessionStorage.getItem('paperioVoted') === '1';
+        let voted = sessionStorage.getItem('offroadcycle3dVoted') === '1';
 
         function createFloatingThumbs(type, originBtn) {
             if (!floatingThumbs) return;
@@ -327,14 +327,14 @@
                 if (voted) return;
                 lockVoting();
                 createFloatingThumbs('up', thumbsUpBtn);
-                sessionStorage.setItem('paperioVoted', '1');
+                sessionStorage.setItem('offroadcycle3dVoted', '1');
                 voted = true;
             });
             thumbsDownBtn.addEventListener('click', function() {
                 if (voted) return;
                 lockVoting();
                 createFloatingThumbs('down', thumbsDownBtn);
-                sessionStorage.setItem('paperioVoted', '1');
+                sessionStorage.setItem('offroadcycle3dVoted', '1');
                 voted = true;
             });
         }
