@@ -51,7 +51,8 @@ const gameData = [
    { name: "Goober Dash", link: "/games/gooberdash.html" },
    { name: "Golf Clash", link: "/games/golfclash.html" }, 
    { name: "Similing Glass", link: "/games/similingglass.html" },
-   { name: "Crowdy City IO", link: "/games/crowdycityio.html" },
+   { name: "Crowdy City IO", link: "/games/crowdycityio.html" }, 
+   { name: "Archery King 3D", link: "/games/archeryking3d.html" }
 ];
 
 
@@ -2046,7 +2047,15 @@ const allGamesDatabase = [
         image: "images/crowdycityioimage.jpg",
         url: "games/crowdycityio.html",
         tags: ["io", "strategy", "multiplayer"]
+    },  
+    {
+        id: 41, 
+        name: "Archery King 3D", 
+        image: "images/archeryking3dimage.jpg",
+        url: "games/arecheryking3d.html",
+        tags: ["3d", "strategy", "sports"]
     },
+
 
 
 ];
