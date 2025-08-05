@@ -245,7 +245,7 @@
         const voteLock = document.getElementById('voteLock');
 
         // Only allow one vote per session
-        let voted = sessionStorage.getItem('paperioVoted') === '1';
+        let voted = sessionStorage.getItem('ball2048Voted') === '1';
 
         function createFloatingThumbs(type, originBtn) {
             if (!floatingThumbs) return;
@@ -327,14 +327,14 @@
                 if (voted) return;
                 lockVoting();
                 createFloatingThumbs('up', thumbsUpBtn);
-                sessionStorage.setItem('paperioVoted', '1');
+                sessionStorage.setItem('ball2048Voted', '1');
                 voted = true;
             });
             thumbsDownBtn.addEventListener('click', function() {
                 if (voted) return;
                 lockVoting();
                 createFloatingThumbs('down', thumbsDownBtn);
-                sessionStorage.setItem('paperioVoted', '1');
+                sessionStorage.setItem('ball2048Voted', '1');
                 voted = true;
             });
         }
