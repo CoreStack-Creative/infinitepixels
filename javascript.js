@@ -318,133 +318,246 @@ function displaySearchResults(results) {
 }
 
 
-// Fullscreen functionality - with null check
+// Fullscreen functionality - Native browser fullscreen with custom overlay
 if (fullscreenBtn) {
    fullscreenBtn.addEventListener('click', toggleFullscreen);
 } else {
    console.log('Fullscreen button not found');
 }
 
+let fullscreenOverlay = null;
+let fullscreenControlBar = null;
 
 function toggleFullscreen() {
    if (!gameContainer || !fullscreenBtn) {
        console.log('Required elements for fullscreen not found');
        return;
    }
-  
-   isFullscreen = !isFullscreen;
-
-
-   if (isFullscreen) {
-       gameContainer.classList.add('fullscreen');
-       fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i><span>Exit Fullscreen</span>';
-       if (gameCanvas) {
-           gameCanvas.style.width = '100vw';
-           gameCanvas.style.height = 'calc(100vh - 60px)';
-       }
-       if (collapseArrow) collapseArrow.style.display = 'block';
-       gameContainer.classList.remove('bar-collapsed');
-       barCollapsed = false;
-
-
-       // Show fullscreen exit message
-       showFullscreenMessage();
+   
+   if (!document.fullscreenElement) {
+       enterNativeFullscreen();
    } else {
-       gameContainer.classList.remove('fullscreen');
-       fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i><span>Fullscreen</span>';
-       barCollapsed = false;
-       if (gameControlBar) gameControlBar.classList.remove('collapsed');
-       if (collapseArrow) {
-           collapseArrow.classList.remove('rotated');
-           collapseArrow.style.display = '';
-       }
-       gameContainer.classList.remove('bar-collapsed');
-       if (gameCanvas) {
-           gameCanvas.style.width = '100%';
-           gameCanvas.style.height = 'auto';
-       }
-       removeFullscreenMessage();
+       exitNativeFullscreen();
    }
 }
 
-
-// Show fullscreen exit message overlay
-function showFullscreenMessage() {
-   // Remove any existing overlay first
-   removeFullscreenMessage();
-
-
-   const overlay = document.createElement('div');
-   overlay.id = 'fullscreenMessageOverlay';
-   overlay.style.cssText = `
-       position: fixed;
-       bottom: 40px;
-       left: 50%;
-       transform: translateX(-50%);
-       background: rgba(30,30,63,0.95);
-       color: #fff;
-       padding: 16px 32px;
-       border-radius: 24px;
-       font-size: 1.1rem;
-       font-weight: 500;
-       z-index: 10010;
-       box-shadow: 0 4px 20px rgba(138,43,226,0.25);
-       opacity: 0;
-       transition: opacity 0.4s;
-       pointer-events: none;
-   `;
-   overlay.textContent = 'To exit fullscreen, press the Escape key';
-   document.body.appendChild(overlay);
-
-
-   setTimeout(() => {
-       overlay.style.opacity = '1';
-   }, 50);
-
-
-   setTimeout(() => {
-       overlay.style.opacity = '0';
-       setTimeout(() => {
-           removeFullscreenMessage();
-       }, 400);
-   }, 3500);
+async function enterNativeFullscreen() {
+   try {
+       // Request fullscreen on the document body or a specific element
+       const element = document.documentElement;
+       
+       if (element.requestFullscreen) {
+           await element.requestFullscreen();
+       } else if (element.mozRequestFullScreen) {
+           await element.mozRequestFullScreen();
+       } else if (element.webkitRequestFullscreen) {
+           await element.webkitRequestFullscreen();
+       } else if (element.msRequestFullscreen) {
+           await element.msRequestFullscreen();
+       }
+       
+       // Create fullscreen overlay after entering fullscreen
+       createFullscreenOverlay();
+       
+   } catch (error) {
+       console.error('Error entering fullscreen:', error);
+   }
 }
 
+function exitNativeFullscreen() {
+   if (document.exitFullscreen) {
+       document.exitFullscreen();
+   } else if (document.mozCancelFullScreen) {
+       document.mozCancelFullScreen();
+   } else if (document.webkitExitFullscreen) {
+       document.webkitExitFullscreen();
+   } else if (document.msExitFullscreen) {
+       document.msExitFullscreen();
+   }
+}
+
+function createFullscreenOverlay() {
+   // Remove existing overlay if any
+   removeFullscreenOverlay();
+   
+   // Create main fullscreen overlay
+   fullscreenOverlay = document.createElement('div');
+   fullscreenOverlay.id = 'fullscreenGameOverlay';
+   fullscreenOverlay.style.cssText = `
+       position: fixed;
+       top: 0;
+       left: 0;
+       width: 100vw;
+       height: 100vh;
+       background: #000;
+       z-index: 999999;
+       display: flex;
+       flex-direction: column;
+   `;
+   
+   // Create the exit notification bar (like in your image)
+   const exitBar = document.createElement('div');
+   exitBar.style.cssText = `
+       position: absolute;
+       top: 50%;
+       left: 50%;
+       transform: translateX(-50%) translateY(-50%);
+       background: rgba(0, 0, 0, 0.8);
+       color: white;
+       padding: 8px 16px;
+       border-radius: 4px;
+       font-size: 14px;
+       font-family: Arial, sans-serif;
+       z-index: 1000001;
+       pointer-events: none;
+       opacity: 0;
+       transition: opacity 0.3s ease;
+   `;
+   exitBar.textContent = `${window.location.hostname} — To exit full screen, press esc`;
+   
+   // Create game iframe container
+   const gameFrame = document.getElementById('gameFrame') || gameContainer.querySelector('iframe');
+   if (gameFrame) {
+       const gameClone = gameFrame.cloneNode(true);
+       gameClone.style.cssText = `
+           width: 100vw;
+           height: 100vh;
+           border: none;
+           background: #000;
+       `;
+       fullscreenOverlay.appendChild(gameClone);
+   }
+   
+   // Add elements to overlay
+   fullscreenOverlay.appendChild(exitBar);
+   document.body.appendChild(fullscreenOverlay);
+   
+   // Show exit bar briefly
+   setTimeout(() => {
+       exitBar.style.opacity = '1';
+   }, 100);
+   
+   setTimeout(() => {
+       exitBar.style.opacity = '0';
+   }, 3000);
+   
+   // Update button text
+   fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i><span>Exit Fullscreen</span>';
+   isFullscreen = true;
+}
+
+function removeFullscreenOverlay() {
+   if (fullscreenOverlay) {
+       document.body.removeChild(fullscreenOverlay);
+       fullscreenOverlay = null;
+   }
+   
+   // Reset button text
+   fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i><span>Fullscreen</span>';
+   isFullscreen = false;
+}
+
+// Listen for fullscreen change events
+document.addEventListener('fullscreenchange', handleFullscreenChange);
+document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+document.addEventListener('msfullscreenchange', handleFullscreenChange);
+
+function handleFullscreenChange() {
+   if (!document.fullscreenElement && 
+       !document.webkitFullscreenElement && 
+       !document.mozFullScreenElement && 
+       !document.msFullscreenElement) {
+       // Exited fullscreen
+       removeFullscreenOverlay();
+   }
+}
+
+// Show fullscreen exit message (keeping your original function for compatibility)
+function showFullscreenMessage() {
+   // This is now handled by the exit bar in createFullscreenOverlay
+   // Keeping function for compatibility with existing code
+}
 
 function removeFullscreenMessage() {
-   const overlay = document.getElementById('fullscreenMessageOverlay');
-   if (overlay) {
-       overlay.parentNode.removeChild(overlay);
-   }
+   // Handled by removeFullscreenOverlay
 }
 
-
-// Collapse arrow functionality
+// Collapse arrow functionality (simplified for native fullscreen)
 if (collapseArrow) {
    collapseArrow.addEventListener('click', () => {
        barCollapsed = !barCollapsed;
 
-
-       if (isFullscreen && gameContainer) {
+       if (gameControlBar) {
            if (barCollapsed) {
-               gameContainer.classList.add('bar-collapsed');
-               collapseArrow.classList.add('rotated');
-               // Arrow stays visible
-           } else {
-               gameContainer.classList.remove('bar-collapsed');
-               collapseArrow.classList.remove('rotated');
-           }
-       } else {
-           if (barCollapsed && gameControlBar) {
                gameControlBar.classList.add('collapsed');
                collapseArrow.classList.add('rotated');
-           } else if (gameControlBar) {
+           } else {
                gameControlBar.classList.remove('collapsed');
                collapseArrow.classList.remove('rotated');
            }
        }
    });
 }
+
+// Enhanced window resize handler
+function handleResize() {
+   const isMobile = window.innerWidth <= 768;
+
+   if (isMobile && !sidebarCollapsed && sidebar && mainContent && sidebarToggle) {
+       sidebar.classList.add('collapsed');
+       mainContent.classList.add('expanded');
+       sidebarCollapsed = true;
+       sidebarToggle.classList.remove('selected');
+   }
+
+   // No special handling needed for native fullscreen
+   if (!isFullscreen && gameContainer && gameCanvas) {
+       const container = gameContainer.getBoundingClientRect();
+       if (container.width > 0) {
+           gameCanvas.style.width = '100%';
+           gameCanvas.style.height = 'auto';
+       }
+   }
+}
+
+// Make sure resize handler is properly attached
+window.addEventListener('resize', handleResize);
+window.addEventListener('orientationchange', () => {
+   setTimeout(handleResize, 100);
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+   // Toggle sidebar with 'S' key
+   if (e.key.toLowerCase() === 's' && !e.ctrlKey && !e.altKey &&
+       document.activeElement !== searchInput) {
+       if (sidebarToggle) sidebarToggle.click();
+   }
+
+   // Toggle fullscreen with 'F' key
+   if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.altKey &&
+       document.activeElement !== searchInput) {
+       if (fullscreenBtn) fullscreenBtn.click();
+   }
+
+   // Close modals with Escape key
+   if (e.key === 'Escape') {
+       if (shareModal && shareModal.classList.contains('active')) {
+           shareModal.classList.remove('active');
+       }
+       // Exit fullscreen if active
+       if (document.fullscreenElement) {
+           exitNativeFullscreen();
+       }
+      
+       // Close video modal if active
+       const videoModal = document.getElementById('videoModal');
+       if (videoModal && videoModal.classList.contains('active')) {
+           closeVideoModal();
+       }
+   }
+});
 
 
 // Share functionality
