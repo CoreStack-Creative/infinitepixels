@@ -50,7 +50,8 @@ const gameData = [
    { name: "Ships 3D", link: "/games/ships3d.html" },
    { name: "Goober Dash", link: "/games/gooberdash.html" },
    { name: "Golf Clash", link: "/games/golfclash.html" }, 
-   { name: "Similing Glass", link: "/games/similingglass.html" }
+   { name: "Similing Glass", link: "/games/similingglass.html" },
+   { name: "Crowdy City IO", link: "/games/crowdycityio.html" },
 ];
 
 
@@ -2038,7 +2039,15 @@ const allGamesDatabase = [
         image: "images/smilingglassimage.jpg",
         url: "games/smilingglass.html",
         tags: ["satisfying", "puzzle", "clicker"]
-    }
+    },  
+    {
+        id: 40, 
+        name: "Crowdy City IO", 
+        image: "images/crowdycityioimage.jpg",
+        url: "games/crowdycityio.html",
+        tags: ["io", "strategy", "multiplayer"]
+    },
+
 
 ];
 
