@@ -48,7 +48,9 @@ const gameData = [
    { name: "Shell Shockers", link: "/games/shellschockers.html" },
    { name: "Smash Karts", link: "/games/smashkarts.html" },
    { name: "Ships 3D", link: "/games/ships3d.html" },
-   { name: "Goober Dash", link: "/games/gooberdash.html" }
+   { name: "Goober Dash", link: "/games/gooberdash.html" },
+   { name: "Golf Clash", link: "/games/golfclash.html" }, 
+   { name: "Similing Glass", link: "/games/similingglass.html" }
 ];
 
 
@@ -2022,7 +2024,22 @@ const allGamesDatabase = [
         image: "images/gooberdashimage.jpg",
         url: "games/gooberdash.html",
         tags: ["io", "platformer", "multiplayer"]
+    }, 
+    {
+        id: 38,
+        name: "Golf Clash",
+        image: "images/golfclashimage.jpg",
+        url: "games/golfclash.html",
+        tags: ["sports", "arcade", "multiplayer"]
+    }, 
+    {
+        id: 39,
+        name: "Smiling Glass",
+        image: "images/smilingglassimage.jpg",
+        url: "games/smilingglass.html",
+        tags: ["satisfying", "puzzle", "clicker"]
     }
+
 ];
 
 // All Games Management System - Unique class name
