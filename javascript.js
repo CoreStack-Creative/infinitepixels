@@ -2663,150 +2663,65 @@ class NewsManager {
     }
 
     generateSampleData() {
-        const categories = ['updates', 'patch-notes', 'events', 'community', 'esports'];
-        const tags = ['update', 'patch', 'event', 'community', 'esports', 'beta'];
+        const categories = ['updates', 'news', 'huge updates', 'games', 'news'];
+        const tags = ['update', 'news', 'huge updates', 'games', 'news', 'beta'];
         
         const sampleArticles = [
             {
                 id: 1,
-                title: "Major Update 2.5 Now Live",
-                summary: "Experience the biggest content update yet with new maps, characters, and game modes. Plus enhanced graphics and performance improvements.",
-                content: "This is the full article content for Major Update 2.5...",
+                title: "Website Now live!",
+                summary: "InfinitePixels is now live for anyone to play at any time.",
                 category: "updates",
-                tags: ["update", "patch"],
+                tags: ["update", "news"],
                 date: new Date('2025-08-01'),
                 author: "Dev Team",
                 featured: true,
-                views: 15420,
-                likes: 892,
+                importance: 10,
+                likes: 1234,
                 image: null
             },
             {
                 id: 2,
-                title: "Summer Championship Tournament Announcement",
-                summary: "Join us for the biggest esports tournament of the year with a $500,000 prize pool and teams from around the world.",
-                content: "Full tournament details...",
-                category: "esports",
-                tags: ["event", "esports"],
+                title: "Completed Random Games Page",
+                summary: "JWe are pleased to announce that we have completed the random games page.",
+                content: "That is right, there is now a random games page to keep you on your toes. If you are ever bored and in need of a new game that you might not have ever played before look no further than the random games page. All you have to do is click onto the page and then voila, you will be taken to a random game. We have an expansive game catalog and you never know what hidden gems you might be missing out on. This new feature makes it so that there is never a dull moment on InfinitePixels. - InfinitePixels Dev Team",
+                category: "update",
+                tags: ["update", "huge updates"],
                 date: new Date('2025-07-30'),
-                author: "Tournament Team",
+                author: "Dev Team",
                 featured: false,
-                views: 8745,
+                importance: 7,
                 likes: 543,
                 image: null
             },
             {
                 id: 3,
-                title: "Community Spotlight: Player Creations",
-                summary: "Check out amazing player-created content, custom maps, and mods that are taking the community by storm.",
-                content: "Community content showcase...",
-                category: "community",
-                tags: ["community"],
+                title: "New Games",
+                summary: "We have just added a huge collection of new games to play.",
+                content: "You might notice that the game catalog is looking extra full and you would be right. We have just added a huge amount of games including some popular ones you have definitely played before such as Basket Random or 1v1.LOL and some underground games that we think you’ll enjoy playing. If you have any more game suggestions reach out to contact.infintepixels.com and let us know. InfinitePixels Dev Team",
+                category: "games",
+                tags: ["games", "new"],
                 date: new Date('2025-07-28'),
                 author: "Community Team",
                 featured: false,
-                views: 12350,
+                importance: 4,
                 likes: 734,
                 image: null
             },
             {
                 id: 4,
-                title: "Hotfix 2.4.3 - Bug Fixes and Improvements",
-                summary: "Quick hotfix addressing several reported issues including connection problems and UI glitches.",
-                content: "Hotfix details and patch notes...",
-                category: "patch-notes",
-                tags: ["patch"],
+                title: "Bug Fixes",
+                summary: "We have fixed some bugs plaguing our website.",
+                content: "It has come to our attention that there were some bugs on different games like paper.io. We believe to have fixed all of the bugs on the website as of now but were not perfect so if you notice any more persistent bug or any that appear no need to fear as you can always email us at contact.infinitepixels@gmail.com. - InfinitePixels Dev Team",
+                category: "updates",
+                tags: ["news, updates"],
                 date: new Date('2025-07-25'),
                 author: "Dev Team",
                 featured: false,
-                views: 6890,
+                importance: 5,
                 likes: 234,
                 image: null
             },
-            {
-                id: 5,
-                title: "New Seasonal Event: Cyber Nexus",
-                summary: "Dive into a cyberpunk-themed seasonal event with exclusive rewards, new game modes, and limited-time cosmetics.",
-                content: "Seasonal event details...",
-                category: "events",
-                tags: ["event", "update"],
-                date: new Date('2025-07-22'),
-                author: "Event Team",
-                featured: false,
-                views: 18765,
-                likes: 1203,
-                image: null
-            },
-            {
-                id: 6,
-                title: "Beta Testing Program Now Open",
-                summary: "Sign up for our exclusive beta testing program and get early access to upcoming features and content.",
-                content: "Beta program information...",
-                category: "community",
-                tags: ["community", "beta"],
-                date: new Date('2025-07-20'),
-                author: "Beta Team",
-                featured: false,
-                views: 9432,
-                likes: 567,
-                image: null
-            },
-            {
-                id: 7,
-                title: "Performance Optimization Update",
-                summary: "Significant performance improvements across all platforms, reducing load times and increasing frame rates.",
-                content: "Performance update details...",
-                category: "updates",
-                tags: ["update", "patch"],
-                date: new Date('2025-07-18'),
-                author: "Tech Team",
-                featured: false,
-                views: 11200,
-                likes: 678,
-                image: null
-            },
-            {
-                id: 8,
-                title: "New Character Reveal: Echo",
-                summary: "Meet Echo, the latest addition to our roster with unique abilities and a compelling backstory.",
-                content: "Character reveal and abilities...",
-                category: "updates",
-                tags: ["update"],
-                date: new Date('2025-07-15'),
-                author: "Design Team",
-                featured: false,
-                views: 22100,
-                likes: 1456,
-                image: null
-            },
-            {
-                id: 9,
-                title: "Server Maintenance Schedule",
-                summary: "Scheduled maintenance windows for the upcoming week to improve server stability and performance.",
-                content: "Maintenance schedule details...",
-                category: "updates",
-                tags: ["update"],
-                date: new Date('2025-07-12'),
-                author: "Infrastructure Team",
-                featured: false,
-                views: 5430,
-                likes: 123,
-                image: null
-            },
-            {
-                id: 10,
-                title: "Community Art Contest Winners",
-                summary: "Congratulations to the winners of our community art contest! Check out these amazing submissions.",
-                content: "Art contest results and gallery...",
-                category: "community",
-                tags: ["community", "event"],
-                date: new Date('2025-07-10'),
-                author: "Community Team",
-                featured: false,
-                views: 7890,
-                likes: 445,
-                image: null
-            }
         ];
 
         this.articles = sampleArticles;
@@ -3002,8 +2917,8 @@ class NewsManager {
                 case 'oldest':
                     return a.date - b.date;
                 case 'popular':
-                    return b.views - a.views;
-                case 'trending':
+                    return a.importance - b.importance;
+                case 'importance':
                     return b.likes - a.likes;
                 case 'newest':
                 default:
