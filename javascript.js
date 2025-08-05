@@ -341,6 +341,8 @@ if (fullscreenBtn) {
 
 let fullscreenOverlay = null;
 let fullscreenControlBar = null;
+let originalGameParent = null;
+let originalGameStyles = {};
 
 function toggleFullscreen() {
    if (!gameContainer || !fullscreenBtn) {
@@ -429,17 +431,36 @@ function createFullscreenOverlay() {
    `;
    exitBar.textContent = `${window.location.hostname} — To exit full screen, press esc`;
    
-   // Create game iframe container
+   // Move the existing game iframe to fullscreen (instead of cloning)
    const gameFrame = document.getElementById('gameFrame') || gameContainer.querySelector('iframe');
    if (gameFrame) {
-       const gameClone = gameFrame.cloneNode(true);
-       gameClone.style.cssText = `
+       // Store original parent and styles for restoration
+       originalGameParent = gameFrame.parentNode;
+       originalGameStyles = {
+           width: gameFrame.style.width,
+           height: gameFrame.style.height,
+           border: gameFrame.style.border,
+           background: gameFrame.style.background,
+           position: gameFrame.style.position,
+           top: gameFrame.style.top,
+           left: gameFrame.style.left,
+           zIndex: gameFrame.style.zIndex
+       };
+       
+       // Apply fullscreen styles to the existing iframe
+       gameFrame.style.cssText = `
            width: 100vw;
            height: 100vh;
            border: none;
            background: #000;
+           position: relative;
+           top: auto;
+           left: auto;
+           z-index: auto;
        `;
-       fullscreenOverlay.appendChild(gameClone);
+       
+       // Move the iframe to the fullscreen overlay
+       fullscreenOverlay.appendChild(gameFrame);
    }
    
    // Add elements to overlay
@@ -462,8 +483,23 @@ function createFullscreenOverlay() {
 
 function removeFullscreenOverlay() {
    if (fullscreenOverlay) {
+       // Move the game iframe back to its original location
+       const gameFrame = fullscreenOverlay.querySelector('iframe');
+       if (gameFrame && originalGameParent) {
+           // Restore original styles
+           Object.keys(originalGameStyles).forEach(property => {
+               gameFrame.style[property] = originalGameStyles[property];
+           });
+           
+           // Move iframe back to original parent
+           originalGameParent.appendChild(gameFrame);
+       }
+       
+       // Remove the fullscreen overlay
        document.body.removeChild(fullscreenOverlay);
        fullscreenOverlay = null;
+       originalGameParent = null;
+       originalGameStyles = {};
    }
    
    // Reset button text
