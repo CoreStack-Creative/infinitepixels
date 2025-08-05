@@ -10,46 +10,45 @@ const searchResults = document.getElementById('searchResults');
 
 // Sample Game Data (Replace with your actual data source)
 const gameData = [
-   { name: "1v1 Lol", link: "games/1v1lol.html" },
-   { name: "3D Formula Racing", link: "games/3dformularacing.html" },
-   { name: "Basket Random", link: "games/basketrandom.html" },
-   { name: "Cookie Clicker", link: "games/cookieclicker.html" },
-   { name: "Cube Arena 2048", link: "games/cubearena2048.html" },
-   { name: "Draw Climber", link: "games/drawclimber.html" },
-   { name: "Fruit Merge", link: "games/fruitmerge.html" },
-   { name: "Helix Jump", link: "games/helixjump.html" },
-   { name: "Masked Special Forces", link: "games/maskedspecialforces.html" },
-   { name: "Paper Io", link: "games/paperio.html" },
-   { name: "Parkour Block 3D", link: "games/parkourblock3d.html" },
-   { name: "Poly Track", link: "games/polytrack.html" },
-   { name: "Rodeo Stampede", link: "games/rodeostampede.html" },
-   { name: "Spiral Roll", link: "games/spiralroll.html" },
-   { name: "Subway Surfers", link: "games/subwaysurfers.html" },
-   { name: "Tiny Fishing", link: "games/tinyfishing.html" },
-   { name: "Bloxd io", link: "games/bloxdio.html" },
-   { name: "Moto X3M", link: "games/motox3m.html" },
-   { name: "Tall Man Run", link: "games/tallmanrun.html" },
-   { name: "Happy Wheels", link: "games/happywheels.html" },
-   { name: "Madalin Stunt Cars Pro", link: "games/madalinstuntcarspro.html" },
-   { name: "Fall Cars: Hexagon", link: "games/fallcarshexagon.html" },
-   { name: "Fruit Ninja", link: "games/fruitninja.html" },
-   { name: "Ball 2048", link: "games/ball2048.html" },
-   { name: "Ice Fishing", link: "games/icefishing.html" },
-   { name: "Stick Fighter 3D", link: "games/stickfighter3d.html" },
-   { name: "Papas Burgeria", link: "games/papasburgeria.html" },
-   { name: "Bullet Army Run", link: "games/bulletarmyrun.html" },
-   { name: "Survival Race", link: "games/survivalrace.html" },
-   { name: "Block Stack 3D", link: "games/blockstack3d.html" },
-   { name: "Rocket Bikes Highway Race", link: "games/rocketbikeshighwayrace.html" },
-   { name: "Offroad Cycle 3D", link: "games/offroadcycle3d.html" },
-   { name: "Funny Shooter 2", link: "games/funnyshooter2.html" },
-   { name: "Draw the Car Path", link: "games/drawthecarpath.html" },
-   { name: "Ninja Arashi", link: "games/ninjaarashi.html" },
-   { name: "Shell Shockers", link: "games/shellschockers.html" },
-   { name: "Smash Karts", link: "games/smashkarts.html" },
-   { name: "Ships 3D", link: "games/ships3d.html" },
-   { name: "Goober Dash", link: "games/gooberdash.html" }
-
+   { name: "1v1 Lol", link: "/games/1v1lol.html" },
+   { name: "3D Formula Racing", link: "/games/3dformularacing.html" },
+   { name: "Basket Random", link: "/games/basketrandom.html" },
+   { name: "Cookie Clicker", link: "/games/cookieclicker.html" },
+   { name: "Cube Arena 2048", link: "/games/cubearena2048.html" },
+   { name: "Draw Climber", link: "/games/drawclimber.html" },
+   { name: "Fruit Merge", link: "/games/fruitmerge.html" },
+   { name: "Helix Jump", link: "/games/helixjump.html" },
+   { name: "Masked Special Forces", link: "/games/maskedspecialforces.html" },
+   { name: "Paper Io", link: "/games/paperio.html" },
+   { name: "Parkour Block 3D", link: "/games/parkourblock3d.html" },
+   { name: "Poly Track", link: "/games/polytrack.html" },
+   { name: "Rodeo Stampede", link: "/games/rodeostampede.html" },
+   { name: "Spiral Roll", link: "/games/spiralroll.html" },
+   { name: "Subway Surfers", link: "/games/subwaysurfers.html" },
+   { name: "Tiny Fishing", link: "/games/tinyfishing.html" },
+   { name: "Bloxd io", link: "/games/bloxdio.html" },
+   { name: "Moto X3M", link: "/games/motox3m.html" },
+   { name: "Tall Man Run", link: "/games/tallmanrun.html" },
+   { name: "Happy Wheels", link: "/games/happywheels.html" },
+   { name: "Madalin Stunt Cars Pro", link: "/games/madalinstuntcarspro.html" },
+   { name: "Fall Cars: Hexagon", link: "/games/fallcarshexagon.html" },
+   { name: "Fruit Ninja", link: "/games/fruitninja.html" },
+   { name: "Ball 2048", link: "/games/ball2048.html" },
+   { name: "Ice Fishing", link: "/games/icefishing.html" },
+   { name: "Stick Fighter 3D", link: "/games/stickfighter3d.html" },
+   { name: "Papas Burgeria", link: "/games/papasburgeria.html" },
+   { name: "Bullet Army Run", link: "/games/bulletarmyrun.html" },
+   { name: "Survival Race", link: "/games/survivalrace.html" },
+   { name: "Block Stack 3D", link: "/games/blockstack3d.html" },
+   { name: "Rocket Bikes Highway Race", link: "/games/rocketbikeshighwayrace.html" },
+   { name: "Offroad Cycle 3D", link: "/games/offroadcycle3d.html" },
+   { name: "Funny Shooter 2", link: "/games/funnyshooter2.html" },
+   { name: "Draw the Car Path", link: "/games/drawthecarpath.html" },
+   { name: "Ninja Arashi", link: "/games/ninjaarashi.html" },
+   { name: "Shell Shockers", link: "/games/shellschockers.html" },
+   { name: "Smash Karts", link: "/games/smashkarts.html" },
+   { name: "Ships 3D", link: "/games/ships3d.html" },
+   { name: "Goober Dash", link: "/games/gooberdash.html" }
 ];
 
 
@@ -269,57 +268,62 @@ document.addEventListener('click', function(e) {
 
 // Search functionality
 if (searchInput) {
-   searchInput.addEventListener('input', () => {
-       const searchTerm = searchInput.value.toLowerCase();
+    searchInput.addEventListener('input', () => {
+        const searchTerm = searchInput.value.toLowerCase();
 
+        if (searchTerm.trim() === '') {
+            // Hide results if input is empty
+            if (searchResults) {
+                searchResults.classList.remove('active');
+                searchResults.innerHTML = '';
+            }
+            return;
+        }
 
-       if (searchTerm.trim() === '') {
-           // Hide results if input is empty
-           if (searchResults) {
-               searchResults.classList.remove('active');
-               searchResults.innerHTML = '';
-           }
-           return;
-       }
+        const filteredGames = gameData.filter(game =>
+            game.name.toLowerCase().includes(searchTerm)
+        );
 
-
-       const filteredGames = gameData.filter(game =>
-           game.name.toLowerCase().includes(searchTerm)
-       );
-
-
-       displaySearchResults(filteredGames);
-   });
+        displaySearchResults(filteredGames);
+    });
 }
 
 
 function displaySearchResults(results) {
-   if (!searchResults) return;
-  
-   searchResults.innerHTML = ''; // Clear previous results
+    if (!searchResults) return;
 
+    searchResults.innerHTML = ''; // Clear previous results
 
-   if (results.length === 0) {
-       // Show "No results found" message
-       searchResults.innerHTML = '<p class="no-results">No results found.</p>';
-       searchResults.classList.add('active');
-   } else {
-       // Display results
-       results.forEach(game => {
-           const resultElement = document.createElement('p');
-           resultElement.textContent = game.name;
-           resultElement.style.cursor = 'pointer';
-           resultElement.addEventListener('click', () => {
-               if (game.link) {
-                   window.location.href = game.link;
-               }
-               searchResults.classList.remove('active');
-               searchInput.value = '';
-           });
-           searchResults.appendChild(resultElement);
-       });
-       searchResults.classList.add('active');
-   }
+    if (results.length === 0) {
+        // Show "No results found" message
+        searchResults.innerHTML = '<p class="no-results">No results found.</p>';
+        searchResults.classList.add('active');
+    } else {
+        // Display results
+        results.forEach(game => {
+            const resultElement = document.createElement('p');
+            resultElement.textContent = game.name;
+            resultElement.style.cursor = 'pointer';
+            resultElement.addEventListener('click', () => {
+                if (game.link) {
+                    let destination = game.link;
+
+                    // If link is relative (starts with "/"), prepend domain
+                    if (destination.startsWith('/')) {
+                        destination = 'https://www.infinite-pixels.com' + destination;
+                    }
+
+                    window.location.href = destination;
+                }
+
+                searchResults.classList.remove('active');
+                searchInput.value = '';
+            });
+            searchResults.appendChild(resultElement);
+        });
+
+        searchResults.classList.add('active');
+    }
 }
 
 
