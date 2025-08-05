@@ -44,7 +44,12 @@ const gameData = [
    { name: "Offroad Cycle 3D", link: "games/offroadcycle3d.html" },
    { name: "Funny Shooter 2", link: "games/funnyshooter2.html" },
    { name: "Draw the Car Path", link: "games/drawthecarpath.html" },
-   { name: "Ninja Arashi", link: "games/ninjaarashi.html" }
+   { name: "Ninja Arashi", link: "games/ninjaarashi.html" },
+   { name: "Shell Shockers", link: "games/shellschockers.html" },
+   { name: "Smash Karts", link: "games/smashkarts.html" },
+   { name: "Ships 3D", link: "games/ships3d.html" },
+   { name: "Goober Dash", link: "games/gooberdash.html" }
+
 ];
 
 
