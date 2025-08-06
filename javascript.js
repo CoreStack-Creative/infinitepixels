@@ -2180,6 +2180,78 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/jkgxa35eeoodbqfj9hlfya96yq75weoi/",
  tags: ["sports", "3d", "racing"],
  description: "Scooter Touchgrind Tricks 3D is a fun driving game where you control a scooter through exciting levels full of obstacles. Your goal is simply to reach the finish line without crashing! Along the way, you'll need to dodge obstacles and keep your balance as the tracks get harder. You can collect coins to unlock cooler scooters and try out different styles."
+ },
+ {
+ id: 45,
+ name: "Dunk Shot",
+ image: "images/dunkshotimage.jpg",
+ slug: "dunkshot",
+ gameUrl: "https://html5.gamemonetize.co/nfungeu1lgtd3uholrztk9r8gwwgtsxl/",
+ tags: ["basketball", "clicker", "arcade"],
+ description: "Dunk Shot Basketball is a popular basketball game that can be played on mobile devices. The game involves shooting a basketball into a hoop that moves up and down the screen, with the aim of getting as many baskets as possible within a set time limit. Collect stars to buy more balls."
+ },
+ {
+ id: 46,
+ name: "Uno Online",
+ image: "images/unoonlineimage.jpg",
+ slug: "unoonline",
+ gameUrl: "https://html5.gamemonetize.co/wkxitscgm7t9szdj938hq6bs10ms7rse/",
+ tags: ["strategy", "multiplayer", "online"],
+ description: "UNO Online is a strategy card game. In the game, the first player to clear his hand will become the winner. In order to win, you need to guess the deck of cards in your opponents hands and arrange your card order reasonably."
+ },
+ {
+ id: 47,
+ name: "Snowball IO",
+ image: "images/snowballioimage.jpg",
+ slug: "snowballio",
+ gameUrl: "https://html5.gamemonetize.co/v4hz9wmqunchapevb1msrjdrc39f3csy/",
+ tags: ["io", "arcade", "online"],
+ description: "Snowball.io is a fast-paced multiplayer action game. In the game, players control a snow-clearing machine to build and throw snowballs at others. Knock opponents off the arena to be the last one standing and claim victory."
+ },
+ {
+ id: 47,
+ name: "Realistic Lion Hunting",
+ image: "images/realisticlionhuntingimage.jpg",
+ slug: "realisticlionhunting",
+ gameUrl: "https://html5.gamemonetize.co/4xgs7sshdp0wpeqsoztn42pdttjiy5jq/",
+ tags: ["animal", "action", "3D"],
+ description: "Experience the thrill of the wild in Realistic Lion Hunting! This immersive simulator puts you in the paws of a majestic lion, roaming a vast and realistic forest. Hunt various animals to survive and advance through challenging levels. Explore the dense wilderness, track your prey, and feel the rush of the hunt. Perfect for those seeking adventure and excitement in the animal kingdom."
+ },
+ {
+ id: 47,
+ name: "Iron Legion",
+ image: "images/ironlegionimage.jpg",
+ slug: "ironlegion",
+ gameUrl: "https://html5.gamemonetize.co/gkeofcoqengjzxlw0b09f2qrng35egbi/",
+ tags: ["online", "action", "3D"],
+ description: "Iron Legion Dive into epic tank battles of the modern era! Iron Legion is an exciting online action game where you become the commander of a formidable combat vehicle."
+ },
+ {
+ id: 48,
+ name: "Narrow One",
+ image: "images/narrowoneimage.jpg",
+ slug: "narrowone",
+ gameUrl: "https://narrow.one/",
+ tags: ["online", "shooter", "multiplayer"],
+ description: "Narrow.One is a multiplayer archery game. Team up with others to defend your castle and capture the enemy flag. Use your bow and arrows wisely to outshoot your opponents and lead your team to victory."
+ },
+ {
+ id: 49,
+ name: "Hole IO",
+ image: "images/holeioimage.jpg",
+ slug: "holeio",
+ gameUrl: "https://holeio.com/",
+ tags: ["io", "online", "multiplayer"],
+ description: "Hole.io is an arcade physics game. Control a black hole and devour everything in sight to grow bigger. Compete against other players in real time to consume the most and dominate the cityscape."
+ },
+ {
+ id: 50,
+ name: "Only Up! Parkour",
+ image: "images/onlyup!parkourimage.jpg",
+ slug: "onlyup!parkour",
+ gameUrl: "https://html5.gamemonetize.co/x0hb11h9lq2347nqv2kvk4bycdlxm9eb/",
+ tags: ["platformer", "parkour", "3d"],
+ description: "Only Up! is an exciting arcade game in which you have to overcome obstacles and conquer heights. Inspired by the popular game Your task is to guide the character through a vertical labyrinth full of various obstacles. You must react quickly, jump accurately and climb up dexterously to avoid crashing into obstacles and falling down. As you progress through the various levels, you will encounter increasing difficulty and new challenges such as moving platforms and rotating obstacles."
  }
 ];
 
