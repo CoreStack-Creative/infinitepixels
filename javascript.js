@@ -53,7 +53,15 @@ const gameData = [
    { name: "Similing Glass", link: "/game.html?game=similingglass" },
    { name: "Crowdy City IO", link: "/game.html?game=crowdycityio" }, 
    { name: "Archery King 3D", link: "/game.html?game=archeryking3d" },
-   { name: "Scooter Touchgrind", link: "/game.html?game=scootertouchgrind" }
+   { name: "Scooter Touchgrind", link: "/game.html?game=scootertouchgrind" },
+   { name: "Dunk Shot", link: "/game.html?game=dunkshot" },
+   { name: "Uno Online", link: "/game.html?game=unoonline" },
+   { name: "Snowball IO", link: "/game.html?game=snowballio" },
+   { name: "Realistic Lion Hunting", link: "/game.html?game=realisticlionhunting" },
+   { name: "Iron Legion", link: "/game.html?game=ironlegion" },
+   { name: "Narrow One", link: "/game.html?game=narrowone" },
+   { name: "Hole IO", link: "/game.html?game=holeio" },
+   { name: "Only Up! Parkour", link: "/game.html?game=onlyup!parkour" }
 ];
 
 
