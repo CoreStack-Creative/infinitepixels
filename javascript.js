@@ -2259,7 +2259,7 @@ class GameLoader {
  // Update share link
  const shareLink = document.getElementById('shareLink');
  if (shareLink) {
- shareLink.value = `${window.location.origin}/games/game.html?game=${game.slug}`;
+ shareLink.value = `${window.location.origin}/game.html?game=${game.slug}`;
  }
  }
 
@@ -2682,8 +2682,8 @@ class AllGamesManager {
  gameCardsContainer.innerHTML = currentPageGames.map(gameItem => {
  // Create the game link - use new dynamic format if slug exists, fallback to old format
  const gameLink = gameItem.slug 
- ? `games/game.html?game=${gameItem.slug}`
- : gameItem.url || `games/${gameItem.name.toLowerCase().replace(/\s+/g, '')}.html`;
+ ? `game.html?game=${gameItem.slug}`
+ : gameItem.url || `${gameItem.name.toLowerCase().replace(/\s+/g, '')}.html`;
  
  return `
  <div class="individual-game-card" data-game="${gameItem.slug || gameItem.name.toLowerCase().replace(/\s+/g, '-')}">
@@ -2719,8 +2719,8 @@ class AllGamesManager {
  );
  if (gameData) {
  const gameLink = gameData.slug 
- ? `games/game.html?game=${gameData.slug}`
- : gameData.url || `games/${gameData.name.toLowerCase().replace(/\s+/g, '')}.html`;
+ ? `game.html?game=${gameData.slug}`
+ : gameData.url || `${gameData.name.toLowerCase().replace(/\s+/g, '')}.html`;
  window.location.href = gameLink;
  }
  });
@@ -2861,33 +2861,7 @@ function addMultipleGamesToCollection(gamesArray) {
 }
 
 
-// Example usage for adding more games:
-/*
-// Add a single game
-addNewGameToCollection("Super Mario Bros", "images/mario.jpg", "games/mario.html", ["platformer", "classic", "adventure"]);
 
-// Add multiple games at once
-addMultipleGamesToCollection([
-    {
-        name: "Tetris Classic",
-        image: "images/tetris.jpg",
-        url: "games/tetris.html",
-        tags: ["puzzle", "classic", "blocks"]
-    },
-    {
-        name: "Pac-Man Arcade",
-        image: "images/pacman.jpg",
-        url: "games/pacman.html",
-        tags: ["arcade", "classic", "maze"]
-    },
-    {
-        name: "Street Fighter",
-        image: "images/streetfighter.jpg",
-        url: "games/streetfighter.html",
-        tags: ["fighting", "action", "multiplayer"]
-    }
-]);
-*/
 
 // Settings.js - Handle all settings functionality
 class SettingsManager {
