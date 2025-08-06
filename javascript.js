@@ -3991,10 +3991,41 @@ function cosmicCategoriesFilterGamesByConstellation(category) {
     );
 }
 
-// Create game card HTML
+// Enhanced function to convert game name to URL parameter format
+function cosmicCategoriesGameNameToUrlParam(gameName) {
+    return gameName
+        .toLowerCase()
+        .replace(/[^\w]/g, '');   // Remove all non-word characters (spaces, punctuation, etc.)
+}
+
+// Navigate to game - UPDATED for new URL format
+function cosmicCategoriesNavigateToGame(gameUrl) {
+    // If it's already a proper URL, use it
+    if (gameUrl.startsWith('http') || gameUrl.startsWith('/game.html?game=')) {
+        window.location.href = gameUrl;
+        return;
+    }
+    
+    // Otherwise, assume it's a game name and convert to new format
+    let gameName = gameUrl;
+    
+    // If it looks like old format, extract game name
+    if (gameUrl.startsWith('games/') && gameUrl.endsWith('.html')) {
+        gameName = gameUrl.replace('games/', '').replace('.html', '');
+    }
+    
+    // Convert to URL-friendly format
+    const urlFriendlyName = cosmicCategoriesGameNameToUrlParam(gameName);
+    
+    // Create new format URL
+    const finalUrl = `/game.html?game=${encodeURIComponent(urlFriendlyName)}`;
+    window.location.href = finalUrl;
+}
+
+// Create game card HTML - UPDATED to use game name instead of URL
 function cosmicCategoriesCreateGameNebulaCard(game) {
     return `
-        <div class="cosmic-categories-game-nebula-card" onclick="cosmicCategoriesNavigateToGame('${game.url}')">
+        <div class="cosmic-categories-game-nebula-card" onclick="cosmicCategoriesNavigateToGame('${game.name}')">
             <img src="${game.image}" 
                  alt="${game.name}" 
                  class="cosmic-categories-game-star-image"
@@ -4002,11 +4033,6 @@ function cosmicCategoriesCreateGameNebulaCard(game) {
             <h4 class="cosmic-categories-game-title-aurora">${game.name}</h4>
         </div>
     `;
-}
-
-// Navigate to game
-function cosmicCategoriesNavigateToGame(url) {
-    window.location.href = url;
 }
 
 // Create category card HTML
@@ -4162,10 +4188,10 @@ function cosmicCategoriesRenderModalPage() {
     }
 }
 
-// Create modal game card
+// Create modal game card - UPDATED to use game name instead of URL
 function cosmicCategoriesCreateModalGameCard(game) {
     return `
-        <div class="cosmic-categories-game-nebula-card" onclick="cosmicCategoriesNavigateToGame('${game.url}')">
+        <div class="cosmic-categories-game-nebula-card" onclick="cosmicCategoriesNavigateToGame('${game.name}')">
             <img src="${game.image}" 
                  alt="${game.name}" 
                  class="cosmic-categories-game-star-image"
