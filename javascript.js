@@ -4637,6 +4637,7 @@ if (typeof window !== 'undefined') {
 /**
  * Related Games System
  * Dynamically displays games with similar tags to the current game
+ * Updated to work with /game.html?game=gamename URL format
  */
 
 /**
@@ -4707,7 +4708,21 @@ function getAbsoluteImageUrl(imagePath) {
 }
 
 /**
+ * Enhanced function to convert game name to URL parameter format
+ * @param {string} gameName - The game name
+ * @returns {string} URL-friendly game parameter
+ */
+function gameNameToUrlParam(gameName) {
+    return gameName
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '') // Remove special characters
+        .replace(/\s+/g, '-')     // Replace spaces with hyphens
+        .replace(/-+/g, '-');     // Replace multiple hyphens with single hyphen
+}
+
+/**
  * Renders the related games section
+ * Updated to use new URL format
  * @param {string} currentGameName - Name of the current game
  */
 function showRelatedGames(currentGameName) {
@@ -4729,8 +4744,11 @@ function showRelatedGames(currentGameName) {
     
     const gamesHTML = relatedGames.map(game => {
         const absoluteImageUrl = getAbsoluteImageUrl(game.image);
+        const gameUrlParam = gameNameToUrlParam(game.name);
+        const gameUrl = `/game.html?game=${gameUrlParam}`;
+        
         return `
-            <div class="game-item" data-game="${game.name.toLowerCase().replace(/\s+/g, '-')}" onclick="navigateToGame('${game.url}')">
+            <div class="game-item" data-game="${gameUrlParam}" onclick="navigateToGame('${gameUrl}')">
                 <div class="game-thumbnail" style="background-image: url('${absoluteImageUrl}')"></div>
                 <div class="game-details">
                     <h4>${game.name}</h4>
@@ -4753,7 +4771,8 @@ function showRelatedGames(currentGameName) {
 
 /**
  * Navigates to a game page
- * @param {string} gameUrl - URL of the game
+ * Updated to work with /game.html?game=gamename format
+ * @param {string} gameUrl - URL of the game OR game name
  */
 function navigateToGame(gameUrl) {
     let finalUrl = gameUrl;
@@ -4761,21 +4780,27 @@ function navigateToGame(gameUrl) {
     // Check if URL is already absolute
     if (gameUrl.startsWith('http') || gameUrl.startsWith('//')) {
         finalUrl = gameUrl;
+    } else if (gameUrl.startsWith('/game.html?game=')) {
+        // Already in correct format
+        finalUrl = gameUrl;
     } else if (gameUrl.startsWith('/')) {
         // Already absolute from root, keep as is
         finalUrl = gameUrl;
-    } else if (gameUrl.startsWith('games/')) {
-        // Convert to absolute URL with full domain
-        const protocol = window.location.protocol;
-        const hostname = window.location.hostname;
-        const port = window.location.port ? ':' + window.location.port : '';
-        finalUrl = `${protocol}//${hostname}${port}/${gameUrl}`;
     } else {
-        // For any other relative URL, make it absolute
-        const protocol = window.location.protocol;
-        const hostname = window.location.hostname;
-        const port = window.location.port ? ':' + window.location.port : '';
-        finalUrl = `${protocol}//${hostname}${port}/${gameUrl}`;
+        // Convert game name to new URL format
+        // Assume gameUrl is either a game name or needs to be converted
+        let gameName = gameUrl;
+        
+        // If it looks like old format, extract game name
+        if (gameUrl.startsWith('games/') && gameUrl.endsWith('.html')) {
+            gameName = gameUrl.replace('games/', '').replace('.html', '');
+        }
+        
+        // Convert to URL-friendly format (lowercase, hyphens instead of spaces)
+        const urlFriendlyName = gameName.toLowerCase().replace(/\s+/g, '-');
+        
+        // Create new format URL
+        finalUrl = `/game.html?game=${encodeURIComponent(urlFriendlyName)}`;
     }
     
     // Navigate to the game page
@@ -4784,15 +4809,35 @@ function navigateToGame(gameUrl) {
 
 /**
  * Gets the current game name from various sources
- * You can customize this function based on how you store the current game info
+ * Updated to work with /game.html?game=gamename format
  * @returns {string|null} Current game name or null if not found
  */
 function getCurrentGameName() {
-    // Method 1: From data attribute on body
+    // Method 1: From URL parameters (NEW - for /game.html?game=gamename format)
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameParam = urlParams.get('game');
+    if (gameParam) {
+        // Check if this matches any game in our database
+        const foundGame = allGamesDatabase.find(game => 
+            game.name.toLowerCase() === gameParam.toLowerCase() ||
+            game.name.toLowerCase().replace(/\s+/g, '-') === gameParam.toLowerCase() ||
+            game.name.toLowerCase().replace(/\s+/g, '') === gameParam.toLowerCase()
+        );
+        if (foundGame) return foundGame.name;
+        
+        // If not found by direct match, try converting parameter back to readable name
+        const readableName = gameParam.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        const foundByReadable = allGamesDatabase.find(game => 
+            game.name.toLowerCase() === readableName.toLowerCase()
+        );
+        if (foundByReadable) return foundByReadable.name;
+    }
+    
+    // Method 2: From data attribute on body
     const bodyGameName = document.body.dataset.currentGame;
     if (bodyGameName) return bodyGameName;
     
-    // Method 2: From page title (assuming format like "Game Name - Your Site")
+    // Method 3: From page title (assuming format like "Game Name - Your Site")
     const titleMatch = document.title.match(/^([^-]+)/);
     if (titleMatch) {
         const titleGameName = titleMatch[1].trim();
@@ -4803,19 +4848,25 @@ function getCurrentGameName() {
         if (foundGame) return foundGame.name;
     }
     
-    // Method 3: From URL path (assuming format like /games/gamename.html)
+    // Method 4: From URL path (UPDATED - for new format)
     const urlPath = window.location.pathname;
+    if (urlPath === '/game.html' || urlPath.endsWith('/game.html')) {
+        // Already handled by Method 1 above
+        return null;
+    }
+    
+    // Method 5: Legacy support for old format /games/gamename.html
     const urlMatch = urlPath.match(/\/games\/([^\/]+)\.html$/);
     if (urlMatch) {
         const urlGameName = urlMatch[1];
         // Try to find matching game by URL
         const foundGame = allGamesDatabase.find(game => 
-            game.url.includes(urlGameName)
+            game.url && game.url.includes(urlGameName)
         );
         if (foundGame) return foundGame.name;
     }
     
-    // Method 4: From meta tag
+    // Method 6: From meta tag
     const metaGame = document.querySelector('meta[name="game-name"]');
     if (metaGame) return metaGame.content;
     
@@ -4827,6 +4878,13 @@ function getCurrentGameName() {
  * Call this function when the page loads
  */
 function initializeRelatedGames() {
+    // Wait for database to be loaded
+    if (typeof allGamesDatabase === 'undefined' || !allGamesDatabase.length) {
+        console.warn('Games database not loaded yet');
+        setTimeout(initializeRelatedGames, 100); // Retry after 100ms
+        return;
+    }
+    
     const currentGameName = getCurrentGameName();
     
     if (currentGameName) {
@@ -4839,6 +4897,7 @@ function initializeRelatedGames() {
 
 /**
  * Shows a random selection of games when current game can't be determined
+ * Updated to use new URL format
  * @param {number} count - Number of random games to show
  */
 function showRandomGames(count = 6) {
@@ -4851,8 +4910,11 @@ function showRandomGames(count = 6) {
     
     const gamesHTML = randomGames.map(game => {
         const absoluteImageUrl = getAbsoluteImageUrl(game.image);
+        const gameUrlParam = gameNameToUrlParam(game.name);
+        const gameUrl = `/game.html?game=${gameUrlParam}`;
+        
         return `
-            <div class="game-item" data-game="${game.name.toLowerCase().replace(/\s+/g, '-')}" onclick="navigateToGame('${game.url}')">
+            <div class="game-item" data-game="${gameUrlParam}" onclick="navigateToGame('${gameUrl}')">
                 <div class="game-thumbnail" style="background-image: url('${absoluteImageUrl}')"></div>
                 <div class="game-details">
                     <h4>${game.name}</h4>
