@@ -2175,7 +2175,7 @@ const gamesDatabase = [
  {
  id: 44,
  name: "Scooter Touchgrind",
- image: "images/scootertouchgrindimage.jpg",
+ image: "images/scootertouchgrind3dimage.jpg",
  slug: "scootertouchgrind",
  gameUrl: "https://html5.gamemonetize.co/jkgxa35eeoodbqfj9hlfya96yq75weoi/",
  tags: ["sports", "3d", "racing"],
