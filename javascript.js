@@ -61,7 +61,14 @@ const gameData = [
    { name: "Iron Legion", link: "/game.html?game=ironlegion" },
    { name: "Narrow One", link: "/game.html?game=narrowone" },
    { name: "Hole IO", link: "/game.html?game=holeio" },
-   { name: "Only Up! Parkour", link: "/game.html?game=onlyup!parkour" }
+   { name: "Only Up! Parkour", link: "/game.html?game=onlyup!parkour" },
+   { name: "Bit Life", link: "/game.html?game=bitlife" },
+   { name: "Gulper IO", link: "/game.html?game=gulperio" },
+   { name: "Moto X3M Winter", link: "/game.html?game=motox3mwinter" },
+   { name: "rocketbotroyale", link: "/game.html?game=rocketbotroyale" },
+   { name: "Rocket League", link: "/game.html?game=rocketleague" },
+   { name: "Slope 3", link: "/game.html?game=slope3" },
+   { name: "Stair Race 3D", link: "/game.html?game=stairrace3d" }
 ];
 
 
@@ -2260,6 +2267,69 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/x0hb11h9lq2347nqv2kvk4bycdlxm9eb/",
  tags: ["platformer", "parkour", "3d"],
  description: "Only Up! is an exciting arcade game in which you have to overcome obstacles and conquer heights. Inspired by the popular game Your task is to guide the character through a vertical labyrinth full of various obstacles. You must react quickly, jump accurately and climb up dexterously to avoid crashing into obstacles and falling down. As you progress through the various levels, you will encounter increasing difficulty and new challenges such as moving platforms and rotating obstacles."
+ },
+ {
+ id: 51,
+ name: "Stair Race 3D",
+ image: "images/stairrace3dimage.jpg",
+ slug: "stairrace3d",
+ gameUrl: "https://html5.gamemonetize.co/4zz6wv4zin8z8pqbeb7l0jrpf3gxhl19/",
+ tags: ["3d", "runner", "platformer"],
+ description: "You have to compete in a big arena for who is best in building stairs against a variety of difficult enemies. In order to win, you have to pick up the stair planks and use them in order to build stairs and reach the next platform."
+ },
+ {
+ id: 52,
+ name: "BitLife",
+ image: "images/bitlifeimage.jpg",
+ slug: "bitlife",
+ gameUrl: "https://html5.gamemonetize.co/sunlne8825d1006jux3b1xrl9vda49f1/",
+ tags: ["clicker", "puzzle", "arcade"],
+ description: "How will you live your BitLife? Will you try to make all the right choices in an attempt to become a model citizen sometime before you die? You could marry the love of your life, have kids, and pick up a good education along the way. Or will you play choices that horrify your parents? You could descend into a life of crime, fall in love or go on adventures, start prison riots, smuggle duffle bags, and cheat on your spouse. You choose your story."
+ },
+ {
+ id: 53,
+ name: "Moto X3M Winter",
+ image: "images/motox3mwinterimage.jpg",
+ slug: "motox3mwinter",
+ gameUrl: "https://html5.gamemonetize.co/1gjwgvl2j0ipdd9ybezeavu04y1nqjen/",
+ tags: ["levels", "bike", "racing"],
+ description: "Moto X3M Winter is a stunt bike racing game. Ride through icy tracks filled with ramps, traps, and obstacles. Perform flips and race against the clock to complete each level with the fastest time."
+ },
+ {
+ id: 54,
+ name: "Rocket Bot Royale",
+ image: "images/rocketbotroyaleimage.jpg",
+ slug: "rocketbotroyale",
+ gameUrl: "https://rocketbotroyale2.winterpixel.io/",
+ tags: ["action", "multiplayer", "adventure"],
+ description: "Rocket Bot Royale is a tank battle game. Jump into fast multiplayer fights on a destructible island. Use rocket-powered tanks to shoot, dodge, and outsmart your enemies to be the last bot standing."
+ },
+ {
+ id: 55,
+ name: "Slope 3",
+ image: "images/slope3image.jpg",
+ slug: "slope3",
+ gameUrl: "https://slope3.com/",
+ tags: ["io", "racing", "platformer"],
+ description: "Slope 3 is a fast-paced endless runner. Guide a rolling ball down a neon slope while dodging obstacles and staying on track. The farther you go, the faster it gets—test your reflexes and survive as long as you can."
+ },
+ {
+ id: 56,
+ name: "Slither IO",
+ image: "images/slitherioimage.jpg",
+ slug: "slitherio",
+ gameUrl: "https://slither.io/",
+ tags: ["io", "multiplayer", "action"],
+ description: "Slither.io is a snake-themed multiplayer game. Eat glowing orbs to grow your snake while avoiding others. Outsmart and trap opponents to climb the leaderboard and become the biggest snake on the map."
+ },
+ {
+ id: 57,
+ name: "Rocket League",
+ image: "images/rocketleagueimage.jpg",
+ slug: "rocketleague",
+ gameUrl: "https://html5.gamemonetize.co/0c57ybsvhtn9xv77swrbiwgtreda0pal/",
+ tags: ["racing", "sports", "online"],
+ description: "Rocket League is a high-octane sports game. Drive rocket-powered cars and hit a giant ball to score goals. Combine speed, skill, and teamwork in fast-paced matches across futuristic arenas."
  }
 ];
 
