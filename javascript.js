@@ -2315,12 +2315,12 @@ const gamesDatabase = [
  },
  {
  id: 56,
- name: "Slither IO",
- image: "images/slitherioimage.jpg",
- slug: "slitherio",
+ name: "Gulper IO",
+ image: "images/gulperioimage.jpg",
+ slug: "gulperio",
  gameUrl: "https://slither.io/",
  tags: ["io", "multiplayer", "action"],
- description: "Slither.io is a snake-themed multiplayer game. Eat glowing orbs to grow your snake while avoiding others. Outsmart and trap opponents to climb the leaderboard and become the biggest snake on the map."
+ description: "Gulper.io is a snake-themed multiplayer game. Eat glowing orbs to grow your snake while avoiding others. Outsmart and trap opponents to climb the leaderboard and become the biggest snake on the map."
  },
  {
  id: 57,
