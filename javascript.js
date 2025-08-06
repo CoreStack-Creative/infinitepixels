@@ -4715,9 +4715,7 @@ function getAbsoluteImageUrl(imagePath) {
 function gameNameToUrlParam(gameName) {
     return gameName
         .toLowerCase()
-        .replace(/[^\w\s-]/g, '') // Remove special characters
-        .replace(/\s+/g, '-')     // Replace spaces with hyphens
-        .replace(/-+/g, '-');     // Replace multiple hyphens with single hyphen
+        .replace(/[^\w]/g, '');   // Remove all non-word characters (spaces, punctuation, etc.)
 }
 
 /**
@@ -4821,7 +4819,8 @@ function getCurrentGameName() {
         const foundGame = allGamesDatabase.find(game => 
             game.name.toLowerCase() === gameParam.toLowerCase() ||
             game.name.toLowerCase().replace(/\s+/g, '-') === gameParam.toLowerCase() ||
-            game.name.toLowerCase().replace(/\s+/g, '') === gameParam.toLowerCase()
+            game.name.toLowerCase().replace(/\s+/g, '') === gameParam.toLowerCase() ||
+            game.name.toLowerCase() === gameParam.toLowerCase().replace(/-/g, ' ')
         );
         if (foundGame) return foundGame.name;
         
