@@ -1757,331 +1757,720 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(showRedirectAndGo, 100);
 });
 
-// Games data - Add your games here
-const allGamesDatabase = [
+// Enhanced games database with descriptions and game URLs
+const gamesDatabase = [
     {
         id: 1,
         name: "1v1 Lol",
         image: "images/1v1lolimage.jpg",
-        url: "games/1v1lol.html",
-        tags: ["shooter", "action", "multiplayer"]
+        slug: "1v1lol",
+        gameUrl: "https://1v1.lol/",
+        tags: ["shooter", "action", "multiplayer"],
+        description: "1v1.LOL is an online third-person shooter with cool building mechanics. Battle royale, build battle, box fight, zone wars and more game modes to enjoy!"
     },
     {
         id: 2,
         name: "3D Formula Racing",
         image: "images/3dformularacingimage.jpg",
-        url: "games/3dformularacing.html",
-        tags: ["racing", "cars", "3d"]
+        slug: "3dformularacing",
+        gameUrl: "https://html5.gamemonetize.co/tia5pbecnefai0pnlkapzyzzfh0yobn4/",
+        tags: ["racing", "cars", "3d"],
+        description: "Experience the thrill of Formula 1 racing in this high-speed 3D racing game. Navigate challenging tracks and compete against other racers to reach the finish line first!"
     },
     {
         id: 3,
         name: "Basket Random",
         image: "images/basketrandomimage.jpg",
-        url: "games/basketrandom.html",
-        tags: ["2 player", "basketball", "sports"]
+        slug: "basketrandom",
+        gameUrl: "https://html5.gamemonetize.co/anaaahgt57d5t2tddrbc1m4qq97vz1jd/",
+        tags: ["2 player", "basketball", "sports"],
+        description: "Basket Random is a fun basketball game with ragdoll physics! Play against a friend or the computer in this wacky sports game where anything can happen."
     },
     {
         id: 4,
         name: "Cookie Clicker",
         image: "images/cookieclickerimage.jpg",
-        url: "games/cookieclicker.html",
-        tags: ["clicker", "idle", "cooking"]
+        slug: "cookieclicker",
+        gameUrl: "https://html5.gamemonetize.co/z5n072q7gj0w969r5ul4ignnxe0fzsun/",
+        tags: ["clicker", "idle", "cooking"],
+        description: "The original idle clicker game! Click cookies to earn points and buy upgrades to generate even more cookies automatically. How many cookies can you make?"
     },
     {
         id: 5,
         name: "Cube Arena 2048",
         image: "images/cubearenaimage.jpg",
-        url: "games/cubearena2048.html",
-        tags: ["3d", "2048", "io"]
+        slug: "cubearena2048",
+        gameUrl: "https://html5.gamemonetize.co/83up5y2u78nvd5ngywugy6j4g3im4lda/",
+        tags: ["3d", "2048", "io"],
+        description: "Combine the classic 2048 puzzle with 3D cube mechanics! Merge cubes with the same numbers to create higher values while navigating a 3D arena."
     },
     {
         id: 6,
         name: "Draw Climber",
         image: "images/drawclimberimage.jpg",
-        url: "games/drawclimber.html",
-        tags: ["puzzle", "drawing", "runner"]
+        slug: "drawclimber",
+        gameUrl: "https://html5.gamemonetize.co/0lkapk5bhk46tk0s8d971iyarszc8ib8/",
+        tags: ["puzzle", "drawing", "runner"],
+        description: "Draw legs for your character to help them climb over obstacles! Each obstacle requires different leg shapes, so be creative with your drawings!"
     },
     {
         id: 7,
         name: "Fruit Merge",
         image: "images/fruitmergeimage.jpg",
-        url: "games/fruitmerge.html",
-        tags: ["satisfying", "puzzle", "fruit"]
+        slug: "fruitmerge",
+        gameUrl: "https://html5.gamemonetize.co/rgz7sjhynwsheffgv4ijzz1nj2oa1nur/",
+        tags: ["satisfying", "puzzle", "fruit"],
+        description: "Drop and merge identical fruits to create new ones! Watch as small fruits combine into bigger ones in this relaxing and satisfying puzzle game."
     },
     {
         id: 8,
         name: "Helix Jump",
         image: "images/helixjumpimage.jpg",
-        url: "games/helixjump.html",
-        tags: ["arcade", "endless", "platformer"]
+        slug: "helixjump",
+        gameUrl: "https://html5.gamemonetize.co/ghzimuehf6yw4vkdaywk1s9x3mrbgq0w/",
+        tags: ["arcade", "endless", "platformer"],
+        description: "Bounce the ball through the helix tower maze! Avoid the colored sections and try to reach the bottom. How far can you fall?"
     },
     {
         id: 9,
         name: "Masked Special Forces",
         image: "images/maskedspecialforcesimage.jpg",
-        url: "games/maskedspecialforces.html",
-        tags: ["shooter", "online", "multiplayer"]
+        slug: "maskedspecialforces",
+        gameUrl: "https://html5.gamemonetize.co/1s10wsxntjub41qo2puh7jlx3qmbvh5t/",
+        tags: ["shooter", "online", "multiplayer"],
+        description: "Join the special forces in this tactical multiplayer shooter! Work with your team to complete missions and eliminate enemies in various combat scenarios."
     },
     {
         id: 10,
         name: "Paper Io",
         image: "images/paperioimage.jpg",
-        url: "games/paperio.html",
-        tags: ["io", "strategy", "multiplayer"]
+        slug: "paperio",
+        gameUrl: "https://html5.gamemonetize.co/1skj7a1hu68a1p31ag4ywljq4gb18oma/",
+        tags: ["io", "strategy", "multiplayer"],
+        description: "Conquer as much territory as possible in this addictive io game! Draw lines to claim areas while avoiding other players who can eliminate you."
     },
     {
         id: 11,
         name: "Parkour Block 3D",
         image: "images/parkourblock3dimage.jpg",
-        url: "games/parkourblock3d.html",
-        tags: ["parkour", "3d", "platformer"]
+        slug: "parkourblock3d",
+        gameUrl: "https://html5.gamemonetize.co/hrsxh2clxg229ty294gdlbjzeejglgmp/",
+        tags: ["parkour", "3d", "platformer"],
+        description: "Master the art of parkour in this 3D block world! Jump, slide, and climb through challenging obstacle courses. Test your skills and reflexes!"
     },
     {
         id: 12,
         name: "Poly Track",
         image: "images/polytrackimage.jpg",
-        url: "games/polytrack.html",
-        tags: ["racing", "cars", "online"]
+        slug: "polytrack",
+        gameUrl: "https://www.kodub.com/apps/polytrack",
+        tags: ["racing", "cars", "online"],
+        description: "Race through stylish low-poly tracks in this modern racing game! Navigate challenging courses with realistic physics and smooth controls."
     },
     {
         id: 13,
         name: "Rodeo Stampede",
         image: "images/rodeostampedeimage.jpg",
-        url: "games/rodeoStampede.html",
-        tags: ["adventure", "animal", "racing"]
+        slug: "rodeostampede",
+        gameUrl: "https://html5.gamemonetize.co/p4y8uwto5cchbs371ua7hxqzidihi213/",
+        tags: ["adventure", "animal", "racing"],
+        description: "Lasso and tame wild animals in this endless adventure! Ride buffalo, elephants, and more while avoiding obstacles in the wild savanna."
     },
     {
         id: 14,
         name: "Spiral Roll",
         image: "images/spiralrollimage.jpg",
-        url: "games/spiralroll.html",
-        tags: ["platformer", "satisfying", "3d"]
+        slug: "spiralroll",
+        gameUrl: "https://html5.gamemonetize.co/fq17wpd1ygq5kppyqq9souztit8jlkk0/",
+        tags: ["platformer", "satisfying", "3d"],
+        description: "Chip away at the spiral tower with your ball! Navigate through the colorful spiral while avoiding obstacles. It's oddly satisfying!"
     },
     {
         id: 15,
         name: "Subway Surfers",
         image: "images/subwaysurfersimage.jpg",
-        url: "games/subwaysurfers.html",
-        tags: ["endless", "platformer", "parkour"]
+        slug: "subwaysurfers",
+        gameUrl: "https://html5.gamemonetize.co/du2cejdc5we8szc7vgfdatel08oxr0zg/",
+        tags: ["endless", "platformer", "parkour"],
+        description: "Run as fast as you can in this endless runner! Dodge trains, collect coins, and surf through the subway while avoiding the grumpy inspector."
     },
     {
         id: 16,
         name: "Tiny Fishing",
         image: "images/tinyfishingimage.jpg",
-        url: "games/tinyfishing.html",
-        tags: ["idle", "fishing", "clicker"]
+        slug: "tinyfishing",
+        gameUrl: "https://html5.gamemonetize.co/hzvsxelbew3y0v09vyql2n40kgtziqyg/",
+        tags: ["idle", "fishing", "clicker"],
+        description: "Cast your line and catch fish in this relaxing idle fishing game! Upgrade your equipment and discover new fish species in deeper waters."
     },
     {
         id: 17,
         name: "Bloxd io",
         image: "images/bloxdioimage.jpg",
-        url: "games/bloxdio.html",
-        tags: ["io", "parkour", "multiplayer"]
+        slug: "bloxdio",
+        gameUrl: "https://bloxd.io/",
+        tags: ["io", "parkour", "multiplayer"],
+        description: "Block-style battle royale with parkour elements! Build, fight, and survive against other players in this unique multiplayer experience."
     },
     {
         id: 18,
         name: "Moto X3M",
         image: "images/motox3mimage.jpg",
-        url: "games/motox3m.html",
-        tags: ["bike", "racing", "levels"]
+        slug: "motox3m",
+        gameUrl: "https://html5.gamemonetize.co/cwvgstrd6an0nqgcf0rdd7phev53fnm1/",
+        tags: ["bike", "racing", "levels"],
+        description: "Ride your dirt bike through challenging obstacle courses! Perform stunts and overcome deadly traps in this thrilling motorcycle racing game."
     },
     {
         id: 19,
         name: "Tall Man Run",
         image: "images/tallmanrunimage.jpg",
-        url: "games/tallmanrun.html",
-        tags: ["3d", "platformer", "runner"]
+        slug: "tallmanrun",
+        gameUrl: "https://html5.gamemonetize.co/skdbuby5hhfbfz0r7xl3jbcovwhugsfk/",
+        tags: ["3d", "platformer", "runner"],
+        description: "Run and grow taller by collecting the right items! Avoid obstacles that make you shorter and reach the finish line as tall as possible!"
     },
     {
         id: 20,
         name: "Happy Wheels",
         image: "images/happywheelsimage.jpg",
-        url: "games/happywheels.html",
-        tags: ["adventure", "racing", "sports"]
+        slug: "happywheels",
+        gameUrl: "https://html5.gamemonetize.co/2aibzvt72bgq8i17drkp5y9a6v7a4rq8/",
+        tags: ["adventure", "racing", "sports"],
+        description: "Navigate through dangerous obstacle courses in this physics-based game! Choose your character and vehicle, then try to reach the finish line in one piece!"
     },
     {
         id: 21,
         name: "Madalin Stunt Cars Pro",
         image: "images/madalinstuntcarsproimage.jpg",
-        url: "games/madalinstuntcarspro.html",
-        tags: ["multiplayer", "racing", "cars"]
+        slug: "madalinstuntcarspro",
+        gameUrl: "https://html5.gamemonetize.co/d452kzeh8w8ouiigleba5g52hgu805ls/",
+        tags: ["multiplayer", "racing", "cars"],
+        description: "Perform incredible stunts with supercars! Drive through massive stunt arenas and showcase your driving skills with realistic car physics."
     },
     {
         id: 22,
         name: "Ice Fishing",
         image: "images/icefishingimage.jpg",
-        url: "games/icefishing.html",
-        tags: ["fishing", "3d", "sports"]
+        slug: "icefishing",
+        gameUrl: "https://html5.gamemonetize.co/ixcjahmstfww53i0yvwn30089nd6e2ay/",
+        tags: ["fishing", "3d", "sports"],
+        description: "Try your luck at ice fishing in this 3D winter sports game! Drill holes in the ice and catch fish while enjoying the peaceful snowy environment."
     },
     {
         id: 23,
         name: "Stick Fighter 3D",
         image: "images/stickfighter3dimage.jpg",
-        url: "games/stickfighter3d.html",
-        tags: ["action", "3d", "2 player"]
+        slug: "stickfighter3d",
+        gameUrl: "https://html5.gamemonetize.co/vlskz7dtsxmpg34pu546de1wjng6ffob/",
+        tags: ["action", "3d", "2 player"],
+        description: "Engage in epic 3D stick figure battles! Fight against AI or challenge a friend in this action-packed fighting game with realistic physics."
     },
     {
         id: 24,
         name: "Fruit Ninja",
         image: "images/fruitninjaimage.jpg",
-        url: "games/fruitninja.html",
-        tags: ["fruit", "satisfying", "arcade"]
+        slug: "fruitninja",
+        gameUrl: "https://html5.gamemonetize.co/4kci7og3klgj0ivy2wz3gdvd9dth5e7n/",
+        tags: ["fruit", "satisfying", "arcade"],
+        description: "Slice and dice fruits with your finger! Avoid the bombs and try to cut as many fruits as possible in this satisfying arcade classic."
     },
     {
         id: 25,
         name: "Fall Cars: Hexagon",
         image: "images/fallcarshexagonimage.jpg",
-        url: "games/fallcarshexagon.html",
-        tags: ["cars", "2 player", "platformer"]
+        slug: "fallcarshexagon",
+        gameUrl: "https://html5.gamemonetize.co/5ms4h5xfk8lssrl6iitqdpj8uk4tketp/",
+        tags: ["cars", "2 player", "platformer"],
+        description: "Race on hexagonal platforms that fall away! Be the last car standing in this thrilling multiplayer survival racing game."
     },
     {
         id: 26,
         name: "Ball 2048",
         image: "images/ball2048image.jpg",
-        url: "games/ball2048.html",
-        tags: ["2048", "levels", "runner"]
-    },
-    {
-        id: 26,
-        name: "Papas Burgeria",
-        image: "images/papasburgeriaimage.jpg",
-        url: "games/papasburgeria.html",
-        tags: ["cooking", "clicker", "arcade"]
+        slug: "ball2048",
+        gameUrl: "https://html5.gamemonetize.co/e3jt923v68e8vninc5fcg8jbzpy4p5tz/",
+        tags: ["2048", "levels", "runner"],
+        description: "Roll your ball and merge with others to create higher numbers! Navigate through levels while growing your ball in this 2048-inspired runner."
     },
     {
         id: 27,
+        name: "Papas Burgeria",
+        image: "images/papasburgeriaimage.jpg",
+        slug: "papasburgeria",
+        gameUrl: "https://html5.gamemonetize.co/uw4s71zy0s3jxo6hckel04mw9rbopba8/",
+        tags: ["cooking", "clicker", "arcade"],
+        description: "Run Papa's burger restaurant! Take orders, grill patties, and serve delicious burgers to satisfied customers in this time management cooking game."
+    },
+    {
+        id: 28,
         name: "Bullet Army Run",
         image: "images/bulletarmyrunimage.jpg",
-        url: "games/bulletarmyrun.html",
-        tags: ["levels", "runner", "arcade"]
-    },
-    {
-        id: 28,
-        name: "Ninja Arashi",
-        image: "images/ninjaarashiimage.jpg",
-        url: "games/ninjaarashi.html",
-        tags: ["adventure", "action", "platformer"]
-    },
-    {
-        id: 28,
-        name: "Funny Shooter 2",
-        image: "images/funnyshooter2image.jpg",
-        url: "games/funnyshooter2.html",
-        tags: ["shooter", "action", "3d"]
+        slug: "bulletarmyrun",
+        gameUrl: "https://html5.gamemonetize.co/05v9me4wnyc3flvn250njm13yjh1cacj/",
+        tags: ["levels", "runner", "arcade"],
+        description: "Run through enemy territory while shooting obstacles! Collect ammunition and power-ups as you advance through challenging military-themed levels."
     },
     {
         id: 29,
-        name: "Survival Race",
-        image: "images/survivalraceimage.jpg",
-        url: "games/survivalrace.html",
-        tags: ["racing", "multiplayer", "platformer"]
+        name: "Ninja Arashi",
+        image: "images/ninjaarashiimage.jpg",
+        slug: "ninjaarashi",
+        gameUrl: "https://html5.gamemonetize.co/5dgqcoefxg0lpgt7o5mduxysprpft7cz/",
+        tags: ["adventure", "action", "platformer"],
+        description: "Help the ninja Arashi save his son from the evil Orochi! Jump, dash, and fight through dangerous levels in this epic ninja adventure."
     },
     {
         id: 30,
-        name: "Offroad Cycle 3D",
-        image: "images/offroadcycle3dimage.jpg",
-        url: "games/offroadcycle3d.html",
-        tags: ["racing", "bike", "3d"]
+        name: "Funny Shooter 2",
+        image: "images/funnyshooter2image.jpg",
+        slug: "funnyshooter2",
+        gameUrl: "https://html5.gamemonetize.co/6qfki05meirgub3gv0l2qacr2g3wnsch/",
+        tags: ["shooter", "action", "3d"],
+        description: "Battle against funny red enemies in this 3D first-person shooter! Use various weapons and tactics to eliminate all enemies in each level."
     },
     {
         id: 31,
-        name: "Rocket Bike Highway Race",
-        image: "images/rocketbikeshighwayraceimage.jpg",
-        url: "games/rocketbikeshighwayrace.html",
-        tags: ["racing", "bike", "3d"]
+        name: "Survival Race",
+        image: "images/survivalraceimage.jpg",
+        slug: "survivalrace",
+        gameUrl: "https://html5.gamemonetize.co/9km7avlf26r9se5gam8028uq4p6drmx1/",
+        tags: ["racing", "multiplayer", "platformer"],
+        description: "Race against other players while avoiding deadly obstacles! Only the fastest and smartest racers will survive to the end."
     },
     {
         id: 32,
-        name: "Block Stack 3D",
-        image: "images/blockstack3dimage.jpg",
-        url: "games/blockstack3d.html",
-        tags: ["3d", "puzzle", "endless"]
+        name: "Offroad Cycle 3D",
+        image: "images/offroadcycle3dimage.jpg",
+        slug: "offroadcycle3d",
+        gameUrl: "https://html5.gamemonetize.co/su4m68j4kkt3jsap0867audlbk8hkrpc/",
+        tags: ["racing", "bike", "3d"],
+        description: "Take your mountain bike on challenging offroad trails! Navigate through rough terrain and perform stunts in this realistic 3D cycling game."
     },
     {
         id: 33,
-        name: "Draw the Car Path",
-        image: "images/drawthecarpathimage.jpg",
-        url: "games/drawthecarpath.html",
-        tags: ["drawing", "puzzle", "levels"]
+        name: "Rocket Bike Highway Race",
+        image: "images/rocketbikeshighwayraceimage.jpg",
+        slug: "rocketbikeshighwayrace",
+        gameUrl: "https://html5.gamemonetize.co/ia1hvdgxut4k7h3kjhjecyx7iwhxi010/",
+        tags: ["racing", "bike", "3d"],
+        description: "Race your rocket-powered bike through busy highways! Dodge traffic and use your rocket boost to reach incredible speeds in this futuristic racing game."
     },
     {
         id: 34,
-        name: "Shell Shockers",
-        image: "images/shellshockersimage.jpg",
-        url: "games/shellshockers.html",
-        tags: ["shooter", "io", "multiplayer"]
+        name: "Block Stack 3D",
+        image: "images/blockstack3dimage.jpg",
+        slug: "blockstack3d",
+        gameUrl: "https://html5.gamemonetize.co/trltidnug856kmwd6pglqxsti7v8r3g9/",
+        tags: ["3d", "puzzle", "endless"],
+        description: "Stack blocks as high as possible in this 3D puzzle game! Time your drops perfectly to build the tallest tower without it falling over."
     },
     {
         id: 35,
-        name: "Smash Karts",
-        image: "images/smashkartsimage.jpg",
-        url: "games/smashkarts.html",
-        tags: ["racing", "action", "multiplayer"]
+        name: "Draw the Car Path",
+        image: "images/drawthecarpathimage.jpg",
+        slug: "drawthecarpath",
+        gameUrl: "https://html5.gamemonetize.co/9nx8j6pdpcndxl3sxi5xlq9x8d4tc14m/",
+        tags: ["drawing", "puzzle", "levels"],
+        description: "Draw the path for cars to reach their parking spots! Plan your routes carefully to avoid collisions and get all cars safely parked."
     },
     {
         id: 36,
-        name: "Ships 3D",
-        image: "images/ships3dimage.jpg",
-        url: "games/ships3d.html",
-        tags: ["3d", "action", "multiplayer"]
+        name: "Shell Shockers",
+        image: "images/shellshockersimage.jpg",
+        slug: "shellshockers",
+        gameUrl: "https://shellshock.io/",
+        tags: ["shooter", "io", "multiplayer"],
+        description: "Battle as an egg in this hilarious multiplayer first-person shooter! Crack your opponents while avoiding getting scrambled yourself."
     },
     {
         id: 37,
-        name: "Goober Dash",
-        image: "images/gooberdashimage.jpg",
-        url: "games/gooberdash.html",
-        tags: ["io", "platformer", "multiplayer"]
-    }, 
+        name: "Smash Karts",
+        image: "images/smashkartsimage.jpg",
+        slug: "smashkarts",
+        gameUrl: "https://smashkarts.io/",
+        tags: ["racing", "action", "multiplayer"],
+        description: "Race around tracks and battle other players with weapons! Collect power-ups and try to be the last kart standing in this action-packed racing game."
+    },
     {
         id: 38,
-        name: "Golf Clash",
-        image: "images/golfclashimage.jpg",
-        url: "games/golfclash.html",
-        tags: ["sports", "arcade", "multiplayer"]
-    }, 
+        name: "Ships 3D",
+        image: "images/ships3dimage.jpg",
+        slug: "ships3d",
+        gameUrl: "https://yp3d.com/ships3d/",
+        tags: ["3d", "action", "multiplayer"],
+        description: "Command your warship in epic naval battles! Engage in 3D maritime combat against other players and AI enemies on the high seas."
+    },
     {
         id: 39,
+        name: "Goober Dash",
+        image: "images/gooberdashimage.jpg",
+        slug: "gooberdash",
+        gameUrl: "https://gooberdash.winterpixel.io",
+        tags: ["io", "platformer", "multiplayer"],
+        description: "Race through obstacle courses with other players! Navigate platforms, avoid traps, and be the first to cross the finish line in this multiplayer platformer."
+    },
+    {
+        id: 40,
+        name: "Golf Clash",
+        image: "images/golfclashimage.jpg",
+        slug: "golfclash",
+        gameUrl: "https://html5.gamemonetize.co/ywl5omork0jwarou5xrxinfjgxphqh6s/",
+        tags: ["sports", "arcade", "multiplayer"],
+        description: "Tee off in this competitive golf game! Master your swing and compete against players worldwide in various golf courses and tournaments."
+    },
+    {
+        id: 41,
         name: "Smiling Glass",
         image: "images/smilingglassimage.jpg",
-        url: "games/smilingglass.html",
-        tags: ["satisfying", "puzzle", "clicker"]
-    },  
+        slug: "smilingglass",
+        gameUrl: "https://html5.gamemonetize.co/58l05tjrdda0semxivccmttcg2laqsbv/",
+        tags: ["satisfying", "puzzle", "clicker"],
+        description: "Fill the glass with water and make it smile! Draw lines to guide the water flow and solve increasingly challenging physics-based puzzles."
+    },
     {
-        id: 40, 
-        name: "Crowdy City IO", 
+        id: 42,
+        name: "Crowdy City IO",
         image: "images/crowdycityioimage.jpg",
-        url: "games/crowdycityio.html",
-        tags: ["io", "strategy", "multiplayer"]
-    },  
+        slug: "crowdycityio",
+        gameUrl: "https://html5.gamemonetize.co/3yrlza468z3vsm3r4mv8v9bi7iv2p3tl/",
+        tags: ["io", "strategy", "multiplayer"],
+        description: "Gather the biggest crowd in the city! Run around and collect followers while avoiding other players' crowds in this competitive io game."
+    },
     {
-        id: 41, 
-        name: "Archery King 3D", 
+        id: 43,
+        name: "Archery King 3D",
         image: "images/archeryking3dimage.jpg",
-        url: "games/arecheryking3d.html",
-        tags: ["3d", "strategy", "sports"]
-    }, 
+        slug: "archeryking3d",
+        gameUrl: "https://html5.gamemonetize.co/8zxe2n90tqn7nbpp6z3fqdq1xinsh5j4/",
+        tags: ["3d", "strategy", "sports"],
+        description: "Master the art of archery in this realistic 3D sports game! Aim carefully and account for wind and distance to hit bullseyes and become the archery champion."
+    },
     {
-        id: 42, 
-        name: "Scooter Touchgrind", 
+        id: 44,
+        name: "Scooter Touchgrind",
         image: "images/scootertouchgrindimage.jpg",
-        url: "games/scootertouchgrind.html",
-        tags: ["sports", "3d", "racing"]
+        slug: "scootertouchgrind",
+        gameUrl: "https://html5.gamemonetize.co/jkgxa35eeoodbqfj9hlfya96yq75weoi/",
+        tags: ["sports", "3d", "racing"],
+        description: "Scooter Touchgrind Tricks 3D is a fun driving game where you control a scooter through exciting levels full of obstacles. Your goal is simply to reach the finish line without crashing! Along the way, you'll need to dodge obstacles and keep your balance as the tracks get harder. You can collect coins to unlock cooler scooters and try out different styles."
     }
-
-
-
 ];
 
-// All Games Management System - Unique class name
-class AllGamesController {
+// Make games database globally accessible
+window.gamesDatabase = gamesDatabase;
+window.allGamesDatabase = gamesDatabase; // Fallback for old format
+
+// Game loader functionality for individual game pages
+class GameLoader {
     constructor() {
-        this.gamesList = allGamesDatabase;
+        this.currentGame = null;
+        this.init();
+    }
+
+    init() {
+        // Get game slug from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const gameSlug = urlParams.get('game');
+        
+        if (gameSlug) {
+            this.loadGame(gameSlug);
+        } else {
+            this.showError('No game specified');
+        }
+
+        this.setupEventListeners();
+    }
+
+    loadGame(slug) {
+        // Find game by slug
+        const game = gamesDatabase.find(g => g.slug === slug);
+        
+        if (!game) {
+            this.showError('Game not found');
+            return;
+        }
+
+        this.currentGame = game;
+        this.displayGame(game);
+        this.loadRelatedGames(game);
+        this.setupVotingSystem(game);
+    }
+
+    displayGame(game) {
+        // Update page title
+        document.title = `${game.name} - InfinitePixels`;
+        const pageTitle = document.getElementById('pageTitle');
+        if (pageTitle) pageTitle.textContent = `${game.name} - InfinitePixels`;
+
+        // Update game iframe
+        const gameFrame = document.getElementById('gameFrame');
+        if (gameFrame) {
+            gameFrame.src = game.gameUrl;
+            gameFrame.title = game.name;
+        }
+
+        // Update game title
+        const gameTitle = document.getElementById('gameTitle');
+        if (gameTitle) gameTitle.textContent = game.name;
+
+        // Update description
+        const gameDescription = document.getElementById('gameDescription');
+        if (gameDescription) gameDescription.textContent = game.description;
+
+        // Update tags
+        const genresContainer = document.getElementById('gameGenres');
+        if (genresContainer) {
+            genresContainer.innerHTML = '';
+            game.tags.forEach(tag => {
+                const tagElement = document.createElement('span');
+                tagElement.className = 'genre-tag';
+                tagElement.textContent = tag.charAt(0).toUpperCase() + tag.slice(1);
+                genresContainer.appendChild(tagElement);
+            });
+        }
+
+        // Update share link
+        const shareLink = document.getElementById('shareLink');
+        if (shareLink) {
+            shareLink.value = `${window.location.origin}/games/game.html?game=${game.slug}`;
+        }
+    }
+
+    loadRelatedGames(currentGame) {
+        const container = document.getElementById('relatedGamesContainer');
+        if (!container) return;
+        
+        // Find games with similar tags
+        const relatedGames = gamesDatabase
+            .filter(game => 
+                game.id !== currentGame.id && 
+                game.tags.some(tag => currentGame.tags.includes(tag))
+            )
+            .slice(0, 6);
+
+        // If not enough related games, add random games
+        if (relatedGames.length < 6) {
+            const additionalGames = gamesDatabase
+                .filter(game => 
+                    game.id !== currentGame.id && 
+                    !relatedGames.includes(game)
+                )
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 6 - relatedGames.length);
+            
+            relatedGames.push(...additionalGames);
+        }
+
+        // Display related games
+        container.innerHTML = '<h3>Related Games</h3>';
+        
+        relatedGames.forEach(game => {
+            const gameElement = document.createElement('div');
+            gameElement.className = 'related-game-item';
+            gameElement.innerHTML = `
+                <img src="../${game.image}" alt="${game.name}" loading="lazy">
+                <div class="game-info">
+                    <h4>${game.name}</h4>
+                    <div class="game-tags">
+                        ${game.tags.slice(0, 2).map(tag => 
+                            `<span class="tag">${tag}</span>`
+                        ).join('')}
+                    </div>
+                </div>
+            `;
+            gameElement.addEventListener('click', () => {
+                window.location.href = `game.html?game=${game.slug}`;
+            });
+            container.appendChild(gameElement);
+        });
+    }
+
+    setupVotingSystem(game) {
+        const thumbsUpBtn = document.getElementById('thumbsUpBtn');
+        const thumbsDownBtn = document.getElementById('thumbsDownBtn');
+        const floatingThumbs = document.getElementById('floatingThumbs');
+        const voteLock = document.getElementById('voteLock');
+
+        if (!thumbsUpBtn || !thumbsDownBtn) return;
+
+        // Use game-specific storage key
+        const voteKey = `${game.slug}Voted`;
+        let voted = sessionStorage.getItem(voteKey) === '1';
+
+        const createFloatingThumbs = (type, originBtn) => {
+            if (!floatingThumbs) return;
+            floatingThumbs.innerHTML = '';
+            const count = 7;
+            
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('span');
+                el.className = 'floating-thumb';
+                el.innerHTML = type === 'up'
+                    ? '<i class="fas fa-thumbs-up"></i>'
+                    : '<i class="fas fa-thumbs-down"></i>';
+                
+                el.style.fontSize = '1em';
+                el.style.opacity = '0.85';
+                el.style.color = type === 'up' ? '#4CAF50' : '#e74c3c';
+                el.style.position = 'absolute';
+                el.style.pointerEvents = 'none';
+                
+                const angle = Math.random() * 2 * Math.PI;
+                const distance = 40 + Math.random() * 30;
+                const x = Math.cos(angle) * distance;
+                const y = Math.sin(angle) * distance * (type === 'up' ? -1 : 1);
+                const delay = Math.random() * 0.15;
+                
+                let startX = 0, startY = 0;
+                if (type === 'down' && originBtn && floatingThumbs) {
+                    const parentRect = originBtn.parentElement.getBoundingClientRect();
+                    const btnRect = originBtn.getBoundingClientRect();
+                    startX = btnRect.left - parentRect.left + btnRect.width / 2 - 14;
+                    startY = btnRect.top - parentRect.top + btnRect.height / 2 - 14;
+                } else if (floatingThumbs) {
+                    startX = floatingThumbs.offsetWidth / 2;
+                    startY = floatingThumbs.offsetHeight / 2;
+                }
+                
+                el.style.left = type === 'down' ? `${startX}px` : '50%';
+                el.style.top = type === 'down' ? `${startY}px` : '50%';
+                el.style.transform = 'translate(-50%, -50%)';
+                el.style.animation = type === 'up'
+                    ? `thumbsUpFloatSmall 1.1s ${delay}s cubic-bezier(.4,1.4,.7,1) forwards`
+                    : `thumbsDownFloatSmall 1.1s ${delay}s cubic-bezier(.4,1.4,.7,1) forwards`;
+                el.style.setProperty('--x', `${x}px`);
+                el.style.setProperty('--y', `${y}px`);
+                
+                floatingThumbs.appendChild(el);
+            }
+            
+            setTimeout(() => {
+                if (floatingThumbs) floatingThumbs.innerHTML = '';
+            }, 1300);
+        };
+
+        const lockVoting = () => {
+            thumbsUpBtn.disabled = true;
+            thumbsDownBtn.disabled = true;
+            if (voteLock) {
+                voteLock.style.display = 'flex';
+                voteLock.style.animation = 'voteLockPop 0.5s cubic-bezier(.4,1.4,.7,1)';
+            }
+        };
+
+        // On load, show lock if already voted
+        if (voted) {
+            lockVoting();
+        }
+
+        [thumbsUpBtn, thumbsDownBtn].forEach(btn => {
+            btn.addEventListener('mousedown', () => btn.style.transform = 'scale(0.92)');
+            btn.addEventListener('mouseup', () => btn.style.transform = '');
+            btn.addEventListener('mouseleave', () => btn.style.transform = '');
+        });
+
+        thumbsUpBtn.addEventListener('click', function() {
+            if (voted) return;
+            lockVoting();
+            createFloatingThumbs('up', thumbsUpBtn);
+            sessionStorage.setItem(voteKey, '1');
+            voted = true;
+        });
+
+        thumbsDownBtn.addEventListener('click', function() {
+            if (voted) return;
+            lockVoting();
+            createFloatingThumbs('down', thumbsDownBtn);
+            sessionStorage.setItem(voteKey, '1');
+            voted = true;
+        });
+    }
+
+    setupEventListeners() {
+        // Share functionality
+        const shareBtn = document.getElementById('shareBtn');
+        const shareModal = document.getElementById('shareModal');
+        const closeModal = document.getElementById('closeModal');
+        const copyBtn = document.getElementById('copyBtn');
+        const shareMessage = document.getElementById('shareMessage');
+
+        if (shareBtn && shareModal) {
+            shareBtn.addEventListener('click', () => {
+                shareModal.style.display = 'flex';
+            });
+        }
+
+        if (closeModal && shareModal) {
+            closeModal.addEventListener('click', () => {
+                shareModal.style.display = 'none';
+            });
+        }
+
+        if (copyBtn) {
+            copyBtn.addEventListener('click', () => {
+                const shareLink = document.getElementById('shareLink');
+                if (shareLink) {
+                    shareLink.select();
+                    document.execCommand('copy');
+                    if (shareMessage) {
+                        shareMessage.style.display = 'block';
+                        setTimeout(() => {
+                            shareMessage.style.display = 'none';
+                        }, 2000);
+                    }
+                }
+            });
+        }
+
+        // Fullscreen functionality
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const gameContainer = document.getElementById('gameContainer');
+
+        if (fullscreenBtn && gameContainer) {
+            fullscreenBtn.addEventListener('click', () => {
+                if (gameContainer.requestFullscreen) {
+                    gameContainer.requestFullscreen();
+                } else if (gameContainer.webkitRequestFullscreen) {
+                    gameContainer.webkitRequestFullscreen();
+                } else if (gameContainer.msRequestFullscreen) {
+                    gameContainer.msRequestFullscreen();
+                }
+            });
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            const shareModal = document.getElementById('shareModal');
+            if (shareModal && e.target === shareModal) {
+                shareModal.style.display = 'none';
+            }
+        });
+    }
+
+    showError(message) {
+        const gameTitle = document.getElementById('gameTitle');
+        const gameDescription = document.getElementById('gameDescription');
+        const gameFrame = document.getElementById('gameFrame');
+        
+        if (gameTitle) gameTitle.textContent = 'Error';
+        if (gameDescription) gameDescription.textContent = message;
+        if (gameFrame) gameFrame.style.display = 'none';
+    }
+}
+
+// All Games Management System - Fixed class name and functionality
+class AllGamesManager {
+    constructor() {
+        // Use enhanced games database with fallback to old format
+        this.gamesList = window.gamesDatabase || window.allGamesDatabase || [];
         this.filteredGamesList = [...this.gamesList];
         this.currentPageNumber = 1;
         this.itemsPerPage = 9;
         this.selectedFilterTags = new Set();
         this.currentSearchTerm = '';
         
+        console.log('AllGamesManager initialized with', this.gamesList.length, 'games');
         this.initializeAllGamesPage();
     }
     
@@ -2092,78 +2481,105 @@ class AllGamesController {
         this.renderPaginationControls();
         this.updateGameCountDisplay();
     }
-    
+
     setupAllEventHandlers() {
         // Search functionality with unique IDs
         const searchInputField = document.getElementById('gameSearchField');
         const clearSearchButton = document.getElementById('searchClearBtn');
         
-        searchInputField.addEventListener('input', (e) => {
-            this.currentSearchTerm = e.target.value.toLowerCase();
-            this.applyFiltersAndSearch();
-            this.toggleSearchClearVisibility();
-        });
+        if (searchInputField) {
+            searchInputField.addEventListener('input', (e) => {
+                this.currentSearchTerm = e.target.value.toLowerCase();
+                this.applyFiltersAndSearch();
+                this.toggleSearchClearVisibility();
+            });
+        }
         
-        clearSearchButton.addEventListener('click', () => {
-            searchInputField.value = '';
-            this.currentSearchTerm = '';
-            this.applyFiltersAndSearch();
-            this.toggleSearchClearVisibility();
-            searchInputField.focus();
-        });
+        if (clearSearchButton) {
+            clearSearchButton.addEventListener('click', () => {
+                if (searchInputField) {
+                    searchInputField.value = '';
+                    this.currentSearchTerm = '';
+                    this.applyFiltersAndSearch();
+                    this.toggleSearchClearVisibility();
+                    searchInputField.focus();
+                }
+            });
+        }
         
         // Filter functionality with unique IDs
         const tagFilterButton = document.getElementById('tagFilterBtn');
         const filterOptionsPanel = document.getElementById('filterOptionsPanel');
         const resetFiltersButton = document.getElementById('resetFiltersBtn');
         
-        tagFilterButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            filterOptionsPanel.classList.toggle('active');
-            tagFilterButton.classList.toggle('active');
-        });
+        if (tagFilterButton && filterOptionsPanel) {
+            tagFilterButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                filterOptionsPanel.classList.toggle('show');
+                tagFilterButton.classList.toggle('active');
+            });
+        }
         
         document.addEventListener('click', (e) => {
-            if (!filterOptionsPanel.contains(e.target) && !tagFilterButton.contains(e.target)) {
-                filterOptionsPanel.classList.remove('active');
-                tagFilterButton.classList.remove('active');
+            if (filterOptionsPanel && tagFilterButton) {
+                if (!filterOptionsPanel.contains(e.target) && !tagFilterButton.contains(e.target)) {
+                    filterOptionsPanel.classList.remove('show');
+                    tagFilterButton.classList.remove('active');
+                }
             }
         });
         
-        resetFiltersButton.addEventListener('click', () => {
-            this.selectedFilterTags.clear();
-            this.refreshFilterTagsDisplay();
-            this.applyFiltersAndSearch();
-        });
+        if (resetFiltersButton) {
+            resetFiltersButton.addEventListener('click', () => {
+                this.selectedFilterTags.clear();
+                this.refreshFilterTagsDisplay();
+                this.applyFiltersAndSearch();
+            });
+        }
     }
-    
+
     toggleSearchClearVisibility() {
         const clearSearchButton = document.getElementById('searchClearBtn');
         const searchInputField = document.getElementById('gameSearchField');
         
-        if (searchInputField.value.length > 0) {
-            clearSearchButton.classList.add('visible');
-        } else {
-            clearSearchButton.classList.remove('visible');
+        if (clearSearchButton && searchInputField) {
+            if (searchInputField.value.length > 0) {
+                clearSearchButton.classList.add('visible');
+            } else {
+                clearSearchButton.classList.remove('visible');
+            }
         }
     }
     
     createFilterTagsDisplay() {
         const uniqueTagsSet = new Set();
         this.gamesList.forEach(gameItem => {
-            gameItem.tags.forEach(tagName => uniqueTagsSet.add(tagName));
+            if (gameItem.tags) {
+                gameItem.tags.forEach(tagName => uniqueTagsSet.add(tagName));
+            }
         });
         
         const filterTagsContainer = document.getElementById('availableFilterTags');
+        if (!filterTagsContainer) return;
+        
         filterTagsContainer.innerHTML = '';
         
         Array.from(uniqueTagsSet).sort().forEach(tagName => {
             const tagElement = document.createElement('div');
-            tagElement.className = 'selectable-tag';
-            tagElement.textContent = tagName;
+            tagElement.className = 'filter-tag-option';
+            tagElement.innerHTML = `
+                <span class="tag-name">${tagName.charAt(0).toUpperCase() + tagName.slice(1)}</span>
+                <span class="tag-count">${this.getTagCount(tagName)}</span>
+            `;
             tagElement.addEventListener('click', () => this.handleFilterTagToggle(tagName, tagElement));
             filterTagsContainer.appendChild(tagElement);
         });
+    }
+    
+    getTagCount(tag) {
+        return this.gamesList.filter(game => 
+            game.tags && game.tags.some(t => t.toLowerCase() === tag.toLowerCase())
+        ).length;
     }
     
     handleFilterTagToggle(tagName, tagElement) {
@@ -2179,9 +2595,9 @@ class AllGamesController {
     }
     
     refreshFilterTagsDisplay() {
-        const selectableTags = document.querySelectorAll('.selectable-tag');
-        selectableTags.forEach(tagElement => {
-            const tagText = tagElement.textContent;
+        const filterTagOptions = document.querySelectorAll('.filter-tag-option');
+        filterTagOptions.forEach(tagElement => {
+            const tagText = tagElement.querySelector('.tag-name').textContent.toLowerCase();
             if (this.selectedFilterTags.has(tagText)) {
                 tagElement.classList.add('active');
             } else {
@@ -2192,16 +2608,17 @@ class AllGamesController {
     
     applyFiltersAndSearch() {
         this.filteredGamesList = this.gamesList.filter(gameItem => {
-            // Search filter logic
+            // Search filter logic - enhanced to include descriptions
             const matchesSearchQuery = this.currentSearchTerm === '' || 
                 gameItem.name.toLowerCase().includes(this.currentSearchTerm) ||
-                gameItem.tags.some(tagName => tagName.toLowerCase().includes(this.currentSearchTerm));
+                (gameItem.tags && gameItem.tags.some(tagName => tagName.toLowerCase().includes(this.currentSearchTerm))) ||
+                (gameItem.description && gameItem.description.toLowerCase().includes(this.currentSearchTerm));
             
             // Tag filter logic
             const matchesTagFilters = this.selectedFilterTags.size === 0 ||
-                Array.from(this.selectedFilterTags).every(selectedTag => 
-                    gameItem.tags.includes(selectedTag)
-                );
+                (gameItem.tags && Array.from(this.selectedFilterTags).some(selectedTag => 
+                    gameItem.tags.some(tag => tag.toLowerCase() === selectedTag.toLowerCase())
+                ));
             
             return matchesSearchQuery && matchesTagFilters;
         });
@@ -2211,12 +2628,19 @@ class AllGamesController {
         this.renderPaginationControls();
         this.updateGameCountDisplay();
     }
-    
+
     renderGameCards() {
         const gameCardsContainer = document.getElementById('gameCardsGrid');
+        if (!gameCardsContainer) {
+            console.error('Game cards container not found');
+            return;
+        }
+        
         const startIndex = (this.currentPageNumber - 1) * this.itemsPerPage;
         const endIndex = startIndex + this.itemsPerPage;
         const currentPageGames = this.filteredGamesList.slice(startIndex, endIndex);
+        
+        console.log('Rendering games:', currentPageGames.length);
         
         if (currentPageGames.length === 0) {
             gameCardsContainer.innerHTML = `
@@ -2229,44 +2653,60 @@ class AllGamesController {
             return;
         }
         
-        gameCardsContainer.innerHTML = currentPageGames.map(gameItem => `
-            <div class="individual-game-card" data-game="${gameItem.name.toLowerCase().replace(/\s+/g, '-')}">
-                <div class="game-preview-image">
-                    <img src="${gameItem.image}" alt="${gameItem.name}" />
-                    <div class="game-hover-overlay">
-                        <a href="${gameItem.url}">
-                            <button class="game-play-button">Play Now</button>
-                        </a>
+        gameCardsContainer.innerHTML = currentPageGames.map(gameItem => {
+            // Create the game link - use new dynamic format if slug exists, fallback to old format
+            const gameLink = gameItem.slug 
+                ? `games/game.html?game=${gameItem.slug}`
+                : gameItem.url || `games/${gameItem.name.toLowerCase().replace(/\s+/g, '')}.html`;
+                
+            return `
+                <div class="game-card" data-game="${gameItem.slug || gameItem.name.toLowerCase().replace(/\s+/g, '-')}">
+                    <div class="game-card-image">
+                        <img src="${gameItem.image}" alt="${gameItem.name}" loading="lazy" onerror="this.src='images/placeholder-game.jpg'" />
+                        <div class="game-card-overlay">
+                            <button class="play-button">
+                                <i class="fas fa-play"></i>
+                                <span>Play Now</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="game-card-content">
+                        <h3 class="game-card-title">${gameItem.name}</h3>
+                        <div class="game-card-tags">
+                            ${gameItem.tags ? gameItem.tags.slice(0, 3).map(tagName => 
+                                `<span class="game-tag">${tagName.charAt(0).toUpperCase() + tagName.slice(1)}</span>`
+                            ).join('') : ''}
+                        </div>
+                        ${gameItem.description ? `
+                            <p class="game-card-description">${gameItem.description.substring(0, 100)}${gameItem.description.length > 100 ? '...' : ''}</p>
+                        ` : ''}
                     </div>
                 </div>
-                <div class="game-details-section">
-                    <h3>${gameItem.name}</h3>
-                    <div class="game-category-tags">
-                        ${gameItem.tags.map(tagName => `<span class="category-tag-item">${tagName}</span>`).join('')}
-                    </div>
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
         
         // Add click handlers for individual game cards
-        document.querySelectorAll('.individual-game-card').forEach(cardElement => {
+        document.querySelectorAll('.game-card').forEach(cardElement => {
             cardElement.addEventListener('click', (e) => {
-                if (!e.target.closest('.game-play-button')) {
-                    const playButton = cardElement.querySelector('.game-play-button');
-                    if (playButton) {
-                        playButton.click();
-                    }
+                const gameData = currentPageGames.find(game => 
+                    (game.slug || game.name.toLowerCase().replace(/\s+/g, '-')) === cardElement.dataset.game
+                );
+                if (gameData) {
+                    const gameLink = gameData.slug 
+                        ? `games/game.html?game=${gameData.slug}`
+                        : gameData.url || `games/${gameData.name.toLowerCase().replace(/\s+/g, '')}.html`;
+                    window.location.href = gameLink;
                 }
             });
         });
     }
-    
+
     renderPaginationControls() {
         const totalPagesCount = Math.ceil(this.filteredGamesList.length / this.itemsPerPage);
         const paginationContainer = document.getElementById('pageNavigationControls');
         
-        if (totalPagesCount <= 1) {
-            paginationContainer.innerHTML = '';
+        if (!paginationContainer || totalPagesCount <= 1) {
+            if (paginationContainer) paginationContainer.innerHTML = '';
             return;
         }
         
@@ -2274,9 +2714,10 @@ class AllGamesController {
         
         // Previous navigation button
         paginationHTML += `
-            <button class="nav-page-button" ${this.currentPageNumber === 1 ? 'disabled' : ''} 
-                    onclick="allGamesController.navigateToPage(${this.currentPageNumber - 1})">
+            <button class="page-nav-btn ${this.currentPageNumber === 1 ? 'disabled' : ''}" 
+                    data-page="${this.currentPageNumber - 1}" ${this.currentPageNumber === 1 ? 'disabled' : ''}>
                 <i class="fas fa-chevron-left"></i>
+                Previous
             </button>
         `;
         
@@ -2290,35 +2731,47 @@ class AllGamesController {
         }
         
         if (startPageNumber > 1) {
-            paginationHTML += `<button class="nav-page-button" onclick="allGamesController.navigateToPage(1)">1</button>`;
+            paginationHTML += `<button class="page-nav-btn" data-page="1">1</button>`;
             if (startPageNumber > 2) {
-                paginationHTML += `<span class="pagination-dots">...</span>`;
+                paginationHTML += `<span class="page-ellipsis">...</span>`;
             }
         }
         
         for (let pageNum = startPageNumber; pageNum <= endPageNumber; pageNum++) {
             paginationHTML += `
-                <button class="nav-page-button ${pageNum === this.currentPageNumber ? 'current-page' : ''}" 
-                        onclick="allGamesController.navigateToPage(${pageNum})">${pageNum}</button>
+                <button class="page-nav-btn ${pageNum === this.currentPageNumber ? 'active' : ''}" 
+                        data-page="${pageNum}">${pageNum}</button>
             `;
         }
         
         if (endPageNumber < totalPagesCount) {
             if (endPageNumber < totalPagesCount - 1) {
-                paginationHTML += `<span class="pagination-dots">...</span>`;
+                paginationHTML += `<span class="page-ellipsis">...</span>`;
             }
-            paginationHTML += `<button class="nav-page-button" onclick="allGamesController.navigateToPage(${totalPagesCount})">${totalPagesCount}</button>`;
+            paginationHTML += `<button class="page-nav-btn" data-page="${totalPagesCount}">${totalPagesCount}</button>`;
         }
         
         // Next navigation button
         paginationHTML += `
-            <button class="nav-page-button" ${this.currentPageNumber === totalPagesCount ? 'disabled' : ''} 
-                    onclick="allGamesController.navigateToPage(${this.currentPageNumber + 1})">
+            <button class="page-nav-btn ${this.currentPageNumber === totalPagesCount ? 'disabled' : ''}" 
+                    data-page="${this.currentPageNumber + 1}" ${this.currentPageNumber === totalPagesCount ? 'disabled' : ''}>
+                Next
                 <i class="fas fa-chevron-right"></i>
             </button>
         `;
         
         paginationContainer.innerHTML = paginationHTML;
+        
+        // Add event listeners to pagination buttons
+        paginationContainer.addEventListener('click', (e) => {
+            if (e.target.matches('[data-page]') || e.target.closest('[data-page]')) {
+                const button = e.target.matches('[data-page]') ? e.target : e.target.closest('[data-page]');
+                if (!button.disabled && !button.classList.contains('disabled')) {
+                    const page = parseInt(button.dataset.page);
+                    this.navigateToPage(page);
+                }
+            }
+        });
     }
     
     navigateToPage(pageNumber) {
@@ -2330,62 +2783,57 @@ class AllGamesController {
             this.updateGameCountDisplay();
             
             // Smooth scroll to top of games grid
-            document.getElementById('gameCardsGrid').scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'start' 
-            });
+            const gamesGrid = document.getElementById('gameCardsGrid');
+            if (gamesGrid) {
+                gamesGrid.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
         }
     }
     
     updateGameCountDisplay() {
         const gameCountElement = document.getElementById('totalGameCount');
-        gameCountElement.textContent = this.filteredGamesList.length;
-    }
-    
-    // Method to dynamically add new games
-    addSingleGame(gameData) {
-        const newGameEntry = {
-            id: this.gamesList.length + 1,
-            ...gameData
-        };
-        this.gamesList.push(newGameEntry);
-        this.applyFiltersAndSearch();
-        this.createFilterTagsDisplay();
-    }
-    
-    // Method to add multiple games at once
-    addMultipleGames(gamesArray) {
-        gamesArray.forEach(gameData => {
-            const newGameEntry = {
-                id: this.gamesList.length + 1,
-                ...gameData
-            };
-            this.gamesList.push(newGameEntry);
-        });
-        this.applyFiltersAndSearch();
-        this.createFilterTagsDisplay();
+        if (gameCountElement) {
+            gameCountElement.textContent = this.filteredGamesList.length;
+        }
     }
 }
 
-// Initialize the all games controller when page loads
+// Global variable for external access
 let allGamesController;
 
+// Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    allGamesController = new AllGamesController();
+    // Only initialize if we're on the games page (check for specific elements)
+    if (document.getElementById('gameCardsGrid')) {
+        allGamesController = new AllGamesManager();
+        console.log('Games page initialized');
+    }
+    
+    // Initialize GameLoader if we're on an individual game page
+    if (document.getElementById('gameFrame')) {
+        new GameLoader();
+        console.log('Game page initialized');
+    }
 });
 
 // Utility functions to add games from external scripts
 function addNewGameToCollection(name, image, url, tags) {
     if (allGamesController) {
-        allGamesController.addSingleGame({ name, image, url, tags });
+        allGamesController.gamesList.push({ name, image, url, tags });
+        allGamesController.applyFiltersAndSearch();
     }
 }
 
 function addMultipleGamesToCollection(gamesArray) {
     if (allGamesController) {
-        allGamesController.addMultipleGames(gamesArray);
+        allGamesController.gamesList.push(...gamesArray);
+        allGamesController.applyFiltersAndSearch();
     }
 }
+
 
 // Example usage for adding more games:
 /*
