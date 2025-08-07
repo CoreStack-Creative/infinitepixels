@@ -2359,6 +2359,24 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/dm15vv1aak9c1asfg49ji8s7iosbl6tu/",
  tags: ["2 player", "action", "shooter"],
  description: "Stick Duel Battle is a funny and crazy stickman battle game! You can fight with realistic weapons and physics on many maps. Each different map requires different tactics. Stick Battle Duel can be played with both 1 player and 2 players. The one who reaches 5 score first, wins the game.",
+ },
+ {
+ id: 61,
+ name: "Gansta Duel",
+ image: "images/ganstaduelimage.jpg",
+ slug: "ganstaduel",
+ gameUrl: "https://html5.gamemonetize.co/jxa2s8trml82jl1c2p52en3neqrob1b1/",
+ tags: ["arcade", "action", "levels"], 
+ description: "This game is a fun filled action game against horedes of bots. You can progress trough the diffrent levels and upgrade your abailitys to have more health and do more damage. If you get into a pinch you can even pick up a enemy and spin him around to deal damage to lots of oponents, or if you need to deal lots of damge to one oponent you can hit them with an uppercut.",
+ },
+ {
+ id: 62,
+ name: "Power Slap",
+ image: "images/powerslapimage.jpg",
+ slug: "powerslap",
+ gameUrl: "https://html5.gamemonetize.co/zmlw34hzwakgnkd2nrr1798aqp7xzu7y/",
+ tags: ["arcade", "satifing", "sport"], 
+ description: "Power Slap is an exciting slap battle game where timing, precision, and reflexes are the key to victory! Engage in fast-paced slap duels, test your skills, and out-slap your opponents to dominate the leaderboards. With simple one-tap controls, smooth animations, and addictive arcade-style gameplay, every match is a thrilling challenge. Unlock power-ups, upgrades, and special abilities to gain an edge in battle.",
  }
 ]; 
 
