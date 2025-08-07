@@ -5519,3 +5519,122 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(addScrollAnimation, 100);
     };
 });
+
+// Homepage New Releases JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    const homepageNewGamesGrid = document.getElementById('homepageNewGamesGrid');
+    const homepageGamesCount = document.getElementById('homepageGamesCount');
+    
+    // Number of games to show on homepage (responsive)
+    function getGamesToShow() {
+        const screenWidth = window.innerWidth;
+        if (screenWidth < 768) return 3; // Mobile: 3 games
+        if (screenWidth < 1200) return 4; // Tablet: 4 games
+        return 6; // Desktop: 6 games
+    }
+
+    // Get the newest games for homepage
+    const newestGames = gamesDatabase.slice(-30).reverse();
+    const gamesToShow = getGamesToShow();
+    const homepageGames = newestGames.slice(0, gamesToShow);
+
+    // Update games count
+    function updateHomepageCount() {
+        if (homepageGamesCount) {
+            homepageGamesCount.textContent = newestGames.length;
+        }
+    }
+
+    // Create compact game card for homepage
+    function createHomepageGameCard(game) {
+        return `
+            <div class="homepage-game-card" onclick="playGame('${game.slug}')">
+                <div class="homepage-game-image">
+                    <img src="${game.image}" alt="${game.name}" loading="lazy">
+                    <div class="homepage-new-badge">New</div>
+                    <div class="homepage-game-overlay">
+                        <button class="homepage-play-button">
+                            <i class="fas fa-play"></i>
+                            Play Now
+                        </button>
+                    </div>
+                </div>
+                <div class="homepage-game-info">
+                    <h3>${game.name}</h3>
+                    <div class="homepage-game-tags">
+                        ${game.tags.slice(0, 3).map(tag => `<span class="homepage-tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Load homepage games
+    function loadHomepageGames() {
+        if (!homepageNewGamesGrid) return;
+
+        // Clear loading placeholder
+        homepageNewGamesGrid.innerHTML = '';
+
+        if (homepageGames.length === 0) {
+            homepageNewGamesGrid.innerHTML = `
+                <div class="loading-placeholder">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>No new games available</span>
+                </div>
+            `;
+            return;
+        }
+
+        // Create and append game cards
+        homepageGames.forEach(game => {
+            const gameCard = document.createElement('div');
+            gameCard.innerHTML = createHomepageGameCard(game);
+            homepageNewGamesGrid.appendChild(gameCard.firstElementChild);
+        });
+
+        // Update count
+        updateHomepageCount();
+
+        // Add entrance animation
+        addHomepageAnimation();
+    }
+
+    // Play game function (reuse from main new releases if not already defined)
+    if (typeof window.playGame === 'undefined') {
+        window.playGame = function(gameSlug) {
+            window.location.href = `game.html?game=${gameSlug}`;
+        };
+    }
+
+    // Add entrance animation for homepage cards
+    function addHomepageAnimation() {
+        const gameCards = document.querySelectorAll('.homepage-game-card');
+        gameCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100); // Stagger the animation
+        });
+    }
+
+    // Handle window resize to adjust number of games shown
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            const newGamesToShow = getGamesToShow();
+            if (newGamesToShow !== homepageGames.length) {
+                // Reload with new number of games if screen size changed significantly
+                location.reload();
+            }
+        }, 250);
+    });
+
+    // Initialize homepage new releases
+    loadHomepageGames();
+});
