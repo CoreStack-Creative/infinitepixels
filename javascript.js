@@ -2448,7 +2448,7 @@ const gamesDatabase = [
  {
  id: 68,
  name: "American 18 Wheeler Truck Sim",
- image: "images/american18wheelertrucksimage.jpg",
+ image: "images/american18wheelertrucksimimage.jpg",
  slug: "american18wheelertrucksim",
  gameUrl: "https://html5.gamemonetize.co/iktjgjwxwy2kwttz3yml4av97010fgwy/",
  tags: ["cars", "levels", "adventure"],
