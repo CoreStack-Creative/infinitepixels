@@ -2330,8 +2330,18 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/0c57ybsvhtn9xv77swrbiwgtreda0pal/",
  tags: ["racing", "sports", "online"],
  description: "Rocket League is a high-octane sports game. Drive rocket-powered cars and hit a giant ball to score goals. Combine speed, skill, and teamwork in fast-paced matches across futuristic arenas."
- }
-];
+ },
+ {
+ id: 58,
+ name: "Rise Up",
+ image: "images/riseupimage.jpg",
+ slug: "riseup",
+ gameUrl: "https://html5.gamemonetize.co/5jwn8b2ufm7rdafdtnslr9cvioaoh76m/",
+ tags: ["arcade", "strategy", "levels"],
+ description: "Move your shield with one finger to protect your balloon. Clear your way as you reach higher and higher!",
+ } 
+ 
+]; 
 
 // Make games database globally accessible
 window.gamesDatabase = gamesDatabase;
