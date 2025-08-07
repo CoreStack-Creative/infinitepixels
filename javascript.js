@@ -80,7 +80,9 @@ const gameData = [
    { name: "Winter Clash 3D", link: "/game.html?game=winterclash3d" }, 
    { name: "Stickman Sniper", link: "/game.html?game=stickmansniper" },   
    { name: "American 18 Wheeler Sim", link: "/game.html?game=american18wheelersim" },  
-   { name: "Billard 8Ball Pool", link: "/game.html?game=billard8ballpool" }
+   { name: "Billard 8Ball Pool", link: "/game.html?game=billard8ballpool" },
+   { name: "Flip Master", link: "/game.html?game=flipmaster" },
+   { name: "Curvy Punch 2", link: "/game.html?game=curvypunch2" }
 ];
 
 
@@ -2471,6 +2473,15 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/t5h6lmvu96x7kk5bj6v5n6999o7mf9f1/",
  tags: ["3d", "levels", "parkour"],
  description: "Flip Master is an exciting game about acrobatics and parkour! Perform spectacular tricks, execute breathtaking flips, and conquer challenging obstacles. Control your character in the air, perfect your jumping technique, and land flawlessly. Upgrade your skills, explore new locations, and become the ultimate master of extreme flips!",
+ },
+ {
+ id: 71,
+ name: "Curvy Punch 2",
+ image: "images/curvypunch2image.jpg",
+ slug: "curvypunch2",
+ gameUrl: "https://html5.gamemonetize.co/us0l69i6kfvo5wa3a2skvifjmcmhj8t6/",
+ tags: ["sports", "action", "levels"],
+ description: "Ready to join the funniest and craziest punch battle ever? Play a creative 3D fight action game in Curvy Punch. You can throw hilarious curve punches to knock out your enemies! Your fists don’t just punch straight; you can bend them in wild curves! Control your fists to maneuver around obstacles and punch your opponents hard. Make every punch precise and funny! You can also backflip to avoid enemy attacks!",
  }
 ]; 
 
