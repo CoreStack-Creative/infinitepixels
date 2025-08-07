@@ -68,7 +68,8 @@ const gameData = [
    { name: "rocketbotroyale", link: "/game.html?game=rocketbotroyale" },
    { name: "Rocket League", link: "/game.html?game=rocketleague" },
    { name: "Slope 3", link: "/game.html?game=slope3" },
-   { name: "Stair Race 3D", link: "/game.html?game=stairrace3d" }
+   { name: "Stair Race 3D", link: "/game.html?game=stairrace3d" },
+   { name: "Rise Up", link: "/game.html?game=riseup" }
 ];
 
 
@@ -81,7 +82,7 @@ const gameCanvas = document.getElementById('gameCanvas');
 const gameContainer = document.getElementById('gameContainer');
 const fullscreenBtn = document.getElementById('fullscreenBtn');
 const gameControlBar = document.getElementById('gameControlBar');
-const collapseArrow = document.getElementById('collapseArrow');
+const collapseArrow = document.getElementById('collapseArrow'); 
 const shareBtn = document.getElementById('shareBtn');
 const shareModal = document.getElementById('shareModal');
 const closeModal = document.getElementById('closeModal');
@@ -1766,7 +1767,8 @@ const urls = [
    'game.html?game=similingglass',
    'game.html?game=crowdycityio',
    'game.html?game=archeryking3d',
-   'game.html?game=scootertouchgrind'
+   'game.html?game=scootertouchgrind',
+   'game.html?game=riseup'
 ];
 
 // Function to get a random URL from the list
