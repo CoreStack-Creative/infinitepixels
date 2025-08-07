@@ -2469,7 +2469,7 @@ const gamesDatabase = [
  image: "images/flipmasterimage.jpg",
  slug: "flipmaster",
  gameUrl: "https://html5.gamemonetize.co/t5h6lmvu96x7kk5bj6v5n6999o7mf9f1/",
- tags: ["3d", "levels", "sports"],
+ tags: ["3d", "levels", "parkour"],
  description: "Flip Master is an exciting game about acrobatics and parkour! Perform spectacular tricks, execute breathtaking flips, and conquer challenging obstacles. Control your character in the air, perfect your jumping technique, and land flawlessly. Upgrade your skills, explore new locations, and become the ultimate master of extreme flips!",
  }
 ]; 
