@@ -2458,11 +2458,20 @@ const gamesDatabase = [
  id: 69,
  name: "Billard 8 Ball Pool",
  image: "images/billard8ballpoolimage.jpg",
- slug: "billard8ballpoolimage.jpg",
+ slug: "billard8ballpool",
  gameUrl: "https://html5.gamemonetize.co/jf2a06o1z5ezy7stb7c4lmm13syg12yk/",
- tags: ["sport", "arcade", "strategy"],
+ tags: ["sports", "arcade", "strategy"],
  description: "Famous variety of billiards. The goal of the game is to score all the balls of one group (either “striped” or “solid”) after robbery, and at the end to score the ball with the number 8. Whoever does this, becomes the winner of the game.",
- } 
+ }, 
+ {
+ id: 70,
+ name: "Flip Master",
+ image: "images/flipmasterimage.jpg",
+ slug: "flipmaster",
+ gameUrl: "https://html5.gamemonetize.co/t5h6lmvu96x7kk5bj6v5n6999o7mf9f1/",
+ tags: ["3d", "levels", "sports"],
+ description: "Flip Master is an exciting game about acrobatics and parkour! Perform spectacular tricks, execute breathtaking flips, and conquer challenging obstacles. Control your character in the air, perfect your jumping technique, and land flawlessly. Upgrade your skills, explore new locations, and become the ultimate master of extreme flips!",
+ }
 ]; 
 
 // Make games database globally accessible
