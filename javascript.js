@@ -5525,12 +5525,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const homepageNewGamesGrid = document.getElementById('homepageNewGamesGrid');
     const homepageGamesCount = document.getElementById('homepageGamesCount');
     
-    // Number of games to show on homepage (responsive)
+    // Number of games to show on homepage (always 8 to fill the grid)
     function getGamesToShow() {
-        const screenWidth = window.innerWidth;
-        if (screenWidth < 768) return 3; // Mobile: 3 games
-        if (screenWidth < 1200) return 4; // Tablet: 4 games
-        return 6; // Desktop: 6 games
+        return 8; // Always show 8 games to fill the responsive grid properly
     }
 
     // Get the newest games for homepage
