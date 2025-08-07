@@ -2383,7 +2383,7 @@ const gamesDatabase = [
  image: "images/powerslapimage.jpg",
  slug: "powerslap",
  gameUrl: "https://html5.gamemonetize.co/zmlw34hzwakgnkd2nrr1798aqp7xzu7y/",
- tags: ["arcade", "satifing", "sport"], 
+ tags: ["arcade", "satisfying", "sports"], 
  description: "Power Slap is an exciting slap battle game where timing, precision, and reflexes are the key to victory! Engage in fast-paced slap duels, test your skills, and out-slap your opponents to dominate the leaderboards. With simple one-tap controls, smooth animations, and addictive arcade-style gameplay, every match is a thrilling challenge. Unlock power-ups, upgrades, and special abilities to gain an edge in battle.",
  },
  {
@@ -2412,6 +2412,15 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/y51x5nb673umhgqzva6jz2596cd57cqc/",
  tags: ["arcade", "2048", "action"],
  description: "Jelly Run 2048 is a challenging casual puzzle game that combines the classic 2048 number merging with exciting parkour gameplay. Guide your jelly block by swiping left or right to connect and disconnect cubes. Merge cubes to get double the number, reaching 2048 or greater. When the jelly block collides with tiles of the same number, they merge into a larger number.",
+ },
+ {
+ id: 66,
+ name: "Winter Clash 3D",
+ image: "images/winterclash3dimage.jpg",
+ slug: "winterclash3d",
+ gameUrl: "https://html5.gamemonetize.co/ya6quof6a1n40xzz3thz9xekh349abp8/",
+ tags: ["shooter", "action", "multiplayer"],
+ description: "This Christmas the evil elves plan to take over the Santa’s secret place, and summon the evil Baba Yaga, also known as Pagan Idol to this world. Don’t let this happen. Take your gun and impose punishment on all who confront you in a brand new overwhelming team shooter Winter Clash 3D. Take a role of a mighty Santa Clause and capture the Pagan Idol from a deserted lighthouse island.",
  }
 ]; 
 
