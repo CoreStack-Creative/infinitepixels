@@ -2341,8 +2341,25 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/5jwn8b2ufm7rdafdtnslr9cvioaoh76m/",
  tags: ["arcade", "strategy", "levels"],
  description: "Move your shield with one finger to protect your balloon. Clear your way as you reach higher and higher!",
- } 
- 
+ }, 
+ {
+ id: 59,
+ name: "Mr Racer",
+ image: "images/mrracerimage.jpg",
+ slug: "mrracer",
+ gameUrl: "https://html5.gamemonetize.co/y34098moqvr8ueuddbb4vnwxmtorlq4i/",
+ tags: ["racing", "car", "levels"],
+ description: "MR RACER - Car Racing is a thrilling and challenging racing game that will excite you! Race at high speed with stunning supercars and beat the traffic. This game provides a very easy-to-control car movement and is extremely fun to race. Key features: 100 levels in Challenge Mode. Unlimited levels in Chase Mode. Best of race, chase your opponents and show them that you are a Master! Career Race Mode: Beat your rivals and be the legend! 15 Supercars available Upgrade cars to gear up the performance!",
+ },
+ {
+ id: 60,
+ name: "Stick Duel Battle",
+ image: "images/stickduelbattleimage.jpg",
+ slug: "stickduelbattle",
+ gameUrl: "https://html5.gamemonetize.co/dm15vv1aak9c1asfg49ji8s7iosbl6tu/",
+ tags: ["2 player", "action", "shooter"],
+ description: "Stick Duel Battle is a funny and crazy stickman battle game! You can fight with realistic weapons and physics on many maps. Each different map requires different tactics. Stick Battle Duel can be played with both 1 player and 2 players. The one who reaches 5 score first, wins the game.",
+ }
 ]; 
 
 // Make games database globally accessible
