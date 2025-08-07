@@ -2448,7 +2448,7 @@ const gamesDatabase = [
  {
  id: 68,
  name: "American 18 Wheeler Truck Sim",
- image: "images/american18wheelertrucksimimage.jpg",
+ image: "images/american18wheelertrucksimage.jpg",
  slug: "american18wheelertrucksim",
  gameUrl: "https://html5.gamemonetize.co/iktjgjwxwy2kwttz3yml4av97010fgwy/",
  tags: ["cars", "levels", "adventure"],
@@ -2457,7 +2457,7 @@ const gamesDatabase = [
  {
  id: 69,
  name: "Billard 8 Ball Pool",
- image: "images/billard8ballpoolimimage.jpg",
+ image: "images/billard8ballpoolimage.jpg",
  slug: "billard8ballpoolimage.jpg",
  gameUrl: "https://html5.gamemonetize.co/jf2a06o1z5ezy7stb7c4lmm13syg12yk/",
  tags: ["sport", "arcade", "strategy"],
