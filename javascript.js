@@ -5334,3 +5334,188 @@ window.RelatedGames = {
     showRandom: showRandomGames,
     getCurrentGame: getCurrentGameName
 };
+
+// New Releases JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    const newGamesGrid = document.getElementById('newGamesGrid');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const loadMoreSection = document.getElementById('loadMoreSection');
+    const emptyState = document.getElementById('emptyState');
+    const gamesCountDisplay = document.querySelector('.games-count-display');
+    const totalGamesCount = document.getElementById('totalGamesCount');
+
+    let displayedGamesCount = 0;
+    const gamesPerLoad = 12; // Load 12 games at a time
+    
+    // Get the newest 30 games (assuming the games are ordered by ID, newest first)
+    const newestGames = gamesDatabase.slice(-30).reverse();
+    
+    // Update count displays
+    function updateCountDisplays() {
+        const totalCount = newestGames.length;
+        if (gamesCountDisplay) {
+            gamesCountDisplay.textContent = `${totalCount} new games available`;
+        }
+        if (totalGamesCount) {
+            totalGamesCount.textContent = totalCount;
+        }
+    }
+
+    // Function to truncate description to approximately 2 lines
+    function truncateDescription(description, maxLength = 120) {
+        if (description.length <= maxLength) {
+            return { truncated: description, needsReadMore: false };
+        }
+        
+        // Find a good place to cut (at a word boundary)
+        let truncated = description.substring(0, maxLength);
+        const lastSpace = truncated.lastIndexOf(' ');
+        if (lastSpace > maxLength * 0.8) { // If last space is reasonably close to limit
+            truncated = truncated.substring(0, lastSpace);
+        }
+        
+        return { truncated: truncated + '...', needsReadMore: true };
+    }
+
+    // Create game card HTML
+    function createGameCard(game, index) {
+        const { truncated, needsReadMore } = truncateDescription(game.description);
+        const cardId = `game-card-${index}`;
+        
+        return `
+            <div class="new-game-card" onclick="playGame('${game.slug}')">
+                <div class="new-game-image">
+                    <img src="${game.image}" alt="${game.name}" loading="lazy">
+                    <div class="new-badge">New</div>
+                    <div class="game-overlay">
+                        <button class="play-button">
+                            <i class="fas fa-play"></i>
+                            Play Now
+                        </button>
+                    </div>
+                </div>
+                <div class="new-game-info">
+                    <h3>${game.name}</h3>
+                    <div class="new-game-description" id="desc-${cardId}">
+                        <span class="description-text">${truncated}</span>
+                        ${needsReadMore ? `
+                            <span class="read-more-btn" onclick="event.stopPropagation(); toggleDescription('${cardId}', '${game.description.replace(/'/g, "\\'")}', '${truncated.replace(/'/g, "\\'")}')">
+                                Read more
+                            </span>
+                        ` : ''}
+                    </div>
+                    <div class="new-game-tags">
+                        ${game.tags.map(tag => `<span class="new-tag">${tag}</span>`).join('')}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    // Load games function
+    function loadGames() {
+        const gamesToLoad = newestGames.slice(displayedGamesCount, displayedGamesCount + gamesPerLoad);
+        
+        if (gamesToLoad.length === 0) {
+            loadMoreSection.style.display = 'none';
+            return;
+        }
+
+        // Create and append game cards
+        gamesToLoad.forEach((game, index) => {
+            const gameCard = document.createElement('div');
+            gameCard.innerHTML = createGameCard(game, displayedGamesCount + index);
+            newGamesGrid.appendChild(gameCard.firstElementChild);
+        });
+
+        displayedGamesCount += gamesToLoad.length;
+
+        // Hide load more button if all games are loaded
+        if (displayedGamesCount >= newestGames.length) {
+            loadMoreSection.style.display = 'none';
+        }
+
+        // Update load more button text
+        const remainingGames = newestGames.length - displayedGamesCount;
+        if (remainingGames > 0) {
+            loadMoreBtn.innerHTML = `
+                <i class="fas fa-plus"></i>
+                <span>Show ${Math.min(remainingGames, gamesPerLoad)} More Games</span>
+            `;
+        }
+    }
+
+    // Toggle description function
+    window.toggleDescription = function(cardId, fullDescription, truncatedDescription) {
+        const descElement = document.getElementById(`desc-${cardId}`);
+        const textElement = descElement.querySelector('.description-text');
+        const readMoreBtn = descElement.querySelector('.read-more-btn');
+        
+        if (readMoreBtn.textContent.trim() === 'Read more') {
+            textElement.textContent = fullDescription;
+            readMoreBtn.textContent = 'Show less';
+            readMoreBtn.classList.add('expanded');
+        } else {
+            textElement.textContent = truncatedDescription;
+            readMoreBtn.textContent = 'Read more';
+            readMoreBtn.classList.remove('expanded');
+        }
+    };
+
+    // Play game function
+    window.playGame = function(gameSlug) {
+        window.location.href = `game.html?game=${gameSlug}`;
+    };
+
+    // Initialize the page
+    function initializePage() {
+        if (newestGames.length === 0) {
+            // Show empty state if no games
+            newGamesGrid.style.display = 'none';
+            loadMoreSection.style.display = 'none';
+            emptyState.style.display = 'block';
+        } else {
+            // Load initial games
+            loadGames();
+            updateCountDisplays();
+            
+            // Add event listener to load more button
+            if (loadMoreBtn) {
+                loadMoreBtn.addEventListener('click', loadGames);
+            }
+        }
+    }
+
+    // Start the initialization
+    initializePage();
+
+    // Add smooth scroll animation for new game cards
+    function addScrollAnimation() {
+        const gameCards = document.querySelectorAll('.new-game-card');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        });
+
+        gameCards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    }
+
+    // Add animation after initial load
+    setTimeout(addScrollAnimation, 100);
+
+    // Re-run animation after loading more games
+    const originalLoadGames = loadGames;
+    loadGames = function() {
+        originalLoadGames();
+        setTimeout(addScrollAnimation, 100);
+    };
+});
