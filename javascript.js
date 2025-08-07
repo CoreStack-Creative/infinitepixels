@@ -2348,7 +2348,7 @@ const gamesDatabase = [
  image: "images/mrracerimage.jpg",
  slug: "mrracer",
  gameUrl: "https://html5.gamemonetize.co/y34098moqvr8ueuddbb4vnwxmtorlq4i/",
- tags: ["racing", "car", "levels"],
+ tags: ["racing", "cars", "levels"],
  description: "MR RACER - Car Racing is a thrilling and challenging racing game that will excite you! Race at high speed with stunning supercars and beat the traffic. This game provides a very easy-to-control car movement and is extremely fun to race. Key features: 100 levels in Challenge Mode. Unlimited levels in Chase Mode. Best of race, chase your opponents and show them that you are a Master! Career Race Mode: Beat your rivals and be the legend! 15 Supercars available Upgrade cars to gear up the performance!",
  },
  {
@@ -2377,6 +2377,24 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/zmlw34hzwakgnkd2nrr1798aqp7xzu7y/",
  tags: ["arcade", "satifing", "sport"], 
  description: "Power Slap is an exciting slap battle game where timing, precision, and reflexes are the key to victory! Engage in fast-paced slap duels, test your skills, and out-slap your opponents to dominate the leaderboards. With simple one-tap controls, smooth animations, and addictive arcade-style gameplay, every match is a thrilling challenge. Unlock power-ups, upgrades, and special abilities to gain an edge in battle.",
+ },
+ {
+ id: 63,
+ name: "Shadow Fights",
+ image: "images/shadowfightsimage.jpg",
+ slug: "shadowfights",
+ gameUrl: "https://html5.gamemonetize.co/juebfqc8k4i9lp3yoki4uftvqt0ks6gb/",
+ tags: ["2 player", "action", "adventure"],
+ description: "The Shadow Fighters took their places on the field. The fight will only have 1 winner! Be fast, swing your fists and dodge blows! Shadow Fights game can be played 1 player or 2 player. If you're ready for 3 rounds of fights, start the game!",
+ },
+ {
+ id: 64,
+ name: "Archer Hero",
+ image: "images/archerheroimage.jpg",
+ slug: "archerhero",
+ gameUrl: "https://html5.gamemonetize.co/29wtfvf9jszoc8gibo9dms1f37htul8z/",
+ tags: ["adventure", "levels", "action"],
+ description: "Introducing Archer Hero Pro, an immersive gaming experience that puts your archery prowess to the ultimate test. Step into the shoes of a legendary hero tasked with defending your castle against relentless waves of formidable adversaries bent on invasion. With precision and agility, wield your bow and arrow to unleash devastating attacks upon your foes. Whether youre facing hordes of enemy foot soldiers or confronting imposing siege engines.",
  }
 ]; 
 
