@@ -69,7 +69,15 @@ const gameData = [
    { name: "Rocket League", link: "/game.html?game=rocketleague" },
    { name: "Slope 3", link: "/game.html?game=slope3" },
    { name: "Stair Race 3D", link: "/game.html?game=stairrace3d" },
-   { name: "Rise Up", link: "/game.html?game=riseup" }
+   { name: "Rise Up", link: "/game.html?game=riseup" },  
+   { name: "Mr Racer", link: "/game.html?game=mrracer" }, 
+   { name: "Stick Duel Battle", link: "/game.html?game=stickduelbattle" },  
+   { name: "Gansta Duel", link: "/game.html?game=Gansta Duel" },  
+   { name: "Power Slap", link: "/game.html?game=powerslap" },  
+   { name: "Rise Up", link: "/game.html?game=riseup" },  
+   { name: "Archer Hero", link: "/game.html?game=archerhero" }, 
+   { name: "Jelly Run 2048", link: "/game.html?game=jellyrun2048" },  
+   { name: "Winter Clash 3D", link: "/game.html?game=winterclash3d" }
 ];
 
 
@@ -2395,6 +2403,15 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/29wtfvf9jszoc8gibo9dms1f37htul8z/",
  tags: ["adventure", "levels", "action"],
  description: "Introducing Archer Hero Pro, an immersive gaming experience that puts your archery prowess to the ultimate test. Step into the shoes of a legendary hero tasked with defending your castle against relentless waves of formidable adversaries bent on invasion. With precision and agility, wield your bow and arrow to unleash devastating attacks upon your foes. Whether youre facing hordes of enemy foot soldiers or confronting imposing siege engines.",
+ },
+ {
+ id: 65,
+ name: "Jelly Run 2048",
+ image: "images/jellyrun2048image.jpg",
+ slug: "jellyrun2048",
+ gameUrl: "https://html5.gamemonetize.co/y51x5nb673umhgqzva6jz2596cd57cqc/",
+ tags: ["arcade", "2048", "action"],
+ description: "Jelly Run 2048 is a challenging casual puzzle game that combines the classic 2048 number merging with exciting parkour gameplay. Guide your jelly block by swiping left or right to connect and disconnect cubes. Merge cubes to get double the number, reaching 2048 or greater. When the jelly block collides with tiles of the same number, they merge into a larger number.",
  }
 ]; 
 
