@@ -78,8 +78,8 @@ const gameData = [
    { name: "Archer Hero", link: "/game.html?game=archerhero" }, 
    { name: "Jelly Run 2048", link: "/game.html?game=jellyrun2048" },  
    { name: "Winter Clash 3D", link: "/game.html?game=winterclash3d" }, 
-   { name: "Stickman Sniper", link: "/game.html?game=stickmansniper" },  
-
+   { name: "Stickman Sniper", link: "/game.html?game=stickmansniper" },   
+   { name: "American 18 Wheeler Sim", link: "/game.html?game=american18wheelersim" } 
 ];
 
 
@@ -1778,7 +1778,17 @@ const urls = [
    'game.html?game=crowdycityio',
    'game.html?game=archeryking3d',
    'game.html?game=scootertouchgrind',
-   'game.html?game=riseup'
+   'game.html?game=riseup', 
+   'game.html?game=mrracer',  
+   'game.html?game=stickduelbattle', 
+   'game.html?game=ganstaduel', 
+   'game.html?game=powerslap', 
+   'game.html?game=archerhero',  
+   'game.html?game=jellyrun2048',  
+   'game.html?game=winterclash3d',  
+   'game.html?game=stickmansniper',   
+   'game.html?game=american18wheelersim' 
+
 ];
 
 // Function to get a random URL from the list
@@ -2432,6 +2442,15 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/pnu56ck5blbnesweiw2z1ule6o530x9e/",
  tags: ["shooter", "action", "clicker"],
  description: "Highly trained, these games celebrate the marksmen with the most deadly of aim. In these sniper games the goal is to avoid detection and use your specialized training to infiltrate, observe and eliminate enemy troops at long distances before they even spot your location.",
+ },   
+ {
+ id: 68,
+ name: "American 18 Wheeler Truck Sim",
+ image: "images/american18wheelertrucksimimage.jpg",
+ slug: "american18wheelertrucksim",
+ gameUrl: "https://html5.gamemonetize.co/iktjgjwxwy2kwttz3yml4av97010fgwy/",
+ tags: ["cars", "levels", "adventure"],
+ description: "In the event that you love playing Truck Games, you are in for a treat. Load American 18 Wheeler Truck Sim Games 2021 is the game you have been sitting tight for. Prepare for the sensible and energizing driving experience. Drive payload truck simulator and investigate the uneven climate and test your mountain driving abilities. Driving on slopes, mountains and steep ways is a genuine driving test and experience in rough terrain load truck leaving simulator games 2021. Work 18 wheelers simulator to move freight great and become a genuine tremendous conveyance truck carrier.",
  }  
 ]; 
 
