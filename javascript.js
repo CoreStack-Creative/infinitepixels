@@ -2787,18 +2787,20 @@ class GameLoader {
  }
 }
 
-// All Games Management System - Fixed to match CSS classes
+// All Games Management System - Fixed to match CSS classes with A-Z sorting
 class AllGamesManager {
  constructor() {
  // Use enhanced games database with fallback to old format
  this.gamesList = window.gamesDatabase || window.allGamesDatabase || [];
+ // Sort games alphabetically by name on initialization
+ this.gamesList.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
  this.filteredGamesList = [...this.gamesList];
  this.currentPageNumber = 1;
  this.itemsPerPage = 24;
  this.selectedFilterTags = new Set();
  this.currentSearchTerm = '';
  
- console.log('AllGamesManager initialized with', this.gamesList.length, 'games');
+ console.log('AllGamesManager initialized with', this.gamesList.length, 'games (sorted A-Z)');
  this.initializeAllGamesPage();
  }
  
@@ -2951,6 +2953,9 @@ class AllGamesManager {
  return matchesSearchQuery && matchesTagFilters;
  });
  
+ // Sort filtered results alphabetically by name
+ this.filteredGamesList.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+ 
  this.currentPageNumber = 1;
  this.renderGameCards();
  this.renderPaginationControls();
@@ -2968,7 +2973,7 @@ class AllGamesManager {
  const endIndex = startIndex + this.itemsPerPage;
  const currentPageGames = this.filteredGamesList.slice(startIndex, endIndex);
  
- console.log('Rendering games:', currentPageGames.length);
+ console.log('Rendering games:', currentPageGames.length, '(sorted A-Z)');
  
  if (currentPageGames.length === 0) {
  gameCardsContainer.innerHTML = `
@@ -3124,7 +3129,7 @@ class AllGamesManager {
  updateGameCountDisplay() {
  const gameCountElement = document.querySelector('.results-counter');
  if (gameCountElement) {
- gameCountElement.textContent = `Showing ${this.filteredGamesList.length} games`;
+ gameCountElement.textContent = `Showing ${this.filteredGamesList.length} games (A-Z)`;
  }
  }
 }
@@ -3137,7 +3142,7 @@ document.addEventListener('DOMContentLoaded', () => {
  // Only initialize if we're on the games page (check for specific elements)
  if (document.querySelector('.game-cards-grid')) {
  allGamesController = new AllGamesManager();
- console.log('Games page initialized');
+ console.log('Games page initialized with A-Z sorting');
  }
  
  // Initialize GameLoader if we're on an individual game page
@@ -3151,6 +3156,8 @@ document.addEventListener('DOMContentLoaded', () => {
 function addNewGameToCollection(name, image, url, tags) {
  if (allGamesController) {
  allGamesController.gamesList.push({ name, image, url, tags });
+ // Re-sort the games list to maintain A-Z order
+ allGamesController.gamesList.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
  allGamesController.applyFiltersAndSearch();
  }
 }
@@ -3158,6 +3165,8 @@ function addNewGameToCollection(name, image, url, tags) {
 function addMultipleGamesToCollection(gamesArray) {
  if (allGamesController) {
  allGamesController.gamesList.push(...gamesArray);
+ // Re-sort the games list to maintain A-Z order
+ allGamesController.gamesList.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
  allGamesController.applyFiltersAndSearch();
  }
 }
