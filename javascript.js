@@ -2642,7 +2642,7 @@ class AllGamesManager {
  this.gamesList = window.gamesDatabase || window.allGamesDatabase || [];
  this.filteredGamesList = [...this.gamesList];
  this.currentPageNumber = 1;
- this.itemsPerPage = 20;
+ this.itemsPerPage = 24;
  this.selectedFilterTags = new Set();
  this.currentSearchTerm = '';
  
