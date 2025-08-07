@@ -79,7 +79,8 @@ const gameData = [
    { name: "Jelly Run 2048", link: "/game.html?game=jellyrun2048" },  
    { name: "Winter Clash 3D", link: "/game.html?game=winterclash3d" }, 
    { name: "Stickman Sniper", link: "/game.html?game=stickmansniper" },   
-   { name: "American 18 Wheeler Sim", link: "/game.html?game=american18wheelersim" } 
+   { name: "American 18 Wheeler Sim", link: "/game.html?game=american18wheelersim" },  
+   { name: "Billard 8Ball Pool", link: "/game.html?game=billard8ballpool" }
 ];
 
 
@@ -1787,7 +1788,8 @@ const urls = [
    'game.html?game=jellyrun2048',  
    'game.html?game=winterclash3d',  
    'game.html?game=stickmansniper',   
-   'game.html?game=american18wheelersim' 
+   'game.html?game=american18wheelersim',  
+   'game.html?game=billard8ballpool'
 
 ];
 
@@ -2451,7 +2453,16 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/iktjgjwxwy2kwttz3yml4av97010fgwy/",
  tags: ["cars", "levels", "adventure"],
  description: "In the event that you love playing Truck Games, you are in for a treat. Load American 18 Wheeler Truck Sim Games 2021 is the game you have been sitting tight for. Prepare for the sensible and energizing driving experience. Drive payload truck simulator and investigate the uneven climate and test your mountain driving abilities. Driving on slopes, mountains and steep ways is a genuine driving test and experience in rough terrain load truck leaving simulator games 2021. Work 18 wheelers simulator to move freight great and become a genuine tremendous conveyance truck carrier.",
- }  
+ },  
+ {
+ id: 69,
+ name: "Billard 8 Ball Pool",
+ image: "images/billard8ballpoolimimage.jpg",
+ slug: "billard8ballpoolimage.jpg",
+ gameUrl: "https://html5.gamemonetize.co/jf2a06o1z5ezy7stb7c4lmm13syg12yk/",
+ tags: ["sport", "arcade", "strategy"],
+ description: "Famous variety of billiards. The goal of the game is to score all the balls of one group (either “striped” or “solid”) after robbery, and at the end to score the ball with the number 8. Whoever does this, becomes the winner of the game.",
+ } 
 ]; 
 
 // Make games database globally accessible
