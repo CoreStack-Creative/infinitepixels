@@ -77,7 +77,9 @@ const gameData = [
    { name: "Rise Up", link: "/game.html?game=riseup" },  
    { name: "Archer Hero", link: "/game.html?game=archerhero" }, 
    { name: "Jelly Run 2048", link: "/game.html?game=jellyrun2048" },  
-   { name: "Winter Clash 3D", link: "/game.html?game=winterclash3d" }
+   { name: "Winter Clash 3D", link: "/game.html?game=winterclash3d" }, 
+   { name: "Stickman Sniper", link: "/game.html?game=stickmansniper" },  
+
 ];
 
 
@@ -2421,7 +2423,16 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/ya6quof6a1n40xzz3thz9xekh349abp8/",
  tags: ["shooter", "action", "multiplayer"],
  description: "This Christmas the evil elves plan to take over the Santa’s secret place, and summon the evil Baba Yaga, also known as Pagan Idol to this world. Don’t let this happen. Take your gun and impose punishment on all who confront you in a brand new overwhelming team shooter Winter Clash 3D. Take a role of a mighty Santa Clause and capture the Pagan Idol from a deserted lighthouse island.",
- }
+ },
+ {
+ id: 67,
+ name: "Stickman Sniper",
+ image: "images/stickmansniperimage.jpg",
+ slug: "stickmansniper",
+ gameUrl: "https://html5.gamemonetize.co/pnu56ck5blbnesweiw2z1ule6o530x9e/",
+ tags: ["shooter", "action", "clicker"],
+ description: "Highly trained, these games celebrate the marksmen with the most deadly of aim. In these sniper games the goal is to avoid detection and use your specialized training to infiltrate, observe and eliminate enemy troops at long distances before they even spot your location.",
+ }  
 ]; 
 
 // Make games database globally accessible
