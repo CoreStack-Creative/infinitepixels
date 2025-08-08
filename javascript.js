@@ -2482,6 +2482,15 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/us0l69i6kfvo5wa3a2skvifjmcmhj8t6/",
  tags: ["sports", "action", "levels"],
  description: "Ready to join the funniest and craziest punch battle ever? Play a creative 3D fight action game in Curvy Punch. You can throw hilarious curve punches to knock out your enemies! Your fists don’t just punch straight; you can bend them in wild curves! Control your fists to maneuver around obstacles and punch your opponents hard. Make every punch precise and funny! You can also backflip to avoid enemy attacks!",
+ },
+ {
+ id: 72,
+ name: "2048 Legend",
+ image: "images/2048legendimage.jpg",
+ slug: "2048legend",
+ gameUrl: "https://html5.gamemonetize.co/iqv0wswiozpaxs6s7rdtqdj24ibdrgsa/",
+ tags: ["2048", "arcade", "strategy"],
+ description: "2048 is a simple game where you add up numbers. That's it. Although, it's not as easy as it seems. It can prove to be quite a challenge. If you don't already know this classic, then you're in for a treat! Are you ready to test your wit and get as much score as possible? Then what are you waiting for? Go on and play it!",
  }
 ]; 
 
