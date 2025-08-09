@@ -2572,7 +2572,7 @@ const gamesDatabase = [
  {
  id: 79,
  name: "Bird Simulator",
- image: "images/stickmanghostimage.jpg",
+ image: "images/birdsimulatorimage.jpg",
  slug: "stickmanghostonline",
  gameUrl: "https://html5.gamemonetize.co/v0ap03gz77p5idffw3d94p8vql3pg23b/",
  tags: ["simulator", "3d", "animal"],
