@@ -2525,7 +2525,7 @@ const gamesDatabase = [
  image: "images/boatrescueimage.jpg",
  slug: "boatrescue",
  gameUrl: "https://html5.gamemonetize.co/dlnizm1qjw53qkx4t9kdv0prsp27jdxx/",
- tags: ["drive", "action", "levels"],
+ tags: ["racing", "action", "levels"],
  description: "American Boat Rescue Simulator is a simulator game where you need to rescue people from water, 100 mission waiting to to rescue people from different place of island, you can gain points and buy new boat, more fancy, you have to reach all achievement where you can find in menu. Have fun!",
  }
 ]; 
