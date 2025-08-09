@@ -1791,8 +1791,12 @@ const urls = [
    'game.html?game=jellyrun2048',  
    'game.html?game=winterclash3d',  
    'game.html?game=stickmansniper',   
-   'game.html?game=american18wheelersim',  
-   'game.html?game=billard8ballpool'
+   'game.html?game=american18wheelertrucksim',  
+   'game.html?game=billard8ballpool',
+   'game.html?game=flipmaster',
+   'game.html?game=curvypunch2',
+   'game.html?game=2048legend',
+   'game.html?game=rideronlinepro'
 
 ];
 
