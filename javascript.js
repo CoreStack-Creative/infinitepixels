@@ -2505,6 +2505,15 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/xqxcsqazsozjzy71jb1hn0a54dorg91d/",
  tags: ["bike", "arcade", "endless"],
  description: "Get ready for some flippin action! Perform crazy stunts as you navigate the endless world of Rider! Grab your motorcycle and start spinning like a maniac, collect diamonds and unlock new bikes, combos and beat high scores. Play Rider Online now for free! have fun with this new game.",
+ }, 
+ {
+ id: 74,
+ name: "Sniper Simulator",
+ image: "images/snipersimulatorimage.jpg",
+ slug: "snipersimulator",
+ gameUrl: "https://html5.gamemonetize.co/ote0vnkghfmoz4n40ifk5isr27q9f5qj/",
+ tags: ["shooter", "action", "levels"],
+ description: "“Sniper Simulator” is a first-person shooting simulation game, in the game, players will play the role of a sniper and control a variety of classic guns for sniper training. In addition, a popular assembly gameplay has been added, allowing players to experience the excitement of assembling while shooting. The game is easy to operate, the screen is beautiful, the sound effects and gun textures are realistic, restoring the most realistic shooting experience.",
  }
 ]; 
 
