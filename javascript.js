@@ -35,7 +35,7 @@ const gameData = [
    { name: "Fruit Ninja", link: "/game.html?game=fruitninja" },
    { name: "Ball 2048", link: "/game.html?game=ball2048" },
    { name: "Ice Fishing", link: "/game.html?game=icefishing" },
-   { name: "Stick Fighter 3D", link: "/game.html?game=stickfighter3d" },
+   { name: "Stick Fighter", link: "/game.html?game=stickfighter" },
    { name: "Papas Burgeria", link: "/game.html?game=papasburgeria" },
    { name: "Bullet Army Run", link: "/game.html?game=bulletarmyrun" },
    { name: "Survival Race", link: "/game.html?game=survivalrace" },
@@ -85,6 +85,7 @@ const gameData = [
    { name: "Curvy Punch 2", link: "/game.html?game=curvypunch2" },
    { name: "Rider Online Pro", link: "/game.html?game=rideronlinepro" },
    { name: "Sniper Simulator", link: "/game.html?game=snipersimulator" },
+   { name: "Momo Horror Story", link: "/game.html?game=momohorrorstory" },
    { name: "Boat Rescue", link: "/game.html?game=boatrescue" }
 ];
 
@@ -1765,7 +1766,7 @@ const urls = [
    'game.html?game=fruitninja',
    'game.html?game=ball2048',
    'game.html?game=icefishing',
-   'game.html?game=stickfighter3d',
+   'game.html?game=stickfighter',
    'game.html?game=papasburgeria',
    'game.html?game=bulletarmyrun',
    'game.html?game=survivalrace',
@@ -1800,6 +1801,7 @@ const urls = [
    'game.html?game=2048legend',
    'game.html?game=rideronlinepro',
    'game.html?game=snipersimulator',
+   'game.html?game=momohorrorstory',
    'game.html?game-boatrescue'
 
 ];
@@ -2035,11 +2037,11 @@ const gamesDatabase = [
  },
  {
  id: 23,
- name: "Stick Fighter 3D",
- image: "images/stickfighter3dimage.jpg",
- slug: "stickfighter3d",
+ name: "Stick Fighter",
+ image: "images/stickfighterimage.jpg",
+ slug: "stickfighter",
  gameUrl: "https://html5.gamemonetize.co/vlskz7dtsxmpg34pu546de1wjng6ffob/",
- tags: ["action", "3d", "2 player"],
+ tags: ["action", "stickman", "2 player"],
  description: "Engage in epic 3D stick figure battles! Fight against AI or challenge a friend in this action-packed fighting game with realistic physics."
  },
  {
@@ -2264,7 +2266,7 @@ const gamesDatabase = [
  image: "images/realisticlionhuntingimage.jpg",
  slug: "realisticlionhunting",
  gameUrl: "https://html5.gamemonetize.co/4xgs7sshdp0wpeqsoztn42pdttjiy5jq/",
- tags: ["animal", "action", "3D"],
+ tags: ["animal", "action", "simulator"],
  description: "Experience the thrill of the wild in Realistic Lion Hunting! This immersive simulator puts you in the paws of a majestic lion, roaming a vast and realistic forest. Hunt various animals to survive and advance through challenging levels. Explore the dense wilderness, track your prey, and feel the rush of the hunt. Perfect for those seeking adventure and excitement in the animal kingdom."
  },
  {
@@ -2318,7 +2320,7 @@ const gamesDatabase = [
  image: "images/bitlifeimage.jpg",
  slug: "bitlife",
  gameUrl: "https://html5.gamemonetize.co/sunlne8825d1006jux3b1xrl9vda49f1/",
- tags: ["clicker", "puzzle", "arcade"],
+ tags: ["clicker", "puzzle", "simulator"],
  description: "How will you live your BitLife? Will you try to make all the right choices in an attempt to become a model citizen sometime before you die? You could marry the love of your life, have kids, and pick up a good education along the way. Or will you play choices that horrify your parents? You could descend into a life of crime, fall in love or go on adventures, start prison riots, smuggle duffle bags, and cheat on your spouse. You choose your story."
  },
  {
@@ -2390,7 +2392,7 @@ const gamesDatabase = [
  image: "images/stickduelbattleimage.jpg",
  slug: "stickduelbattle",
  gameUrl: "https://html5.gamemonetize.co/dm15vv1aak9c1asfg49ji8s7iosbl6tu/",
- tags: ["2 player", "action", "shooter"],
+ tags: ["2 player", "action", "stickman"],
  description: "Stick Duel Battle is a funny and crazy stickman battle game! You can fight with realistic weapons and physics on many maps. Each different map requires different tactics. Stick Battle Duel can be played with both 1 player and 2 players. The one who reaches 5 score first, wins the game.",
  },
  {
@@ -2453,7 +2455,7 @@ const gamesDatabase = [
  image: "images/stickmansniperimage.jpg",
  slug: "stickmansniper",
  gameUrl: "https://html5.gamemonetize.co/pnu56ck5blbnesweiw2z1ule6o530x9e/",
- tags: ["shooter", "action", "clicker"],
+ tags: ["shooter", "action", "stickman"],
  description: "Highly trained, these games celebrate the marksmen with the most deadly of aim. In these sniper games the goal is to avoid detection and use your specialized training to infiltrate, observe and eliminate enemy troops at long distances before they even spot your location.",
  },   
  {
@@ -2462,7 +2464,7 @@ const gamesDatabase = [
  image: "images/american18wheelertrucksimimage.jpg",
  slug: "american18wheelertrucksim",
  gameUrl: "https://html5.gamemonetize.co/iktjgjwxwy2kwttz3yml4av97010fgwy/",
- tags: ["cars", "levels", "adventure"],
+ tags: ["cars", "levels", "simulator"],
  description: "In the event that you love playing Truck Games, you are in for a treat. Load American 18 Wheeler Truck Sim Games 2021 is the game you have been sitting tight for. Prepare for the sensible and energizing driving experience. Drive payload truck simulator and investigate the uneven climate and test your mountain driving abilities. Driving on slopes, mountains and steep ways is a genuine driving test and experience in rough terrain load truck leaving simulator games 2021. Work 18 wheelers simulator to move freight great and become a genuine tremendous conveyance truck carrier.",
  },  
  {
@@ -2516,7 +2518,7 @@ const gamesDatabase = [
  image: "images/snipersimulatorimage.jpg",
  slug: "snipersimulator",
  gameUrl: "https://html5.gamemonetize.co/ote0vnkghfmoz4n40ifk5isr27q9f5qj/",
- tags: ["shooter", "action", "levels"],
+ tags: ["shooter", "simulator", "levels"],
  description: "“Sniper Simulator” is a first-person shooting simulation game, in the game, players will play the role of a sniper and control a variety of classic guns for sniper training. In addition, a popular assembly gameplay has been added, allowing players to experience the excitement of assembling while shooting. The game is easy to operate, the screen is beautiful, the sound effects and gun textures are realistic, restoring the most realistic shooting experience.",
  },
  {
@@ -2527,6 +2529,15 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/dlnizm1qjw53qkx4t9kdv0prsp27jdxx/",
  tags: ["racing", "action", "levels"],
  description: "American Boat Rescue Simulator is a simulator game where you need to rescue people from water, 100 mission waiting to to rescue people from different place of island, you can gain points and buy new boat, more fancy, you have to reach all achievement where you can find in menu. Have fun!",
+ },
+ {
+ id: 76,
+ name: "Momo Horror Story",
+ image: "images/momohorrorstory.jpg",
+ slug: "momohorrorstory",
+ gameUrl: "https://html5.gamemonetize.co/5fv1qjs4y57ltbk9q74zpteyeq3p6mob/",
+ tags: ["horror", "action", "shooter"],
+ description: "Momo is a horror game based on the history of the message user momo. In the game, you will be a guy that contacts momo by message, and now he will be pursued by the monster of momo. You will have to complete some tasks before get rescued, like turn on the generator, find some keys, close windows etc...The objetive is to survive until the timer reachs 00:00 then, the police will arrive and you would able to escape. There are two modes in game, Classic and Gun mode.",
  }
 ]; 
 
@@ -4153,7 +4164,7 @@ const cosmicCategoriesConstellations = {
     },
     '2 player': {
         name: '2 Player',
-        image: 'images/stickfighter3dimage.jpg',
+        image: 'images/shadowfightsimage.jpg',
         description: 'Two-player competitions'
     },
     'basketball': {
@@ -4230,7 +4241,22 @@ const cosmicCategoriesConstellations = {
         name: 'Cooking',
         image: 'images/papasburgeriaimage.jpg',
         description: 'Cooking and food games'
-    }
+    },
+    'horror': {
+        name: 'Horror',
+        image: 'images/momohorrorstoryimage.jpg',
+        description: 'Horror and scary games'
+    },
+    'simulator': {
+        name: 'Simulator',
+        image: 'images/bussimulatorimage.jpg',
+        description: 'Simulator games'
+    },
+    'stickman': {
+        name: 'Stickman',
+        image: 'images/stickfighter3dimage.jpg',
+        description: 'Stickman games'
+    },
 };
 
 // Fallback images for categories without specific images
