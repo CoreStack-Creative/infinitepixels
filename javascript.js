@@ -84,8 +84,8 @@ const gameData = [
    { name: "Flip Master", link: "/game.html?game=flipmaster" },
    { name: "Curvy Punch 2", link: "/game.html?game=curvypunch2" },
    { name: "Rider Online Pro", link: "/game.html?game=rideronlinepro" },
-   { name: "Sniper Simulator", link: "/game.html?game=snipersimulator" }
-   { 
+   { name: "Sniper Simulator", link: "/game.html?game=snipersimulator" },
+   { name: "Boat Rescue", link: "/game.html?game=boatrescue" }
 ];
 
 
@@ -1799,7 +1799,8 @@ const urls = [
    'game.html?game=curvypunch2',
    'game.html?game=2048legend',
    'game.html?game=rideronlinepro',
-   'game.html?game=snipersimulator'
+   'game.html?game=snipersimulator',
+   'game.html?game-boatrescue'
 
 ];
 
@@ -2517,6 +2518,15 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/ote0vnkghfmoz4n40ifk5isr27q9f5qj/",
  tags: ["shooter", "action", "levels"],
  description: "“Sniper Simulator” is a first-person shooting simulation game, in the game, players will play the role of a sniper and control a variety of classic guns for sniper training. In addition, a popular assembly gameplay has been added, allowing players to experience the excitement of assembling while shooting. The game is easy to operate, the screen is beautiful, the sound effects and gun textures are realistic, restoring the most realistic shooting experience.",
+ },
+ {
+ id: 75,
+ name: "Boat Rescue",
+ image: "images/boatrescueimage.jpg",
+ slug: "boatrescue",
+ gameUrl: "https://html5.gamemonetize.co/dlnizm1qjw53qkx4t9kdv0prsp27jdxx/",
+ tags: ["drive", "action", "levels"],
+ description: "American Boat Rescue Simulator is a simulator game where you need to rescue people from water, 100 mission waiting to to rescue people from different place of island, you can gain points and buy new boat, more fancy, you have to reach all achievement where you can find in menu. Have fun!",
  }
 ]; 
 
