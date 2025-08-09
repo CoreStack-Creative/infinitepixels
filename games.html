@@ -294,53 +294,53 @@
     </div>
 
     <main class="main-content" id="mainContent">
-        <div class="all-games-wrapper">
-            <header class="page-banner-section">
-                <h1 class="main-page-title">All Games</h1>
-                <p class="page-description">Discover your next favorite game from our collection</p>
+        <div class="complete-games-container">
+            <header class="primary-banner-area">
+                <h1 class="central-page-heading">All Games</h1>
+                <p class="banner-subtext">Discover your next favorite game from our collection</p>
             </header>
 
-            <div class="game-controls-panel">
-                <div class="search-control-wrapper">
-                    <div class="game-search-box">
-                        <i class="fas fa-search search-magnifier"></i>
-                        <input type="text" id="gameSearchField" placeholder="Search for games..." class="search-text-input">
-                        <button class="search-clear-btn" id="searchClearBtn">
+            <div class="controls-dashboard">
+                <div class="search-field-container">
+                    <div class="primary-search-field">
+                        <i class="fas fa-search search-icon-element"></i>
+                        <input type="text" id="gameSearchField" placeholder="Search for games..." class="main-search-input">
+                        <button class="input-clear-button" id="searchClearBtn">
                             <i class="fas fa-times"></i>
                         </button>
                     </div>
                 </div>
 
-                <div class="filter-control-wrapper">
-                    <button class="tag-filter-button" id="tagFilterBtn">
+                <div class="filters-section-wrapper">
+                    <button class="primary-filter-toggle" id="tagFilterBtn">
                         <i class="fas fa-filter"></i>
                         <span>Filter</span>
                         <i class="fas fa-chevron-down"></i>
                     </button>
-                    <div class="filter-options-panel" id="filterOptionsPanel">
-                        <div class="filter-panel-header">
+                    <div class="dropdown-filters-menu" id="filterOptionsPanel">
+                        <div class="filters-menu-header">
                             <span>Filter by Tags</span>
-                            <button class="reset-filters-btn" id="resetFiltersBtn">Clear All</button>
+                            <button class="clear-all-filters-btn" id="resetFiltersBtn">Clear All</button>
                         </div>
-                        <div class="available-filter-tags" id="availableFilterTags">
+                        <div class="filter-tags-collection" id="availableFilterTags">
                             <!-- Filter tags will be populated by JavaScript -->
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="search-results-display">
-                <div class="results-counter" id="resultsCounter">
+            <div class="results-summary-area">
+                <div class="games-counter-text" id="resultsCounter">
                     <span id="totalGameCount">0</span> games found
                 </div>
             </div>
 
-            <div class="game-cards-grid" id="gameCardsGrid">
+            <div class="primary-games-grid" id="gameCardsGrid">
                 <!-- Game cards will be populated by JavaScript -->
             </div>
 
-            <div class="page-navigation-wrapper">
-                <div class="page-navigation-controls" id="pageNavigationControls">
+            <div class="pagination-controls-area">
+                <div class="pagination-buttons-group" id="pageNavigationControls">
                     <!-- Pagination will be populated by JavaScript -->
                 </div>
             </div>

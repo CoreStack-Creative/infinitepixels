@@ -2796,351 +2796,347 @@ class GameLoader {
  }
 }
 
-// All Games Management System - Fixed to match CSS classes with A-Z sorting
+// All Games Management System - Updated to match new CSS classes with A-Z sorting (No Descriptions)
 class AllGamesManager {
- constructor() {
- // Use enhanced games database with fallback to old format
- this.gamesList = window.gamesDatabase || window.allGamesDatabase || [];
- // Sort games alphabetically by name on initialization
- this.gamesList.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
- this.filteredGamesList = [...this.gamesList];
- this.currentPageNumber = 1;
- this.itemsPerPage = 24;
- this.selectedFilterTags = new Set();
- this.currentSearchTerm = '';
- 
- console.log('AllGamesManager initialized with', this.gamesList.length, 'games (sorted A-Z)');
- this.initializeAllGamesPage();
- }
- 
- initializeAllGamesPage() {
- this.setupAllEventHandlers();
- this.createFilterTagsDisplay();
- this.renderGameCards();
- this.renderPaginationControls();
- this.updateGameCountDisplay();
- }
+    constructor() {
+        // Use enhanced games database with fallback to old format
+        this.gamesList = window.gamesDatabase || window.allGamesDatabase || [];
+        // Sort games alphabetically by name on initialization
+        this.gamesList.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+        this.filteredGamesList = [...this.gamesList];
+        this.currentPageNumber = 1;
+        this.itemsPerPage = 24;
+        this.selectedFilterTags = new Set();
+        this.currentSearchTerm = '';
+        
+        console.log('AllGamesManager initialized with', this.gamesList.length, 'games (sorted A-Z)');
+        this.initializeAllGamesPage();
+    }
+    
+    initializeAllGamesPage() {
+        this.setupAllEventHandlers();
+        this.createFilterTagsDisplay();
+        this.renderGameCards();
+        this.renderPaginationControls();
+        this.updateGameCountDisplay();
+    }
 
- setupAllEventHandlers() {
- // Search functionality - matches CSS classes
- const searchInputField = document.querySelector('.search-text-input');
- const clearSearchButton = document.querySelector('.search-clear-btn');
- 
- if (searchInputField) {
- searchInputField.addEventListener('input', (e) => {
- this.currentSearchTerm = e.target.value.toLowerCase();
- this.applyFiltersAndSearch();
- this.toggleSearchClearVisibility();
- });
- }
- 
- if (clearSearchButton) {
- clearSearchButton.addEventListener('click', () => {
- if (searchInputField) {
- searchInputField.value = '';
- this.currentSearchTerm = '';
- this.applyFiltersAndSearch();
- this.toggleSearchClearVisibility();
- searchInputField.focus();
- }
- });
- }
- 
- // Filter functionality - matches CSS classes
- const tagFilterButton = document.querySelector('.tag-filter-button');
- const filterOptionsPanel = document.querySelector('.filter-options-panel');
- const resetFiltersButton = document.querySelector('.reset-filters-btn');
- 
- if (tagFilterButton && filterOptionsPanel) {
- tagFilterButton.addEventListener('click', (e) => {
- e.stopPropagation();
- filterOptionsPanel.classList.toggle('active');
- tagFilterButton.classList.toggle('active');
- });
- }
- 
- document.addEventListener('click', (e) => {
- if (filterOptionsPanel && tagFilterButton) {
- if (!filterOptionsPanel.contains(e.target) && !tagFilterButton.contains(e.target)) {
- filterOptionsPanel.classList.remove('active');
- tagFilterButton.classList.remove('active');
- }
- }
- });
- 
- if (resetFiltersButton) {
- resetFiltersButton.addEventListener('click', () => {
- this.selectedFilterTags.clear();
- this.refreshFilterTagsDisplay();
- this.applyFiltersAndSearch();
- });
- }
- }
+    setupAllEventHandlers() {
+        // Search functionality - updated to match new CSS classes
+        const searchInputField = document.querySelector('.main-search-input');
+        const clearSearchButton = document.querySelector('.input-clear-button');
+        
+        if (searchInputField) {
+            searchInputField.addEventListener('input', (e) => {
+                this.currentSearchTerm = e.target.value.toLowerCase();
+                this.applyFiltersAndSearch();
+                this.toggleSearchClearVisibility();
+            });
+        }
+        
+        if (clearSearchButton) {
+            clearSearchButton.addEventListener('click', () => {
+                if (searchInputField) {
+                    searchInputField.value = '';
+                    this.currentSearchTerm = '';
+                    this.applyFiltersAndSearch();
+                    this.toggleSearchClearVisibility();
+                    searchInputField.focus();
+                }
+            });
+        }
+        
+        // Filter functionality - updated to match new CSS classes
+        const tagFilterButton = document.querySelector('.primary-filter-toggle');
+        const filterOptionsPanel = document.querySelector('.dropdown-filters-menu');
+        const resetFiltersButton = document.querySelector('.clear-all-filters-btn');
+        
+        if (tagFilterButton && filterOptionsPanel) {
+            tagFilterButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                filterOptionsPanel.classList.toggle('active');
+                tagFilterButton.classList.toggle('active');
+            });
+        }
+        
+        document.addEventListener('click', (e) => {
+            if (filterOptionsPanel && tagFilterButton) {
+                if (!filterOptionsPanel.contains(e.target) && !tagFilterButton.contains(e.target)) {
+                    filterOptionsPanel.classList.remove('active');
+                    tagFilterButton.classList.remove('active');
+                }
+            }
+        });
+        
+        if (resetFiltersButton) {
+            resetFiltersButton.addEventListener('click', () => {
+                this.selectedFilterTags.clear();
+                this.refreshFilterTagsDisplay();
+                this.applyFiltersAndSearch();
+            });
+        }
+    }
 
- toggleSearchClearVisibility() {
- const clearSearchButton = document.querySelector('.search-clear-btn');
- const searchInputField = document.querySelector('.search-text-input');
- 
- if (clearSearchButton && searchInputField) {
- if (searchInputField.value.length > 0) {
- clearSearchButton.classList.add('visible');
- } else {
- clearSearchButton.classList.remove('visible');
- }
- }
- }
- 
- createFilterTagsDisplay() {
- const uniqueTagsSet = new Set();
- this.gamesList.forEach(gameItem => {
- if (gameItem.tags) {
- gameItem.tags.forEach(tagName => uniqueTagsSet.add(tagName));
- }
- });
- 
- const filterTagsContainer = document.querySelector('.available-filter-tags');
- if (!filterTagsContainer) return;
- 
- filterTagsContainer.innerHTML = '';
- 
- Array.from(uniqueTagsSet).sort().forEach(tagName => {
- const tagElement = document.createElement('div');
- tagElement.className = 'selectable-tag';
- tagElement.innerHTML = `
- <span class="tag-name">${tagName.charAt(0).toUpperCase() + tagName.slice(1)}</span>
- <span class="tag-count">(${this.getTagCount(tagName)})</span>
- `;
- tagElement.addEventListener('click', () => this.handleFilterTagToggle(tagName, tagElement));
- filterTagsContainer.appendChild(tagElement);
- });
- }
- 
- getTagCount(tag) {
- return this.gamesList.filter(game => 
- game.tags && game.tags.some(t => t.toLowerCase() === tag.toLowerCase())
- ).length;
- }
- 
- handleFilterTagToggle(tagName, tagElement) {
- if (this.selectedFilterTags.has(tagName)) {
- this.selectedFilterTags.delete(tagName);
- tagElement.classList.remove('active');
- } else {
- this.selectedFilterTags.add(tagName);
- tagElement.classList.add('active');
- }
- 
- this.applyFiltersAndSearch();
- }
- 
- refreshFilterTagsDisplay() {
- const filterTagOptions = document.querySelectorAll('.selectable-tag');
- filterTagOptions.forEach(tagElement => {
- const tagText = tagElement.querySelector('.tag-name').textContent.toLowerCase();
- if (this.selectedFilterTags.has(tagText)) {
- tagElement.classList.add('active');
- } else {
- tagElement.classList.remove('active');
- }
- });
- }
- 
- applyFiltersAndSearch() {
- this.filteredGamesList = this.gamesList.filter(gameItem => {
- // Search filter logic - enhanced to include descriptions
- const matchesSearchQuery = this.currentSearchTerm === '' || 
- gameItem.name.toLowerCase().includes(this.currentSearchTerm) ||
- (gameItem.tags && gameItem.tags.some(tagName => tagName.toLowerCase().includes(this.currentSearchTerm))) ||
- (gameItem.description && gameItem.description.toLowerCase().includes(this.currentSearchTerm));
- 
- // Tag filter logic
- const matchesTagFilters = this.selectedFilterTags.size === 0 ||
- (gameItem.tags && Array.from(this.selectedFilterTags).some(selectedTag => 
- gameItem.tags.some(tag => tag.toLowerCase() === selectedTag.toLowerCase())
- ));
- 
- return matchesSearchQuery && matchesTagFilters;
- });
- 
- // Sort filtered results alphabetically by name
- this.filteredGamesList.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
- 
- this.currentPageNumber = 1;
- this.renderGameCards();
- this.renderPaginationControls();
- this.updateGameCountDisplay();
- }
+    toggleSearchClearVisibility() {
+        const clearSearchButton = document.querySelector('.input-clear-button');
+        const searchInputField = document.querySelector('.main-search-input');
+        
+        if (clearSearchButton && searchInputField) {
+            if (searchInputField.value.length > 0) {
+                clearSearchButton.classList.add('visible');
+            } else {
+                clearSearchButton.classList.remove('visible');
+            }
+        }
+    }
+    
+    createFilterTagsDisplay() {
+        const uniqueTagsSet = new Set();
+        this.gamesList.forEach(gameItem => {
+            if (gameItem.tags) {
+                gameItem.tags.forEach(tagName => uniqueTagsSet.add(tagName));
+            }
+        });
+        
+        const filterTagsContainer = document.querySelector('.filter-tags-collection');
+        if (!filterTagsContainer) return;
+        
+        filterTagsContainer.innerHTML = '';
+        
+        Array.from(uniqueTagsSet).sort().forEach(tagName => {
+            const tagElement = document.createElement('div');
+            tagElement.className = 'clickable-filter-tag';
+            tagElement.innerHTML = `
+                <span class="tag-name">${tagName.charAt(0).toUpperCase() + tagName.slice(1)}</span>
+                <span class="tag-count">(${this.getTagCount(tagName)})</span>
+            `;
+            tagElement.addEventListener('click', () => this.handleFilterTagToggle(tagName, tagElement));
+            filterTagsContainer.appendChild(tagElement);
+        });
+    }
+    
+    getTagCount(tag) {
+        return this.gamesList.filter(game => 
+            game.tags && game.tags.some(t => t.toLowerCase() === tag.toLowerCase())
+        ).length;
+    }
+    
+    handleFilterTagToggle(tagName, tagElement) {
+        if (this.selectedFilterTags.has(tagName)) {
+            this.selectedFilterTags.delete(tagName);
+            tagElement.classList.remove('active');
+        } else {
+            this.selectedFilterTags.add(tagName);
+            tagElement.classList.add('active');
+        }
+        
+        this.applyFiltersAndSearch();
+    }
+    
+    refreshFilterTagsDisplay() {
+        const filterTagOptions = document.querySelectorAll('.clickable-filter-tag');
+        filterTagOptions.forEach(tagElement => {
+            const tagText = tagElement.querySelector('.tag-name').textContent.toLowerCase();
+            if (this.selectedFilterTags.has(tagText)) {
+                tagElement.classList.add('active');
+            } else {
+                tagElement.classList.remove('active');
+            }
+        });
+    }
+    
+    applyFiltersAndSearch() {
+        this.filteredGamesList = this.gamesList.filter(gameItem => {
+            // Search filter logic - removed description searching
+            const matchesSearchQuery = this.currentSearchTerm === '' || 
+                gameItem.name.toLowerCase().includes(this.currentSearchTerm) ||
+                (gameItem.tags && gameItem.tags.some(tagName => tagName.toLowerCase().includes(this.currentSearchTerm)));
+            
+            // Tag filter logic
+            const matchesTagFilters = this.selectedFilterTags.size === 0 ||
+                (gameItem.tags && Array.from(this.selectedFilterTags).some(selectedTag => 
+                    gameItem.tags.some(tag => tag.toLowerCase() === selectedTag.toLowerCase())
+                ));
+            
+            return matchesSearchQuery && matchesTagFilters;
+        });
+        
+        // Sort filtered results alphabetically by name
+        this.filteredGamesList.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+        
+        this.currentPageNumber = 1;
+        this.renderGameCards();
+        this.renderPaginationControls();
+        this.updateGameCountDisplay();
+    }
 
- renderGameCards() {
- const gameCardsContainer = document.querySelector('.game-cards-grid');
- if (!gameCardsContainer) {
- console.error('Game cards container not found');
- return;
- }
- 
- const startIndex = (this.currentPageNumber - 1) * this.itemsPerPage;
- const endIndex = startIndex + this.itemsPerPage;
- const currentPageGames = this.filteredGamesList.slice(startIndex, endIndex);
- 
- console.log('Rendering games:', currentPageGames.length, '(sorted A-Z)');
- 
- if (currentPageGames.length === 0) {
- gameCardsContainer.innerHTML = `
- <div class="no-games-message">
- <i class="fas fa-gamepad"></i>
- <h3>No games found</h3>
- <p>Try adjusting your search or filter criteria</p>
- </div>
- `;
- return;
- }
- 
- gameCardsContainer.innerHTML = currentPageGames.map(gameItem => {
- // Create the game link - use new dynamic format if slug exists, fallback to old format
- const gameLink = gameItem.slug 
- ? `game.html?game=${gameItem.slug}`
- : gameItem.url || `${gameItem.name.toLowerCase().replace(/\s+/g, '')}.html`;
- 
- return `
- <div class="individual-game-card" data-game="${gameItem.slug || gameItem.name.toLowerCase().replace(/\s+/g, '-')}">
- <div class="game-preview-image">
- <img src="${gameItem.image}" alt="${gameItem.name}" loading="lazy" onerror="this.src='images/placeholder-game.jpg'" />
- <div class="game-hover-overlay">
- <button class="game-play-button">
- <i class="fas fa-play"></i>
- <span>Play Now</span>
- </button>
- </div>
- </div>
- <div class="game-details-section">
- <h3>${gameItem.name}</h3>
- <div class="game-category-tags">
- ${gameItem.tags ? gameItem.tags.slice(0, 3).map(tagName => 
- `<span class="category-tag-item">${tagName.charAt(0).toUpperCase() + tagName.slice(1)}</span>`
- ).join('') : ''}
- </div>
- ${gameItem.description ? `
- <p class="game-description">${gameItem.description.substring(0, 100)}${gameItem.description.length > 100 ? '...' : ''}</p>
- ` : ''}
- </div>
- </div>
- `;
- }).join('');
- 
- // Add click handlers for individual game cards
- document.querySelectorAll('.individual-game-card').forEach(cardElement => {
- cardElement.addEventListener('click', (e) => {
- const gameData = currentPageGames.find(game => 
- (game.slug || game.name.toLowerCase().replace(/\s+/g, '-')) === cardElement.dataset.game
- );
- if (gameData) {
- const gameLink = gameData.slug 
- ? `game.html?game=${gameData.slug}`
- : gameData.url || `${gameData.name.toLowerCase().replace(/\s+/g, '')}.html`;
- window.location.href = gameLink;
- }
- });
- });
- }
+    renderGameCards() {
+        const gameCardsContainer = document.querySelector('.primary-games-grid');
+        if (!gameCardsContainer) {
+            console.error('Game cards container not found');
+            return;
+        }
+        
+        const startIndex = (this.currentPageNumber - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        const currentPageGames = this.filteredGamesList.slice(startIndex, endIndex);
+        
+        console.log('Rendering games:', currentPageGames.length, '(sorted A-Z)');
+        
+        if (currentPageGames.length === 0) {
+            gameCardsContainer.innerHTML = `
+                <div class="empty-games-state">
+                    <i class="fas fa-gamepad"></i>
+                    <h3>No games found</h3>
+                    <p>Try adjusting your search or filter criteria</p>
+                </div>
+            `;
+            return;
+        }
+        
+        gameCardsContainer.innerHTML = currentPageGames.map(gameItem => {
+            // Create the game link - use new dynamic format if slug exists, fallback to old format
+            const gameLink = gameItem.slug 
+                ? `game.html?game=${gameItem.slug}`
+                : gameItem.url || `${gameItem.name.toLowerCase().replace(/\s+/g, '')}.html`;
+            
+            return `
+                <div class="single-game-tile" data-game="${gameItem.slug || gameItem.name.toLowerCase().replace(/\s+/g, '-')}">
+                    <div class="game-thumbnail-container">
+                        <img src="${gameItem.image}" alt="${gameItem.name}" loading="lazy" onerror="this.src='images/placeholder-game.jpg'" />
+                        <div class="tile-hover-effect">
+                            <button class="tile-play-action">
+                                <i class="fas fa-play"></i>
+                                <span>Play Now</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="game-info-panel">
+                        <h3>${gameItem.name}</h3>
+                        <div class="game-tags-list">
+                            ${gameItem.tags ? gameItem.tags.slice(0, 3).map(tagName => 
+                                `<span class="individual-game-tag">${tagName.charAt(0).toUpperCase() + tagName.slice(1)}</span>`
+                            ).join('') : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        
+        // Add click handlers for individual game cards - updated class name
+        document.querySelectorAll('.single-game-tile').forEach(cardElement => {
+            cardElement.addEventListener('click', (e) => {
+                const gameData = currentPageGames.find(game => 
+                    (game.slug || game.name.toLowerCase().replace(/\s+/g, '-')) === cardElement.dataset.game
+                );
+                if (gameData) {
+                    const gameLink = gameData.slug 
+                        ? `game.html?game=${gameData.slug}`
+                        : gameData.url || `${gameData.name.toLowerCase().replace(/\s+/g, '')}.html`;
+                    window.location.href = gameLink;
+                }
+            });
+        });
+    }
 
- renderPaginationControls() {
- const totalPagesCount = Math.ceil(this.filteredGamesList.length / this.itemsPerPage);
- const paginationContainer = document.querySelector('.page-navigation-controls');
- 
- if (!paginationContainer || totalPagesCount <= 1) {
- if (paginationContainer) paginationContainer.innerHTML = '';
- return;
- }
- 
- let paginationHTML = '';
- 
- // Previous navigation button
- paginationHTML += `
- <button class="nav-page-button ${this.currentPageNumber === 1 ? 'disabled' : ''}" 
- data-page="${this.currentPageNumber - 1}" ${this.currentPageNumber === 1 ? 'disabled' : ''}>
- <i class="fas fa-chevron-left"></i>
- Previous
- </button>
- `;
- 
- // Page number buttons logic
- const maxVisiblePageNumbers = 5;
- let startPageNumber = Math.max(1, this.currentPageNumber - Math.floor(maxVisiblePageNumbers / 2));
- let endPageNumber = Math.min(totalPagesCount, startPageNumber + maxVisiblePageNumbers - 1);
- 
- if (endPageNumber - startPageNumber + 1 < maxVisiblePageNumbers) {
- startPageNumber = Math.max(1, endPageNumber - maxVisiblePageNumbers + 1);
- }
- 
- if (startPageNumber > 1) {
- paginationHTML += `<button class="nav-page-button" data-page="1">1</button>`;
- if (startPageNumber > 2) {
- paginationHTML += `<span class="pagination-dots">...</span>`;
- }
- }
- 
- for (let pageNum = startPageNumber; pageNum <= endPageNumber; pageNum++) {
- paginationHTML += `
- <button class="nav-page-button ${pageNum === this.currentPageNumber ? 'current-page' : ''}" 
- data-page="${pageNum}">${pageNum}</button>
- `;
- }
- 
- if (endPageNumber < totalPagesCount) {
- if (endPageNumber < totalPagesCount - 1) {
- paginationHTML += `<span class="pagination-dots">...</span>`;
- }
- paginationHTML += `<button class="nav-page-button" data-page="${totalPagesCount}">${totalPagesCount}</button>`;
- }
- 
- // Next navigation button
- paginationHTML += `
- <button class="nav-page-button ${this.currentPageNumber === totalPagesCount ? 'disabled' : ''}" 
- data-page="${this.currentPageNumber + 1}" ${this.currentPageNumber === totalPagesCount ? 'disabled' : ''}>
- Next
- <i class="fas fa-chevron-right"></i>
- </button>
- `;
- 
- paginationContainer.innerHTML = paginationHTML;
- 
- // Add event listeners to pagination buttons
- paginationContainer.addEventListener('click', (e) => {
- if (e.target.matches('[data-page]') || e.target.closest('[data-page]')) {
- const button = e.target.matches('[data-page]') ? e.target : e.target.closest('[data-page]');
- if (!button.disabled && !button.classList.contains('disabled')) {
- const page = parseInt(button.dataset.page);
- this.navigateToPage(page);
- }
- }
- });
- }
- 
- navigateToPage(pageNumber) {
- const totalPagesCount = Math.ceil(this.filteredGamesList.length / this.itemsPerPage);
- if (pageNumber >= 1 && pageNumber <= totalPagesCount) {
- this.currentPageNumber = pageNumber;
- this.renderGameCards();
- this.renderPaginationControls();
- this.updateGameCountDisplay();
- 
- // Smooth scroll to top of games grid
- const gamesGrid = document.querySelector('.game-cards-grid');
- if (gamesGrid) {
- gamesGrid.scrollIntoView({ 
- behavior: 'smooth', 
- block: 'start' 
- });
- }
- }
- }
- 
- updateGameCountDisplay() {
- const gameCountElement = document.querySelector('.results-counter');
- if (gameCountElement) {
- gameCountElement.textContent = `Showing ${this.filteredGamesList.length} games (A-Z)`;
- }
- }
+    renderPaginationControls() {
+        const totalPagesCount = Math.ceil(this.filteredGamesList.length / this.itemsPerPage);
+        const paginationContainer = document.querySelector('.pagination-buttons-group');
+        
+        if (!paginationContainer || totalPagesCount <= 1) {
+            if (paginationContainer) paginationContainer.innerHTML = '';
+            return;
+        }
+        
+        let paginationHTML = '';
+        
+        // Previous navigation button - updated class name
+        paginationHTML += `
+            <button class="pagination-nav-button ${this.currentPageNumber === 1 ? 'disabled' : ''}" 
+                data-page="${this.currentPageNumber - 1}" ${this.currentPageNumber === 1 ? 'disabled' : ''}>
+                <i class="fas fa-chevron-left"></i>
+                Previous
+            </button>
+        `;
+        
+        // Page number buttons logic
+        const maxVisiblePageNumbers = 5;
+        let startPageNumber = Math.max(1, this.currentPageNumber - Math.floor(maxVisiblePageNumbers / 2));
+        let endPageNumber = Math.min(totalPagesCount, startPageNumber + maxVisiblePageNumbers - 1);
+        
+        if (endPageNumber - startPageNumber + 1 < maxVisiblePageNumbers) {
+            startPageNumber = Math.max(1, endPageNumber - maxVisiblePageNumbers + 1);
+        }
+        
+        if (startPageNumber > 1) {
+            paginationHTML += `<button class="pagination-nav-button" data-page="1">1</button>`;
+            if (startPageNumber > 2) {
+                paginationHTML += `<span class="pagination-ellipsis">...</span>`;
+            }
+        }
+        
+        for (let pageNum = startPageNumber; pageNum <= endPageNumber; pageNum++) {
+            paginationHTML += `
+                <button class="pagination-nav-button ${pageNum === this.currentPageNumber ? 'current-page' : ''}" 
+                    data-page="${pageNum}">${pageNum}</button>
+            `;
+        }
+        
+        if (endPageNumber < totalPagesCount) {
+            if (endPageNumber < totalPagesCount - 1) {
+                paginationHTML += `<span class="pagination-ellipsis">...</span>`;
+            }
+            paginationHTML += `<button class="pagination-nav-button" data-page="${totalPagesCount}">${totalPagesCount}</button>`;
+        }
+        
+        // Next navigation button - updated class name
+        paginationHTML += `
+            <button class="pagination-nav-button ${this.currentPageNumber === totalPagesCount ? 'disabled' : ''}" 
+                data-page="${this.currentPageNumber + 1}" ${this.currentPageNumber === totalPagesCount ? 'disabled' : ''}>
+                Next
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        `;
+        
+        paginationContainer.innerHTML = paginationHTML;
+        
+        // Add event listeners to pagination buttons
+        paginationContainer.addEventListener('click', (e) => {
+            if (e.target.matches('[data-page]') || e.target.closest('[data-page]')) {
+                const button = e.target.matches('[data-page]') ? e.target : e.target.closest('[data-page]');
+                if (!button.disabled && !button.classList.contains('disabled')) {
+                    const page = parseInt(button.dataset.page);
+                    this.navigateToPage(page);
+                }
+            }
+        });
+    }
+    
+    navigateToPage(pageNumber) {
+        const totalPagesCount = Math.ceil(this.filteredGamesList.length / this.itemsPerPage);
+        if (pageNumber >= 1 && pageNumber <= totalPagesCount) {
+            this.currentPageNumber = pageNumber;
+            this.renderGameCards();
+            this.renderPaginationControls();
+            this.updateGameCountDisplay();
+            
+            // Smooth scroll to top of games grid - updated class name
+            const gamesGrid = document.querySelector('.primary-games-grid');
+            if (gamesGrid) {
+                gamesGrid.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }
+        }
+    }
+    
+    updateGameCountDisplay() {
+        const gameCountElement = document.querySelector('.games-counter-text');
+        if (gameCountElement) {
+            gameCountElement.textContent = `Showing ${this.filteredGamesList.length} games (A-Z)`;
+        }
+    }
 }
 
 // Global variable for external access
@@ -3148,36 +3144,36 @@ let allGamesController;
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
- // Only initialize if we're on the games page (check for specific elements)
- if (document.querySelector('.game-cards-grid')) {
- allGamesController = new AllGamesManager();
- console.log('Games page initialized with A-Z sorting');
- }
- 
- // Initialize GameLoader if we're on an individual game page
- if (document.getElementById('gameFrame')) {
- new GameLoader();
- console.log('Game page initialized');
- }
+    // Only initialize if we're on the games page (check for specific elements) - updated class name
+    if (document.querySelector('.primary-games-grid')) {
+        allGamesController = new AllGamesManager();
+        console.log('Games page initialized with A-Z sorting');
+    }
+    
+    // Initialize GameLoader if we're on an individual game page
+    if (document.getElementById('gameFrame')) {
+        new GameLoader();
+        console.log('Game page initialized');
+    }
 });
 
 // Utility functions to add games from external scripts
 function addNewGameToCollection(name, image, url, tags) {
- if (allGamesController) {
- allGamesController.gamesList.push({ name, image, url, tags });
- // Re-sort the games list to maintain A-Z order
- allGamesController.gamesList.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
- allGamesController.applyFiltersAndSearch();
- }
+    if (allGamesController) {
+        allGamesController.gamesList.push({ name, image, url, tags });
+        // Re-sort the games list to maintain A-Z order
+        allGamesController.gamesList.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+        allGamesController.applyFiltersAndSearch();
+    }
 }
 
 function addMultipleGamesToCollection(gamesArray) {
- if (allGamesController) {
- allGamesController.gamesList.push(...gamesArray);
- // Re-sort the games list to maintain A-Z order
- allGamesController.gamesList.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
- allGamesController.applyFiltersAndSearch();
- }
+    if (allGamesController) {
+        allGamesController.gamesList.push(...gamesArray);
+        // Re-sort the games list to maintain A-Z order
+        allGamesController.gamesList.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+        allGamesController.applyFiltersAndSearch();
+    }
 }
 
 
