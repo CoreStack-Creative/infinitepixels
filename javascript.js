@@ -82,7 +82,8 @@ const gameData = [
    { name: "American 18 Wheeler Sim", link: "/game.html?game=american18wheelersim" },  
    { name: "Billard 8Ball Pool", link: "/game.html?game=billard8ballpool" },
    { name: "Flip Master", link: "/game.html?game=flipmaster" },
-   { name: "Curvy Punch 2", link: "/game.html?game=curvypunch2" }
+   { name: "Curvy Punch 2", link: "/game.html?game=curvypunch2" },
+   { name: "Rider Online Pro", link: "/game.html?game=rideronlinepro" }
 ];
 
 
@@ -2491,6 +2492,15 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/iqv0wswiozpaxs6s7rdtqdj24ibdrgsa/",
  tags: ["2048", "arcade", "strategy"],
  description: "2048 is a simple game where you add up numbers. That's it. Although, it's not as easy as it seems. It can prove to be quite a challenge. If you don't already know this classic, then you're in for a treat! Are you ready to test your wit and get as much score as possible? Then what are you waiting for? Go on and play it!",
+ },
+ {
+ id: 73,
+ name: "Rider Online Pro",
+ image: "images/rideronlineproimage.jpg",
+ slug: "rideronlinepro",
+ gameUrl: "https://html5.gamemonetize.co/xqxcsqazsozjzy71jb1hn0a54dorg91d/",
+ tags: ["bike", "arcade", "endless"],
+ description: "Get ready for some flippin action! Perform crazy stunts as you navigate the endless world of Rider! Grab your motorcycle and start spinning like a maniac, collect diamonds and unlock new bikes, combos and beat high scores. Play Rider Online now for free! have fun with this new game.",
  }
 ]; 
 
