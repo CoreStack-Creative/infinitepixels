@@ -89,7 +89,10 @@ const gameData = [
    { name: "Boat Rescue", link: "/game.html?game=boatrescue" }, 
    { name: "Bus Simulator", link: "/game.html?game=snipersimulator" },
    { name: "Stickman Online", link: "/game.html?game=momohorrorstory" },
-   { name: "Bird Simulator", link: "/game.html?game=boatrescue" } 
+   { name: "Bird Simulator", link: "/game.html?game=boatrescue" },
+   { name: "Deep Space Horror Outpost", link: "/game.html?game=deepspacehorroroutpost" },  
+   { name: "Nightwalkers IO", link: "/game.html?game=nightwalkersio" }, 
+   { name: "Night Racer", link: "/game.html?game=nightracer" }
 ];
 
 
@@ -1808,7 +1811,10 @@ const urls = [
    'game.html?game-boatrescue', 
    'game.html?game=bussimulator',
    'game.html?game=stickmanghostonline',
-   'game.html?game=birdsimulator'
+   'game.html?game=birdsimulator',
+   'game.html?game=deepspacehorroroutpost',
+   'game.html?game=nightracer',
+   'game.html?game=nightwalkersio',
 
 ];
 
@@ -2539,7 +2545,7 @@ const gamesDatabase = [
  {
  id: 76,
  name: "Momo Horror Story",
- image: "images/momohorrorstory.jpg",
+ image: "images/momohorrorstoryimage.jpg",
  slug: "momohorrorstory",
  gameUrl: "https://html5.gamemonetize.co/5fv1qjs4y57ltbk9q74zpteyeq3p6mob/",
  tags: ["horror", "action", "shooter"],
@@ -2564,14 +2570,41 @@ const gamesDatabase = [
  description: "Crush your rivals and become the last survival ghost in the Stickman City. Walk through many places and use all kinds of powerful and interesting weapons to fight, Perform many combos and defeat all enemies to reach the boss and save the world of the evil Stickmans. Collect coins and upgrade your character with new weapons, movements, skills and skins to survive and become the ultimate ghost warrior. The objective of the game is to take the brave stickman to the end of each of the levels defeating the stikcman ninja who will not hesitate to eliminate you.",
  },
  {
- id: 78,
+ id: 79,
  name: "Bird Simulator",
  image: "images/stickmanghostimage.jpg",
  slug: "stickmanghostonline",
  gameUrl: "https://html5.gamemonetize.co/v0ap03gz77p5idffw3d94p8vql3pg23b/",
  tags: ["simulator", "3d", "animal"],
  description: "Bird Simulator is a woodland-based exploration game where you play as a bird, soaring through forests, searching for food, building nests, and interacting with wildlife while avoiding natural dangers.",
- }
+ },
+ {
+ id: 80,
+ name: "Nightwalkers IO",
+ image: "images/nightwalkersioimage.jpg",
+ slug: "nightwalkersio",
+ gameUrl: "https://html5.gamemonetize.co/99mi8patiemjg6ns0m4apjv6p92csyt2/",
+ tags: ["io", "online", "action"],
+ description: "Nightwalkers.io or in short, Nightwalkers, is a free Co-Op browser zombie survival game from JeFawk Games. It features unique gameplay elements such as Apocalypses and Noise which attracts zombies. Grab a friend and make an invincible base. Gather resources and build weapons, fight through endless waves of zombies to establish a new World Record...or don't and just chill in the base and talk to one of the 1000+ daily people on the chat. However you play is up to you, but don't forget, kill as many zombies as possible!",
+ },
+ {
+ id: 81,
+ name: "Night Racing",
+ image: "images/nightracingimage.jpg",
+ slug: "nightracing",
+ gameUrl: "https://html5.gamemonetize.co/vpyg4xx30zcxx3sv2p8ke2ws7bvwg08v/",
+ tags: ["racing", "car", "action"],
+ description: "Get ready for thrilling nighttime races in an adrenaline-filled city! In this game, youll become a true street racer. Jump into the seat of a powerful sports car and hit the streets of the nocturnal city where exciting challenges await you. Complete various missions and perform tricks to showcase your driving skills, evading the police and leaving them far behind. As the game progresses, youll have the opportunity to purchase new, more powerful and faster cars.",
+ },
+ {
+ id: 82,
+ name: "Deep Space Horror Outpost",
+ image: "images/deepspacehorroroutpostimage.jpg",
+ slug: "deepspacehorroroutpost",
+ gameUrl: "https://html5.gamemonetize.co/zyq2hd8j0nld46fklqgj0cyacbpo09mn/",
+ tags: ["horror", "action", "shooter"],
+ description: "You are out of energy for your space cruiser. Lucky for you, there is an Deep Space Outpost. You need to collect 8 Energy Cells so you can go on with your journey. But, this isn't easy as is sounds. Station is abandoned, by humans. Only think remain on that station, is not human, and its bloodthirsty! Good luck!",
+ },
 ]; 
 
 // Make games database globally accessible
