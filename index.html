@@ -45,168 +45,168 @@
   </script>
   <!-- End Google Tag Manager -->
 
-  <!-- InMobi Choice CMP (TCF 2.2 + US Privacy / GPP support) -->
-  <script type="text/javascript" async=true>
-    (function () {
-      var host = window.location.hostname;
-      var element = document.createElement("script");
-      var firstScript = document.getElementsByTagName("script")[0];
-      var url = "https://cmp.inmobi.com"
-        .concat("/choice/", "-s1tTqKghbBFX", "/", host, "/choice.js?tag_version=V3");
-      var uspTries = 0;
-      var uspTriesLimit = 3;
-      element.async = true;
-      element.type = "text/javascript";
-      element.src = url;
-      firstScript.parentNode.insertBefore(element, firstScript);
+   <!-- InMobi Choice CMP (TCF 2.2 + US Privacy / GPP support) -->
+   <script type="text/javascript" async=true>
+     (function () {
+       var host = window.location.hostname;
+       var element = document.createElement("script");
+       var firstScript = document.getElementsByTagName("script")[0];
+       var url = "https://cmp.inmobi.com"
+         .concat("/choice/", "-s1tTqKghbBFX", "/", host, "/choice.js?tag_version=V3");
+       var uspTries = 0;
+       var uspTriesLimit = 3;
+       element.async = true;
+       element.type = "text/javascript";
+       element.src = url;
+       firstScript.parentNode.insertBefore(element, firstScript);
 
-      // TCF stub
-      function makeStub() {
-        var TCF_LOCATOR_NAME = "__tcfapiLocator";
-        var queue = [];
-        var win = window;
-        var cmpFrame;
-        function addFrame() {
-          var doc = win.document;
-          var otherCMP = !!win.frames[TCF_LOCATOR_NAME];
-          if (!otherCMP) {
-            if (doc.body) {
-              var iframe = doc.createElement("iframe");
-              iframe.style.cssText = "display:none";
-              iframe.name = TCF_LOCATOR_NAME;
-              doc.body.appendChild(iframe);
-            } else {
-              setTimeout(addFrame, 5);
-            }
-          }
-          return !otherCMP;
-        }
-        function tcfAPIHandler() {
-          var gdprApplies;
-          var args = arguments;
-          if (!args.length) {
-            return queue;
-          } else if (args[0] === "setGdprApplies") {
-            if (args.length > 3 && args[2] === 2 && typeof args[3] === "boolean") {
-              gdprApplies = args[3];
-              if (typeof args[2] === "function") {
-                args[2]("set", true);
-              }
-            }
-          } else if (args[0] === "ping") {
-            var retr = {
-              gdprApplies: gdprApplies,
-              cmpLoaded: false,
-              cmpStatus: "stub"
-            };
-            if (typeof args[2] === "function") {
-              args[2](retr);
-            }
-          } else {
-            queue.push(args);
-          }
-        }
-        function postMessageEventHandler(event) {
-          var msgIsString = typeof event.data === "string";
-          var json = {};
-          try {
-            json = msgIsString ? JSON.parse(event.data) : event.data;
-          } catch (ignore) {}
-          var payload = json.__tcfapiCall;
-          if (payload) {
-            window.__tcfapi(
-              payload.command,
-              payload.version,
-              function (retValue, success) {
-                var returnMsg = {
-                  __tcfapiReturn: {
-                    returnValue: retValue,
-                    success: success,
-                    callId: payload.callId
-                  }
-                };
-                if (msgIsString) {
-                  returnMsg = JSON.stringify(returnMsg);
-                }
-                if (event && event.source && event.source.postMessage) {
-                  event.source.postMessage(returnMsg, "*");
-                }
-              },
-              payload.parameter
-            );
-          }
-        }
-        while (win) {
-          try {
-            if (win.frames[TCF_LOCATOR_NAME]) {
-              cmpFrame = win;
-              break;
-            }
-          } catch (ignore) {}
-          if (win === window.top) break;
-          win = win.parent;
-        }
-        if (!cmpFrame) {
-          addFrame();
-          win.__tcfapi = tcfAPIHandler;
-          win.addEventListener("message", postMessageEventHandler, false);
-        }
-      }
-      makeStub();
+       // TCF stub
+       function makeStub() {
+         var TCF_LOCATOR_NAME = "__tcfapiLocator";
+         var queue = [];
+         var win = window;
+         var cmpFrame;
+         function addFrame() {
+           var doc = win.document;
+           var otherCMP = !!win.frames[TCF_LOCATOR_NAME];
+           if (!otherCMP) {
+             if (doc.body) {
+               var iframe = doc.createElement("iframe");
+               iframe.style.cssText = "display:none";
+               iframe.name = TCF_LOCATOR_NAME;
+               doc.body.appendChild(iframe);
+             } else {
+               setTimeout(addFrame, 5);
+             }
+           }
+           return !otherCMP;
+         }
+         function tcfAPIHandler() {
+           var gdprApplies;
+           var args = arguments;
+           if (!args.length) {
+             return queue;
+           } else if (args[0] === "setGdprApplies") {
+             if (args.length > 3 && args[2] === 2 && typeof args[3] === "boolean") {
+               gdprApplies = args[3];
+               if (typeof args[2] === "function") {
+                 args[2]("set", true);
+               }
+             }
+           } else if (args[0] === "ping") {
+             var retr = {
+               gdprApplies: gdprApplies,
+               cmpLoaded: false,
+               cmpStatus: "stub"
+             };
+             if (typeof args[2] === "function") {
+               args[2](retr);
+             }
+           } else {
+             queue.push(args);
+           }
+         }
+         function postMessageEventHandler(event) {
+           var msgIsString = typeof event.data === "string";
+           var json = {};
+           try {
+             json = msgIsString ? JSON.parse(event.data) : event.data;
+           } catch (ignore) {}
+           var payload = json.__tcfapiCall;
+           if (payload) {
+             window.__tcfapi(
+               payload.command,
+               payload.version,
+               function (retValue, success) {
+                 var returnMsg = {
+                   __tcfapiReturn: {
+                     returnValue: retValue,
+                     success: success,
+                     callId: payload.callId
+                   }
+                 };
+                 if (msgIsString) {
+                   returnMsg = JSON.stringify(returnMsg);
+                 }
+                 if (event && event.source && event.source.postMessage) {
+                   event.source.postMessage(returnMsg, "*");
+                 }
+               },
+               payload.parameter
+             );
+           }
+         }
+         while (win) {
+           try {
+             if (win.frames[TCF_LOCATOR_NAME]) {
+               cmpFrame = win;
+               break;
+             }
+           } catch (ignore) {}
+           if (win === window.top) break;
+           win = win.parent;
+         }
+         if (!cmpFrame) {
+           addFrame();
+           win.__tcfapi = tcfAPIHandler;
+           win.addEventListener("message", postMessageEventHandler, false);
+         }
+       }
+       makeStub();
 
-      // GPP stub
-      function makeGppStub() {
-        const CMP_ID = 10;
-        const SUPPORTED_APIS = [
-          "2:tcfeuv2","6:uspv1","7:usnatv1","8:usca","9:usvav1",
-          "10:uscov1","11:usutv1","12:usctv1"
-        ];
-        window.__gpp_addFrame = function (n) {
-          if (!window.frames[n]) {
-            if (document.body) {
-              var i = document.createElement("iframe");
-              i.style.cssText = "display:none";
-              i.name = n;
-              document.body.appendChild(i);
-            } else {
-              window.setTimeout(window.__gpp_addFrame, 10, n);
-            }
-          }
-        };
-        window.__gpp_stub = function () {
-          var b = arguments;
-          __gpp.queue = __gpp.queue || [];
-          __gpp.events = __gpp.events || [];
-          if (!b.length || (b.length == 1 && b[0] == "queue")) {
-            return __gpp.queue;
-          }
-          if (b.length == 1 && b[0] == "events") {
-            return __gpp.events;
-          }
-          if (b[0] === "ping") {
-            b[1]({
-              gppVersion: "1.1",
-              cmpStatus: "stub",
-              cmpDisplayStatus: "hidden",
-              signalStatus: "not ready",
-              supportedAPIs: SUPPORTED_APIS,
-              cmpId: CMP_ID,
-              sectionList: [],
-              applicableSections: [-1],
-              gppString: "",
-              parsedSections: {}
-            }, true);
-          } else {
-            __gpp.queue.push([].slice.apply(b));
-          }
-        };
-        window.__gpp_addFrame("__gppLocator");
-      }
-      makeGppStub();
-    })();
-  </script>
-  <!-- End InMobi Choice CMP -->
+       // GPP stub
+       function makeGppStub() {
+         const CMP_ID = 10;
+         const SUPPORTED_APIS = [
+           "2:tcfeuv2","6:uspv1","7:usnatv1","8:usca","9:usvav1",
+           "10:uscov1","11:usutv1","12:usctv1"
+         ];
+         window.__gpp_addFrame = function (n) {
+           if (!window.frames[n]) {
+             if (document.body) {
+               var i = document.createElement("iframe");
+               i.style.cssText = "display:none";
+               i.name = n;
+               document.body.appendChild(i);
+             } else {
+               window.setTimeout(window.__gpp_addFrame, 10, n);
+             }
+           } else {
+             window.__gpp_stub = function () {
+               var b = arguments;
+               __gpp.queue = __gpp.queue || [];
+               __gpp.events = __gpp.events || [];
+               if (!b.length || (b.length == 1 && b[0] == "queue")) {
+                 return __gpp.queue;
+               }
+               if (b.length == 1 && b[0] == "events") {
+                 return __gpp.events;
+               }
+               if (b[0] === "ping") {
+                 b[1]({
+                   gppVersion: "1.1",
+                   cmpStatus: "stub",
+                   cmpDisplayStatus: "hidden",
+                   signalStatus: "not ready",
+                   supportedAPIS: SUPPORTED_APIS,
+                   cmpId: CMP_ID,
+                   sectionList: [],
+                   applicableSections: [-1],
+                   gppString: "",
+                   parsedSections: {}
+                 }, true);
+               } else {
+                 __gpp.queue.push([].slice.apply(b));
+               }
+             };
+           }
+         };
+       }
+     })();
+   </script>
+   <!-- End InMobi Choice CMP -->
 </head>
+
 
 <body>
 
