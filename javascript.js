@@ -83,7 +83,9 @@ const gameData = [
    { name: "Billard 8Ball Pool", link: "/game.html?game=billard8ballpool" },
    { name: "Flip Master", link: "/game.html?game=flipmaster" },
    { name: "Curvy Punch 2", link: "/game.html?game=curvypunch2" },
-   { name: "Rider Online Pro", link: "/game.html?game=rideronlinepro" }
+   { name: "Rider Online Pro", link: "/game.html?game=rideronlinepro" },
+   { name: "Sniper Simulator", link: "/game.html?game=snipersimulator" }
+   { 
 ];
 
 
@@ -1796,7 +1798,8 @@ const urls = [
    'game.html?game=flipmaster',
    'game.html?game=curvypunch2',
    'game.html?game=2048legend',
-   'game.html?game=rideronlinepro'
+   'game.html?game=rideronlinepro',
+   'game.html?game=snipersimulator'
 
 ];
 
