@@ -86,7 +86,10 @@ const gameData = [
    { name: "Rider Online Pro", link: "/game.html?game=rideronlinepro" },
    { name: "Sniper Simulator", link: "/game.html?game=snipersimulator" },
    { name: "Momo Horror Story", link: "/game.html?game=momohorrorstory" },
-   { name: "Boat Rescue", link: "/game.html?game=boatrescue" }
+   { name: "Boat Rescue", link: "/game.html?game=boatrescue" }, 
+   { name: "Bus Simulator", link: "/game.html?game=snipersimulator" },
+   { name: "Stickman Online", link: "/game.html?game=momohorrorstory" },
+   { name: "Bird Simulator", link: "/game.html?game=boatrescue" } 
 ];
 
 
@@ -1802,7 +1805,10 @@ const urls = [
    'game.html?game=rideronlinepro',
    'game.html?game=snipersimulator',
    'game.html?game=momohorrorstory',
-   'game.html?game-boatrescue'
+   'game.html?game-boatrescue', 
+   'game.html?game=bussimulator',
+   'game.html?game=stickmanghostonline',
+   'game.html?game=birdsimulator'
 
 ];
 
@@ -2538,6 +2544,33 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/5fv1qjs4y57ltbk9q74zpteyeq3p6mob/",
  tags: ["horror", "action", "shooter"],
  description: "Momo is a horror game based on the history of the message user momo. In the game, you will be a guy that contacts momo by message, and now he will be pursued by the monster of momo. You will have to complete some tasks before get rescued, like turn on the generator, find some keys, close windows etc...The objetive is to survive until the timer reachs 00:00 then, the police will arrive and you would able to escape. There are two modes in game, Classic and Gun mode.",
+ }, 
+ {
+ id: 77,
+ name: "Bus Simulator",
+ image: "images/bussimulatorimage.jpg",
+ slug: "bussimulator",
+ gameUrl: "https://html5.gamemonetize.co/dubea73z3y8yy37n10vzmubrovaolu7b/",
+ tags: ["racing", "action", "simulator"],
+ description: "Bus Simulator is a city-based driving game where you take the role of a bus driver, following scheduled routes, picking up and dropping off passengers, and navigating realistic urban traffic, weather, and road conditions.",
+ },
+  {
+ id: 78,
+ name: "Stickman Ghost Online",
+ image: "images/stickmanghostonlineimage.jpg",
+ slug: "stickmanghostonline",
+ gameUrl: "https://html5.gamemonetize.co/qsd2h427rg6z6gza2xekqsdwgk1dwksa/",
+ tags: ["stickman", "online", "sction"],
+ description: "Crush your rivals and become the last survival ghost in the Stickman City. Walk through many places and use all kinds of powerful and interesting weapons to fight, Perform many combos and defeat all enemies to reach the boss and save the world of the evil Stickmans. Collect coins and upgrade your character with new weapons, movements, skills and skins to survive and become the ultimate ghost warrior. The objective of the game is to take the brave stickman to the end of each of the levels defeating the stikcman ninja who will not hesitate to eliminate you.",
+ },
+ {
+ id: 78,
+ name: "Bird Simulator",
+ image: "images/stickmanghostimage.jpg",
+ slug: "stickmanghostonline",
+ gameUrl: "https://html5.gamemonetize.co/v0ap03gz77p5idffw3d94p8vql3pg23b/",
+ tags: ["simulator", "3d", "animal"],
+ description: "Bird Simulator is a woodland-based exploration game where you play as a bird, soaring through forests, searching for food, building nests, and interacting with wildlife while avoiding natural dangers.",
  }
 ]; 
 
