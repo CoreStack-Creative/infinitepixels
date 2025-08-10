@@ -2569,7 +2569,7 @@ const gamesDatabase = [
  image: "images/stickmanghostonlineimage.jpg",
  slug: "stickmanghostonline",
  gameUrl: "https://html5.gamemonetize.co/qsd2h427rg6z6gza2xekqsdwgk1dwksa/",
- tags: ["stickman", "online", "sction"],
+ tags: ["stickman", "online", "action"],
  description: "Crush your rivals and become the last survival ghost in the Stickman City. Walk through many places and use all kinds of powerful and interesting weapons to fight, Perform many combos and defeat all enemies to reach the boss and save the world of the evil Stickmans. Collect coins and upgrade your character with new weapons, movements, skills and skins to survive and become the ultimate ghost warrior. The objective of the game is to take the brave stickman to the end of each of the levels defeating the stikcman ninja who will not hesitate to eliminate you.",
  },
  {
