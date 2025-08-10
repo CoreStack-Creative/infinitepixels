@@ -90,8 +90,9 @@ const gameData = [
    { name: "Bus Simulator", link: "/game.html?game=snipersimulator" },
    { name: "Stickman Online", link: "/game.html?game=momohorrorstory" },
    { name: "Bird Simulator", link: "/game.html?game=Bird Simulator" },
-   { name: "Deep Space Horror Outpost", link: "/game.html?game=deepspacehorroroutpost" },  
    { name: "Nightwalkers IO", link: "/game.html?game=nightwalkersio" }, 
+   { name: "Zombie Escape", link: "/game.html?game=zombieescape" }, 
+   { name: "Escape Your Birthday", link: "/game.html?game=escapeyourbirthday" }, 
    { name: "Night Racer", link: "/game.html?game=nightracer" }
 ];
 
@@ -1812,9 +1813,11 @@ const urls = [
    'game.html?game=bussimulator',
    'game.html?game=stickmanghostonline',
    'game.html?game=birdsimulator',
-   'game.html?game=deepspacehorroroutpost',
    'game.html?game=nightracer',
    'game.html?game=nightwalkersio',
+   'game.html?game=deepspacehorroroutpost',
+   'game.html?game=zombieescape',
+   'game.html?game=escapeyourbirthday',
 
 ];
 
@@ -2604,6 +2607,24 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/zyq2hd8j0nld46fklqgj0cyacbpo09mn/",
  tags: ["horror", "action", "shooter"],
  description: "You are out of energy for your space cruiser. Lucky for you, there is an Deep Space Outpost. You need to collect 8 Energy Cells so you can go on with your journey. But, this isn't easy as is sounds. Station is abandoned, by humans. Only think remain on that station, is not human, and its bloodthirsty! Good luck!",
+ },
+ {
+ id: 83,
+ name: "Zombie Escape",
+ image: "images/zombieescapeimage.jpg",
+ slug: "zombieescape",
+ gameUrl: "https://html5.gamemonetize.co/ifcdrnwla32frs6rgrw3ulbbgnip63qq/",
+ tags: ["horror", "action", "puzzle"],
+ description: "Zombie Escape Horror Factory is an exciting survival game that immerses you in a zombie infested apocalyptic world. Your mission is to repair all the generators with your teammates, which when completed will open a door for you to escape this living nightmare. An immersive experience with tension and fear everywhere. Can you successfully complete the mission and escape?",
+ },
+ {
+ id: 84,
+ name: "Escape Your Birthday",
+ image: "images/escapeyourbirthdayimage.jpg",
+ slug: "escapeyourbirthday",
+ gameUrl: "https://html5.gamemonetize.co/karmfagd29qbrrs3vznumevkjw1vjzlz/",
+ tags: ["horror", "action", "puzzle"],
+ description: "A creepy birthday. A locked room. Can you find your way out? You wake up in a strange room. It’s your birthday… but something feels off. There’s a cake, a candle, and an eerie silence. This isn’t a celebration — it’s a puzzle. And you need to escape. Features: First-person horror puzzle experience Atmospheric sound design — headphones highly recommended One-room mystery filled with strange objects and hidden clues Short and spooky — perfect for a coffee break scare.",
  },
 ]; 
 
