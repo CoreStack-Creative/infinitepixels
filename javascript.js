@@ -1809,7 +1809,7 @@ const urls = [
    'game.html?game=rideronlinepro',
    'game.html?game=snipersimulator',
    'game.html?game=momohorrorstory',
-   'game.html?game-boatrescue', 
+   'game.html?game=boatrescue', 
    'game.html?game=bussimulator',
    'game.html?game=stickmanghostonline',
    'game.html?game=birdsimulator',
