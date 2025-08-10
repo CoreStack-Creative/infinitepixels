@@ -2596,7 +2596,7 @@ const gamesDatabase = [
  image: "images/nightracingimage.jpg",
  slug: "nightracing",
  gameUrl: "https://html5.gamemonetize.co/vpyg4xx30zcxx3sv2p8ke2ws7bvwg08v/",
- tags: ["racing", "car", "action"],
+ tags: ["racing", "cars", "action"],
  description: "Get ready for thrilling nighttime races in an adrenaline-filled city! In this game, youll become a true street racer. Jump into the seat of a powerful sports car and hit the streets of the nocturnal city where exciting challenges await you. Complete various missions and perform tricks to showcase your driving skills, evading the police and leaving them far behind. As the game progresses, youll have the opportunity to purchase new, more powerful and faster cars.",
  },
  {
