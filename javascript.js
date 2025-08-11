@@ -2632,7 +2632,7 @@ const gamesDatabase = [
  id: 85,
  name: "Mirage Online Classic",
  image: "images/mirageonlineclassicimage.jpg",
- slug: "mirageonlineclassix",
+ slug: "mirageonlineclassic",
  gameUrl: "https://play.mirageonlineclassic.com/?_gl=1*1lkikim*_ga*MjEzNjk4OTUyNy4xNzU0Nzg5Mjcx*_ga_9Z6N2DZBSW*czE3NTQ3ODkyNzAkbzEkZzAkdDE3NTQ3ODkyNzAkajYwJGwwJGgw",
  tags: ["multiplayer", "adventure", "online"],
  description: "Mirage Online Classic is a retro-style MMORPG where you explore a vast fantasy world, battle monsters, complete quests, gather loot, and interact with other players while steadily leveling up your skills, equipment, and abilities.",
