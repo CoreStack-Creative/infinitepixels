@@ -95,7 +95,8 @@ const gameData = [
    { name: "Escape Your Birthday", link: "/game.html?game=escapeyourbirthday" }, 
    { name: "Night Racer", link: "/game.html?game=nightracer" }, 
    { name: "Mirage Online Clasic", link: "/game.html?game=mirageonlineclasic" },
-   { name: "Gang Fall Party", link: "/game.html?game=gangfallparty" }
+   { name: "Gang Fall Party", link: "/game.html?game=gangfallparty" },
+   { name: "Trial Bike Racing Clash", link: "/game.html?game=trialbikeracingclash" }
 
 ];
 
@@ -1822,8 +1823,8 @@ const urls = [
    'game.html?game=zombieescape',
    'game.html?game=escapeyourbirthday', 
    'game.html?game=mirageonlineclassic',
-   'game.html?game=gangfallparty'
-
+   'game.html?game=gangfallparty',
+   'game.html?game=trialbikeracingclash'
 
 ];
 
@@ -2650,6 +2651,15 @@ const gamesDatabase = [
  tags: ["io", "action", "2 player"],
  description: "Get ready to start a great online fighting game with the Gang Fall Party game! All of the fights will be on the high places and your only goal in this game is to fall your opponents from the places you're fighting on with your punches. You can play the game in single player mode or in two player game mode. You can fight against a friend in 1vs1 game mode and you can fight against lots of online opponents with your friends in 2 player mode with the Vs All game mode. You can fight against online friends in 1P game mode. In each online game, you will fight against 16 or 17 players.",
  }, 
+{
+ id: 87,
+ name: "Trial Bike Racing Clash",
+ image: "images/trialbikeracingclashimage.jpg",
+ slug: "trailbikeracingclash",
+ gameUrl: "https://html5.gamemonetize.co/vqfqbnwpjpv5t77qupxckrz953obu9wd/",
+ tags: ["bike", "multiplayer", "2 player"],
+ description: "A super bike racing experience begins with a stunt bike and a stunt rider with the Trial Bike Racing Clash! Dangerous rides in different zones will be waiting for you! This race can be played either in 1 player game mode or in 2 player game mode. Play both mission and skills game modes against a friend and race to the finish line. Customizable bikes and riders and various exciting game levels are waiting for you.",
+ }
 ]; 
 
 // Make games database globally accessible
