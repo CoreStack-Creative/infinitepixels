@@ -94,7 +94,9 @@ const gameData = [
    { name: "Zombie Escape", link: "/game.html?game=zombieescape" }, 
    { name: "Escape Your Birthday", link: "/game.html?game=escapeyourbirthday" }, 
    { name: "Night Racer", link: "/game.html?game=nightracer" }, 
-   { name: "Mirage Online Clasic", link: "/game.html?game=mirageonlineclasic" }
+   { name: "Mirage Online Clasic", link: "/game.html?game=mirageonlineclasic" },
+   { name: "Gang Fall Party", link: "/game.html?game=gangfallparty" }
+
 ];
 
 
@@ -1819,7 +1821,9 @@ const urls = [
    'game.html?game=deepspacehorroroutpost',
    'game.html?game=zombieescape',
    'game.html?game=escapeyourbirthday', 
-   'game.html?game=mirageonlineclassic'
+   'game.html?game=mirageonlineclassic',
+   'game.html?game=gangfallparty'
+
 
 ];
 
@@ -2636,6 +2640,15 @@ const gamesDatabase = [
  gameUrl: "https://play.mirageonlineclassic.com/?_gl=1*1lkikim*_ga*MjEzNjk4OTUyNy4xNzU0Nzg5Mjcx*_ga_9Z6N2DZBSW*czE3NTQ3ODkyNzAkbzEkZzAkdDE3NTQ3ODkyNzAkajYwJGwwJGgw",
  tags: ["multiplayer", "adventure", "online"],
  description: "Mirage Online Classic is a retro-style MMORPG where you explore a vast fantasy world, battle monsters, complete quests, gather loot, and interact with other players while steadily leveling up your skills, equipment, and abilities.",
+ }, 
+{
+ id: 86,
+ name: "Gang Fall Party",
+ image: "images/gangfallpartyimage.jpg",
+ slug: "gangfallparty",
+ gameUrl: "https://html5.gamemonetize.co/i7uarc0zpakotfo600u3t1j18vdzan26/",
+ tags: ["io", "action", "2 player"],
+ description: "Get ready to start a great online fighting game with the Gang Fall Party game! All of the fights will be on the high places and your only goal in this game is to fall your opponents from the places you're fighting on with your punches. You can play the game in single player mode or in two player game mode. You can fight against a friend in 1vs1 game mode and you can fight against lots of online opponents with your friends in 2 player mode with the Vs All game mode. You can fight against online friends in 1P game mode. In each online game, you will fight against 16 or 17 players.",
  }, 
 ]; 
 
