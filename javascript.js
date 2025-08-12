@@ -316,65 +316,118 @@ document.addEventListener('click', function(e) {
 }, true);
 
 
-// Search functionality
-if (searchInput) {
-    searchInput.addEventListener('input', () => {
-        const searchTerm = searchInput.value.toLowerCase();
+// Enhanced Search Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const searchIconBtn = document.getElementById('searchIconBtn');
+    const searchBox = document.getElementById('searchBox');
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const searchWrapper = document.querySelector('.search-wrapper');
 
-        if (searchTerm.trim() === '') {
-            // Hide results if input is empty
-            if (searchResults) {
-                searchResults.classList.remove('active');
-                searchResults.innerHTML = '';
-            }
-            return;
+    // Open search box
+    function openSearch() {
+        searchWrapper.classList.add('search-active');
+        searchBox.classList.add('active');
+        // Small delay to ensure animation starts, then focus input
+        setTimeout(() => {
+            searchInput.focus();
+        }, 300);
+    }
+
+    // Close search box
+    function closeSearch() {
+        searchWrapper.classList.remove('search-active');
+        searchBox.classList.remove('active');
+        searchInput.value = '';
+        searchResults.classList.remove('active');
+        searchInput.blur();
+    }
+
+    // Event listeners
+    searchIconBtn.addEventListener('click', openSearch);
+
+    // Close search when clicking outside
+    document.addEventListener('click', function(event) {
+        if (!searchWrapper.contains(event.target) && !searchResults.contains(event.target)) {
+            closeSearch();
         }
-
-        const filteredGames = gameData.filter(game =>
-            game.name.toLowerCase().includes(searchTerm)
-        );
-
-        displaySearchResults(filteredGames);
     });
-}
 
+    // Prevent closing when clicking inside search box
+    searchBox.addEventListener('click', function(event) {
+        event.stopPropagation();
+    });
 
-function displaySearchResults(results) {
-    if (!searchResults) return;
+    // Handle escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeSearch();
+        }
+    });
 
-    searchResults.innerHTML = ''; // Clear previous results
+    // Your existing search functionality integrated
+    if (searchInput) {
+        searchInput.addEventListener('input', () => {
+            const searchTerm = searchInput.value.toLowerCase();
 
-    if (results.length === 0) {
-        // Show "No results found" message
-        searchResults.innerHTML = '<p class="no-results">No results found.</p>';
-        searchResults.classList.add('active');
-    } else {
-        // Display results
-        results.forEach(game => {
-            const resultElement = document.createElement('p');
-            resultElement.textContent = game.name;
-            resultElement.style.cursor = 'pointer';
-            resultElement.addEventListener('click', () => {
-                if (game.link) {
-                    let destination = game.link;
+            if (searchTerm.trim() === '') {
+                // Hide results if input is empty
+                if (searchResults) {
+                    searchResults.classList.remove('active');
+                    searchResults.innerHTML = '';
+                }
+                return;
+            }
 
-                    // If link is relative (starts with "/"), prepend domain
-                    if (destination.startsWith('/')) {
-                        destination = 'https://www.infinite-pixels.com' + destination;
+            const filteredGames = gameData.filter(game =>
+                game.name.toLowerCase().includes(searchTerm)
+            );
+
+            displaySearchResults(filteredGames);
+        });
+    }
+
+    function displaySearchResults(results) {
+        if (!searchResults) return;
+
+        searchResults.innerHTML = ''; // Clear previous results
+
+        if (results.length === 0) {
+            // Show "No results found" message
+            searchResults.innerHTML = '<p class="no-results">No results found.</p>';
+            searchResults.classList.add('active');
+        } else {
+            // Display results
+            results.forEach(game => {
+                const resultElement = document.createElement('p');
+                resultElement.textContent = game.name;
+                resultElement.style.cursor = 'pointer';
+                resultElement.addEventListener('click', () => {
+                    if (game.link) {
+                        let destination = game.link;
+
+                        // If link is relative (starts with "/"), prepend domain
+                        if (destination.startsWith('/')) {
+                            destination = 'https://www.infinite-pixels.com' + destination;
+                        }
+
+                        window.location.href = destination;
                     }
 
-                    window.location.href = destination;
-                }
-
-                searchResults.classList.remove('active');
-                searchInput.value = '';
+                    searchResults.classList.remove('active');
+                    searchInput.value = '';
+                    closeSearch(); // Close the search box after selection
+                });
+                searchResults.appendChild(resultElement);
             });
-            searchResults.appendChild(resultElement);
-        });
 
-        searchResults.classList.add('active');
+            searchResults.classList.add('active');
+        }
     }
-}
+
+    // Enhanced search button functionality
+    // Search triggers automatically on input, no separate search button needed
+});
 
 
 // Fullscreen functionality - Native browser fullscreen on game container

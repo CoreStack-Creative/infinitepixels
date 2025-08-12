@@ -138,10 +138,14 @@
         </button>
 
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search games...">
-            <button class="search-btn" id="searchBtn">
-                <i class="fas fa-search"></i>
-            </button>
+            <div class="search-wrapper">
+                <button class="search-icon-btn" id="searchIconBtn">
+                    <i class="fas fa-search"></i>
+                </button>
+                <div class="search-box" id="searchBox">
+                    <input type="text" id="searchInput" placeholder="Search games...">
+                </div>
+            </div>
             <div class="search-results" id="searchResults">
                 <!-- Search results will be displayed here -->
             </div>
