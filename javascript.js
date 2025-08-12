@@ -2062,7 +2062,7 @@ const gamesDatabase = [
  {
  id: 23,
  name: "Stick Fighter",
- image: "images/stickfighterimage.jpg",
+ image: "images/stickfighter3dimage.jpg",
  slug: "stickfighter",
  gameUrl: "https://html5.gamemonetize.co/vlskz7dtsxmpg34pu546de1wjng6ffob/",
  tags: ["action", "stickman", "2 player"],
@@ -2664,6 +2664,15 @@ const gamesDatabase = [
  },
  {
  id: 88,
+ name: "Slenderman Lost at School",
+ image: "images/slendermanlostatschoolimage.jpg",
+ slug: "slendermanlostatschool",
+ gameUrl: "https://html5.gamemonetize.co/24gnovw92p6d8dz6lr9jg0sp3ug9xrmd/",
+ tags: ["horror", "3d", "puzzle"],
+ description: "Slenderman Lost at School is a chilling online horror game that thrusts players into a dark and eerie school where the infamous Slenderman roams. Your objective is to explore the abandoned school, solve puzzles, and collect items to escape Slendermans clutches. The game combines elements of stealth, strategy, and horror to deliver a truly immersive experience. Navigate through dimly lit hallways, avoid Slendermans gaze, and uncover the dark secrets hidden within the school. Can you survive the terror and find your way out before its too late?",
+ },
+ {
+ id: 89,
  name: "Stickman Sports Badminton",
  image: "images/stickmansportsbadmintonimage.jpg",
  slug: "stickmansportsbadminton",
