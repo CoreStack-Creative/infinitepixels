@@ -4201,13 +4201,13 @@ class NewsManager {
     }
 
     formatNumber(num) {
-        if (num >= 1000000) {
-            return (num / 1000000).toFixed(1) + 'M';
+        if (num === undefined || num === null || isNaN(num)) {
+            return '0';
         }
-        if (num >= 1000) {
-            return (num / 1000).toFixed(1) + 'K';
-        }
-        return num.toString();
+        const numValue = typeof num === 'string' ? parseFloat(num) : num;
+        if (numValue >= 1000000) return (numValue / 1000000).toFixed(1) + 'M';
+        if (numValue >= 1000) return (numValue / 1000).toFixed(1) + 'K';
+        return Math.floor(numValue).toString();
     }
 }
 
