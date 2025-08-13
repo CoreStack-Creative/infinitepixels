@@ -31,6 +31,13 @@ body {
    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
+.logo-link {
+    margin-top: 1rem;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+}
 
 /* Sidebar Toggle Button */
 .sidebar-toggle {
