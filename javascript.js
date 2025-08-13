@@ -1815,12 +1815,15 @@ let selectedGameImageWrapper;
 
 // State
 let currentSelectedGame = null;
+let carouselAnimationId = null;
+let carouselPosition = 0;
 
 // Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
     initializeElements();
-    createCarouselSlides();
+    createDynamicCarousel();
     attachEventListeners();
+    startCarouselAnimation();
 });
 
 function initializeElements() {
@@ -1833,20 +1836,103 @@ function initializeElements() {
     selectedGameImageWrapper = document.getElementById('selectedGameImageWrapper');
 }
 
-function createCarouselSlides() {
-    if (!carouselSlides) return;
+function createDynamicCarousel() {
+    if (!carouselSlides || !gamesDatabase) return;
     
     carouselSlides.innerHTML = '';
     
-    // Create slides for each game (duplicate twice for smooth infinite scroll with 4 images showing)
-    const allGames = [...gamesDatabase, ...gamesDatabase, ...gamesDatabase];
+    // Create enough slides to ensure smooth infinite scrolling
+    // We need at least 3 sets of all games for seamless looping
+    const tripleGames = [...gamesDatabase, ...gamesDatabase, ...gamesDatabase];
     
-    allGames.forEach(game => {
+    tripleGames.forEach((game, index) => {
         const slide = document.createElement('div');
         slide.className = 'carousel-slide';
         slide.style.backgroundImage = `url('${game.image}')`;
+        slide.setAttribute('data-game-index', index % gamesDatabase.length);
+        slide.setAttribute('title', game.name);
+        
+        // Add click handler for carousel slides
+        slide.addEventListener('click', function() {
+            const gameIndex = parseInt(this.getAttribute('data-game-index'));
+            const selectedGame = gamesDatabase[gameIndex];
+            displaySelectedGame(selectedGame);
+        });
+        
         carouselSlides.appendChild(slide);
     });
+    
+    // Set initial width for smooth animation
+    updateCarouselWidth();
+}
+
+function updateCarouselWidth() {
+    if (!carouselSlides) return;
+    
+    const slides = carouselSlides.children;
+    const slideWidth = getSlideWidth();
+    const gap = getGapSize();
+    
+    // Calculate total width needed for all slides
+    const totalWidth = slides.length * (slideWidth + gap);
+    carouselSlides.style.width = `${totalWidth}px`;
+}
+
+function getSlideWidth() {
+    // Return slide width based on screen size
+    if (window.innerWidth <= 320) return 80;
+    if (window.innerWidth <= 480) return 100;
+    if (window.innerWidth <= 768) return 120;
+    return 160;
+}
+
+function getGapSize() {
+    // Return gap size based on screen size
+    if (window.innerWidth <= 480) return 6;
+    if (window.innerWidth <= 768) return 8;
+    return 10;
+}
+
+function startCarouselAnimation() {
+    if (carouselAnimationId) {
+        cancelAnimationFrame(carouselAnimationId);
+    }
+    
+    animateCarousel();
+}
+
+function animateCarousel() {
+    if (!carouselSlides) return;
+    
+    const slideWidth = getSlideWidth();
+    const gap = getGapSize();
+    const moveDistance = slideWidth + gap;
+    
+    // Move the carousel
+    carouselPosition -= 0.5; // Adjust speed here (pixels per frame)
+    
+    // Reset position when we've moved one full set of games
+    const resetPoint = -(gamesDatabase.length * moveDistance);
+    if (carouselPosition <= resetPoint) {
+        carouselPosition = 0;
+    }
+    
+    carouselSlides.style.transform = `translateX(${carouselPosition}px)`;
+    
+    carouselAnimationId = requestAnimationFrame(animateCarousel);
+}
+
+function pauseCarousel() {
+    if (carouselAnimationId) {
+        cancelAnimationFrame(carouselAnimationId);
+        carouselAnimationId = null;
+    }
+}
+
+function resumeCarousel() {
+    if (!carouselAnimationId) {
+        startCarouselAnimation();
+    }
 }
 
 function attachEventListeners() {
@@ -1860,15 +1946,30 @@ function attachEventListeners() {
     categoryBars.forEach(bar => {
         bar.addEventListener('click', function() {
             const category = this.dataset.category;
-            selectRandomGameFromCategory(category);
+            selectRandomGameFromCategoryEnhanced(category);
         });
     });
     
     // Selected game image click
     if (selectedGameImageWrapper) {
         selectedGameImageWrapper.addEventListener('click', function() {
+            if (currentSelectedGame) {
+                // Navigate to the game page with slug parameter
+                window.location.href = `https://www.infinite-pixels.com/game.html?game=${currentSelectedGame.slug}`;
+            }
         });
     }
+    
+    // Pause carousel on hover
+    if (carouselSlides) {
+        carouselSlides.addEventListener('mouseenter', pauseCarousel);
+        carouselSlides.addEventListener('mouseleave', resumeCarousel);
+    }
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        updateCarouselWidth();
+    });
 }
 
 function selectRandomGame() {
@@ -1946,7 +2047,6 @@ function getGamesByCategory(category) {
     );
 }
 
-
 // Enhanced category mapping for better filtering
 const categoryMappings = {
     'shooter': ['shooter', 'action'],
@@ -1987,39 +2087,53 @@ function selectRandomGameFromCategoryEnhanced(category) {
     }, 1000);
 }
 
-// Replace the category bar event listeners with enhanced version
-function attachEnhancedEventListeners() {
-    // Random button click
-    if (randomButton) {
-        randomButton.addEventListener('click', selectRandomGame);
-    }
+// Dynamic carousel management
+function addGameToCarousel(game) {
+    if (!carouselSlides) return;
     
-    // Category bar clicks with enhanced filtering
-    const categoryBars = document.querySelectorAll('.category-bar');
-    categoryBars.forEach(bar => {
-        bar.addEventListener('click', function() {
-            const category = this.dataset.category;
-            selectRandomGameFromCategoryEnhanced(category);
-        });
-    });
+    // Add the game to the database first
+    gamesDatabase.push(game);
     
-    // Selected game image click
-    if (selectedGameImageWrapper) {
-        selectedGameImageWrapper.addEventListener('click', function() {
-            if (currentSelectedGame) {
-                // Navigate to the game page with slug parameter
-                window.location.href = `https://www.infinite-pixels.com/game.html?game=${currentSelectedGame.slug}`;
-            }
-        });
+    // Recreate carousel with new game included
+    createDynamicCarousel();
+}
+
+function removeGameFromCarousel(gameSlug) {
+    if (!carouselSlides) return;
+    
+    // Remove the game from the database
+    const gameIndex = gamesDatabase.findIndex(game => game.slug === gameSlug);
+    if (gameIndex !== -1) {
+        gamesDatabase.splice(gameIndex, 1);
+        
+        // Recreate carousel without the removed game
+        createDynamicCarousel();
     }
 }
 
-// Update the main initialization to use enhanced event listeners
-document.addEventListener('DOMContentLoaded', function() {
-    initializeElements();
-    createCarouselSlides();
-    attachEnhancedEventListeners();
-});
+function updateCarouselGame(gameSlug, updatedGame) {
+    if (!carouselSlides) return;
+    
+    // Update the game in the database
+    const gameIndex = gamesDatabase.findIndex(game => game.slug === gameSlug);
+    if (gameIndex !== -1) {
+        gamesDatabase[gameIndex] = updatedGame;
+        
+        // Recreate carousel with updated game
+        createDynamicCarousel();
+    }
+}
+
+// Expose functions for external use
+window.randomPageUtils = {
+    addGameToCarousel,
+    removeGameFromCarousel,
+    updateCarouselGame,
+    pauseCarousel,
+    resumeCarousel,
+    selectRandomGame,
+    selectRandomGameFromCategoryEnhanced
+};
 
 // Enhanced games database with descriptions and game URLs
 const gamesDatabase = [

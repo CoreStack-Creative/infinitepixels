@@ -3843,7 +3843,7 @@ select:focus {
 
 .carousel-container {
     position: relative;
-    height: 400px;
+    height: 17rem; /* Reduced height for square images */
     border-radius: 20px;
     overflow: hidden;
     background: var(--about-gradient-cosmic);
@@ -3858,14 +3858,15 @@ select:focus {
 
 .carousel-slides {
     display: flex;
-    width: 400%; /* Show 4 images at once, so total width is 4x container */
     height: 100%;
-    animation: carousel-slide 20s infinite linear;
+    animation: carousel-slide-dynamic 85s infinite linear;
+    gap: 10px; /* Space between images */
+    padding: 10px; /* Padding from container edges */
 }
 
 .carousel-slide {
-    min-width: 25%; /* Each slide takes 1/4 of the container width */
-    height: 100%;
+    flex: 0 0 160px; /* Fixed width for square images */
+    height: 160px; /* Fixed height for square images */
     position: relative;
     display: flex;
     align-items: center;
@@ -3873,9 +3874,15 @@ select:focus {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    margin: 0 5px; /* Small gap between images */
     border-radius: 15px;
     overflow: hidden;
+    transition: transform 0.3s ease;
+    margin-top: 3rem;
+}
+
+.carousel-slide:hover {
+    transform: scale(1.05);
+    z-index: 2;
 }
 
 .carousel-slide::before {
@@ -3886,29 +3893,22 @@ select:focus {
     right: 0;
     bottom: 0;
     background: linear-gradient(45deg, 
-        rgba(138, 43, 226, 0.6), 
-        rgba(106, 27, 154, 0.4), 
-        rgba(21, 101, 192, 0.6)
+        rgba(138, 43, 226, 0.3), 
+        rgba(106, 27, 154, 0.2), 
+        rgba(21, 101, 192, 0.3)
     );
     z-index: 1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 
-@keyframes carousel-slide {
+.carousel-slide:hover::before {
+    opacity: 1;
+}
+
+@keyframes carousel-slide-dynamic {
     0% { transform: translateX(0); }
-    7.14% { transform: translateX(0); }
-    14.28% { transform: translateX(-25%); }
-    21.42% { transform: translateX(-25%); }
-    28.56% { transform: translateX(-50%); }
-    35.70% { transform: translateX(-50%); }
-    42.84% { transform: translateX(-75%); }
-    49.98% { transform: translateX(-75%); }
-    57.12% { transform: translateX(-100%); }
-    64.26% { transform: translateX(-100%); }
-    71.40% { transform: translateX(-125%); }
-    78.54% { transform: translateX(-125%); }
-    85.68% { transform: translateX(-150%); }
-    92.82% { transform: translateX(-150%); }
-    100% { transform: translateX(-175%); }
+    100% { transform: translateX(-50%); }
 }
 
 /* Random Button */
@@ -4012,14 +4012,21 @@ select:focus {
 }
 
 .game-image-wrapper {
+    flex: 0 0 280px; /* Fixed width similar to carousel pattern */
+    height: 300px; /* More rectangular aspect ratio (16:10) */
     position: relative;
-    display: inline-block;
-    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     border-radius: 20px;
     overflow: hidden;
     cursor: pointer;
     transition: transform 0.3s ease;
     box-shadow: var(--about-glow-purple);
+    margin-bottom: 2rem;
 }
 
 .game-image-wrapper:hover {
@@ -4027,9 +4034,10 @@ select:focus {
 }
 
 .selected-game-image {
-    width: 50%;
-    max-width: 400px;
-    height: auto;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures image covers the container while maintaining aspect ratio */
+    object-position: center;
     display: block;
 }
 
@@ -4099,14 +4107,14 @@ select:focus {
 .category-bars {
     display: grid;
     gap: 1rem;
-    max-width: 1000px; /* Increased from 800px */
+    max-width: 1000px;
     margin: 0 auto;
 }
 
 .category-bar {
     background: var(--about-gradient-cosmic);
     border-radius: 15px;
-    padding: 25px 40px; /* Increased padding for wider bars */
+    padding: 25px 40px;
     cursor: pointer;
     transition: all 0.3s ease;
     border: 2px solid transparent;
@@ -4153,12 +4161,18 @@ select:focus {
     }
     
     .carousel-container {
-        height: 300px;
+        height: 160px;
         margin: 0 10px;
     }
     
+    .carousel-slides {
+        gap: 8px;
+        padding: 8px;
+    }
+    
     .carousel-slide {
-        margin: 0 2px; /* Smaller gap on mobile */
+        flex: 0 0 120px; /* Smaller on tablet */
+        height: 120px;
     }
     
     .random-button {
@@ -4170,8 +4184,13 @@ select:focus {
         font-size: 2rem;
     }
     
+    .game-image-wrapper {
+        width: 280px; /* Smaller on tablet */
+        height: 210px;
+    }
+    
     .category-bar {
-        padding: 18px 25px; /* Adjusted for mobile */
+        padding: 18px 25px;
     }
     
     .category-content {
@@ -4181,11 +4200,17 @@ select:focus {
 
 @media (max-width: 480px) {
     .carousel-container {
-        height: 250px;
+        height: 130px;
+    }
+    
+    .carousel-slides {
+        gap: 6px;
+        padding: 6px;
     }
     
     .carousel-slide {
-        margin: 0 1px; /* Even smaller gap on small mobile */
+        flex: 0 0 100px; /* Even smaller on mobile */
+        height: 100px;
     }
     
     .random-button {
@@ -4209,8 +4234,25 @@ select:focus {
         font-size: 1.5rem;
     }
     
+    .game-image-wrapper {
+        width: 240px; /* Mobile size */
+        height: 180px;
+    }
+    
     .category-bar {
-        padding: 15px 20px; /* Smaller padding on small screens */
+        padding: 15px 20px;
+    }
+}
+
+@media (max-width: 320px) {
+    .game-image-wrapper {
+        width: 200px; /* Very small screens */
+        height: 150px;
+    }
+    
+    .carousel-slide {
+        flex: 0 0 80px;
+        height: 80px;
     }
 }
 
