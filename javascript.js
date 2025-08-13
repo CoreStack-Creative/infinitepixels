@@ -6253,8 +6253,8 @@ class FavoritesManager {
         });
 
         // Insert favorite button before fullscreen button
-        const fullscreenBtn = document.getElementById('fullscreenBtn');
-        gameControls.insertBefore(favoriteBtn, fullscreenBtn);
+        const shareBtn = document.getElementById('shareBtn');
+        gameControls.insertBefore(favoriteBtn, shareBtn);
         
         // Initialize button state
         updateFavoriteBtn();
