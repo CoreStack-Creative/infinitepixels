@@ -6344,11 +6344,14 @@ class FavoritesManager {
             </div>
         `;
 
-        // Insert after first section or at the beginning
-        const firstSection = mainContent.querySelector('section');
-        if (firstSection && firstSection.nextSibling) {
-            mainContent.insertBefore(favoritesSection, firstSection.nextSibling);
+        // Insert after the second section
+        const sections = mainContent.querySelectorAll('section');
+        if (sections.length >= 2) {
+            const secondSection = sections[1];
+            // insert after second section
+            secondSection.parentNode.insertBefore(favoritesSection, secondSection.nextSibling);
         } else {
+            // fallback if less than 2 sections
             mainContent.appendChild(favoritesSection);
         }
     }
