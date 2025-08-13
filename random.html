@@ -152,16 +152,99 @@
         </div>
     </div>
 
-    <!-- Redirect Overlay -->
-    <div class="redirect-overlay" id="redirectOverlay">
-        <div class="redirect-container">
-            <div class="redirect-spinner"></div>
-            <h2>Redirecting...</h2>
-            <p>Taking you to a random game</p>
-        </div>
-    </div>
+    <main class="main-content" id="mainContent">
+        <div class="random-container">
+            <!-- Hero Section with Carousel and Random Button -->
+            <section class="hero-section">
+                <div class="carousel-container">
+                    <div class="carousel-wrapper">
+                        <div class="carousel-slides" id="carouselSlides">
+                            <!-- Slides will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <div class="random-button-container">
+                        <button class="random-button" id="randomButton">
+                            <div class="button-content">
+                                <i class="fas fa-dice"></i>
+                                <span>Random Game</span>
+                            </div>
+                            <div class="button-glow"></div>
+                        </button>
+                    </div>
+                </div>
+            </section>
 
-    <main class="main-content" id="mainContent"></main>
+            <!-- Selected Game Display -->
+            <section class="selected-game-section" id="selectedGameSection" style="display: none;">
+                <div class="selected-game-container">
+                    <div class="game-image-wrapper" id="selectedGameImageWrapper">
+                        <img id="selectedGameImage" alt="Selected Game" />
+                        <div class="play-overlay">
+                            <i class="fas fa-play"></i>
+                            <span>Click to Play</span>
+                        </div>
+                    </div>
+                    <h2 class="selected-game-title" id="selectedGameTitle"></h2>
+                    <p class="selected-game-description" id="selectedGameDescription"></p>
+                </div>
+            </section>
+
+            <!-- Category Sections -->
+            <section class="category-sections">
+                <h2 class="section-title">Random by Category</h2>
+                <div class="category-bars">
+                    <div class="category-bar" data-category="shooter">
+                        <div class="category-content">
+                            <i class="fas fa-crosshairs"></i>
+                            <span>Shooter Games</span>
+                            <i class="fas fa-dice category-dice"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="category-bar" data-category="racing">
+                        <div class="category-content">
+                            <i class="fas fa-car"></i>
+                            <span>Racing Games</span>
+                            <i class="fas fa-dice category-dice"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="category-bar" data-category="puzzle">
+                        <div class="category-content">
+                            <i class="fas fa-puzzle-piece"></i>
+                            <span>Puzzle Games</span>
+                            <i class="fas fa-dice category-dice"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="category-bar" data-category="io">
+                        <div class="category-content">
+                            <i class="fas fa-globe"></i>
+                            <span>IO Games</span>
+                            <i class="fas fa-dice category-dice"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="category-bar" data-category="sports">
+                        <div class="category-content">
+                            <i class="fas fa-basketball-ball"></i>
+                            <span>Sports Games</span>
+                            <i class="fas fa-dice category-dice"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="category-bar" data-category="arcade">
+                        <div class="category-content">
+                            <i class="fas fa-gamepad"></i>
+                            <span>Arcade Games</span>
+                            <i class="fas fa-dice category-dice"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
 
     <script src="javascript.js"></script>
 </body>

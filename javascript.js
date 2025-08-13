@@ -1804,112 +1804,221 @@ document.addEventListener('DOMContentLoaded', function() {
 
 console.log('🎮 JavaScript loaded successfully!');
 
-// List of URLs to randomly redirect to
-const urls = [
-   'game.html?game=1v1lol',
-   'game.html?game=3dformularacing',
-   'game.html?game=basketrandom',
-   'game.html?game=cookieclicker',
-   'game.html?game=cubearena2048',
-   'game.html?game=drawclimber',
-   'game.html?game=fruitmerge',
-   'game.html?game=helixjump',
-   'game.html?game=maskedspecialforces',
-   'game.html?game=paperio',
-   'game.html?game=parkourblock3d',
-   'game.html?game=polytrack',
-   'game.html?game=rodeostampede',
-   'game.html?game=spiralroll',
-   'game.html?game=subwaysurfers',
-   'game.html?game=tinyfishing',
-   'game.html?game=bloxdio',
-   'game.html?game=motox3m',
-   'game.html?game=tallmanrun',
-   'game.html?game=happywheels',
-   'game.html?game=madalinstuntcarspro',
-   'game.html?game=fallcarshexagon',
-   'game.html?game=fruitninja',
-   'game.html?game=ball2048',
-   'game.html?game=icefishing',
-   'game.html?game=stickfighter',
-   'game.html?game=papasburgeria',
-   'game.html?game=bulletarmyrun',
-   'game.html?game=survivalrace',
-   'game.html?game=blockstack3d',
-   'game.html?game=rocketbikeshighwayrace',
-   'game.html?game=offroadcycle3d',
-   'game.html?game=funnyshooter2',
-   'game.html?game=drawthecarpath',
-   'game.html?game=ninjaarashi',
-   'game.html?game=shellschockers',
-   'game.html?game=smashkarts',
-   'game.html?game=ships3d',
-   'game.html?game=gooberdash',
-   'game.html?game=golfclash',
-   'game.html?game=similingglass',
-   'game.html?game=crowdycityio',
-   'game.html?game=archeryking3d',
-   'game.html?game=scootertouchgrind',
-   'game.html?game=riseup', 
-   'game.html?game=mrracer',  
-   'game.html?game=stickduelbattle', 
-   'game.html?game=ganstaduel', 
-   'game.html?game=powerslap', 
-   'game.html?game=archerhero',  
-   'game.html?game=jellyrun2048',  
-   'game.html?game=winterclash3d',  
-   'game.html?game=stickmansniper',   
-   'game.html?game=american18wheelertrucksim',  
-   'game.html?game=billard8ballpool',
-   'game.html?game=flipmaster',
-   'game.html?game=curvypunch2',
-   'game.html?game=2048legend',
-   'game.html?game=rideronlinepro',
-   'game.html?game=snipersimulator',
-   'game.html?game=momohorrorstory',
-   'game.html?game=boatrescue', 
-   'game.html?game=bussimulator',
-   'game.html?game=stickmanghostonline',
-   'game.html?game=birdsimulator',
-   'game.html?game=nightracer',
-   'game.html?game=nightwalkersio',
-   'game.html?game=deepspacehorroroutpost',
-   'game.html?game=zombieescape',
-   'game.html?game=escapeyourbirthday', 
-   'game.html?game=mirageonlineclassic',
-   'game.html?game=gangfallparty',
-   'game.html?game=trialbikeracingclash',
-   'game.html?game=stickmansportsbadminton',
+// DOM elements
+let carouselSlides;
+let randomButton;
+let selectedGameSection;
+let selectedGameImage;
+let selectedGameTitle;
+let selectedGameDescription;
+let selectedGameImageWrapper;
 
-];
+// State
+let currentSelectedGame = null;
 
-// Function to get a random URL from the list
-function getRandomUrl() {
-    const randomIndex = Math.floor(Math.random() * urls.length);
-    return urls[randomIndex];
-}
-
-// Function to show redirect overlay and redirect
-function showRedirectAndGo() {
-    const overlay = document.getElementById('redirectOverlay');
-    
-    // Show the overlay
-    overlay.classList.add('show');
-    
-    // Redirect after a very short delay (500ms)
-    setTimeout(() => {
-        window.location.href = getRandomUrl();
-    }, 900);
-}
-
+// Initialize the page
 document.addEventListener('DOMContentLoaded', function() {
-    // Any other code that uses DOM elements should go here too
+    initializeElements();
+    createCarouselSlides();
+    attachEventListeners();
 });
 
-// Start redirect process when page loads
-document.addEventListener('DOMContentLoaded', () => {
-    // Show redirect overlay almost immediately (100ms delay for smooth animation)
-    setTimeout(showRedirectAndGo, 100);
+function initializeElements() {
+    carouselSlides = document.getElementById('carouselSlides');
+    randomButton = document.getElementById('randomButton');
+    selectedGameSection = document.getElementById('selectedGameSection');
+    selectedGameImage = document.getElementById('selectedGameImage');
+    selectedGameTitle = document.getElementById('selectedGameTitle');
+    selectedGameDescription = document.getElementById('selectedGameDescription');
+    selectedGameImageWrapper = document.getElementById('selectedGameImageWrapper');
+}
+
+function createCarouselSlides() {
+    if (!carouselSlides) return;
+    
+    carouselSlides.innerHTML = '';
+    
+    // Create slides for each game (duplicate twice for smooth infinite scroll with 4 images showing)
+    const allGames = [...gamesDatabase, ...gamesDatabase, ...gamesDatabase];
+    
+    allGames.forEach(game => {
+        const slide = document.createElement('div');
+        slide.className = 'carousel-slide';
+        slide.style.backgroundImage = `url('${game.image}')`;
+        carouselSlides.appendChild(slide);
+    });
+}
+
+function attachEventListeners() {
+    // Random button click
+    if (randomButton) {
+        randomButton.addEventListener('click', selectRandomGame);
+    }
+    
+    // Category bar clicks
+    const categoryBars = document.querySelectorAll('.category-bar');
+    categoryBars.forEach(bar => {
+        bar.addEventListener('click', function() {
+            const category = this.dataset.category;
+            selectRandomGameFromCategory(category);
+        });
+    });
+    
+    // Selected game image click
+    if (selectedGameImageWrapper) {
+        selectedGameImageWrapper.addEventListener('click', function() {
+        });
+    }
+}
+
+function selectRandomGame() {
+    // Add spinning animation to button
+    randomButton.classList.add('spinning');
+    
+    // Select random game after animation
+    setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * gamesDatabase.length);
+        const selectedGame = gamesDatabase[randomIndex];
+        displaySelectedGame(selectedGame);
+        randomButton.classList.remove('spinning');
+    }, 1000);
+}
+
+function selectRandomGameFromCategory(category) {
+    // Filter games by category
+    const categoryGames = gamesDatabase.filter(game => 
+        game.tags.some(tag => tag.toLowerCase().includes(category.toLowerCase()))
+    );
+    
+    if (categoryGames.length === 0) {
+        // Fallback to all games if no games in category
+        selectRandomGame();
+        return;
+    }
+    
+    // Add spinning animation to button
+    randomButton.classList.add('spinning');
+    
+    // Select random game from category after animation
+    setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * categoryGames.length);
+        const selectedGame = categoryGames[randomIndex];
+        displaySelectedGame(selectedGame);
+        randomButton.classList.remove('spinning');
+    }, 1000);
+}
+
+function displaySelectedGame(game) {
+    currentSelectedGame = game;
+    
+    // Update game details
+    if (selectedGameImage) {
+        selectedGameImage.src = game.image;
+        selectedGameImage.alt = game.name;
+    }
+    
+    if (selectedGameTitle) {
+        selectedGameTitle.textContent = game.name;
+    }
+    
+    if (selectedGameDescription) {
+        selectedGameDescription.textContent = game.description;
+    }
+    
+    // Show the selected game section with animation
+    if (selectedGameSection) {
+        selectedGameSection.style.display = 'block';
+        setTimeout(() => {
+            selectedGameSection.classList.add('show');
+            // Scroll to the selected game section
+            selectedGameSection.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }, 100);
+    }
+}
+
+// Utility function to get games by category
+function getGamesByCategory(category) {
+    return gamesDatabase.filter(game => 
+        game.tags.some(tag => tag.toLowerCase().includes(category.toLowerCase()))
+    );
+}
+
+
+// Enhanced category mapping for better filtering
+const categoryMappings = {
+    'shooter': ['shooter', 'action'],
+    'racing': ['racing', 'cars'],
+    'puzzle': ['puzzle', '2048', 'clicker'],
+    'io': ['io', 'multiplayer', 'online'],
+    'sports': ['sports', 'basketball'],
+    'arcade': ['arcade', 'endless', 'platformer']
+};
+
+function getEnhancedGamesByCategory(category) {
+    const searchTags = categoryMappings[category] || [category];
+    return gamesDatabase.filter(game => 
+        game.tags.some(tag => 
+            searchTags.some(searchTag => 
+                tag.toLowerCase().includes(searchTag.toLowerCase())
+            )
+        )
+    );
+}
+
+// Update the selectRandomGameFromCategory function to use enhanced filtering
+function selectRandomGameFromCategoryEnhanced(category) {
+    const categoryGames = getEnhancedGamesByCategory(category);
+    
+    if (categoryGames.length === 0) {
+        selectRandomGame();
+        return;
+    }
+    
+    randomButton.classList.add('spinning');
+    
+    setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * categoryGames.length);
+        const selectedGame = categoryGames[randomIndex];
+        displaySelectedGame(selectedGame);
+        randomButton.classList.remove('spinning');
+    }, 1000);
+}
+
+// Replace the category bar event listeners with enhanced version
+function attachEnhancedEventListeners() {
+    // Random button click
+    if (randomButton) {
+        randomButton.addEventListener('click', selectRandomGame);
+    }
+    
+    // Category bar clicks with enhanced filtering
+    const categoryBars = document.querySelectorAll('.category-bar');
+    categoryBars.forEach(bar => {
+        bar.addEventListener('click', function() {
+            const category = this.dataset.category;
+            selectRandomGameFromCategoryEnhanced(category);
+        });
+    });
+    
+    // Selected game image click
+    if (selectedGameImageWrapper) {
+        selectedGameImageWrapper.addEventListener('click', function() {
+            if (currentSelectedGame) {
+                // Navigate to the game page with slug parameter
+                window.location.href = `https://www.infinite-pixels.com/game.html?game=${currentSelectedGame.slug}`;
+            }
+        });
+    }
+}
+
+// Update the main initialization to use enhanced event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    initializeElements();
+    createCarouselSlides();
+    attachEnhancedEventListeners();
 });
 
 // Enhanced games database with descriptions and game URLs
