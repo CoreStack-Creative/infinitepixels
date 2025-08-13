@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="google-adsense-account" content="ca-pub-8164325902033897" />
+  <title>Favorites - InfinitePixels</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- Cookiebot CMP -->
+  <script 
+    id="Cookiebot"
+    src="https://consent.cookiebot.com/uc.js"
+    data-cbid="82d2063c-123d-4595-9051-0b523b38f58f"
+    data-blockingmode="auto"
+    type="text/javascript">
+  </script>
+
+  <!-- Google Consent Mode v2 defaults: deny until consent given -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("consent", "default", {
+      ad_storage: "denied",
+      analytics_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied"
+    });
+  </script>
+
+  <!-- Google Tag Manager (blocked until 'marketing' consent) -->
+  <script type="text/plain" data-cookieconsent="marketing">
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+      var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s),
+        dl = l != "dataLayer" ? "&l=" + l : "";
+      j.async = true;
+      j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, "script", "dataLayer", "GTM-NPJXGVHN");
+  </script>
+
+  <!-- Google Analytics 4 (Statistics) -->
+  <script type="text/plain" data-cookieconsent="statistics">
+    gtag("js", new Date());
+    gtag("config", "G-0YQ8BM0QCT");
+  </script>
+
+  <!-- Google AdSense (Marketing) -->
+  <script type="text/plain" data-cookieconsent="marketing"
+    data-ad-client="ca-pub-8164325902033897"
+    async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js">
+  </script>
+</head>
+<body>
+
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NPJXGVHN"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+     
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <img src="images/infinitepixleslogo.webp" alt="InfinitePixels Logo" width="85px" height="85px">
+                </div>
+                <h2>InfinitePixels</h2>
+            </div>
+        </div>
+
+        <ul class="nav-links">
+            <li>
+                <a href="index.html">
+                    <i class="icon">
+                        <img src="images/home.png" alt="Homepage" width="20" height="20">
+                    </i>
+                    <span>Homepage</span>
+                </a>
+            </li>
+            <li>
+                <a href="games.html">
+                    <i class="icon">
+                        <img src="images/games.png" alt="Games" width="20" height="20">
+                    </i>
+                    <span>Games</span>
+                </a>
+            </li>
+            <li>
+                <a href="random.html">
+                    <i class="icon">
+                        <img src="images/random.png" alt="Random" width="20" height="20">
+                    </i>
+                    <span>Random</span>
+                </a>
+            </li>
+            <li>
+                <a href="categories.html">
+                    <i class="icon">
+                        <img src="images/grid.png" alt="Categories" width="20" height="20">
+                    </i>
+                    <span>Categories</span>
+                </a>
+            </li>
+            <li>
+                <a href="favorites.html" class="active">
+                    <i class="icon">
+                        <img src="images/heart.png" alt="Favorites" width="20" height="20">
+                    </i>
+                    <span>Favorites</span>
+                </a>
+            </li>
+            <li>
+                <a href="news.html">
+                    <i class="icon">
+                        <img src="images/news.png" alt="News" width="20" height="20">
+                    </i>
+                    <span>News</span>
+                </a>
+            </li>
+            <li>
+                <a href="settings.html">
+                    <i class="icon">
+                        <img src="images/settings.png" alt="Settings" width="20" height="20">
+                    </i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+     <div class="top-bar">
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="search-container">
+            <div class="search-wrapper">
+                <button class="search-icon-btn" id="searchIconBtn">
+                    <i class="fas fa-search"></i>
+                </button>
+                <div class="search-box" id="searchBox">
+                    <input type="text" id="searchInput" placeholder="Search games...">
+                </div>
+            </div>
+            <div class="search-results" id="searchResults">
+                <!-- Search results will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <main class="main-content" id="mainContent">
+        <div class="favorites-container">
+            <div class="favorites-header">
+                <h1 class="favorites-title">Your Favorite Games</h1>
+                <div class="favorites-filter">
+                    <select id="favoritesFilter" class="filter-select">
+                        <option value="newest">Newest</option>
+                        <option value="oldest">Oldest</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="favoritesGrid" class="favorites-grid">
+                <!-- Favorites will be loaded here -->
+            </div>
+            
+            <div id="noFavorites" class="no-favorites" style="display: none;">
+                <div class="no-favorites-content">
+                    <i class="far fa-heart"></i>
+                    <h2>No Favorite Games Yet</h2>
+                    <p>Start adding games to your favorites by clicking the heart icon while playing!</p>
+                    <a href="games.html" class="browse-games-btn">Browse Games</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="javascript.js"></script>
+</body>
+</html>

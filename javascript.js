@@ -6119,3 +6119,260 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize homepage new releases
     loadHomepageGames();
 });
+
+// Favorites Management
+class FavoritesManager {
+    constructor() {
+        this.favorites = this.loadFavorites();
+        this.init();
+    }
+
+    init() {
+        // Initialize favorites page if we're on it
+        if (window.location.pathname.includes('favorites.html')) {
+            this.initFavoritesPage();
+        }
+        
+        // Initialize game control bar if present
+        this.initGameControlBar();
+        
+        // Initialize homepage favorites if on homepage
+        if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
+            this.initHomepageFavorites();
+        }
+    }
+
+    loadFavorites() {
+        try {
+            const stored = localStorage.getItem('infinitepixels_favorites');
+            return stored ? JSON.parse(stored) : [];
+        } catch (error) {
+            console.error('Error loading favorites:', error);
+            return [];
+        }
+    }
+
+    saveFavorites() {
+        try {
+            localStorage.setItem('infinitepixels_favorites', JSON.stringify(this.favorites));
+        } catch (error) {
+            console.error('Error saving favorites:', error);
+        }
+    }
+
+    addToFavorites(gameSlug) {
+        const game = gamesDatabase.find(g => g.slug === gameSlug);
+        if (!game) return false;
+
+        // Check if already favorited
+        if (this.isFavorited(gameSlug)) return false;
+
+        const favoriteData = {
+            slug: gameSlug,
+            dateAdded: new Date().toISOString(),
+            timestamp: Date.now()
+        };
+
+        this.favorites.push(favoriteData);
+        this.saveFavorites();
+        return true;
+    }
+
+    removeFromFavorites(gameSlug) {
+        const index = this.favorites.findIndex(fav => fav.slug === gameSlug);
+        if (index === -1) return false;
+
+        this.favorites.splice(index, 1);
+        this.saveFavorites();
+        return true;
+    }
+
+    isFavorited(gameSlug) {
+        return this.favorites.some(fav => fav.slug === gameSlug);
+    }
+
+    toggleFavorite(gameSlug) {
+        if (this.isFavorited(gameSlug)) {
+            return this.removeFromFavorites(gameSlug);
+        } else {
+            return this.addToFavorites(gameSlug);
+        }
+    }
+
+    getFavoriteGames(sortOrder = 'newest') {
+        const favoriteGames = this.favorites.map(fav => {
+            const game = gamesDatabase.find(g => g.slug === fav.slug);
+            return game ? { ...game, dateAdded: fav.dateAdded, timestamp: fav.timestamp } : null;
+        }).filter(Boolean);
+
+        // Sort by date added
+        if (sortOrder === 'oldest') {
+            return favoriteGames.sort((a, b) => a.timestamp - b.timestamp);
+        } else {
+            return favoriteGames.sort((a, b) => b.timestamp - a.timestamp);
+        }
+    }
+
+    initGameControlBar() {
+        // Get current game from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentGame = urlParams.get('game');
+        
+        if (!currentGame) return;
+
+        const gameControlBar = document.getElementById('gameControlBar');
+        if (!gameControlBar) return;
+
+        const gameControls = gameControlBar.querySelector('.game-controls');
+        if (!gameControls) return;
+
+        // Create favorite button
+        const favoriteBtn = document.createElement('button');
+        favoriteBtn.className = 'control-btn favorite-btn';
+        favoriteBtn.id = 'favoriteBtn';
+        
+        const updateFavoriteBtn = () => {
+            const isFav = this.isFavorited(currentGame);
+            favoriteBtn.classList.toggle('favorited', isFav);
+            favoriteBtn.innerHTML = `
+                <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
+                <span>${isFav ? 'Favorited' : 'Favorite'}</span>
+            `;
+        };
+
+        favoriteBtn.addEventListener('click', () => {
+            this.toggleFavorite(currentGame);
+            updateFavoriteBtn();
+            
+            // Show a brief feedback
+            const originalText = favoriteBtn.querySelector('span').textContent;
+            favoriteBtn.querySelector('span').textContent = this.isFavorited(currentGame) ? 'Added!' : 'Removed!';
+            setTimeout(() => {
+                updateFavoriteBtn();
+            }, 1000);
+        });
+
+        // Insert favorite button before fullscreen button
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        gameControls.insertBefore(favoriteBtn, fullscreenBtn);
+        
+        // Initialize button state
+        updateFavoriteBtn();
+    }
+
+    initFavoritesPage() {
+        const favoritesGrid = document.getElementById('favoritesGrid');
+        const noFavorites = document.getElementById('noFavorites');
+        const favoritesFilter = document.getElementById('favoritesFilter');
+
+        if (!favoritesGrid || !noFavorites) return;
+
+        const renderFavorites = () => {
+            const sortOrder = favoritesFilter?.value || 'newest';
+            const favoriteGames = this.getFavoriteGames(sortOrder);
+
+            if (favoriteGames.length === 0) {
+                favoritesGrid.style.display = 'none';
+                noFavorites.style.display = 'block';
+                return;
+            }
+
+            favoritesGrid.style.display = 'grid';
+            noFavorites.style.display = 'none';
+
+            favoritesGrid.innerHTML = favoriteGames.map(game => {
+                const gameUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
+                const dateAdded = new Date(game.dateAdded).toLocaleDateString();
+
+                return `
+                    <div class="favorite-game-card" onclick="window.location.href='${gameUrl}'">
+                        <div class="favorite-date">${dateAdded}</div>
+                        <img src="${game.image}" alt="${game.name}" class="favorite-game-image">
+                        <div class="favorite-game-info">
+                            <h3>${game.name}</h3>
+                            <p>${game.description}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
+        // Initial render
+        renderFavorites();
+
+        // Filter change handler
+        if (favoritesFilter) {
+            favoritesFilter.addEventListener('change', renderFavorites);
+        }
+    }
+
+    initHomepageFavorites() {
+        // Create favorites section for homepage
+        const mainContent = document.getElementById('mainContent');
+        if (!mainContent) return;
+
+        // Check if favorites section already exists
+        if (document.querySelector('.favorites-section')) return;
+
+        const favoriteGames = this.getFavoriteGames('newest').slice(0, 6); // Show max 6 games
+
+        if (favoriteGames.length === 0) return; // Don't show section if no favorites
+
+        const favoritesSection = document.createElement('section');
+        favoritesSection.className = 'favorites-section';
+
+        const gamesList = favoriteGames.map(game => {
+            const gameUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
+            return `
+                <a href="${gameUrl}" class="favorite-item">
+                    <img src="${game.image}" alt="${game.name}" class="favorite-item-image">
+                    <div class="favorite-item-info">
+                        <h4>${game.name}</h4>
+                        <p>Added ${new Date(game.dateAdded).toLocaleDateString()}</p>
+                    </div>
+                </a>
+            `;
+        }).join('');
+
+        favoritesSection.innerHTML = `
+            <div class="favorites-section-header">
+                <h2 class="favorites-section-title">Your Favorite Games</h2>
+                <a href="favorites.html" class="view-all-favorites">View All →</a>
+            </div>
+            <div class="favorites-list">
+                ${gamesList}
+            </div>
+        `;
+
+        // Insert after first section or at the beginning
+        const firstSection = mainContent.querySelector('section');
+        if (firstSection && firstSection.nextSibling) {
+            mainContent.insertBefore(favoritesSection, firstSection.nextSibling);
+        } else {
+            mainContent.appendChild(favoritesSection);
+        }
+    }
+
+    // Method to refresh homepage favorites (call when favorites change)
+    refreshHomepageFavorites() {
+        const existingSection = document.querySelector('.favorites-section');
+        if (existingSection) {
+            existingSection.remove();
+        }
+        this.initHomepageFavorites();
+    }
+}
+
+// Initialize Favorites Manager
+let favoritesManager;
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    favoritesManager = new FavoritesManager();
+});
+
+// Export for use in other scripts
+if (typeof window !== 'undefined') {
+    window.FavoritesManager = FavoritesManager;
+    window.favoritesManager = favoritesManager;
+}
