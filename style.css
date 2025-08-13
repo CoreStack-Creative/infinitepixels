@@ -4009,6 +4009,17 @@ select:focus {
     text-align: center;
     max-width: 600px;
     margin: 0 auto;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 20px;
+    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.selected-game-container:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px rgba(255, 255, 255, 0.1);
 }
 
 .game-image-wrapper {
