@@ -4006,8 +4006,23 @@ class NewsManager {
                 featured: false,
                 importance: 5,
                 image: null
+            },  
+            { 
+                id: 6, 
+                title: "We need your help", 
+                summary: "We are calling uppon you to help us add more games", 
+                content: "We here at InfinitePixels dev team are always looking for new games to add to our website. If you have any diffrent sugustions dont hesitate to email us. This can be any type of game (safe for school) that you wish we had on out webite. It would help us out tremdously if you could attach a link to the game but if you cant find one dont let that stop you. Even if you just have a memory of the game we might be able to find it, we cant garantee that we will be able to add your game into the website but its awalys worth a shot and we will atleast reply to your email. The email to contact us at is contact.infinitepixels@gmail.com. - InfinitePixels Dev Team",
+                catagory: "community",
+                tags: ["community", "news"],
+                date: new Date('2025-08-13'),
+                author: "Dev Team",
+                featured: false,
+                image: null
             },
         ];
+
+
+            
 
         this.articles = sampleArticles;
         this.filteredArticles = [...this.articles];
