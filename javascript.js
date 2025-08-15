@@ -97,7 +97,9 @@ const gameData = [
    { name: "Mirage Online Clasic", link: "/game.html?game=mirageonlineclasic" },
    { name: "Gang Fall Party", link: "/game.html?game=gangfallparty" },
    { name: "Trial Bike Racing Clash", link: "/game.html?game=trialbikeracingclash" },
-   { name: "Stickman Sports Badminton", link: "/game.html?game=stickmansportsbadminton" }
+   { name: "Stickman Sports Badminton", link: "/game.html?game=stickmansportsbadminton" },
+   { name: "Command Strike FPS", link: "/game.html?game=commandstrikefps" },
+   { name: "Zombie Survival 2", link: "/game.html?game=zombiesurvival2" }
 
 ];
 
@@ -2958,14 +2960,23 @@ const gamesDatabase = [
  },
 {
  id: 90,
- name: "Darts Pro",
- image: "images/dartsproimage.jpg",
- slug: "dartspro",
- gameUrl: "https://html5.gamemonetize.co/v75bhmn4rk5wbsovgrvbjzfzx1bqpclk/",
- tags: ["sports", "online", "strategy"],
- description: "Darts Pro is a realistic darts game where you can play against the CPU or other poeple online. You play each match as a race to see who can score 500 points the quickest. The scorring is subtractive meaning that if you score 60 points you would only have 440 to go. See you can crownend the ultimate dart champion. ",
+ name: "Command Strike FPS",
+ image: "images/commandstrikefpsimage.jpg",
+ slug: "commandstrikefps",
+ gameUrl: "https://html5.gamemonetize.co/fiogowuzog6jowbgvabdxrcqaub4cubc/",
+ tags: ["shooter", "action", "multiplayer"],
+ description: "Command Strike FPS is a fast-paced first-person shooter that offers both offline and online gameplay across a variety of detailed battle maps. Players can choose from modes like Deathmatch, Team Deathmatch, Free-for-All, Flag Capture, and Mission Mode, each providing intense firefights and strategic challenges. Armed with a wide selection of guns, grenades, and other equipment, players step into the role of a “super soldier,” using simple, intuitive controls to dominate the battlefield in action-packed combat.",
+ },
+{
+ id: 91,
+ name: "Zombie Survival 2",
+ image: "images/zombiesurvival2image.jpg",
+ slug: "zombiesurvival2",
+ gameUrl: "https://html5.gamemonetize.co/83siph0wqz04p8mp137w5uch7vk5t0nu/",
+ tags: ["adventure", "action", "strategy"],
+ description: "Dive into the heart-pounding nightmare of Zombie Survival 2, where every shadow could hide your doom. Scavenge abandoned cities, dark forests, and eerie alleyways for scarce resources, from makeshift wooden bats and broomsticks to crossbows and medkits, while keeping a sharp eye on durability and survival. Craft over 20 items—armor, weapons, backpacks—and set cunning traps to hold off relentless zombie hordes and towering bosses who demand every ounce of your wit and courage. Build your hideout, juggle a tight inventory, and prove just how long you can last in this relentless undead apocalypse.",
  }
-]; 
+];  
 
 // Make games database globally accessible
 window.gamesDatabase = gamesDatabase;
