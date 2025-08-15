@@ -2955,6 +2955,15 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/c6zx75jasrpsm0b6a4utgps07dxhs3h5/",
  tags: ["sports", "stickman", "2 player"],
  description: "Different Stickman characters meet in Stickman Sports Badminton game! The game will give you a good badminton experience with its realistic ball physics. At the same time, the boosters for the game (big racket, fireball, faster) and some negative bonuses  (slowly) increase the fun. You can play the game for 1 Player or 2 Players. There are 'Normal' and 'Hard' game modes when playing against the CPU. You can choose the number of sets in the game as 5,7 or 9. Show who is the better badminton player now!",
+ },
+{
+ id: 89,
+ name: "Darts Pro",
+ image: "images/dartsproimage.jpg",
+ slug: "dartspro",
+ gameUrl: "https://html5.gamemonetize.co/v75bhmn4rk5wbsovgrvbjzfzx1bqpclk/",
+ tags: ["sports", "online", "strategy"],
+ description: "Darts Pro is a realistic darts game where you can play against the CPU or other poeple online. You play each match as a race to see who can score 500 points the quickest. The scorring is subtractive meaning that if you score 60 points you would only have 440 to go. See you can crownend the ultimate dart champion. ",
  }
 ]; 
 
@@ -4016,7 +4025,8 @@ class NewsManager {
                 tags: ["community", "news"],
                 date: new Date('2025-08-13'),
                 author: "Dev Team",
-                featured: false,
+                featured: false, 
+                importance: 5,
                 image: null
             },
         ];
