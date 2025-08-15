@@ -2955,16 +2955,7 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/c6zx75jasrpsm0b6a4utgps07dxhs3h5/",
  tags: ["sports", "stickman", "2 player"],
  description: "Different Stickman characters meet in Stickman Sports Badminton game! The game will give you a good badminton experience with its realistic ball physics. At the same time, the boosters for the game (big racket, fireball, faster) and some negative bonuses  (slowly) increase the fun. You can play the game for 1 Player or 2 Players. There are 'Normal' and 'Hard' game modes when playing against the CPU. You can choose the number of sets in the game as 5,7 or 9. Show who is the better badminton player now!",
- },
- {
- id: 90,
- name: "Paper Io",
- image: "images/paperioimage.jpg",
- slug: "paperiotest",
- gameUrl: "https://html5.gamemonetize.co/1skj7a1hurifha1p31ag4ywljq4gb18oma/",
- tags: ["io", "strategy", "multiplayer"],
- description: "Conquer as much territory as possible in this addictive io game! Draw lines to claim areas while avoiding other players who can eliminate you."
- },
+ }
 ]; 
 
 // Make games database globally accessible
