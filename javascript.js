@@ -3963,7 +3963,6 @@ class NewsManager {
                 author: "Dev Team",
                 featured: true,
                 importance: 10,
-                image: null
             },
             {
                 id: 2,
@@ -3977,7 +3976,6 @@ class NewsManager {
                 author: "Dev Team",
                 featured: false,
                 importance: 7,
-                image: null
             },
             {
                 id: 3,
@@ -3991,7 +3989,6 @@ class NewsManager {
                 author: "Community Team",
                 featured: false,
                 importance: 4,
-                image: null
             },
             {
                 id: 4,
@@ -4005,7 +4002,6 @@ class NewsManager {
                 author: "Dev Team",
                 featured: false,
                 importance: 5,
-                image: null
             },
             {
                 id: 5,
@@ -4019,7 +4015,6 @@ class NewsManager {
                 author: "Dev Team",
                 featured: false,
                 importance: 5,
-                image: null
             },  
             { 
                 id: 6, 
@@ -4033,7 +4028,6 @@ class NewsManager {
                 author: "Dev Team",
                 featured: false, 
                 importance: 5,
-                image: null
             },
         ];
 
@@ -4297,7 +4291,7 @@ class NewsManager {
 
         return `
             <div class="news-card" onclick="newsManager.openArticleModal(newsManager.articles.find(a => a.id === ${article.id}))">
-                <div class="news-card-image"></div>
+                <div class="news-card-image" style="background-image: url('${article.image || 'images/default-news.png'}');"></div>
                 <div class="news-card-content">
                     <div class="news-card-meta">
                         <div class="news-card-date">
