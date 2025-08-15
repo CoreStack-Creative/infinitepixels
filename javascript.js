@@ -3946,27 +3946,26 @@ class NewsManager {
                 id: 1,
                 title: "Website Now live!",
                 summary: "InfinitePixels is now live for anyone to play at any time.",
+                content: " We are so excited to finally be able to share this with the world and we hope you enjoy playing all of the games we have to offer. If you have any suggestions or feedback please reach out to us through our contact page. We are always looking to improve the site and make it the best it can be for our users. - InfinitePixels Dev Team",
                 category: "updates",
                 tags: ["update", "news"],
-                date: new Date('2025-08-01'),
+                date: new Date('2025-08-03'),
                 author: "Dev Team",
                 featured: true,
                 importance: 10,
-                likes: 1234,
                 image: null
             },
             {
                 id: 2,
                 title: "Completed Random Games Page",
-                summary: "JWe are pleased to announce that we have completed the random games page.",
+                summary: "We are pleased to announce that we have completed the random games page.",
                 content: "That is right, there is now a random games page to keep you on your toes. If you are ever bored and in need of a new game that you might not have ever played before look no further than the random games page. All you have to do is click onto the page and then voila, you will be taken to a random game. We have an expansive game catalog and you never know what hidden gems you might be missing out on. This new feature makes it so that there is never a dull moment on InfinitePixels. - InfinitePixels Dev Team",
-                category: "update",
+                category: "updates",
                 tags: ["update", "huge updates"],
                 date: new Date('2025-07-30'),
                 author: "Dev Team",
                 featured: false,
                 importance: 7,
-                likes: 543,
                 image: null
             },
             {
@@ -3980,7 +3979,6 @@ class NewsManager {
                 author: "Community Team",
                 featured: false,
                 importance: 4,
-                likes: 734,
                 image: null
             },
             {
@@ -3989,12 +3987,24 @@ class NewsManager {
                 summary: "We have fixed some bugs plaguing our website.",
                 content: "It has come to our attention that there were some bugs on different games like paper.io. We believe to have fixed all of the bugs on the website as of now but were not perfect so if you notice any more persistent bug or any that appear no need to fear as you can always email us at contact.infinitepixels@gmail.com. - InfinitePixels Dev Team",
                 category: "updates",
-                tags: ["news, updates"],
+                tags: ["news, maintenance"],
                 date: new Date('2025-07-25'),
                 author: "Dev Team",
                 featured: false,
                 importance: 5,
-                likes: 234,
+                image: null
+            },
+            {
+                id: 5,
+                title: "Favorite Games Feature",
+                summary: "We added a feature to favorite games.",
+                content: "We have recently added a feature that allows you to favorite games. This means that you can now save your favorite games to a list and easily access them later. To favorite a game, simply click the heart button on the game you are playing. You can view your favorite games on the Favorites page or on the Favorites section of the homepage. We hope this makes it easier for you to find and play your favorite games on InfinitePixels. - InfinitePixels Dev Team",
+                category: "updates",
+                tags: ["news, updates"],
+                date: new Date('2025-08-13'),
+                author: "Dev Team",
+                featured: false,
+                importance: 5,
                 image: null
             },
         ];
@@ -4275,16 +4285,6 @@ class NewsManager {
                             <span>Read More</span>
                             <i class="fas fa-arrow-right"></i>
                         </button>
-                        <div class="news-card-stats">
-                            <div class="news-card-stat">
-                                <i class="fas fa-eye"></i>
-                                <span>${this.formatNumber(article.views)}</span>
-                            </div>
-                            <div class="news-card-stat">
-                                <i class="fas fa-heart"></i>
-                                <span>${this.formatNumber(article.likes)}</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -4396,20 +4396,9 @@ class NewsManager {
                 <br>
                 <p>${article.content}</p>
                 <br>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
                 <br>
-                <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                <p>Infinite Pixels - Ultimate Gaming Hub</p>
             </div>
-            <div class="modal-article-footer">
-                <div class="modal-article-stats">
-                    <span><i class="fas fa-eye"></i> ${this.formatNumber(article.views)} views</span>
-                    <span><i class="fas fa-heart"></i> ${this.formatNumber(article.likes)} likes</span>
-                </div>
-                <div class="modal-article-share">
-                    <button class="share-btn"><i class="fab fa-twitter"></i></button>
-                    <button class="share-btn"><i class="fab fa-facebook"></i></button>
-                    <button class="share-btn"><i class="fas fa-link"></i></button>
-                </div>
             </div>
         `;
         
