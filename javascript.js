@@ -6252,7 +6252,7 @@ class FavoritesManager {
             }, 1000);
         });
 
-        // Insert favorite button before fullscreen button
+        // Insert favorite button before share button
         const shareBtn = document.getElementById('shareBtn');
         gameControls.insertBefore(favoriteBtn, shareBtn);
         
@@ -6286,6 +6286,9 @@ class FavoritesManager {
 
                 return `
                     <div class="favorite-game-card" onclick="window.location.href='${gameUrl}'">
+                        <button class="remove-favorite-btn" onclick="event.stopPropagation(); this.removeFavorite('${game.slug}')" title="Remove from favorites">
+                            <span class="minus-icon">−</span>
+                        </button>
                         <div class="favorite-date">${dateAdded}</div>
                         <img src="${game.image}" alt="${game.name}" class="favorite-game-image">
                         <div class="favorite-game-info">
@@ -6295,6 +6298,23 @@ class FavoritesManager {
                     </div>
                 `;
             }).join('');
+
+            // Add event listeners to remove buttons
+            favoritesGrid.querySelectorAll('.remove-favorite-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const gameSlug = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+                    this.removeFavoriteAndRefresh(gameSlug);
+                });
+            });
+        };
+
+        // Method to remove favorite and refresh the display
+        this.removeFavoriteAndRefresh = (gameSlug) => {
+            // Assuming you have a method to remove from favorites
+            // Replace this with your actual favorite removal logic
+            this.toggleFavorite(gameSlug); // or this.removeFavorite(gameSlug);
+            renderFavorites(); // Re-render the favorites
         };
 
         // Initial render

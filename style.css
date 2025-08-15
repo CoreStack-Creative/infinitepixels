@@ -9661,6 +9661,45 @@ body.light-theme ::-webkit-scrollbar-thumb {
     transform: translateX(100%);
 }
 
+/* Remove favorite button styling */
+.remove-favorite-btn {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #d32f2f;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1;
+    z-index: 10;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.remove-favorite-btn:hover {
+    background-color: #d32f2f;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.remove-favorite-btn:active {
+    transform: scale(0.95);
+}
+
+.minus-icon {
+    display: block;
+    margin-top: 0px; /* Fine-tune vertical alignment */
+}
+
 .favorite-game-image {
     width: 100%;
     height: 180px;
