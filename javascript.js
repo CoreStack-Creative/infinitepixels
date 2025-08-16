@@ -2975,6 +2975,24 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/83siph0wqz04p8mp137w5uch7vk5t0nu/",
  tags: ["adventure", "action", "strategy"],
  description: "Dive into the heart-pounding nightmare of Zombie Survival 2, where every shadow could hide your doom. Scavenge abandoned cities, dark forests, and eerie alleyways for scarce resources, from makeshift wooden bats and broomsticks to crossbows and medkits, while keeping a sharp eye on durability and survival. Craft over 20 items—armor, weapons, backpacks—and set cunning traps to hold off relentless zombie hordes and towering bosses who demand every ounce of your wit and courage. Build your hideout, juggle a tight inventory, and prove just how long you can last in this relentless undead apocalypse.",
+ },
+{
+ id: 92,
+ name: "Silent Fear",
+ image: "images/silentfearimage.jpg",
+ slug: "silentfear",
+ gameUrl: "https://html5.gamemonetize.co/kl1jn8oiq2ah7pzb9n3oxnco25smwc2b/",
+ tags: ["horror", "action", "runner"],
+ description: "Silent Fear throws you into a relentless nightmare where every shadow hides danger and every sound could be your last. Armed only with scraps like a saw, a smartphone, and a broken gun barrel, you must outwit infected creatures that hunt both humans and animals. As the last survivor, your only choice is to run, adapt, and fight for every second of life.",
+ },
+{
+ id: 93,
+ name: "Save the Dummy",
+ image: "images/savethedummyimage.jpg",
+ slug: "savethedummy",
+ gameUrl: "https://html5.gamemonetize.co/rrcjjjeau91stfs3fcoopnr101g1awgh/",
+ tags: ["drawing", "puzzle", "strategy"],
+ description: "Save the Dummy is a quirky physics-based puzzle game where your goal is to free a ragdoll from precarious traps and strange contraptions. Each level challenges you to cut ropes, push objects, and trigger chain reactions that send the dummy tumbling to safety. With clever mechanics and playful chaos, every puzzle solved brings a satisfying dose of humor and relief.",
  }
 ];  
 
