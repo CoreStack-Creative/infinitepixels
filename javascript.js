@@ -3002,6 +3002,24 @@ const gamesDatabase = [
  gameUrl: "https://slowroads.io/",
  tags: ["cars", "io", "racing"],
  description: "Slow Roads is a relaxing driving simulation where you cruise endlessly along procedurally generated roads that stretch through calm, scenic landscapes. With no goals or finish lines, the game focuses on the meditative joy of the journey itself, letting you enjoy the freedom of the open road. Customizable settings like weather, time of day, and even an autodrive option make every drive a unique and soothing escape.",
+ },
+{
+ id: 95,
+ name: "Slope",
+ image: "images/slopeimage.jpg",
+ slug: "slope",
+ gameUrl: "https://ubggo.github.io/ub-games/slope/",
+ tags: ["io", "platformer", "runner"],
+ description: "Race a neon ball down an endless, gravity-defying slope where reflexes are your only ally. Dodge sharp turns, treacherous platforms, and glowing obstacles as your speed climbs into adrenaline territory. Every run is a fresh test of focus—how far can you push the limits before the track claims you?",
+ },
+{
+ id: 96,
+ name: "Snow Rider 3D",
+ image: "images/snowrider3dimage.jpg",
+ slug: "snowrider3d",
+ gameUrl: "https://ubggo.github.io/ub-games/snowrider3d/",
+ tags: ["runner", "sports", "endless"],
+ description: "Strap in and shred icy slopes at breathtaking speed, weaving through trees, rocks, and frosty obstacles in a high-octane downhill thrill ride. Collect gifts along the way to boost your score and unlock sleek new sleds that keep the runs feeling fresh. With smooth 3D visuals and responsive controls, every descent becomes a wintry rush you won’t want to end.",
  }
 ];  
 
