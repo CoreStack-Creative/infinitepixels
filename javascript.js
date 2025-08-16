@@ -3020,6 +3020,15 @@ const gamesDatabase = [
  gameUrl: "https://ubggo.github.io/ub-games/snowrider3d/",
  tags: ["runner", "sports", "endless"],
  description: "Strap in and shred icy slopes at breathtaking speed, weaving through trees, rocks, and frosty obstacles in a high-octane downhill thrill ride. Collect gifts along the way to boost your score and unlock sleek new sleds that keep the runs feeling fresh. With smooth 3D visuals and responsive controls, every descent becomes a wintry rush you won’t want to end.",
+ },
+{
+ id: 97,
+ name: "Retro Bowl",
+ image: "images/retrobowlimage.jpg",
+ slug: "retrobowl",
+ gameUrl: "https://ubggo.github.io/ub-games/snowrider3d/",
+ tags: ["runner", "sports", "endless"],
+ description: "Strap in and shred icy slopes at breathtaking speed, weaving through trees, rocks, and frosty obstacles in a high-octane downhill thrill ride. Collect gifts along the way to boost your score and unlock sleek new sleds that keep the runs feeling fresh. With smooth 3D visuals and responsive controls, every descent becomes a wintry rush you won’t want to end.",
  }
 ];  
 
