@@ -2746,7 +2746,7 @@ const gamesDatabase = [
  slug: "jellyrun2048",
  gameUrl: "https://html5.gamemonetize.co/y51x5nb673umhgqzva6jz2596cd57cqc/",
  tags: ["arcade", "2048", "action"],
- description: "Jelly Run 2048 is a challenging casual puzzle game that combines the classic 2048 number merging with exciting parkour gameplay. Guide your jelly block by swiping left or right to connect and disconnect cubes. Merge cubes to get double the number, reaching 2048 or greater. When the jelly block collides with tiles of the same number, they merge into a larger number.",
+ description: "Jelly Run 2048 is a fun and challenging puzzle game that blends the classic 2048 number-merging concept with fast-paced parkour action. Swipe your jelly block left or right to navigate obstacles and link cubes together. Combine matching cubes to double their value and aim to reach 2048 or higher. Each collision with a same-number tile creates a bigger cube, keeping the gameplay exciting and strategic.",
  },
  {
  id: 66,
@@ -2755,7 +2755,7 @@ const gamesDatabase = [
  slug: "winterclash3d",
  gameUrl: "https://html5.gamemonetize.co/ya6quof6a1n40xzz3thz9xekh349abp8/",
  tags: ["shooter", "action", "multiplayer"],
- description: "This Christmas the evil elves plan to take over the Santa’s secret place, and summon the evil Baba Yaga, also known as Pagan Idol to this world. Don’t let this happen. Take your gun and impose punishment on all who confront you in a brand new overwhelming team shooter Winter Clash 3D. Take a role of a mighty Santa Clause and capture the Pagan Idol from a deserted lighthouse island.",
+ description: "This Christmas, mischievous elves are plotting to seize Santa’s secret base and summon the fearsome Baba Yaga, also known as the Pagan Idol. It’s up to you to stop them and defend the holiday spirit. Grab your weapons and face off in the action-packed team shooter Winter Clash 3D. Step into the role of a powerful Santa Claus and capture the Pagan Idol on a remote lighthouse island!",
  },
  {
  id: 67,
@@ -2764,7 +2764,7 @@ const gamesDatabase = [
  slug: "stickmansniper",
  gameUrl: "https://html5.gamemonetize.co/pnu56ck5blbnesweiw2z1ule6o530x9e/",
  tags: ["shooter", "action", "stickman"],
- description: "Highly trained, these games celebrate the marksmen with the most deadly of aim. In these sniper games the goal is to avoid detection and use your specialized training to infiltrate, observe and eliminate enemy troops at long distances before they even spot your location.",
+ description: "These sniper games put your precision and stealth to the ultimate test. Step into the shoes of an elite marksman, using your skills to remain unseen while taking out targets from afar. Carefully plan each shot, observe enemy movements, and strike before you’re detected. Only the sharpest shooters can complete the mission and dominate the battlefield.",
  },   
  {
  id: 68,
@@ -2773,7 +2773,7 @@ const gamesDatabase = [
  slug: "american18wheelertrucksim",
  gameUrl: "https://html5.gamemonetize.co/iktjgjwxwy2kwttz3yml4av97010fgwy/",
  tags: ["cars", "levels", "simulator"],
- description: "In the event that you love playing Truck Games, you are in for a treat. Load American 18 Wheeler Truck Sim Games 2021 is the game you have been sitting tight for. Prepare for the sensible and energizing driving experience. Drive payload truck simulator and investigate the uneven climate and test your mountain driving abilities. Driving on slopes, mountains and steep ways is a genuine driving test and experience in rough terrain load truck leaving simulator games 2021. Work 18 wheelers simulator to move freight great and become a genuine tremendous conveyance truck carrier.",
+ description: "If you’re a fan of truck driving games, American 18 Wheeler Truck Sim Games 2021 is made for you. Experience the thrill of navigating heavy loads through challenging terrains and unpredictable weather. Test your skills on steep mountains, winding roads, and rugged landscapes as you deliver cargo safely. Master the 18-wheeler simulator, complete your deliveries, and become the ultimate truck driving pro!",
  },  
  {
  id: 69,
@@ -2782,7 +2782,7 @@ const gamesDatabase = [
  slug: "billard8ballpool",
  gameUrl: "https://html5.gamemonetize.co/jf2a06o1z5ezy7stb7c4lmm13syg12yk/",
  tags: ["sports", "arcade", "strategy"],
- description: "Famous variety of billiards. The goal of the game is to score all the balls of one group (either “striped” or “solid”) after robbery, and at the end to score the ball with the number 8. Whoever does this, becomes the winner of the game.",
+ description: "This popular version of billiards challenges players to pocket all the balls from their assigned group—either “solid” or “striped.” After clearing your set, the ultimate goal is to sink the 8-ball to claim victory. Strategy and precision are key to outsmarting your opponent. The first player to complete these steps wins the game and takes the title!",
  }, 
  {
  id: 70,
@@ -2791,7 +2791,7 @@ const gamesDatabase = [
  slug: "flipmaster",
  gameUrl: "https://html5.gamemonetize.co/t5h6lmvu96x7kk5bj6v5n6999o7mf9f1/",
  tags: ["3d", "levels", "parkour"],
- description: "Flip Master is an exciting game about acrobatics and parkour! Perform spectacular tricks, execute breathtaking flips, and conquer challenging obstacles. Control your character in the air, perfect your jumping technique, and land flawlessly. Upgrade your skills, explore new locations, and become the ultimate master of extreme flips!",
+ description: "Flip Master puts you in the center of thrilling acrobatics and high-flying parkour action. Pull off jaw-dropping flips, daring tricks, and navigate tricky obstacles with precision. Master your jumps, control your character mid-air, and stick every landing perfectly. Level up your skills, unlock new arenas, and prove you have what it takes to be the ultimate flip champion!",
  },
  {
  id: 71,
@@ -2800,7 +2800,7 @@ const gamesDatabase = [
  slug: "curvypunch2",
  gameUrl: "https://html5.gamemonetize.co/us0l69i6kfvo5wa3a2skvifjmcmhj8t6/",
  tags: ["sports", "action", "levels"],
- description: "Ready to join the funniest and craziest punch battle ever? Play a creative 3D fight action game in Curvy Punch. You can throw hilarious curve punches to knock out your enemies! Your fists don’t just punch straight; you can bend them in wild curves! Control your fists to maneuver around obstacles and punch your opponents hard. Make every punch precise and funny! You can also backflip to avoid enemy attacks!",
+ description: "Get ready for the wackiest punch battle around in Curvy Punch, a 3D action-fighting game full of laughs and chaos. Swing your fists in wild, curving punches to take down your opponents in the most unpredictable ways. Dodge obstacles, land perfect hits, and even pull off backflips to stay one step ahead. Every punch is a mix of strategy and silliness—can you master the madness?",
  },
  {
  id: 72,
@@ -2809,7 +2809,7 @@ const gamesDatabase = [
  slug: "2048legend",
  gameUrl: "https://html5.gamemonetize.co/iqv0wswiozpaxs6s7rdtqdj24ibdrgsa/",
  tags: ["2048", "arcade", "strategy"],
- description: "2048 is a simple game where you add up numbers. That's it. Although, it's not as easy as it seems. It can prove to be quite a challenge. If you don't already know this classic, then you're in for a treat! Are you ready to test your wit and get as much score as possible? Then what are you waiting for? Go on and play it!",
+ description: "2048 is a fun and addictive puzzle game where you combine matching numbers to reach higher values. While the rules are straightforward, mastering it can be surprisingly tricky. Each move requires strategy and careful planning to maximize your score. If you haven’t tried this modern classic yet, now’s the perfect time to put your skills to the test!",
  },
  {
  id: 73,
@@ -2818,7 +2818,7 @@ const gamesDatabase = [
  slug: "rideronlinepro",
  gameUrl: "https://html5.gamemonetize.co/xqxcsqazsozjzy71jb1hn0a54dorg91d/",
  tags: ["bike", "arcade", "endless"],
- description: "Get ready for some flippin action! Perform crazy stunts as you navigate the endless world of Rider! Grab your motorcycle and start spinning like a maniac, collect diamonds and unlock new bikes, combos and beat high scores. Play Rider Online now for free! have fun with this new game.",
+ description: "Get ready for thrilling stunts and nonstop action in Rider! Hop on your motorcycle and spin, flip, and perform daring tricks through an endless, dynamic world. Collect diamonds to unlock new bikes, master combos, and aim for the highest scores. Play Rider Online for free and enjoy endless fun and excitement!",
  }, 
  {
  id: 74,
@@ -2827,7 +2827,7 @@ const gamesDatabase = [
  slug: "snipersimulator",
  gameUrl: "https://html5.gamemonetize.co/ote0vnkghfmoz4n40ifk5isr27q9f5qj/",
  tags: ["shooter", "simulator", "levels"],
- description: "“Sniper Simulator” is a first-person shooting simulation game, in the game, players will play the role of a sniper and control a variety of classic guns for sniper training. In addition, a popular assembly gameplay has been added, allowing players to experience the excitement of assembling while shooting. The game is easy to operate, the screen is beautiful, the sound effects and gun textures are realistic, restoring the most realistic shooting experience.",
+ description: "Sniper Simulator is a first-person shooting game that puts you in the role of a skilled sniper, handling a variety of classic rifles for realistic training. The game includes an engaging assembly feature, letting players experience the thrill of putting together their weapons while taking precise shots. Easy-to-use controls, stunning visuals, and lifelike sound effects enhance the immersive experience. With realistic gun textures and environments, every shot feels authentic, offering a true-to-life sniper simulation.",
  },
  {
  id: 75,
@@ -2836,7 +2836,7 @@ const gamesDatabase = [
  slug: "boatrescue",
  gameUrl: "https://html5.gamemonetize.co/dlnizm1qjw53qkx4t9kdv0prsp27jdxx/",
  tags: ["racing", "action", "levels"],
- description: "American Boat Rescue Simulator is a simulator game where you need to rescue people from water, 100 mission waiting to to rescue people from different place of island, you can gain points and buy new boat, more fancy, you have to reach all achievement where you can find in menu. Have fun!",
+ description: "American Boat Rescue Simulator puts you in charge of saving people from dangerous waters across a variety of island locations. Complete 100 challenging missions, each requiring skill and quick thinking to reach those in need. Earn points to upgrade your boat, making it faster, stronger, and more stylish as you progress. Track your achievements in the menu and strive to complete them all while enjoying the thrilling rescue experience.",
  },
  {
  id: 76,
@@ -2845,7 +2845,7 @@ const gamesDatabase = [
  slug: "momohorrorstory",
  gameUrl: "https://html5.gamemonetize.co/5fv1qjs4y57ltbk9q74zpteyeq3p6mob/",
  tags: ["horror", "action", "shooter"],
- description: "Momo is a horror game based on the history of the message user momo. In the game, you will be a guy that contacts momo by message, and now he will be pursued by the monster of momo. You will have to complete some tasks before get rescued, like turn on the generator, find some keys, close windows etc...The objetive is to survive until the timer reachs 00:00 then, the police will arrive and you would able to escape. There are two modes in game, Classic and Gun mode.",
+ description: "Momo is a chilling horror game inspired by the legend of the mysterious messaging figure, Momo. Players take on the role of someone who has contacted Momo and must now survive being hunted by the terrifying creature. Complete tasks like turning on generators, finding keys, and securing windows to stay alive until the timer hits zero, when the police arrive to rescue you. The game offers two modes—Classic and Gun—adding different challenges to your fight for survival.",
  }, 
  {
  id: 77,
@@ -2854,7 +2854,7 @@ const gamesDatabase = [
  slug: "bussimulator",
  gameUrl: "https://html5.gamemonetize.co/dubea73z3y8yy37n10vzmubrovaolu7b/",
  tags: ["racing", "action", "simulator"],
- description: "Bus Simulator is a city-based driving game where you take the role of a bus driver, following scheduled routes, picking up and dropping off passengers, and navigating realistic urban traffic, weather, and road conditions.",
+ description: "Bus Simulator puts you in the driver’s seat of a city bus, where your job is to follow scheduled routes and transport passengers safely. Navigate busy streets, obey traffic rules, and adapt to realistic urban traffic patterns. Face changing weather conditions and challenging road layouts that test your driving skills. Experience the daily life of a bus driver while keeping passengers happy and on time.",
  },
   {
  id: 78,
@@ -2863,7 +2863,7 @@ const gamesDatabase = [
  slug: "stickmanghostonline",
  gameUrl: "https://html5.gamemonetize.co/qsd2h427rg6z6gza2xekqsdwgk1dwksa/",
  tags: ["stickman", "online", "action"],
- description: "Crush your rivals and become the last survival ghost in the Stickman City. Walk through many places and use all kinds of powerful and interesting weapons to fight, Perform many combos and defeat all enemies to reach the boss and save the world of the evil Stickmans. Collect coins and upgrade your character with new weapons, movements, skills and skins to survive and become the ultimate ghost warrior. The objective of the game is to take the brave stickman to the end of each of the levels defeating the stikcman ninja who will not hesitate to eliminate you.",
+ description: "Step into Stickman City and fight to become the last surviving ghost among your rivals. Explore diverse locations and unleash a variety of powerful weapons, chaining combos to defeat enemies and face the ultimate bosses. Collect coins to upgrade your character with new weapons, skills, movements, and skins, enhancing your chances of survival. Your mission is to guide the brave stickman through each level, taking down relentless ninja opponents and saving the city from the evil Stickmans.",
  },
  {
  id: 79,
@@ -2872,7 +2872,7 @@ const gamesDatabase = [
  slug: "stickmanghostonline",
  gameUrl: "https://html5.gamemonetize.co/v0ap03gz77p5idffw3d94p8vql3pg23b/",
  tags: ["simulator", "3d", "animal"],
- description: "Bird Simulator is a woodland-based exploration game where you play as a bird, soaring through forests, searching for food, building nests, and interacting with wildlife while avoiding natural dangers.",
+ description: "Bird Simulator lets you take flight as a bird in a vibrant forest, exploring treetops, rivers, and open skies. Hunt for food, build nests, and care for your young while interacting with other wildlife. Avoid natural hazards and predators as you navigate the challenges of the wild. Experience the freedom of flight and the thrill of surviving in a realistic woodland ecosystem.",
  },
  {
  id: 80,
@@ -2881,7 +2881,7 @@ const gamesDatabase = [
  slug: "nightwalkersio",
  gameUrl: "https://html5.gamemonetize.co/99mi8patiemjg6ns0m4apjv6p92csyt2/",
  tags: ["io", "online", "action"],
- description: "Nightwalkers.io or in short, Nightwalkers, is a free Co-Op browser zombie survival game from JeFawk Games. It features unique gameplay elements such as Apocalypses and Noise which attracts zombies. Grab a friend and make an invincible base. Gather resources and build weapons, fight through endless waves of zombies to establish a new World Record...or don't and just chill in the base and talk to one of the 1000+ daily people on the chat. However you play is up to you, but don't forget, kill as many zombies as possible!",
+ description: "Nightwalkers.io, or simply Nightwalkers, is a free co-op browser game from JeFawk Games that puts you in the middle of a zombie apocalypse. Survive unique challenges like Apocalypses and the Noise system that draws zombies toward you. Team up with friends to build an impenetrable base, gather resources, craft weapons, and battle endless waves of the undead—or just relax and chat with the 1,000+ daily players. However you play, the goal remains the same: survive, thrive, and take down as many zombies as possible!",
  },
  {
  id: 81,
@@ -2890,7 +2890,7 @@ const gamesDatabase = [
  slug: "nightracing",
  gameUrl: "https://html5.gamemonetize.co/vpyg4xx30zcxx3sv2p8ke2ws7bvwg08v/",
  tags: ["racing", "cars", "action"],
- description: "Get ready for thrilling nighttime races in an adrenaline-filled city! In this game, youll become a true street racer. Jump into the seat of a powerful sports car and hit the streets of the nocturnal city where exciting challenges await you. Complete various missions and perform tricks to showcase your driving skills, evading the police and leaving them far behind. As the game progresses, youll have the opportunity to purchase new, more powerful and faster cars.",
+ description: "Experience the thrill of high-speed nighttime racing through a vibrant, neon-lit city. Step into the driver’s seat of a powerful sports car and take on daring challenges that test your skills. Complete missions, perform stunts, and outsmart the police as you blaze through the streets. Earn rewards to unlock faster, more powerful cars and prove yourself as the ultimate street racer.",
  },
  {
  id: 82,
@@ -2899,7 +2899,7 @@ const gamesDatabase = [
  slug: "deepspacehorroroutpost",
  gameUrl: "https://html5.gamemonetize.co/zyq2hd8j0nld46fklqgj0cyacbpo09mn/",
  tags: ["horror", "action", "shooter"],
- description: "You are out of energy for your space cruiser. Lucky for you, there is an Deep Space Outpost. You need to collect 8 Energy Cells so you can go on with your journey. But, this isn't easy as is sounds. Station is abandoned, by humans. Only think remain on that station, is not human, and its bloodthirsty! Good luck!",
+ description: "Your space cruiser has run out of energy, and the only hope is a remote Deep Space Outpost. To continue your journey, you must find and collect 8 crucial Energy Cells. But the abandoned station isn’t as safe as it seems—humans are gone, and something else lurks in the shadows. Dangerous and relentless, this bloodthirsty presence will test your courage at every turn.",
  },
  {
  id: 83,
@@ -2908,7 +2908,7 @@ const gamesDatabase = [
  slug: "zombieescape",
  gameUrl: "https://html5.gamemonetize.co/ifcdrnwla32frs6rgrw3ulbbgnip63qq/",
  tags: ["horror", "action", "puzzle"],
- description: "Zombie Escape Horror Factory is an exciting survival game that immerses you in a zombie infested apocalyptic world. Your mission is to repair all the generators with your teammates, which when completed will open a door for you to escape this living nightmare. An immersive experience with tension and fear everywhere. Can you successfully complete the mission and escape?",
+ description: "Enter Zombie Escape Horror Factory, where a world overrun by zombies tests your survival skills. Join forces with teammates to repair critical generators that hold the key to escaping alive. Every shadow hides a threat, and every step could be your last, keeping fear at the forefront. Will you survive the onslaught long enough to complete the mission and break free from the nightmare?",
  },
  {
  id: 84,
@@ -2917,7 +2917,7 @@ const gamesDatabase = [
  slug: "escapeyourbirthday",
  gameUrl: "https://html5.gamemonetize.co/karmfagd29qbrrs3vznumevkjw1vjzlz/",
  tags: ["horror", "action", "puzzle"],
- description: "A creepy birthday. A locked room. Can you find your way out? You wake up in a strange room. It’s your birthday… but something feels off. There’s a cake, a candle, and an eerie silence. This isn’t a celebration — it’s a puzzle. And you need to escape. Features: First-person horror puzzle experience Atmospheric sound design — headphones highly recommended One-room mystery filled with strange objects and hidden clues Short and spooky — perfect for a coffee break scare.",
+ description: "It’s your birthday, but something is terribly wrong. You awaken in a locked room with only a cake, a candle, and an unsettling silence surrounding you. What seems like a celebration quickly turns into a sinister puzzle where every object may hold a clue. Search the room, solve the mystery, and escape—before the party takes a darker turn.",
  }, 
  {
  id: 85,
@@ -2935,7 +2935,7 @@ const gamesDatabase = [
  slug: "gangfallparty",
  gameUrl: "https://html5.gamemonetize.co/i7uarc0zpakotfo600u3t1j18vdzan26/",
  tags: ["io", "action", "2 player"],
- description: "Get ready to start a great online fighting game with the Gang Fall Party game! All of the fights will be on the high places and your only goal in this game is to fall your opponents from the places you're fighting on with your punches. You can play the game in single player mode or in two player game mode. You can fight against a friend in 1vs1 game mode and you can fight against lots of online opponents with your friends in 2 player mode with the Vs All game mode. You can fight against online friends in 1P game mode. In each online game, you will fight against 16 or 17 players.",
+ description: "Gang Fall Party throws you into chaotic online brawls where the goal is simple—knock your rivals off the stage with powerful punches. Battles take place on high platforms, and every hit brings you closer to victory or a dramatic fall. Play solo, challenge a friend in 1v1, or team up in 2 Player mode to take on dozens of opponents in the fast-paced Vs All mode. Each match pits you against up to 16–17 fighters, making every round unpredictable and full of action.",
  }, 
  {
  id: 87,
@@ -2944,7 +2944,7 @@ const gamesDatabase = [
  slug: "trialbikeracingclash",
  gameUrl: "https://html5.gamemonetize.co/vqfqbnwpjpv5t77qupxckrz953obu9wd/",
  tags: ["bike", "multiplayer", "2 player"],
- description: "A super bike racing experience begins with a stunt bike and a stunt rider with the Trial Bike Racing Clash! Dangerous rides in different zones will be waiting for you! This race can be played either in 1 player game mode or in 2 player game mode. Play both mission and skills game modes against a friend and race to the finish line. Customizable bikes and riders and various exciting game levels are waiting for you.",
+ description: "Trial Bike Racing Clash kicks off an adrenaline-packed stunt racing adventure where daring riders take on extreme tracks. Face dangerous courses across multiple zones, pushing your skills to the limit with high-speed tricks and precision control. Play solo or challenge a friend in 1 Player or 2 Player modes, testing yourself in both missions and skill-based races. With customizable bikes, unique riders, and a variety of thrilling levels, the competition never stops.",
  },
  {
  id: 88,
@@ -2953,7 +2953,7 @@ const gamesDatabase = [
  slug: "slendermanlostatschool",
  gameUrl: "https://html5.gamemonetize.co/24gnovw92p6d8dz6lr9jg0sp3ug9xrmd/",
  tags: ["horror", "3d", "puzzle"],
- description: "Slenderman Lost at School is a chilling online horror game that thrusts players into a dark and eerie school where the infamous Slenderman roams. Your objective is to explore the abandoned school, solve puzzles, and collect items to escape Slendermans clutches. The game combines elements of stealth, strategy, and horror to deliver a truly immersive experience. Navigate through dimly lit hallways, avoid Slendermans gaze, and uncover the dark secrets hidden within the school. Can you survive the terror and find your way out before its too late?",
+ description: "Slenderman Lost at School drops you into a creepy, abandoned campus haunted by the legendary Slenderman. To survive, you’ll need to search the halls for clues, gather items, and solve puzzles that open the path to freedom. Blending stealth, suspense, and strategy, the game keeps tension high as you creep through shadowy corridors and avoid Slenderman’s deadly stare. Every corner hides a secret—and only sharp instincts will help you escape before it’s too late.",
  },
  {
  id: 89,
@@ -2962,7 +2962,7 @@ const gamesDatabase = [
  slug: "stickmansportsbadminton",
  gameUrl: "https://html5.gamemonetize.co/c6zx75jasrpsm0b6a4utgps07dxhs3h5/",
  tags: ["sports", "stickman", "2 player"],
- description: "Different Stickman characters meet in Stickman Sports Badminton game! The game will give you a good badminton experience with its realistic ball physics. At the same time, the boosters for the game (big racket, fireball, faster) and some negative bonuses  (slowly) increase the fun. You can play the game for 1 Player or 2 Players. There are 'Normal' and 'Hard' game modes when playing against the CPU. You can choose the number of sets in the game as 5,7 or 9. Show who is the better badminton player now!",
+ description: "Stickman Sports Badminton brings quirky characters together for a fast and fun badminton showdown. With realistic shuttle physics, exciting power-ups like giant rackets, fire smashes, and speed boosts—alongside tricky debuffs that slow you down—the action stays fresh and unpredictable. Play solo or challenge a friend in 1v1 matches, with options for Normal or Hard difficulty when facing the CPU. Customize your match length with 5, 7, or 9 sets and prove who truly rules the court!",
  },
 {
  id: 90,
@@ -2971,7 +2971,7 @@ const gamesDatabase = [
  slug: "commandstrikefps",
  gameUrl: "https://html5.gamemonetize.co/fiogowuzog6jowbgvabdxrcqaub4cubc/",
  tags: ["shooter", "action", "multiplayer"],
- description: "Command Strike FPS is a fast-paced first-person shooter that offers both offline and online gameplay across a variety of detailed battle maps. Players can choose from modes like Deathmatch, Team Deathmatch, Free-for-All, Flag Capture, and Mission Mode, each providing intense firefights and strategic challenges. Armed with a wide selection of guns, grenades, and other equipment, players step into the role of a “super soldier,” using simple, intuitive controls to dominate the battlefield in action-packed combat.",
+ description: "Command Strike FPS delivers high-speed first-person shooting with both offline and online action across diverse, well-designed maps. Choose from modes like Deathmatch, Team Deathmatch, Free-for-All, Flag Capture, or Mission Mode, each offering unique tactical challenges and nonstop firefights. With an arsenal of weapons, explosives, and gear at your disposal, you’ll step into the boots of an elite soldier and fight to dominate every battle.",
  },
 {
  id: 91,
@@ -2980,7 +2980,7 @@ const gamesDatabase = [
  slug: "zombiesurvival2",
  gameUrl: "https://html5.gamemonetize.co/83siph0wqz04p8mp137w5uch7vk5t0nu/",
  tags: ["adventure", "action", "strategy"],
- description: "Dive into the heart-pounding nightmare of Zombie Survival 2, where every shadow could hide your doom. Scavenge abandoned cities, dark forests, and eerie alleyways for scarce resources, from makeshift wooden bats and broomsticks to crossbows and medkits, while keeping a sharp eye on durability and survival. Craft over 20 items—armor, weapons, backpacks—and set cunning traps to hold off relentless zombie hordes and towering bosses who demand every ounce of your wit and courage. Build your hideout, juggle a tight inventory, and prove just how long you can last in this relentless undead apocalypse.",
+ description: "Step into Zombie Survival 2, a relentless fight for life where danger waits in every shadow. Explore ruined cities, haunted woods, and empty backstreets to gather precious supplies—from crude weapons and crossbows to vital medkits—while carefully managing what lasts and what breaks. Use over 20 craftable upgrades, from gear and weapons to traps, to push back endless hordes and towering bosses that test both strategy and courage. Strengthen your base, balance your inventory, and see how long you can endure against the rising tide of the undead.",
  },
 {
  id: 92,
@@ -2989,7 +2989,7 @@ const gamesDatabase = [
  slug: "silentfear",
  gameUrl: "https://html5.gamemonetize.co/kl1jn8oiq2ah7pzb9n3oxnco25smwc2b/",
  tags: ["horror", "action", "runner"],
- description: "Silent Fear throws you into a relentless nightmare where every shadow hides danger and every sound could be your last. Armed only with scraps like a saw, a smartphone, and a broken gun barrel, you must outwit infected creatures that hunt both humans and animals. As the last survivor, your only choice is to run, adapt, and fight for every second of life.",
+ description: "Silent Fear plunges you into a terrifying world where danger lurks in the dark and even the faintest noise can betray you. With nothing but makeshift tools—a saw, a phone, and a shattered gun barrel—you must survive against twisted creatures that stalk everything living. The infected hunt with unrelenting persistence, forcing you to think fast and act smarter. As humanity’s last hope, survival comes down to every heartbeat, every step, and every desperate choice.",
  },
 {
  id: 93,
@@ -2998,7 +2998,7 @@ const gamesDatabase = [
  slug: "savethedummy",
  gameUrl: "https://html5.gamemonetize.co/rrcjjjeau91stfs3fcoopnr101g1awgh/",
  tags: ["drawing", "puzzle", "strategy"],
- description: "Save the Dummy is a quirky physics-based puzzle game where your goal is to free a ragdoll from precarious traps and strange contraptions. Each level challenges you to cut ropes, push objects, and trigger chain reactions that send the dummy tumbling to safety. With clever mechanics and playful chaos, every puzzle solved brings a satisfying dose of humor and relief.",
+ description: "Save the Dummy is a lighthearted physics puzzle game where you must rescue a floppy ragdoll from odd traps and tricky setups. Every stage asks you to interact with ropes, platforms, and obstacles to set off reactions that guide the dummy to safety. The mix of creative problem-solving and unpredictable physics keeps the gameplay fun and engaging. Each completed puzzle rewards you with a mix of humor and satisfaction.",
  },
 {
  id: 94,
