@@ -2993,6 +2993,15 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/rrcjjjeau91stfs3fcoopnr101g1awgh/",
  tags: ["drawing", "puzzle", "strategy"],
  description: "Save the Dummy is a quirky physics-based puzzle game where your goal is to free a ragdoll from precarious traps and strange contraptions. Each level challenges you to cut ropes, push objects, and trigger chain reactions that send the dummy tumbling to safety. With clever mechanics and playful chaos, every puzzle solved brings a satisfying dose of humor and relief.",
+ },
+{
+ id: 94,
+ name: "Slowroads IO",
+ image: "images/slowroadsioimage.jpg",
+ slug: "slowroadsio",
+ gameUrl: "https://slowroads.io/",
+ tags: ["cars", "io", "racing"],
+ description: "Slow Roads is a relaxing driving simulation where you cruise endlessly along procedurally generated roads that stretch through calm, scenic landscapes. With no goals or finish lines, the game focuses on the meditative joy of the journey itself, letting you enjoy the freedom of the open road. Customizable settings like weather, time of day, and even an autodrive option make every drive a unique and soothing escape.",
  }
 ];  
 
