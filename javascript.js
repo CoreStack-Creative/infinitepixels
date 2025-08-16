@@ -99,7 +99,13 @@ const gameData = [
    { name: "Trial Bike Racing Clash", link: "/game.html?game=trialbikeracingclash" },
    { name: "Stickman Sports Badminton", link: "/game.html?game=stickmansportsbadminton" },
    { name: "Command Strike FPS", link: "/game.html?game=commandstrikefps" },
-   { name: "Zombie Survival 2", link: "/game.html?game=zombiesurvival2" }
+   { name: "Zombie Survival 2", link: "/game.html?game=zombiesurvival2" },
+   { name: "Silent Fear", link: "/game.html?game=silentfear" },
+   { name: "Save the Dummy", link: "/game.html?game=savethedummy" },
+   { name: "Slowroads IO", link: "/game.html?game=slowroadsio" },
+   { name: "Slope", link: "/game.html?game=slope" },
+   { name: "Snow Rider 3D", link: "/game.html?game=snowrider3d" },
+   { name: "Retro Bowl", link: "/game.html?game=retrobowl" }
 
 ];
 
