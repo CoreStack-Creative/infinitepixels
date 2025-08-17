@@ -9914,3 +9914,239 @@ body.light-theme ::-webkit-scrollbar-thumb {
         grid-template-columns: 1fr;
     }
 }
+
+
+.page-header {
+    text-align: center;
+    margin-top: 4rem;
+    padding: 0 1rem;
+}
+
+.page-title {
+    font-size: 3rem;
+    font-weight: bold;
+    background: var(--about-gradient-cosmic);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+    text-shadow: var(--about-glow-purple);
+}
+
+.page-subtitle {
+    font-size: 1.2rem;
+    color: var(--about-text-secondary);
+    margin-bottom: 2rem;
+}
+
+.recently-played-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.controls-section {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 2rem;
+    padding: 0 0.5rem;
+}
+
+.clear-history-btn {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.clear-history-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4);
+}
+
+.clear-history-btn i {
+    font-size: 1rem;
+}
+
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.game-card {
+    background: var(--bg-secondary);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    position: relative;
+    cursor: pointer;
+}
+
+.game-card:hover {
+    transform: translateY(-10px);
+    border: 2px solid var(--accent-color);
+    box-shadow: var(--about-glow-purple);
+}
+
+.game-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--about-gradient-aurora);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.game-card:hover::before {
+    opacity: 0.1;
+}
+
+.game-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+}
+
+.game-info {
+    padding: 1.5rem;
+    position: relative;
+    z-index: 2;
+}
+
+.game-name {
+    font-size: 1.4rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--about-text-primary);
+}
+
+.game-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.game-tag {
+    background: var(--about-gradient-nebula);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.last-played {
+    font-size: 0.9rem;
+    color: var(--about-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.last-played i {
+    color: var(--accent-color);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--about-text-secondary);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    color: var(--accent-color);
+}
+
+.empty-state h3 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--about-text-primary);
+}
+
+.empty-state p {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+}
+
+.browse-games-btn {
+    display: inline-block;
+    background: var(--about-gradient-cosmic);
+    color: white;
+    text-decoration: none;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.browse-games-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--about-glow-purple);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1.5rem 2rem;
+    }
+    
+    .page-header {
+        padding: 0 0.5rem;
+    }
+    
+    .recently-played-container {
+        padding: 0 0.5rem;
+    }
+    
+    .page-title {
+        font-size: 2.5rem;
+    }
+    
+    .games-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .controls-section {
+        justify-content: center;
+        padding: 0;
+    }
+    
+    .game-info {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .main-content {
+        padding: 1rem 1.5rem;
+    }
+    
+    .page-header {
+        padding: 0 0.25rem;
+    }
+    
+    .recently-played-container {
+        padding: 0 0.25rem;
+    }
+}

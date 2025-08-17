@@ -6484,3 +6484,166 @@ if (typeof window !== 'undefined') {
     window.FavoritesManager = FavoritesManager;
     window.favoritesManager = favoritesManager;
 }
+
+// Recently Played Manager
+class RecentlyPlayedManager {
+    constructor() {
+        this.storageKey = 'infinitePixels_recentlyPlayed';
+        this.maxGames = 24;
+        this.init();
+    }
+
+    init() {
+        // Load and display recently played games on page load
+        this.displayRecentGames();
+        
+        // Set up event listeners
+        this.setupEventListeners();
+    }
+
+    setupEventListeners() {
+        // Clear history button
+        const clearBtn = document.getElementById('clearHistoryBtn');
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => this.clearHistory());
+        }
+    }
+
+    // Add a game to recently played (call this when a game is accessed)
+    addGameToRecent(gameSlug) {
+        const game = gamesDatabase.find(g => g.slug === gameSlug);
+        if (!game) return;
+
+        let recentGames = this.getRecentGames();
+        
+        // Remove the game if it already exists (to move it to the front)
+        recentGames = recentGames.filter(g => g.slug !== gameSlug);
+        
+        // Add the game to the beginning with current timestamp
+        const gameWithTimestamp = {
+            ...game,
+            lastPlayed: Date.now()
+        };
+        
+        recentGames.unshift(gameWithTimestamp);
+        
+        // Keep only the most recent games
+        if (recentGames.length > this.maxGames) {
+            recentGames = recentGames.slice(0, this.maxGames);
+        }
+        
+        // Save to localStorage
+        localStorage.setItem(this.storageKey, JSON.stringify(recentGames));
+        
+        // Refresh display if on recently played page
+        if (document.getElementById('recentGamesGrid')) {
+            this.displayRecentGames();
+        }
+    }
+
+    getRecentGames() {
+        try {
+            const stored = localStorage.getItem(this.storageKey);
+            return stored ? JSON.parse(stored) : [];
+        } catch (error) {
+            console.error('Error loading recent games:', error);
+            return [];
+        }
+    }
+
+    displayRecentGames() {
+        const container = document.getElementById('recentGamesGrid');
+        const emptyState = document.getElementById('emptyState');
+        
+        if (!container) return;
+
+        const recentGames = this.getRecentGames();
+        
+        if (recentGames.length === 0) {
+            container.style.display = 'none';
+            if (emptyState) emptyState.style.display = 'block';
+            return;
+        }
+
+        container.style.display = 'grid';
+        if (emptyState) emptyState.style.display = 'none';
+
+        container.innerHTML = recentGames.map(game => this.createGameCard(game)).join('');
+    }
+
+    createGameCard(game) {
+        const timeAgo = this.formatTimeAgo(game.lastPlayed);
+        
+        return `
+            <div class="game-card" onclick="window.location.href='https://www.infinite-pixels.com/game.html?game=${game.slug}'">
+                <img src="${game.image}" alt="${game.name}" class="game-image" 
+                     onerror="this.src='images/placeholder-game.jpg'">
+                <div class="game-info">
+                    <h3 class="game-name">${game.name}</h3>
+                    <div class="game-tags">
+                        ${game.tags.map(tag => `<span class="game-tag">${tag}</span>`).join('')}
+                    </div>
+                    <div class="last-played">
+                        <i class="fas fa-clock"></i>
+                        <span>Played ${timeAgo}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    formatTimeAgo(timestamp) {
+        const now = Date.now();
+        const diff = now - timestamp;
+        
+        const minutes = Math.floor(diff / (1000 * 60));
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        
+        if (minutes < 1) return 'just now';
+        if (minutes < 60) return `${minutes}m ago`;
+        if (hours < 24) return `${hours}h ago`;
+        if (days < 7) return `${days}d ago`;
+        
+        // For older dates, show actual date
+        const date = new Date(timestamp);
+        return date.toLocaleDateString();
+    }
+
+    clearHistory() {
+        if (confirm('Are you sure you want to clear your recently played games history?')) {
+            localStorage.removeItem(this.storageKey);
+            this.displayRecentGames();
+        }
+    }
+}
+
+// Initialize the recently played manager when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    window.recentlyPlayedManager = new RecentlyPlayedManager();
+});
+
+// Function to track game visits (add this to your game pages)
+function trackGameVisit(gameSlug) {
+    if (window.recentlyPlayedManager) {
+        window.recentlyPlayedManager.addGameToRecent(gameSlug);
+    } else {
+        // If manager isn't loaded yet, try again after a short delay
+        setTimeout(() => {
+            if (window.recentlyPlayedManager) {
+                window.recentlyPlayedManager.addGameToRecent(gameSlug);
+            }
+        }, 100);
+    }
+}
+
+// Auto-track visits when on game.html page
+if (window.location.pathname.includes('game.html')) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const gameSlug = urlParams.get('game');
+    if (gameSlug) {
+        document.addEventListener('DOMContentLoaded', () => {
+            trackGameVisit(gameSlug);
+        });
+    }
+}
