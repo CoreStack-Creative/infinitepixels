@@ -3047,12 +3047,12 @@ const gamesDatabase = [
  },
 {
  id: 98,
- name: "Crazy Car Parking",
- image: "images/crazycarparkingimage.jpg",
- slug: "crazycarparking",
+ name: "Classic Car Parking",
+ image: "images/classiccarparkingimage.jpg",
+ slug: "classiccarparking",
  gameUrl: "https://html5.gamemonetize.co/h2756112zb490g5tjjpoq6av147lo7i7/",
  tags: ["cars", "levels", "puzzle"],
- description: "Crazy Car Parking is a realistic driving game that puts your precision and control to the test. Take the wheel of vintage cars and carefully maneuver through tight spaces, narrow paths, and challenging obstacles. Each mission requires perfect parking without collisions. It’s more than just gameplay—it’s a true challenge of skill and patience.",
+ description: "Classic Car Parking is a realistic driving game that puts your precision and control to the test. Take the wheel of vintage cars and carefully maneuver through tight spaces, narrow paths, and challenging obstacles. Each mission requires perfect parking without collisions. It’s more than just gameplay—it’s a true challenge of skill and patience.",
  }
 ];  
 
