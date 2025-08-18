@@ -5916,6 +5916,13 @@ window.RelatedGames = {
 // New Releases JavaScript
 document.addEventListener('DOMContentLoaded', function() {
     const newGamesGrid = document.getElementById('newGamesGrid');
+    
+    // ADD THIS CHECK - Exit early if not on the new releases page
+    if (!newGamesGrid) {
+        console.log('Not on new releases page - skipping new games functionality');
+        return;
+    }
+    
     const loadMoreBtn = document.getElementById('loadMoreBtn');
     const loadMoreSection = document.getElementById('loadMoreSection');
     const emptyState = document.getElementById('emptyState');
@@ -5924,6 +5931,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let displayedGamesCount = 0;
     const gamesPerLoad = 12; // Load 12 games at a time
+    
+    // Check if gamesDatabase exists and has data
+    if (typeof gamesDatabase === 'undefined' || !gamesDatabase || gamesDatabase.length === 0) {
+        console.error('gamesDatabase is not loaded or empty');
+        if (emptyState) {
+            emptyState.style.display = 'block';
+        }
+        if (newGamesGrid) {
+            newGamesGrid.style.display = 'none';
+        }
+        if (loadMoreSection) {
+            loadMoreSection.style.display = 'none';
+        }
+        return;
+    }
     
     // Get the newest 30 games (assuming the games are ordered by ID, newest first)
     const newestGames = gamesDatabase.slice(-30).reverse();
@@ -5939,10 +5961,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Function to escape HTML and quotes
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     // Function to truncate description to approximately 2 lines
     function truncateDescription(description, maxLength = 120) {
-        if (description.length <= maxLength) {
-            return { truncated: description, needsReadMore: false };
+        if (!description || description.length <= maxLength) {
+            return { truncated: description || '', needsReadMore: false };
         }
         
         // Find a good place to cut (at a word boundary)
@@ -5955,15 +5985,28 @@ document.addEventListener('DOMContentLoaded', function() {
         return { truncated: truncated + '...', needsReadMore: true };
     }
 
-    // Create game card HTML
+    // Create game card HTML with proper escaping
     function createGameCard(game, index) {
+        if (!game || !game.name || !game.slug) {
+            console.error('Invalid game data:', game);
+            return '<div class="error-card">Invalid game data</div>';
+        }
+
         const { truncated, needsReadMore } = truncateDescription(game.description);
         const cardId = `game-card-${index}`;
         
+        // Escape all text content
+        const gameName = escapeHtml(game.name);
+        const gameImage = game.image || 'images/default-game.jpg';
+        const gameSlug = game.slug;
+        const truncatedDesc = escapeHtml(truncated);
+        const fullDesc = escapeHtml(game.description || '');
+        const gameTags = game.tags || [];
+        
         return `
-            <div class="new-game-card" onclick="playGame('${game.slug}')">
+            <div class="new-game-card" onclick="playGame('${gameSlug}')">
                 <div class="new-game-image">
-                    <img src="${game.image}" alt="${game.name}" loading="lazy">
+                    <img src="${gameImage}" alt="${gameName}" loading="lazy" onerror="this.src='images/default-game.jpg'">
                     <div class="new-badge">New</div>
                     <div class="game-overlay">
                         <button class="play-button">
@@ -5973,49 +6016,73 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
                 <div class="new-game-info">
-                    <h3>${game.name}</h3>
+                    <h3>${gameName}</h3>
                     <div class="new-game-description" id="desc-${cardId}">
-                        <span class="description-text">${truncated}</span>
+                        <span class="description-text">${truncatedDesc}</span>
                         ${needsReadMore ? `
-                            <span class="read-more-btn" onclick="event.stopPropagation(); toggleDescription('${cardId}', '${game.description.replace(/'/g, "\\'")}', '${truncated.replace(/'/g, "\\'")}')">
+                            <span class="read-more-btn" onclick="event.stopPropagation(); toggleDescription('${cardId}')">
                                 Read more
                             </span>
                         ` : ''}
                     </div>
                     <div class="new-game-tags">
-                        ${game.tags.map(tag => `<span class="new-tag">${tag}</span>`).join('')}
+                        ${gameTags.map(tag => `<span class="new-tag">${escapeHtml(tag)}</span>`).join('')}
                     </div>
                 </div>
             </div>
         `;
     }
 
+    // Store full descriptions for toggle function
+    const gameDescriptions = {};
+
     // Load games function
     function loadGames() {
         const gamesToLoad = newestGames.slice(displayedGamesCount, displayedGamesCount + gamesPerLoad);
         
         if (gamesToLoad.length === 0) {
-            loadMoreSection.style.display = 'none';
+            if (loadMoreSection) {
+                loadMoreSection.style.display = 'none';
+            }
             return;
         }
 
         // Create and append game cards
         gamesToLoad.forEach((game, index) => {
-            const gameCard = document.createElement('div');
-            gameCard.innerHTML = createGameCard(game, displayedGamesCount + index);
-            newGamesGrid.appendChild(gameCard.firstElementChild);
+            const cardIndex = displayedGamesCount + index;
+            const cardId = `game-card-${cardIndex}`;
+            
+            // Store descriptions for toggle function
+            gameDescriptions[cardId] = {
+                full: game.description || '',
+                truncated: truncateDescription(game.description || '').truncated
+            };
+
+            const gameCardHTML = createGameCard(game, cardIndex);
+            
+            // Create temporary container and check if HTML is valid
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = gameCardHTML;
+            
+            if (tempDiv.firstElementChild) {
+                newGamesGrid.appendChild(tempDiv.firstElementChild);
+            } else {
+                console.error('Failed to create game card for:', game);
+            }
         });
 
         displayedGamesCount += gamesToLoad.length;
 
         // Hide load more button if all games are loaded
         if (displayedGamesCount >= newestGames.length) {
-            loadMoreSection.style.display = 'none';
+            if (loadMoreSection) {
+                loadMoreSection.style.display = 'none';
+            }
         }
 
         // Update load more button text
         const remainingGames = newestGames.length - displayedGamesCount;
-        if (remainingGames > 0) {
+        if (remainingGames > 0 && loadMoreBtn) {
             loadMoreBtn.innerHTML = `
                 <i class="fas fa-plus"></i>
                 <span>Show ${Math.min(remainingGames, gamesPerLoad)} More Games</span>
@@ -6023,18 +6090,25 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Toggle description function
-    window.toggleDescription = function(cardId, fullDescription, truncatedDescription) {
+    // Toggle description function - simplified
+    window.toggleDescription = function(cardId) {
         const descElement = document.getElementById(`desc-${cardId}`);
+        if (!descElement) return;
+        
         const textElement = descElement.querySelector('.description-text');
         const readMoreBtn = descElement.querySelector('.read-more-btn');
         
+        if (!textElement || !readMoreBtn) return;
+        
+        const descriptions = gameDescriptions[cardId];
+        if (!descriptions) return;
+        
         if (readMoreBtn.textContent.trim() === 'Read more') {
-            textElement.textContent = fullDescription;
+            textElement.textContent = descriptions.full;
             readMoreBtn.textContent = 'Show less';
             readMoreBtn.classList.add('expanded');
         } else {
-            textElement.textContent = truncatedDescription;
+            textElement.textContent = descriptions.truncated;
             readMoreBtn.textContent = 'Read more';
             readMoreBtn.classList.remove('expanded');
         }
@@ -6042,16 +6116,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Play game function
     window.playGame = function(gameSlug) {
-        window.location.href = `game.html?game=${gameSlug}`;
+        if (gameSlug) {
+            window.location.href = `game.html?game=${gameSlug}`;
+        }
     };
 
     // Initialize the page
     function initializePage() {
         if (newestGames.length === 0) {
             // Show empty state if no games
-            newGamesGrid.style.display = 'none';
-            loadMoreSection.style.display = 'none';
-            emptyState.style.display = 'block';
+            if (newGamesGrid) newGamesGrid.style.display = 'none';
+            if (loadMoreSection) loadMoreSection.style.display = 'none';
+            if (emptyState) emptyState.style.display = 'block';
         } else {
             // Load initial games
             loadGames();
@@ -6103,6 +6179,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const homepageNewGamesGrid = document.getElementById('homepageNewGamesGrid');
     const homepageGamesCount = document.getElementById('homepageGamesCount');
     
+    // Check if this is the homepage
+    if (!homepageNewGamesGrid) return;
+    
+    // Check if gamesDatabase exists
+    if (typeof gamesDatabase === 'undefined' || !gamesDatabase || gamesDatabase.length === 0) {
+        console.error('gamesDatabase is not loaded for homepage');
+        homepageNewGamesGrid.innerHTML = `
+            <div class="loading-placeholder">
+                <i class="fas fa-exclamation-circle"></i>
+                <span>No new games available</span>
+            </div>
+        `;
+        return;
+    }
+    
     // Number of games to show on homepage (always 8 to fill the grid)
     function getGamesToShow() {
         return 8; // Always show 8 games to fill the responsive grid properly
@@ -6120,12 +6211,29 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Function to escape HTML
+    function escapeHtml(text) {
+        if (!text) return '';
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+
     // Create compact game card for homepage
     function createHomepageGameCard(game) {
+        if (!game || !game.name || !game.slug) {
+            return '<div class="error-card">Invalid game data</div>';
+        }
+
+        const gameName = escapeHtml(game.name);
+        const gameImage = game.image || 'images/default-game.jpg';
+        const gameSlug = game.slug;
+        const gameTags = game.tags || [];
+
         return `
-            <div class="homepage-game-card" onclick="playGame('${game.slug}')">
+            <div class="homepage-game-card" onclick="playGame('${gameSlug}')">
                 <div class="homepage-game-image">
-                    <img src="${game.image}" alt="${game.name}" loading="lazy">
+                    <img src="${gameImage}" alt="${gameName}" loading="lazy" onerror="this.src='images/default-game.jpg'">
                     <div class="homepage-new-badge">New</div>
                     <div class="homepage-game-overlay">
                         <button class="homepage-play-button">
@@ -6135,9 +6243,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>
                 <div class="homepage-game-info">
-                    <h3>${game.name}</h3>
+                    <h3>${gameName}</h3>
                     <div class="homepage-game-tags">
-                        ${game.tags.slice(0, 3).map(tag => `<span class="homepage-tag">${tag}</span>`).join('')}
+                        ${gameTags.slice(0, 3).map(tag => `<span class="homepage-tag">${escapeHtml(tag)}</span>`).join('')}
                     </div>
                 </div>
             </div>
@@ -6146,8 +6254,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Load homepage games
     function loadHomepageGames() {
-        if (!homepageNewGamesGrid) return;
-
         // Clear loading placeholder
         homepageNewGamesGrid.innerHTML = '';
 
@@ -6163,9 +6269,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Create and append game cards
         homepageGames.forEach(game => {
-            const gameCard = document.createElement('div');
-            gameCard.innerHTML = createHomepageGameCard(game);
-            homepageNewGamesGrid.appendChild(gameCard.firstElementChild);
+            const gameCardHTML = createHomepageGameCard(game);
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = gameCardHTML;
+            
+            if (tempDiv.firstElementChild) {
+                homepageNewGamesGrid.appendChild(tempDiv.firstElementChild);
+            } else {
+                console.error('Failed to create homepage game card for:', game);
+            }
         });
 
         // Update count
@@ -6178,7 +6290,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Play game function (reuse from main new releases if not already defined)
     if (typeof window.playGame === 'undefined') {
         window.playGame = function(gameSlug) {
-            window.location.href = `game.html?game=${gameSlug}`;
+            if (gameSlug) {
+                window.location.href = `game.html?game=${gameSlug}`;
+            }
         };
     }
 
@@ -6585,7 +6699,7 @@ class RecentlyPlayedManager {
         
         return `
             <div class="game-card" onclick="window.location.href='https://www.infinite-pixels.com/game.html?game=${game.slug}'">
-                <img src="${game.image}" alt="${game.name}" class="game-image" 
+                <img src="${game.image}" alt="${game.name}" class="recent-game-image" 
                      onerror="this.src='images/placeholder-game.jpg'">
                 <div class="game-info">
                     <h3 class="game-name">${game.name}</h3>
