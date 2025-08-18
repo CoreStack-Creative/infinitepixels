@@ -3032,9 +3032,18 @@ const gamesDatabase = [
  name: "Retro Bowl",
  image: "images/retrobowlimage.jpg",
  slug: "retrobowl",
- gameUrl: "https://ubggo.github.io/ub-games/snowrider3d/",
+ gameUrl: "https://ubggo.github.io/ub-games/retrobowl/",
  tags: ["runner", "sports", "endless"],
  description: "Strap in and shred icy slopes at breathtaking speed, weaving through trees, rocks, and frosty obstacles in a high-octane downhill thrill ride. Collect gifts along the way to boost your score and unlock sleek new sleds that keep the runs feeling fresh. With smooth 3D visuals and responsive controls, every descent becomes a wintry rush you won’t want to end.",
+ },
+{
+ id: 98,
+ name: "Basketball Line",
+ image: "images/basketballlineimage.jpg",
+ slug: "basketballline",
+ gameUrl: "https://html5.gamemonetize.co/q3kmzjunadtxkw3c55y3465ru3m9vknq/",
+ tags: ["basketball", "sports", "drawing"],
+ description: "Basketball Line is a creative puzzle game where you draw lines to guide the falling ball into the hoop. Time your drawings carefully to ensure a perfect shot. Watch out for bombs that can ruin your play. Keep drawing and dunking to score big!",
  }
 ];  
 
