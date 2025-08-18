@@ -3044,6 +3044,15 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/q3kmzjunadtxkw3c55y3465ru3m9vknq/",
  tags: ["basketball", "sports", "drawing"],
  description: "Basketball Line is a creative puzzle game where you draw lines to guide the falling ball into the hoop. Time your drawings carefully to ensure a perfect shot. Watch out for bombs that can ruin your play. Keep drawing and dunking to score big!",
+ },
+{
+ id: 98,
+ name: "Crazy Car Parking",
+ image: "images/crazycarparkingimage.jpg",
+ slug: "crazycarparking",
+ gameUrl: "https://html5.gamemonetize.co/h2756112zb490g5tjjpoq6av147lo7i7/",
+ tags: ["cars", "levels", "puzzle"],
+ description: "Crazy Car Parking is a realistic driving game that puts your precision and control to the test. Take the wheel of vintage cars and carefully maneuver through tight spaces, narrow paths, and challenging obstacles. Each mission requires perfect parking without collisions. It’s more than just gameplay—it’s a true challenge of skill and patience.",
  }
 ];  
 
@@ -4690,7 +4699,7 @@ const cosmicCategoriesConstellations = {
     },
     'drawing': {
         name: 'Drawing',
-        image: 'images/drawthecarpathimage.jpg',
+        image: 'images/savethedummyimage.jpg',
         description: 'Creative drawing games'
     },
     'runner': {
