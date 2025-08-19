@@ -6791,3 +6791,19 @@ if (window.location.pathname.includes('game.html')) {
         });
     }
 }
+
+document.addEventListener("DOMContentLoaded", function () {
+  // Get the current page (e.g. "games.html")
+  const currentPage = window.location.pathname.split("/").pop();
+
+  // Select all sidebar links
+  const navLinks = document.querySelectorAll(".sidebar a");
+
+  navLinks.forEach(link => {
+    const linkPage = link.getAttribute("href");
+
+    if (linkPage === currentPage || (linkPage === "index.html" && currentPage === "")) {
+      link.classList.add("active");
+    }
+  });
+});
