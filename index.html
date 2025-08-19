@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="google-adsense-account" content="ca-pub-8164325902033897" />
   <title>InfinitePixels - Ultimate Gaming Hub</title>
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="stylesheet" href="style.css" />
@@ -16,7 +15,7 @@
   />
   <link rel="canonical" href="https://infinite-pixels.com/" />
 
-  <!-- Cookiebot CMP -->
+  <!-- ✅ Cookiebot CMP (must come first, only include once) -->
   <script 
     id="Cookiebot"
     src="https://consent.cookiebot.com/uc.js"
@@ -25,7 +24,7 @@
     type="text/javascript">
   </script>
 
-  <!-- Google Consent Mode v2 defaults: deny until consent given -->
+  <!-- ✅ Google Consent Mode v2 defaults: deny until consent given -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -37,7 +36,7 @@
     });
   </script>
 
-  <!-- Google Tag Manager (blocked until 'marketing' consent) -->
+  <!-- ✅ Google Tag Manager (blocked until 'marketing' consent) -->
   <script type="text/plain" data-cookieconsent="marketing">
     (function (w, d, s, l, i) {
       w[l] = w[l] || [];
@@ -51,27 +50,28 @@
     })(window, document, "script", "dataLayer", "GTM-NPJXGVHN");
   </script>
 
-  <!-- Google Analytics 4 (Statistics) -->
+  <!-- ✅ Google Analytics 4 (fires only if Statistics accepted) -->
   <script type="text/plain" data-cookieconsent="statistics">
     gtag("js", new Date());
     gtag("config", "G-0YQ8BM0QCT");
   </script>
 
-  <!-- Google AdSense (Marketing) -->
-  <script type="text/plain" data-cookieconsent="marketing"
-    data-ad-client="ca-pub-8164325902033897"
-    async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js">
-  </script>
+  <!-- ❌ DO NOT put AdSense in <head> with data-cookieconsent -->
+  <!-- ✅ Place AdSense inside <body>, controlled by Cookiebot -->
 </head>
-
-
-
 <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NPJXGVHN"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
 
-   <!-- Google Tag Manager (noscript) -->
-   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NPJXGVHN"
-   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-   <!-- End Google Tag Manager (noscript) -->
+    <!-- ✅ Google AdSense (fires only if Marketing accepted) -->
+    <script type="text/plain" data-cookieconsent="marketing"
+      data-ad-client="ca-pub-8164325902033897"
+      async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js">
+    </script>
 
     <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
