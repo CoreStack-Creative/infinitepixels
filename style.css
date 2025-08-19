@@ -262,7 +262,7 @@ body {
 }
 
 
-/* Sidebar Styles */
+/* Sidebar: make it a flex container */
 .sidebar {
    position: fixed;
    top: 0;
@@ -277,8 +277,30 @@ body {
    z-index: 1000;
    box-shadow: 0 0 30px rgba(138, 43, 226, 0.2);
    padding-top: 60px; /* Account for the top bar */
+
+   display: flex;
+   flex-direction: column;   /* so we can pin header + footer */
 }
 
+/* Scrollable content area */
+.sidebar-content {
+   flex: 1;                /* take up remaining space */
+   overflow-y: auto;       /* enable scrolling */
+   overflow-x: hidden;     /* no horizontal scroll */
+   padding-bottom: 10px;   /* so last item isn’t cut off */
+}
+
+/* Optional: custom scrollbar styling */
+.sidebar-content::-webkit-scrollbar {
+   width: 6px;
+}
+.sidebar-content::-webkit-scrollbar-thumb {
+   background: rgba(138, 43, 226, 0.4);
+   border-radius: 3px;
+}
+.sidebar-content::-webkit-scrollbar-track {
+   background: transparent;
+}
 
 .sidebar.collapsed {
    /* Move sidebar further off-screen when collapsed */
@@ -373,6 +395,48 @@ body {
    font-size: 18px;
    width: 20px;
    text-align: center;
+}
+
+/* Divider */
+.sidebar-divider {
+    border: 0;
+    height: 1px;
+    background: #ccc;
+    margin: 20px 0;
+}
+
+/* Secondary links - muted style */
+.secondary-links a {
+    color: #888;           /* muted text */
+    font-weight: normal;
+    opacity: 0.7;
+}
+
+.secondary-links a:hover {
+    color: #555;
+    opacity: 1;
+}
+
+/* Contact button */
+.contact-btn-wrapper {
+    margin-top: auto;
+    padding: 15px;
+}
+
+.contact-btn {
+    display: block;
+    text-align: center;
+    background-color: #8a2be2; /* standout color */
+    color: white;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.contact-btn:hover {
+    background-color: #9932cc;
 }
 
 
