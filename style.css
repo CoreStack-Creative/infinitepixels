@@ -2506,7 +2506,7 @@ body {
 }
 
 
-/* Footer Styles */
+/* Default footer style: centered for all pages */
 .site-footer {
    background: linear-gradient(135deg, rgba(10, 10, 35, 0.95) 0%, rgba(30, 30, 63, 0.95) 100%);
    backdrop-filter: blur(20px);
@@ -2514,8 +2514,16 @@ body {
    margin-top: 80px;
    position: relative;
    overflow: hidden;
+   width: 100%;       /* full width by default */
+   margin-left: 0;    /* no offset by default */
+   box-sizing: border-box;
 }
 
+/* Only shift footer on the news page */
+.news-page-container .site-footer {
+   width: calc(100% - 280px); /* matches news content width */
+   margin-left: 280px;        /* align with sidebar */
+}
 
 .site-footer::before {
    content: '';
@@ -7364,7 +7372,7 @@ html {
     display: grid;
     grid-template-columns: 1fr 320px;
     gap: 30px;
-    padding-right: 30px;
+    padding-right: 10px;
 }
 
 /* Featured Banner */
