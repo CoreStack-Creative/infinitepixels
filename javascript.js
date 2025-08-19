@@ -105,7 +105,10 @@ const gameData = [
    { name: "Slowroads IO", link: "/game.html?game=slowroadsio" },
    { name: "Slope", link: "/game.html?game=slope" },
    { name: "Snow Rider 3D", link: "/game.html?game=snowrider3d" },
-   { name: "Retro Bowl", link: "/game.html?game=retrobowl" }
+   { name: "Retro Bowl", link: "/game.html?game=retrobowl" },
+   { name: "Basketball Line", link: "/game.html?game=basketballline" },
+   { name: "Pop the Bubble", link: "/game.html?game=popthebubble" }, 
+   { name: "Classic Car Parking", link: "/game.html?game=classiccarparking" }
 
 ];
 
@@ -3053,7 +3056,16 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/h2756112zb490g5tjjpoq6av147lo7i7/",
  tags: ["cars", "levels", "puzzle"],
  description: "Classic Car Parking is a realistic driving game that puts your precision and control to the test. Take the wheel of vintage cars and carefully maneuver through tight spaces, narrow paths, and challenging obstacles. Each mission requires perfect parking without collisions. It’s more than just gameplay—it’s a true challenge of skill and patience.",
- }
+ },
+{ 
+ id: 99, 
+ name: "Pop the Bubbles",
+ image: "images/popthebubblesimage.jpg",
+ slug: "popthebubbles",
+ gameUrl: "https://html5.gamemonetize.co/s7e6xmuq8kwidnku964f8072hflua90i/",
+ tags: ["satisfying", "levels", "puzzle"],  
+ description: "This relaxing bubble-popping game is the perfect way to unwind after a busy day. Enjoy vibrant colors, soothing music, and endless levels designed to melt away stress. With simple gameplay and a calming atmosphere, it offers the ideal mix of fun and relaxation. Jump in now and experience a peaceful escape filled with lighthearted enjoyment!",
+}
 ];  
 
 // Make games database globally accessible
