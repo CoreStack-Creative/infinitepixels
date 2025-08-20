@@ -3078,7 +3078,7 @@ const gamesDatabase = [
 { 
  id: 100, 
  name: "Airport Manager",
- image: "images/airportmamagerimage.jpg",
+ image: "images/airportmanagerimage.jpg",
  slug: "airportmanager", 
  gameUrl: "https://html5.gamemonetize.co/sg0qh3o90hxhdvsggxqfuwuihhhsr3vo/",
  tags: ["clicker", "levels", "puzzle"],  
