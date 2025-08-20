@@ -3083,7 +3083,7 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/sg0qh3o90hxhdvsggxqfuwuihhhsr3vo/",
  tags: ["clicker", "levels", "puzzle"],  
  description: "Step into the role of an Airport Manager and see if you can successfully run your own airline in Airport Manager Online. Take on tasks like handling security checks, checking boarding passes, flying planes, and even helping travelers find their lost items. Use your management skills to grow and improve your airport, turning it into the top destination for passengers. With exciting challenges and endless fun, this game offers a truly engaging airport adventure!",
-}
+},
 { 
  id: 101, 
  name: "Sausage Flip",
