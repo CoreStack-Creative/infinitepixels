@@ -2583,11 +2583,32 @@ body {
    box-sizing: border-box;
 }
 
-/* Only shift footer on the news page */
+/* Footer - Default state with sidebar visible */
 .news-page-container .site-footer {
-   width: calc(100% - 280px); /* matches news content width */
-   margin-left: 280px;        /* align with sidebar */
+    width: calc(100% - 280px);
+    margin-left: 280px;
+    transition: margin-left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
+
+/* Footer - Expanded state when sidebar is collapsed */
+.news-page-container .site-footer.expanded {
+    width: 100%;
+    margin-left: 0px;
+}
+
+/* Mobile responsive footer */
+@media (max-width: 768px) {
+    .news-page-container .site-footer {
+        width: 100%;
+        margin-left: 0px;
+    }
+    
+    .news-page-container .site-footer.expanded {
+        margin-left: 220px;
+        width: calc(100% - 220px);
+    }
+}
+
 
 .site-footer::before {
    content: '';
@@ -7426,7 +7447,7 @@ html {
 
 /* News Page Specific Styles - All scoped within .news-page-container */
 
-/* Main Layout */
+/* Main Layout - Desktop First */
 .news-page-container .news-main-content {
     margin-left: 280px;
     margin-top: 60px;
@@ -7437,6 +7458,36 @@ html {
     grid-template-columns: 1fr 320px;
     gap: 30px;
     padding-right: 10px;
+}
+
+/* Desktop expanded state (sidebar collapsed) */
+.news-page-container .news-main-content.expanded {
+    margin-left: 0px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .news-page-container .news-main-content {
+        grid-template-columns: 1fr;
+        margin-left: 280px;
+        padding-right: 20px;
+    }
+    
+    .news-page-container .news-main-content.expanded {
+        margin-left: 0px;
+    }
+}
+
+@media (max-width: 768px) {
+    .news-page-container .news-main-content {
+        margin-left: 0px; /* Start with no margin on mobile */
+        padding: 0 15px;
+        gap: 20px;
+    }
+    
+    .news-page-container .news-main-content.expanded {
+        margin-left: 220px; /* Push content right when sidebar is visible on mobile */
+    }
 }
 
 /* Featured Banner */

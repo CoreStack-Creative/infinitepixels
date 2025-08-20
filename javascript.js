@@ -243,8 +243,15 @@ if (sidebarToggle) {
        sidebarCollapsed = !sidebarCollapsed;
        if (sidebar) sidebar.classList.toggle('collapsed');
        if (mainContent) mainContent.classList.toggle('expanded');
+       
+       // ADD THESE LINES: Toggle expanded class for news page elements
+       const newsMainContent = document.querySelector('.news-page-container .news-main-content');
+       const newsFooter = document.querySelector('.news-page-container .site-footer');
+       
+       if (newsMainContent) newsMainContent.classList.toggle('expanded');
+       if (newsFooter) newsFooter.classList.toggle('expanded');
+       
        mobileSidebarOverlayHandler();
-
 
        // Selected when menu is open, unselected when closed
        if (!sidebarCollapsed) {
@@ -275,6 +282,7 @@ window.addEventListener('resize', () => {
    handleResize();
    mobileSidebarOverlayHandler();
 });
+
 
 
 document.addEventListener('DOMContentLoaded', () => {
