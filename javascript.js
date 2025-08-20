@@ -2756,7 +2756,7 @@ const gamesDatabase = [
  image: "images/jellyrun2048image.jpg",
  slug: "jellyrun2048",
  gameUrl: "https://html5.gamemonetize.co/y51x5nb673umhgqzva6jz2596cd57cqc/",
- tags: ["arcade", "2048", "action"],
+ tags: ["arcade", "2048", "runner"],
  description: "Jelly Run 2048 is a fun and challenging puzzle game that blends the classic 2048 number-merging concept with fast-paced parkour action. Swipe your jelly block left or right to navigate obstacles and link cubes together. Combine matching cubes to double their value and aim to reach 2048 or higher. Each collision with a same-number tile creates a bigger cube, keeping the gameplay exciting and strategic.",
  },
  {
