@@ -6864,7 +6864,9 @@ class InfinitePixelsGameSection {
             }
         };
 
-
+        return categoryInfo[this.category] || {
+            title: `${this.category.charAt(0).toUpperCase() + this.category.slice(1)} Games`,
+        };
     }
 
     loadGames() {
