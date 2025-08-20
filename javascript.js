@@ -109,7 +109,8 @@ const gameData = [
    { name: "Basketball Line", link: "/game.html?game=basketballline" },
    { name: "Pop the Bubble", link: "/game.html?game=popthebubble" }, 
    { name: "Classic Car Parking", link: "/game.html?game=classiccarparking" },
-   { name: "Airport Manager", link: "/game.html?game=airportmanager" },
+   { name: "Airport Manager", link: "/game.html?game=airportmanager" }, 
+   { name: "Sausage Flip", link: "/game.html?game=sausageflip" }, 
 ];
 
 
@@ -3083,6 +3084,16 @@ const gamesDatabase = [
  tags: ["clicker", "levels", "puzzle"],  
  description: "Step into the role of an Airport Manager and see if you can successfully run your own airline in Airport Manager Online. Take on tasks like handling security checks, checking boarding passes, flying planes, and even helping travelers find their lost items. Use your management skills to grow and improve your airport, turning it into the top destination for passengers. With exciting challenges and endless fun, this game offers a truly engaging airport adventure!",
 }
+{ 
+ id: 101, 
+ name: "Sausage Flip",
+ image: "images/sausageflipimage.jpg",
+ slug: "sausageflip", 
+ gameUrl: "https://html5.gamemonetize.co/sg0qh3o90hxhdvsggxqfuwuihhhsr3vo/",
+ tags: ["clicker", "levels", "puzzle"],  
+ description: "In Sausage Flip Free, youre not just any sausage. You’re a daring, bouncy hero on a mission to overcome wild levels full of danger, timing, and precision! This action, casual game blends goofy fun with real skill challenges! Tap to launch your sausage with a perfect flip! Launch the sausage on the vine and keep moving to the next pot or shelf, etc. Use your perfect skills to master each tricky obstacle. Cross the finish line to win.",
+}
+
 ];  
 
 // Make games database globally accessible
