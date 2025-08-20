@@ -108,8 +108,8 @@ const gameData = [
    { name: "Retro Bowl", link: "/game.html?game=retrobowl" },
    { name: "Basketball Line", link: "/game.html?game=basketballline" },
    { name: "Pop the Bubble", link: "/game.html?game=popthebubble" }, 
-   { name: "Classic Car Parking", link: "/game.html?game=classiccarparking" }
-
+   { name: "Classic Car Parking", link: "/game.html?game=classiccarparking" },
+   { name: "Airport Manager", link: "/game.html?game=airportmanager" },
 ];
 
 
@@ -3073,6 +3073,15 @@ const gamesDatabase = [
  gameUrl: "https://html5.gamemonetize.co/s7e6xmuq8kwidnku964f8072hflua90i/",
  tags: ["satisfying", "levels", "puzzle"],  
  description: "This relaxing bubble-popping game is the perfect way to unwind after a busy day. Enjoy vibrant colors, soothing music, and endless levels designed to melt away stress. With simple gameplay and a calming atmosphere, it offers the ideal mix of fun and relaxation. Jump in now and experience a peaceful escape filled with lighthearted enjoyment!",
+},
+{ 
+ id: 100, 
+ name: "Airport Manager",
+ image: "images/airportmamagerimage.jpg",
+ slug: "airportmanager", 
+ gameUrl: "https://html5.gamemonetize.co/sg0qh3o90hxhdvsggxqfuwuihhhsr3vo/",
+ tags: ["clicker", "levels", "puzzle"],  
+ description: "Step into the role of an Airport Manager and see if you can successfully run your own airline in Airport Manager Online. Take on tasks like handling security checks, checking boarding passes, flying planes, and even helping travelers find their lost items. Use your management skills to grow and improve your airport, turning it into the top destination for passengers. With exciting challenges and endless fun, this game offers a truly engaging airport adventure!",
 }
 ];  
 
