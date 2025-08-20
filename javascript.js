@@ -4914,6 +4914,37 @@ let cosmicCategoriesCurrentModal = null;
 let cosmicCategoriesCurrentPage = 1;
 let cosmicCategoriesCurrentGames = [];
 
+// URL parameter functions
+function cosmicCategoriesGetUrlParameter(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);
+}
+
+function cosmicCategoriesUpdateUrl(category) {
+    const url = new URL(window.location);
+    if (category) {
+        url.searchParams.set('category', category);
+    } else {
+        url.searchParams.delete('category');
+    }
+    
+    // Update URL without page reload
+    window.history.pushState({ category }, '', url);
+}
+
+// Handle browser back/forward buttons
+function cosmicCategoriesHandlePopState(event) {
+    const category = cosmicCategoriesGetUrlParameter('category');
+    
+    if (category && cosmicCategoriesCurrentModal !== category) {
+        // Open the category from URL
+        cosmicCategoriesOpenModalFromUrl(category);
+    } else if (!category && cosmicCategoriesCurrentModal) {
+        // Close modal if no category in URL
+        cosmicCategoriesCloseModalWithoutUrlUpdate();
+    }
+}
+
 // Create modal HTML
 function cosmicCategoriesCreateModal() {
     return `
@@ -4943,8 +4974,8 @@ function cosmicCategoriesCreateModal() {
     `;
 }
 
-// Open modal with category games
-function cosmicCategoriesOpenModal(category) {
+// Open modal from URL parameter (without updating URL again)
+function cosmicCategoriesOpenModalFromUrl(category) {
     // Ensure modal exists
     let modalOverlay = document.getElementById('cosmicCategoriesModalOverlay');
     if (!modalOverlay) {
@@ -4991,8 +5022,17 @@ function cosmicCategoriesOpenModal(category) {
     document.body.style.overflow = 'hidden'; // Prevent background scrolling
 }
 
-// Close modal
-function cosmicCategoriesCloseModal() {
+// Open modal with category games (with URL update)
+function cosmicCategoriesOpenModal(category) {
+    // Update URL
+    cosmicCategoriesUpdateUrl(category);
+    
+    // Open modal
+    cosmicCategoriesOpenModalFromUrl(category);
+}
+
+// Close modal without updating URL (for browser navigation)
+function cosmicCategoriesCloseModalWithoutUrlUpdate() {
     const modalOverlay = document.getElementById('cosmicCategoriesModalOverlay');
     if (modalOverlay) {
         modalOverlay.classList.remove('cosmic-categories-modal-active');
@@ -5003,6 +5043,15 @@ function cosmicCategoriesCloseModal() {
         cosmicCategoriesCurrentPage = 1;
         cosmicCategoriesCurrentGames = [];
     }
+}
+
+// Close modal (with URL update)
+function cosmicCategoriesCloseModal() {
+    // Update URL (remove category parameter)
+    cosmicCategoriesUpdateUrl(null);
+    
+    // Close modal
+    cosmicCategoriesCloseModalWithoutUrlUpdate();
 }
 
 // Render current page of games
@@ -5114,6 +5163,17 @@ function cosmicCategoriesToggleDimension(category) {
     cosmicCategoriesOpenModal(category);
 }
 
+// Check for URL parameter on page load
+function cosmicCategoriesCheckUrlOnLoad() {
+    const category = cosmicCategoriesGetUrlParameter('category');
+    if (category) {
+        // Small delay to ensure everything is loaded
+        setTimeout(() => {
+            cosmicCategoriesOpenModalFromUrl(category);
+        }, 200);
+    }
+}
+
 // Initialize categories page
 function cosmicCategoriesInitializeUniverse() {
     const categoriesGrid = document.getElementById('categoriesGrid');
@@ -5147,19 +5207,31 @@ function cosmicCategoriesInitializeUniverse() {
     } else {
         categoriesGrid.innerHTML = '<div class="cosmic-categories-void-message">No games available in any category yet...</div>';
     }
+    
+    // Check URL parameter after initialization
+    cosmicCategoriesCheckUrlOnLoad();
 }
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
     // Small delay to ensure allGamesDatabase is loaded
     setTimeout(cosmicCategoriesInitializeUniverse, 100);
+    
+    // Add popstate listener for browser navigation
+    window.addEventListener('popstate', cosmicCategoriesHandlePopState);
 });
 
 // Also initialize if script loads after DOM
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', cosmicCategoriesInitializeUniverse);
+    document.addEventListener('DOMContentLoaded', function() {
+        cosmicCategoriesInitializeUniverse();
+        window.addEventListener('popstate', cosmicCategoriesHandlePopState);
+    });
 } else {
-    setTimeout(cosmicCategoriesInitializeUniverse, 100);
+    setTimeout(() => {
+        cosmicCategoriesInitializeUniverse();
+        window.addEventListener('popstate', cosmicCategoriesHandlePopState);
+    }, 100);
 }
 
 // About Page Interactions JavaScript - OPTIMIZED VERSION
@@ -6982,7 +7054,7 @@ class InfinitePixelsGameSectionsManager {
     generateSectionHTML(sectionId, showHeader, category = '', viewMoreUrl = '') {
         // Generate the view more URL if not provided
         if (!viewMoreUrl && category) {
-            viewMoreUrl = `https://www.infinite-pixels.com/category.html?category=${category.toLowerCase()}`;
+            viewMoreUrl = `https://www.infinite-pixels.com/category.html?category=${category.toLowerCase().replace(/\s+/g, '+')}`;
         }
     
         const viewMoreButton = viewMoreUrl ? `
@@ -7009,7 +7081,7 @@ class InfinitePixelsGameSectionsManager {
 
 // Update the createSection method to pass category and custom URL
 createSection(sectionId, category, options = {}) {
-    const viewMoreUrl = options.viewMoreUrl || `https://www.infinite-pixels.com/category.html?category=${category.toLowerCase()}`;
+    const viewMoreUrl = options.viewMoreUrl || `https://www.infinite-pixels.com/category.html?category=${category.toLowerCase().replace(/\s+/g, '+')}`;
     const sectionHTML = this.generateSectionHTML(sectionId, options.showHeader !== false, category, viewMoreUrl);
     this.container.insertAdjacentHTML('beforeend', sectionHTML);
     
