@@ -6840,42 +6840,31 @@ class InfinitePixelsGameSection {
         const categoryInfo = {
             multiplayer: {
                 title: 'Multiplayer Games',
-                subtitle: 'Connect and compete with players from around the world'
             },
             racing: {
                 title: 'Racing Games',
-                subtitle: 'Experience high-speed thrills and competitive racing action'
             },
             action: {
                 title: 'Action Games',
-                subtitle: 'Fast-paced adventures and intense gameplay experiences'
             },
             shooter: {
                 title: 'Shooter Games',
-                subtitle: 'Tactical combat and precision shooting challenges'
             },
             fighting: {
                 title: '2 Player Games',
-                subtitle: 'Master combat skills in epic one-on-one battles'
             },
             cars: {
                 title: 'Car Games',
-                subtitle: 'Drive, race, and customize your favorite vehicles'
             },
             '3d': {
                 title: '3D Games',
-                subtitle: 'Immersive three-dimensional gaming experiences'
             },
             sports: {
                 title: 'Sports Games',
-                subtitle: 'Compete in your favorite sports and athletic challenges'
             }
         };
 
-        return categoryInfo[this.category] || {
-            title: `${this.category.charAt(0).toUpperCase() + this.category.slice(1)} Games`,
-            subtitle: `Discover amazing ${this.category} games`
-        };
+
     }
 
     loadGames() {
@@ -7084,8 +7073,8 @@ infinitePixelsGameManager.createMultipleSections([
         category: 'multiplayer',
         options: {
             maxGames: 4,
-            customTitle: 'Multiplayer Zone',
-            customSubtitle: 'Challenge friends and players worldwide'
+            customTitle: 'Top Multiplayer Games',
+            customSubtitle: ''
         }
     },
     {
@@ -7093,8 +7082,8 @@ infinitePixelsGameManager.createMultipleSections([
         category: 'racing',
         options: {
             maxGames: 4,
-            customTitle: 'Featured Racing Games',
-            customSubtitle: 'High-octane racing experiences that will get your heart pumping'
+            customTitle: 'Top Racing Games',
+            customSubtitle: ''
         }
     },
     {
@@ -7103,7 +7092,7 @@ infinitePixelsGameManager.createMultipleSections([
         options: {
             maxGames: 4,
             customTitle: 'Top Action Games',
-            customSubtitle: 'Adrenaline-fueled adventures and intense gameplay'
+            customSubtitle: ''
         }
     },
     {
@@ -7111,8 +7100,8 @@ infinitePixelsGameManager.createMultipleSections([
         category: 'shooter',
         options: {
             maxGames: 4,
-            customTitle: 'Best Shooter Games',
-            customSubtitle: 'Precision, strategy, and fast-paced combat'
+            customTitle: 'Top Shooter Games',
+            customSubtitle: ''
         }
     },
     {
@@ -7120,8 +7109,8 @@ infinitePixelsGameManager.createMultipleSections([
         category: '2 player',
         options: {
             maxGames: 4,
-            customTitle: '2 Player',
-            customSubtitle: 'Engage in epic one-on-one battles with friends'
+            customTitle: 'Top 2 Player Games',
+            customSubtitle: ''
         }
     },
     {
@@ -7129,8 +7118,8 @@ infinitePixelsGameManager.createMultipleSections([
         category: 'cars',
         options: {
             maxGames: 4,
-            customTitle: 'Car Collection',
-            customSubtitle: 'Drive your dream cars in stunning environments'
+            customTitle: 'Top Car Games',
+            customSubtitle: ''
         }
     }
 ]);
