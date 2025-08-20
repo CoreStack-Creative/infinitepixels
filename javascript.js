@@ -6815,3 +6815,335 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
+
+class InfinitePixelsGameSection {
+    constructor(sectionId, category, options = {}) {
+        this.sectionId = sectionId;
+        this.category = category.toLowerCase();
+        this.maxGames = options.maxGames || null;
+        this.customTitle = options.customTitle || null;
+        this.customSubtitle = options.customSubtitle || null;
+        this.showHeader = options.showHeader !== false;
+        this.maxDescriptionLength = options.maxDescriptionLength || 100;
+    }
+
+    getElements() {
+        return {
+            section: document.getElementById(`${this.sectionId}-section`),
+            title: document.getElementById(`${this.sectionId}-category-title`),
+            subtitle: document.getElementById(`${this.sectionId}-category-subtitle`),
+            grid: document.getElementById(`${this.sectionId}-games-grid`)
+        };
+    }
+
+    getCategoryInfo() {
+        const categoryInfo = {
+            multiplayer: {
+                title: 'Multiplayer Games',
+                subtitle: 'Connect and compete with players from around the world'
+            },
+            racing: {
+                title: 'Racing Games',
+                subtitle: 'Experience high-speed thrills and competitive racing action'
+            },
+            action: {
+                title: 'Action Games',
+                subtitle: 'Fast-paced adventures and intense gameplay experiences'
+            },
+            shooter: {
+                title: 'Shooter Games',
+                subtitle: 'Tactical combat and precision shooting challenges'
+            },
+            fighting: {
+                title: '2 Player Games',
+                subtitle: 'Master combat skills in epic one-on-one battles'
+            },
+            cars: {
+                title: 'Car Games',
+                subtitle: 'Drive, race, and customize your favorite vehicles'
+            },
+            '3d': {
+                title: '3D Games',
+                subtitle: 'Immersive three-dimensional gaming experiences'
+            },
+            sports: {
+                title: 'Sports Games',
+                subtitle: 'Compete in your favorite sports and athletic challenges'
+            }
+        };
+
+        return categoryInfo[this.category] || {
+            title: `${this.category.charAt(0).toUpperCase() + this.category.slice(1)} Games`,
+            subtitle: `Discover amazing ${this.category} games`
+        };
+    }
+
+    loadGames() {
+        const elements = this.getElements();
+        if (!elements.grid) return;
+
+        let filteredGames = this.getGamesByCategory();
+
+        if (this.maxGames && filteredGames.length > this.maxGames) {
+            filteredGames = filteredGames.slice(0, this.maxGames);
+        }
+
+        if (filteredGames.length === 0) {
+            elements.grid.innerHTML = `
+                <div class="infinite-pixels-no-games">
+                    <p>No games found in the "${this.category}" category.</p>
+                    <p>Check back soon for new additions!</p>
+                </div>
+            `;
+            return;
+        }
+
+        elements.grid.innerHTML = filteredGames.map(game => this.createGameCard(game)).join('');
+        this.updateCategoryHeader();
+    }
+
+    updateCategoryHeader() {
+        const elements = this.getElements();
+        if (!this.showHeader) return;
+
+        const categoryInfo = this.getCategoryInfo();
+        const title = this.customTitle || categoryInfo.title;
+        const subtitle = this.customSubtitle || categoryInfo.subtitle;
+
+        if (elements.title) elements.title.textContent = title;
+        if (elements.subtitle) elements.subtitle.textContent = subtitle;
+    }
+
+    getGamesByCategory() {
+        if (typeof gamesDatabase === 'undefined') {
+            console.warn('gamesDatabase not found');
+            return [];
+        }
+        
+        return gamesDatabase.filter(game => 
+            game.tags && game.tags.some(tag => tag.toLowerCase() === this.category.toLowerCase())
+        );
+    }
+
+    createGameCard(game) {
+        const shortDescription = this.truncateDescription(game.description);
+        const gamePageUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
+
+        return `
+            <div class="infinite-pixels-game-card" data-game-id="${game.id}" data-section="${this.sectionId}">
+                <img src="${game.image}" alt="${game.name}" class="infinite-pixels-game-image" onerror="this.src='images/placeholder-game.jpg'">
+                <div class="infinite-pixels-game-content">
+                    <a href="${gamePageUrl}" class="infinite-pixels-game-title">${game.name}</a>
+                    <div class="infinite-pixels-game-tags">
+                        ${game.tags.map(tag => `<span class="infinite-pixels-game-tag">${tag}</span>`).join('')}
+                    </div>
+                    <div class="infinite-pixels-game-description">
+                        <span class="infinite-pixels-description-preview">
+                            ${shortDescription.text}
+                            ${shortDescription.isTruncated ? 
+                                `<button class="infinite-pixels-read-more-btn" onclick="infinitePixelsGameManager.toggleDescription('${this.sectionId}', ${game.id})">read more</button>` : 
+                                ''
+                            }
+                        </span>
+                        <span class="infinite-pixels-description-full" style="display: none;">
+                            ${game.description}
+                            <button class="infinite-pixels-read-more-btn" onclick="infinitePixelsGameManager.toggleDescription('${this.sectionId}', ${game.id})">read less</button>
+                        </span>
+                    </div>
+                    <a href="${gamePageUrl}" class="infinite-pixels-play-button">Play Now</a>
+                </div>
+            </div>
+        `;
+    }
+
+    truncateDescription(description) {
+        if (!description || description.length <= this.maxDescriptionLength) {
+            return { text: description || '', isTruncated: false };
+        }
+
+        const truncated = description.substring(0, this.maxDescriptionLength);
+        const lastSpaceIndex = truncated.lastIndexOf(' ');
+        
+        return {
+            text: truncated.substring(0, lastSpaceIndex > 0 ? lastSpaceIndex : this.maxDescriptionLength) + '...',
+            isTruncated: true
+        };
+    }
+
+    refresh(newCategory = null, newOptions = {}) {
+        if (newCategory) this.category = newCategory.toLowerCase();
+        Object.assign(this, newOptions);
+        this.loadGames();
+    }
+}
+
+class InfinitePixelsGameSectionsManager {
+    constructor(containerSelector) {
+        this.container = document.querySelector(containerSelector);
+        this.sections = new Map();
+        
+        if (!this.container) {
+            console.error(`Container not found: ${containerSelector}`);
+            return;
+        }
+    }
+
+    generateSectionHTML(sectionId, showHeader, category = '', viewMoreUrl = '') {
+        // Generate the view more URL if not provided
+        if (!viewMoreUrl && category) {
+            viewMoreUrl = `https://www.infinite-pixels.com/category.html?category=${category.toLowerCase()}`;
+        }
+    
+        const viewMoreButton = viewMoreUrl ? `
+            <a href="${viewMoreUrl}" class="infinite-pixels-view-more-btn">
+                View More ${category} Games
+            </a>
+        ` : '';
+
+        return `
+            <section class="infinite-pixels-game-category-section" id="${sectionId}-section">
+                ${showHeader ? `
+                <div class="infinite-pixels-category-header">
+                    <h2 class="infinite-pixels-category-title" id="${sectionId}-category-title"></h2>
+                    <p class="infinite-pixels-category-subtitle" id="${sectionId}-category-subtitle"></p>
+                    ${viewMoreButton}
+                </div>
+                ` : ''}
+                <div class="infinite-pixels-games-grid" id="${sectionId}-games-grid">
+                    <!-- Games will be populated here -->
+                </div>
+            </section>
+        `;
+    }
+
+// Update the createSection method to pass category and custom URL
+createSection(sectionId, category, options = {}) {
+    const viewMoreUrl = options.viewMoreUrl || `https://www.infinite-pixels.com/category.html?category=${category.toLowerCase()}`;
+    const sectionHTML = this.generateSectionHTML(sectionId, options.showHeader !== false, category, viewMoreUrl);
+    this.container.insertAdjacentHTML('beforeend', sectionHTML);
+    
+    const section = new InfinitePixelsGameSection(sectionId, category, options);
+    this.sections.set(sectionId, section);
+    
+    setTimeout(() => section.loadGames(), 10);
+    
+    return section;
+}
+
+    removeSection(sectionId) {
+        const sectionElement = document.getElementById(`${sectionId}-section`);
+        if (sectionElement) {
+            sectionElement.remove();
+        }
+        this.sections.delete(sectionId);
+    }
+
+    getSection(sectionId) {
+        return this.sections.get(sectionId);
+    }
+
+    refreshAllSections() {
+        this.sections.forEach(section => section.loadGames());
+    }
+
+    createMultipleSections(sectionsConfig) {
+        sectionsConfig.forEach(config => {
+            this.createSection(config.id, config.category, config.options || {});
+        });
+    }
+
+    toggleDescription(sectionId, gameId) {
+        const section = this.getSection(sectionId);
+        if (!section) return;
+
+        const gameCard = document.querySelector(`[data-game-id="${gameId}"][data-section="${sectionId}"]`);
+        if (!gameCard) return;
+
+        const preview = gameCard.querySelector('.infinite-pixels-description-preview');
+        const full = gameCard.querySelector('.infinite-pixels-description-full');
+
+        if (preview && full) {
+            if (preview.style.display !== 'none') {
+                preview.style.display = 'none';
+                full.style.display = 'block';
+            } else {
+                preview.style.display = 'block';
+                full.style.display = 'none';
+            }
+        }
+    }
+}
+
+// Initialize the manager
+const infinitePixelsGameManager = new InfinitePixelsGameSectionsManager('#infinite-pixels-game-sections-container');
+
+// Create multiple sections automatically
+infinitePixelsGameManager.createMultipleSections([
+    {
+        id: 'multiplayer-zone',
+        category: 'multiplayer',
+        options: {
+            maxGames: 4,
+            customTitle: 'Multiplayer Zone',
+            customSubtitle: 'Challenge friends and players worldwide'
+        }
+    },
+    {
+        id: 'featured-racing',
+        category: 'racing',
+        options: {
+            maxGames: 4,
+            customTitle: 'Featured Racing Games',
+            customSubtitle: 'High-octane racing experiences that will get your heart pumping'
+        }
+    },
+    {
+        id: 'top-action',
+        category: 'action',
+        options: {
+            maxGames: 4,
+            customTitle: 'Top Action Games',
+            customSubtitle: 'Adrenaline-fueled adventures and intense gameplay'
+        }
+    },
+    {
+        id: 'best-shooters',
+        category: 'shooter',
+        options: {
+            maxGames: 4,
+            customTitle: 'Best Shooter Games',
+            customSubtitle: 'Precision, strategy, and fast-paced combat'
+        }
+    },
+    {
+        id: '2-player',
+        category: '2 player',
+        options: {
+            maxGames: 4,
+            customTitle: '2 Player',
+            customSubtitle: 'Engage in epic one-on-one battles with friends'
+        }
+    },
+    {
+        id: 'car-collection',
+        category: 'cars',
+        options: {
+            maxGames: 4,
+            customTitle: 'Car Collection',
+            customSubtitle: 'Drive your dream cars in stunning environments'
+        }
+    }
+]);
+
+// Optional utility functions
+function refreshInfinitePixelsGameSections() {
+    infinitePixelsGameManager.refreshAllSections();
+}
+
+function addInfinitePixelsGameSection(id, category, options = {}) {
+    return infinitePixelsGameManager.createSection(id, category, options);
+}
+
+function removeInfinitePixelsGameSection(id) {
+    infinitePixelsGameManager.removeSection(id);
+}
