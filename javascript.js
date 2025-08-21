@@ -6311,7 +6311,8 @@ class FavoritesManager {
             this.initFavoritesPage();
         }
         
-
+        // Initialize game control bar if present
+        this.initGameControlBar();
         
 
     }
