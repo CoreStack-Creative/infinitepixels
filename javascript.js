@@ -6859,8 +6859,11 @@ class HomepageGamesManager {
         ];
     }
 
-    // Calculate optimal grid layout
-    calculateGridLayout(totalCards, specialCards) {
+    // Calculate optimal grid layout and adjust config to make rows full
+    calculateGridLayoutAndAdjustConfig(config) {
+        const specialCards = config.filter(c => c.isSpecial).length;
+        const totalCards = config.length;
+        
         // Base columns calculation
         const baseColumns = Math.min(6, Math.max(3, Math.ceil(Math.sqrt(totalCards * 1.5))));
         
@@ -6873,104 +6876,99 @@ class HomepageGamesManager {
             if (columns % 2 !== 0) columns++;
         }
         
-        // Calculate approximate rows needed
+        // Calculate space taken by special cards
         const specialCardSpace = specialCards * 4; // Each special card takes 4 spaces
-        const regularCardSpace = totalCards - specialCards;
-        const totalSpace = specialCardSpace + regularCardSpace;
-        const rows = Math.ceil(totalSpace / columns);
+        const regularCardsCount = totalCards - specialCards;
+        const totalSpace = specialCardSpace + regularCardsCount;
         
-        return { columns, rows };
-    }
-
-    // Position cards in grid to avoid gaps with randomized special card placement
-    positionCardsInGrid(config) {
-        // Create a grid matrix to track occupied spaces
-        const { columns, rows } = this.calculateGridLayout(config.length, config.filter(c => c.isSpecial).length);
-        const grid = Array(rows).fill().map(() => Array(columns).fill(false));
+        // Calculate how many full rows we can make
+        const fullRows = Math.floor(totalSpace / columns);
+        const remainingSpace = totalSpace % columns;
         
-        const positioned = [];
-        const specialCards = config.filter(c => c.isSpecial);
-        const regularCards = config.filter(c => !c.isSpecial);
+        let adjustedConfig = [...config];
         
-        // Generate all possible 2x2 positions for special cards
-        const possibleSpecialPositions = [];
-        for (let row = 0; row <= rows - 2; row++) {
-            for (let col = 0; col <= columns - 2; col++) {
-                possibleSpecialPositions.push({ row, col });
+        // If we have remaining space that's not a full row, remove some regular cards
+        if (remainingSpace > 0) {
+            const spacesToRemove = remainingSpace;
+            let removedCount = 0;
+            
+            // Remove regular cards from the end until we have full rows
+            for (let i = adjustedConfig.length - 1; i >= 0 && removedCount < spacesToRemove; i--) {
+                if (!adjustedConfig[i].isSpecial) {
+                    adjustedConfig.splice(i, 1);
+                    removedCount++;
+                }
             }
         }
         
-        // Shuffle the positions for randomization
-        this.shuffleArray(possibleSpecialPositions);
+        const rows = Math.ceil((specialCardSpace + (adjustedConfig.length - specialCards)) / columns);
         
-        // First pass: position special cards in randomized locations
-        specialCards.forEach((gameConfig, index) => {
+        return { columns, rows, adjustedConfig };
+    }
+
+    // Position cards in grid maintaining original order
+    positionCardsInGrid(config) {
+        // Create a grid matrix to track occupied spaces
+        const { columns, rows, adjustedConfig } = this.calculateGridLayoutAndAdjustConfig(config);
+        const grid = Array(rows).fill().map(() => Array(columns).fill(false));
+        
+        const positioned = [];
+        
+        // Process cards in their original order
+        adjustedConfig.forEach((gameConfig) => {
             let placed = false;
             
-            // Try positions in random order
-            for (let i = 0; i < possibleSpecialPositions.length && !placed; i++) {
-                const { row, col } = possibleSpecialPositions[i];
-                
-                // Check if 2x2 space is available
-                if (!grid[row][col] && !grid[row][col + 1] && 
-                    !grid[row + 1][col] && !grid[row + 1][col + 1]) {
-                    
-                    // Mark spaces as occupied
-                    grid[row][col] = true;
-                    grid[row][col + 1] = true;
-                    grid[row + 1][col] = true;
-                    grid[row + 1][col + 1] = true;
-                    
-                    positioned.push({
-                        ...gameConfig,
-                        gridPosition: {
-                            column: col + 1,
-                            row: row + 1,
-                            columnSpan: 2,
-                            rowSpan: 2
+            if (gameConfig.isSpecial) {
+                // For special cards, find first available 2x2 space
+                for (let row = 0; row <= rows - 2 && !placed; row++) {
+                    for (let col = 0; col <= columns - 2 && !placed; col++) {
+                        // Check if 2x2 space is available
+                        if (!grid[row][col] && !grid[row][col + 1] && 
+                            !grid[row + 1][col] && !grid[row + 1][col + 1]) {
+                            
+                            // Mark spaces as occupied
+                            grid[row][col] = true;
+                            grid[row][col + 1] = true;
+                            grid[row + 1][col] = true;
+                            grid[row + 1][col + 1] = true;
+                            
+                            positioned.push({
+                                ...gameConfig,
+                                gridPosition: {
+                                    column: col + 1,
+                                    row: row + 1,
+                                    columnSpan: 2,
+                                    rowSpan: 2
+                                }
+                            });
+                            
+                            placed = true;
                         }
-                    });
-                    
-                    // Remove this position from available positions
-                    possibleSpecialPositions.splice(i, 1);
-                    i--; // Adjust index after removal
-                    placed = true;
+                    }
                 }
-            }
-        });
-        
-        // Second pass: position regular cards in remaining spaces
-        regularCards.forEach((gameConfig) => {
-            let placed = false;
-            for (let row = 0; row < rows && !placed; row++) {
-                for (let col = 0; col < columns && !placed; col++) {
-                    if (!grid[row][col]) {
-                        grid[row][col] = true;
-                        positioned.push({
-                            ...gameConfig,
-                            gridPosition: {
-                                column: col + 1,
-                                row: row + 1,
-                                columnSpan: 1,
-                                rowSpan: 1
-                            }
-                        });
-                        placed = true;
+            } else {
+                // For regular cards, find first available single space
+                for (let row = 0; row < rows && !placed; row++) {
+                    for (let col = 0; col < columns && !placed; col++) {
+                        if (!grid[row][col]) {
+                            grid[row][col] = true;
+                            positioned.push({
+                                ...gameConfig,
+                                gridPosition: {
+                                    column: col + 1,
+                                    row: row + 1,
+                                    columnSpan: 1,
+                                    rowSpan: 1
+                                }
+                            });
+                            placed = true;
+                        }
                     }
                 }
             }
         });
         
         return { positioned, columns, rows };
-    }
-    
-    // Utility method to shuffle array
-    shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
     }
 
     renderFeaturedGames() {
