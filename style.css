@@ -5586,13 +5586,15 @@ select:focus {
     aspect-ratio: 16/9;
 }
 
-.homepage-game-card:hover {
+.homepage-game-card:hover,
+.homepage-game-card.special:hover {
     transform: translateY(-8px);
     border-color: var(--accent-color);
     box-shadow: var(--about-glow-purple);
 }
 
-.homepage-game-card:hover .homepage-game-tag {
+.homepage-game-card:hover .homepage-game-tag,
+.homepage-game-card.special:hover .homepage-game-tag {
     opacity: 0;
 }
 
@@ -5602,19 +5604,38 @@ select:focus {
     grid-row: span 2;
 }
 
-/* Game Card Image */
+/* Game Card Image - Updated for better layering */
 .homepage-game-card-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 2;
 }
 
-.homepage-game-card:hover .homepage-game-card-image {
+/* NEW: Embedded video styles for each card */
+.homepage-card-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.homepage-game-card:hover .homepage-game-card-image,
+.homepage-game-card.special:hover .homepage-game-card-image,
+.homepage-game-card:hover .homepage-game-card-video,
+.homepage-game-card.special:hover .homepage-game-card-video {
     filter: brightness(0.7);
 }
 
-/* Game Card Overlay */
+/* Game Card Overlay - Updated z-index */
 .homepage-game-card-overlay {
     position: absolute;
     top: 0;
@@ -5628,9 +5649,11 @@ select:focus {
     align-items: center;
     opacity: 0;
     transition: all 0.3s ease;
+    z-index: 3; /* Ensure overlay is always on top */
 }
 
-.homepage-game-card:hover .homepage-game-card-overlay {
+.homepage-game-card:hover .homepage-game-card-overlay,
+.homepage-game-card.special:hover .homepage-game-card-overlay {
     opacity: 1;
 }
 
@@ -5659,7 +5682,7 @@ select:focus {
     box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
 }
 
-/* Game Tags */
+/* Game Tags - Fixed z-index */
 .homepage-game-tag {
     position: absolute;
     top: 8px;
@@ -5668,7 +5691,8 @@ select:focus {
     border-radius: 15px;
     font-size: 0.75rem;
     font-weight: 600;
-    z-index: 2;
+    z-index: 4; /* Higher than overlay (3) to ensure tags show above everything */
+    transition: opacity 0.3s ease;
 }
 
 .homepage-game-tag.new {

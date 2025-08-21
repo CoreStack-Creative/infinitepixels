@@ -6724,7 +6724,7 @@ class InfinitePixelsGameSection {
 
 }
 
-// Homepage Games Manager - FIXED VERSION
+// Homepage Games Manager - FIXED VERSION with Embedded Video Hover
 class HomepageGamesManager {
     constructor() {
         this.favoritesManager = null;
@@ -6791,33 +6791,49 @@ class HomepageGamesManager {
         };
     }
 
-
     // Configuration for featured games
     getFeaturedGamesConfig() {
         return [
             { slug: "1v1lol", isNew: false, isHot: true },
             { slug: "cookieclicker", isNew: false, isHot: false },
+            { slug: "snowrider3d", isNew: false, isHot: false },
             { 
                 slug: "slope", 
                 isSpecial: true, 
-                isNew: false, 
-                isHot: true,
+                isNew: true, 
+                isHot: false,
                 videoUrl: "images/sloperec.mp4"
             },
+            { slug: "bloxdio", isNew: false, isHot: false },
+            { slug: "smashkarts", isNew: false, isHot: false },
+            { slug: "survivalrace", isNew: false, isHot: false },
             { 
                 slug: "subwaysurfers", 
                 isSpecial: true, 
                 isNew: false, 
-                isHot: true,
+                isHot: false,
                 videoUrl: "images/subwaysurfersrec.mp4"
             },
+            { slug: "happywheels", isNew: false, isHot: false },
+            { slug: "maskedspecialforces", isNew: false, isHot: false },
+            { slug: "retrobowl", isNew: false, isHot: false },
             { 
                 slug: "paperio", 
                 isSpecial: true, 
                 isNew: false, 
-                isHot: true,
+                isHot: false,
                 videoUrl: "images/paperiorec.mp4"
             },
+            { slug: "motox3m", isNew: false, isHot: false },
+            { 
+                slug: "fruitmerge", 
+                isSpecial: true, 
+                isNew: false, 
+                isHot: false,
+                videoUrl: "images/fruitmergerec.mp4"
+            },
+            { slug: "parkourblock3d", isNew: false, isHot: false },
+            { slug: "stickfighters", isNew: false, isHot: false },
             { 
                 slug: "polytrack", 
                 isSpecial: true, 
@@ -6826,6 +6842,9 @@ class HomepageGamesManager {
                 videoUrl: "images/polytrackrec.mp4"
             },
             { slug: "basketrandom", isNew: false, isHot: false },
+            { slug: "rocketbotroyale", isNew: false, isHot: false },
+            { slug: "shellshockers", isNew: false, isHot: false },
+            { slug: "tallmanrun", isNew: false, isHot: false },
         ];
     }
 
@@ -6931,33 +6950,64 @@ class HomepageGamesManager {
         });
     }
 
+    // FIXED: New video hover method that embeds video in each card
     setupVideoHover(card, videoUrl) {
-        const overlay = document.getElementById('homepageVideoOverlay');
-        const video = document.getElementById('homepageVideo');
-        
-        if (!overlay || !video) return;
+        // Remove any existing video in this card
+        const existingVideo = card.querySelector('.homepage-card-video');
+        if (existingVideo) {
+            existingVideo.remove();
+        }
 
+        // Create video element inside the card
+        const video = document.createElement('video');
+        video.className = 'homepage-card-video';
+        video.src = videoUrl;
+        video.muted = true;
+        video.loop = true;
+        video.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+            pointer-events: none;
+        `;
+        
+        // Insert video before the overlay
+        const overlay = card.querySelector('.homepage-game-card-overlay');
+        if (overlay) {
+            card.insertBefore(video, overlay);
+        } else {
+            card.appendChild(video);
+        }
+
+        // Handle hover events
         card.addEventListener('mouseenter', () => {
-            const rect = card.getBoundingClientRect();
-            overlay.style.position = 'fixed';
-            overlay.style.top = rect.top + 'px';
-            overlay.style.left = rect.left + 'px';
-            overlay.style.width = rect.width + 'px';
-            overlay.style.height = rect.height + 'px';
-            overlay.style.borderRadius = '12px';
-            overlay.style.overflow = 'hidden';
-            
-            video.src = videoUrl;
             video.currentTime = 0;
             video.play().catch(console.error);
+            video.style.opacity = '1';
             
-            overlay.style.opacity = '1';
+            // Hide the static image
+            const image = card.querySelector('.homepage-game-card-image');
+            if (image) {
+                image.style.opacity = '0';
+            }
         });
 
         card.addEventListener('mouseleave', () => {
-            overlay.style.opacity = '0';
+            video.style.opacity = '0';
             video.pause();
             video.currentTime = 0;
+            
+            // Show the static image again
+            const image = card.querySelector('.homepage-game-card-image');
+            if (image) {
+                image.style.opacity = '1';
+            }
         });
     }
 
