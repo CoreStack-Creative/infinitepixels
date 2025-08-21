@@ -6724,7 +6724,7 @@ class InfinitePixelsGameSection {
 
 }
 
-// Homepage Games Manager
+// Homepage Games Manager - FIXED VERSION
 class HomepageGamesManager {
     constructor() {
         this.favoritesManager = null;
@@ -6746,27 +6746,13 @@ class HomepageGamesManager {
             if (typeof gamesDatabase !== 'undefined' && gamesDatabase.length > 0) {
                 console.log('Dependencies loaded, initializing homepage games...');
                 
-                // Wait for the global favorites manager to be available
-                const waitForFavorites = () => {
-                    if (window.favoritesManager) {
-                        this.favoritesManager = window.favoritesManager;
-                        console.log('Using global favorites manager');
-                    } else {
-                        console.log('Global favorites manager not found, continuing without it');
-                    }
-                    
-                    this.renderFeaturedGames();
-                    this.renderCategoryGames();
-                    this.renderNewGames();
-                    this.initFavoritesPopup();
-                };
-                
-                // Try to get favorites manager, but don't block initialization
-                setTimeout(waitForFavorites, 100);
+                this.renderFeaturedGames();
+                this.renderCategoryGames();
+                this.renderNewGames();
+                this.initFavoritesPopup();
                 
             } else {
                 console.log('Still waiting for dependencies...');
-                // Retry after a short delay
                 setTimeout(checkDependencies, 200);
             }
         };
@@ -6774,24 +6760,50 @@ class HomepageGamesManager {
         checkDependencies();
     }
 
+    // Get favorites manager with better error handling
+    getFavoritesManager() {
+        // Try to get the global favorites manager
+        if (window.favoritesManager) {
+            return window.favoritesManager;
+        }
+        
+        // Try to create a new one if it doesn't exist
+        if (typeof FavoritesManager !== 'undefined') {
+            console.log('Creating new favorites manager instance');
+            return new FavoritesManager();
+        }
+        
+        // If all else fails, create a minimal fallback
+        return {
+            getFavoriteGames: () => {
+                try {
+                    const stored = localStorage.getItem('infinitepixels_favorites');
+                    const favorites = stored ? JSON.parse(stored) : [];
+                    return favorites.map(fav => {
+                        const game = gamesDatabase.find(g => g.slug === fav.slug);
+                        return game ? { ...game, dateAdded: fav.dateAdded, timestamp: fav.timestamp } : null;
+                    }).filter(Boolean).sort((a, b) => b.timestamp - a.timestamp);
+                } catch (error) {
+                    console.error('Error loading favorites:', error);
+                    return [];
+                }
+            }
+        };
+    }
+
     // Configuration for featured games
     getFeaturedGamesConfig() {
         return [
-            // Regular games
             { slug: "1v1lol", isNew: false, isHot: true },
             { slug: "cookieclicker", isNew: false, isHot: false },
             { slug: "cubearena2048", isNew: true, isHot: false },
-            
-            // Special large games with videos (you'll need to add video URLs)
             { 
                 slug: "3dformularacing", 
                 isSpecial: true, 
                 isNew: false, 
                 isHot: true,
-                videoUrl: "videos/3dformularacing-preview.mp4" // You'll need to add this
+                videoUrl: "videos/3dformularacing-preview.mp4"
             },
-            
-            // Regular game (removed duplicate basketrandom)
             { slug: "basketrandom", isNew: false, isHot: false },
         ];
     }
@@ -6818,10 +6830,9 @@ class HomepageGamesManager {
         const grid = document.getElementById('homepageCategoryGrid');
         if (!grid || typeof gamesDatabase === 'undefined') return;
 
-        // Get action games (you can change this category)
         const categoryGames = gamesDatabase
             .filter(game => game.tags && game.tags.includes('action'))
-            .slice(0, 6); // Show first 6 games
+            .slice(0, 6);
 
         let html = '';
         categoryGames.forEach(game => {
@@ -6836,7 +6847,6 @@ class HomepageGamesManager {
         const grid = document.getElementById('homepageNewGrid');
         if (!grid || typeof gamesDatabase === 'undefined') return;
 
-        // Get the 8 newest games (assuming higher IDs are newer)
         const newGames = gamesDatabase
             .slice(-8)
             .reverse();
@@ -6889,13 +6899,11 @@ class HomepageGamesManager {
             const gameUrl = card.getAttribute('data-game-url');
             const videoUrl = card.getAttribute('data-video');
             
-            // Click event to navigate to game
             card.addEventListener('click', (e) => {
                 e.preventDefault();
                 window.location.href = gameUrl;
             });
 
-            // Video hover events for special cards
             if (videoUrl && card.classList.contains('special')) {
                 this.setupVideoHover(card, videoUrl);
             }
@@ -6909,7 +6917,6 @@ class HomepageGamesManager {
         if (!overlay || !video) return;
 
         card.addEventListener('mouseenter', () => {
-            // Position the video overlay over the card
             const rect = card.getBoundingClientRect();
             overlay.style.position = 'fixed';
             overlay.style.top = rect.top + 'px';
@@ -6919,7 +6926,6 @@ class HomepageGamesManager {
             overlay.style.borderRadius = '12px';
             overlay.style.overflow = 'hidden';
             
-            // Set video source and play
             video.src = videoUrl;
             video.currentTime = 0;
             video.play().catch(console.error);
@@ -6946,7 +6952,6 @@ class HomepageGamesManager {
             return;
         }
 
-        // Toggle popup
         floatBtn.addEventListener('click', (e) => {
             console.log('Favorites button clicked!');
             e.stopPropagation();
@@ -6958,13 +6963,11 @@ class HomepageGamesManager {
             }
         });
 
-        // Close popup
         closeBtn.addEventListener('click', () => {
             console.log('Close button clicked');
             this.closeFavoritesPopup();
         });
 
-        // Close popup when clicking outside
         document.addEventListener('click', (e) => {
             if (!popup.contains(e.target) && !floatBtn.contains(e.target)) {
                 this.closeFavoritesPopup();
@@ -6977,16 +6980,14 @@ class HomepageGamesManager {
     openFavoritesPopup() {
         console.log('Opening favorites popup...');
         const popup = document.getElementById('homepageFavoritesPopup');
-        const content = document.getElementById('homepageFavoritesContent');
         
-        if (!popup || !content) {
-            console.error('Popup elements not found');
+        if (!popup) {
+            console.error('Popup element not found');
             return;
         }
 
-        // Render favorites
+        // Render favorites immediately
         this.renderFavoritesPopup();
-        
         popup.classList.add('active');
         console.log('Popup should be visible now');
     }
@@ -7000,48 +7001,68 @@ class HomepageGamesManager {
 
     renderFavoritesPopup() {
         const content = document.getElementById('homepageFavoritesContent');
-        if (!content) return;
+        if (!content) {
+            console.error('Favorites content element not found');
+            return;
+        }
 
-        // Use the global favorites manager if available
-        const favManager = window.favoritesManager || this.favoritesManager;
+        console.log('Rendering favorites popup...');
+
+        // Use the improved favorites manager getter
+        const favManager = this.getFavoritesManager();
         if (!favManager) {
+            console.error('No favorites manager available');
             content.innerHTML = `
                 <div class="homepage-favorites-empty">
-                    <p>Loading favorites...</p>
+                    <p>Unable to load favorites.</p>
+                    <p>Please refresh the page and try again.</p>
                 </div>
             `;
             return;
         }
 
-        const favorites = favManager.getFavoriteGames('newest').slice(0, 8);
+        try {
+            const favorites = favManager.getFavoriteGames('newest').slice(0, 8);
+            console.log('Loaded favorites:', favorites);
 
-        if (favorites.length === 0) {
-            content.innerHTML = `
-                <div class="homepage-favorites-empty">
-                    <p>No favorite games yet!</p>
-                    <p>Click the heart icon on any game to add it to your favorites.</p>
-                </div>
-            `;
-            return;
-        }
-
-        let html = '';
-        favorites.forEach(game => {
-            const gameUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
-            const truncatedDesc = this.truncateText(game.description, 50);
-            
-            html += `
-                <div class="homepage-favorites-item" onclick="window.location.href='${gameUrl}'">
-                    <img src="${game.image}" alt="${game.name}" class="homepage-favorites-item-image" loading="lazy">
-                    <div class="homepage-favorites-item-info">
-                        <h4>${game.name}</h4>
-                        <p>${truncatedDesc}</p>
+            if (favorites.length === 0) {
+                content.innerHTML = `
+                    <div class="homepage-favorites-empty">
+                        <p>No favorite games yet!</p>
+                        <p>Click the heart icon on any game to add it to your favorites.</p>
                     </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            favorites.forEach(game => {
+                const gameUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
+                const truncatedDesc = this.truncateText(game.description, 50);
+                
+                html += `
+                    <div class="homepage-favorites-item" onclick="window.location.href='${gameUrl}'">
+                        <img src="${game.image}" alt="${game.name}" class="homepage-favorites-item-image" loading="lazy">
+                        <div class="homepage-favorites-item-info">
+                            <h4>${game.name}</h4>
+                            <p>${truncatedDesc}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            content.innerHTML = html;
+            console.log('Favorites rendered successfully');
+
+        } catch (error) {
+            console.error('Error rendering favorites:', error);
+            content.innerHTML = `
+                <div class="homepage-favorites-empty">
+                    <p>Error loading favorites.</p>
+                    <p>Please try again later.</p>
                 </div>
             `;
-        });
-
-        content.innerHTML = html;
+        }
     }
 
     truncateText(text, maxLength) {
@@ -7049,7 +7070,6 @@ class HomepageGamesManager {
         return text.substring(0, maxLength) + '...';
     }
 
-    // Method to refresh favorites popup when favorites change
     refreshFavoritesPopup() {
         const popup = document.getElementById('homepageFavoritesPopup');
         if (popup && popup.classList.contains('active')) {
@@ -7058,27 +7078,36 @@ class HomepageGamesManager {
     }
 }
 
-// Initialize when everything is ready
+// IMPROVED INITIALIZATION
 let homepageGamesManager;
 
-// Wait for DOM and other scripts to load
-document.addEventListener('DOMContentLoaded', function() {
-    // Only initialize if we're on a page that has the homepage games elements
-    if (document.getElementById('homepageGamesGrid')) {
-        // Wait a bit more to ensure all scripts are loaded
-        setTimeout(() => {
-            homepageGamesManager = new HomepageGamesManager();
-            window.homepageGamesManager = homepageGamesManager;
-        }, 200);
+// Function to initialize homepage games manager
+function initializeHomepageGamesManager() {
+    if (document.getElementById('homepageGamesGrid') && !homepageGamesManager) {
+        console.log('Initializing Homepage Games Manager...');
+        homepageGamesManager = new HomepageGamesManager();
+        window.homepageGamesManager = homepageGamesManager;
+        return true;
     }
+    return false;
+}
+
+// Multiple initialization attempts
+document.addEventListener('DOMContentLoaded', function() {
+    initializeHomepageGamesManager();
 });
 
-// Also initialize immediately if DOM is already ready
-if (document.readyState !== 'loading') {
-    if (document.getElementById('homepageGamesGrid')) {
-        setTimeout(() => {
-            homepageGamesManager = new HomepageGamesManager();
-            window.homepageGamesManager = homepageGamesManager;
-        }, 200);
-    }
+// Also try after a delay in case other scripts are still loading
+setTimeout(() => {
+    initializeHomepageGamesManager();
+}, 500);
+
+// And try again after window load
+window.addEventListener('load', function() {
+    initializeHomepageGamesManager();
+});
+
+// Export for global access
+if (typeof window !== 'undefined') {
+    window.HomepageGamesManager = HomepageGamesManager;
 }
