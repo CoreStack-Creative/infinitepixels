@@ -6724,7 +6724,7 @@ class InfinitePixelsGameSection {
 
 }
 
-// Homepage Games Manager - FIXED VERSION with Embedded Video Hover
+// Homepage Games Manager - FIXED VERSION with Embedded Video Hover and Dynamic Grid
 class HomepageGamesManager {
     constructor() {
         this.favoritesManager = null;
@@ -6750,6 +6750,9 @@ class HomepageGamesManager {
                 this.renderCategoryGames();
                 this.renderNewGames();
                 this.initFavoritesPopup();
+                
+                // Add resize handler for responsive grid
+                this.initResizeHandler();
                 
             } else {
                 console.log('Still waiting for dependencies...');
@@ -6797,6 +6800,7 @@ class HomepageGamesManager {
             { slug: "1v1lol", isNew: false, isHot: true },
             { slug: "cookieclicker", isNew: false, isHot: false },
             { slug: "snowrider3d", isNew: false, isHot: false },
+            { slug: "golfclash", isNew: false, isHot: false },
             { 
                 slug: "slope", 
                 isSpecial: true, 
@@ -6817,6 +6821,7 @@ class HomepageGamesManager {
             { slug: "happywheels", isNew: false, isHot: false },
             { slug: "maskedspecialforces", isNew: false, isHot: false },
             { slug: "retrobowl", isNew: false, isHot: false },
+            { slug: "fruitninja", isNew: false, isHot: false },
             { 
                 slug: "paperio", 
                 isSpecial: true, 
@@ -6825,6 +6830,9 @@ class HomepageGamesManager {
                 videoUrl: "images/paperiorec.mp4"
             },
             { slug: "motox3m", isNew: false, isHot: false },
+            { slug: "rodeostampede", isNew: false, isHot: false },
+            { slug: "madalinstuntcarspro", isNew: false, isHot: false },
+            { slug: "gulperio", isNew: false, isHot: false },
             { 
                 slug: "fruitmerge", 
                 isSpecial: true, 
@@ -6834,6 +6842,8 @@ class HomepageGamesManager {
             },
             { slug: "parkourblock3d", isNew: false, isHot: false },
             { slug: "stickfighters", isNew: false, isHot: false },
+            { slug: "rocketbikehighwayrace", isNew: false, isHot: false },
+            { slug: "funnyshooter2", isNew: false, isHot: false },
             { 
                 slug: "polytrack", 
                 isSpecial: true, 
@@ -6842,10 +6852,125 @@ class HomepageGamesManager {
                 videoUrl: "images/polytrackrec.mp4"
             },
             { slug: "basketrandom", isNew: false, isHot: false },
-            { slug: "rocketbotroyale", isNew: false, isHot: false },
+            { slug: "rocketbotroyale", isNew: false, isHot: true },
             { slug: "shellshockers", isNew: false, isHot: false },
             { slug: "tallmanrun", isNew: false, isHot: false },
+            { slug: "tinyfishing", isNew: false, isHot: false },
         ];
+    }
+
+    // Calculate optimal grid layout
+    calculateGridLayout(totalCards, specialCards) {
+        // Base columns calculation
+        const baseColumns = Math.min(6, Math.max(3, Math.ceil(Math.sqrt(totalCards * 1.5))));
+        
+        // Ensure we can accommodate special cards (2x2) without gaps
+        let columns = baseColumns;
+        
+        // If we have special cards, make sure columns is even and at least 4
+        if (specialCards > 0) {
+            if (columns < 4) columns = 4;
+            if (columns % 2 !== 0) columns++;
+        }
+        
+        // Calculate approximate rows needed
+        const specialCardSpace = specialCards * 4; // Each special card takes 4 spaces
+        const regularCardSpace = totalCards - specialCards;
+        const totalSpace = specialCardSpace + regularCardSpace;
+        const rows = Math.ceil(totalSpace / columns);
+        
+        return { columns, rows };
+    }
+
+    // Position cards in grid to avoid gaps with randomized special card placement
+    positionCardsInGrid(config) {
+        // Create a grid matrix to track occupied spaces
+        const { columns, rows } = this.calculateGridLayout(config.length, config.filter(c => c.isSpecial).length);
+        const grid = Array(rows).fill().map(() => Array(columns).fill(false));
+        
+        const positioned = [];
+        const specialCards = config.filter(c => c.isSpecial);
+        const regularCards = config.filter(c => !c.isSpecial);
+        
+        // Generate all possible 2x2 positions for special cards
+        const possibleSpecialPositions = [];
+        for (let row = 0; row <= rows - 2; row++) {
+            for (let col = 0; col <= columns - 2; col++) {
+                possibleSpecialPositions.push({ row, col });
+            }
+        }
+        
+        // Shuffle the positions for randomization
+        this.shuffleArray(possibleSpecialPositions);
+        
+        // First pass: position special cards in randomized locations
+        specialCards.forEach((gameConfig, index) => {
+            let placed = false;
+            
+            // Try positions in random order
+            for (let i = 0; i < possibleSpecialPositions.length && !placed; i++) {
+                const { row, col } = possibleSpecialPositions[i];
+                
+                // Check if 2x2 space is available
+                if (!grid[row][col] && !grid[row][col + 1] && 
+                    !grid[row + 1][col] && !grid[row + 1][col + 1]) {
+                    
+                    // Mark spaces as occupied
+                    grid[row][col] = true;
+                    grid[row][col + 1] = true;
+                    grid[row + 1][col] = true;
+                    grid[row + 1][col + 1] = true;
+                    
+                    positioned.push({
+                        ...gameConfig,
+                        gridPosition: {
+                            column: col + 1,
+                            row: row + 1,
+                            columnSpan: 2,
+                            rowSpan: 2
+                        }
+                    });
+                    
+                    // Remove this position from available positions
+                    possibleSpecialPositions.splice(i, 1);
+                    i--; // Adjust index after removal
+                    placed = true;
+                }
+            }
+        });
+        
+        // Second pass: position regular cards in remaining spaces
+        regularCards.forEach((gameConfig) => {
+            let placed = false;
+            for (let row = 0; row < rows && !placed; row++) {
+                for (let col = 0; col < columns && !placed; col++) {
+                    if (!grid[row][col]) {
+                        grid[row][col] = true;
+                        positioned.push({
+                            ...gameConfig,
+                            gridPosition: {
+                                column: col + 1,
+                                row: row + 1,
+                                columnSpan: 1,
+                                rowSpan: 1
+                            }
+                        });
+                        placed = true;
+                    }
+                }
+            }
+        });
+        
+        return { positioned, columns, rows };
+    }
+    
+    // Utility method to shuffle array
+    shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
     }
 
     renderFeaturedGames() {
@@ -6853,9 +6978,17 @@ class HomepageGamesManager {
         if (!grid || typeof gamesDatabase === 'undefined') return;
 
         const config = this.getFeaturedGamesConfig();
+        
+        // Calculate layout and position cards
+        const { positioned, columns, rows } = this.positionCardsInGrid(config);
+        
+        // Set grid CSS properties
+        grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
+        grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+        
         let html = '';
 
-        config.forEach(gameConfig => {
+        positioned.forEach(gameConfig => {
             const game = gamesDatabase.find(g => g.slug === gameConfig.slug);
             if (!game) return;
 
@@ -6863,7 +6996,112 @@ class HomepageGamesManager {
         });
 
         grid.innerHTML = html;
+        
+        // Apply grid positioning to cards after they're in the DOM
+        positioned.forEach((gameConfig, index) => {
+            const cardElement = grid.children[index];
+            if (cardElement && gameConfig.gridPosition) {
+                const pos = gameConfig.gridPosition;
+                cardElement.style.gridColumn = `${pos.column} / span ${pos.columnSpan}`;
+                cardElement.style.gridRow = `${pos.row} / span ${pos.rowSpan}`;
+            }
+        });
+        
         this.attachGameCardEvents('featured');
+    }
+
+    // Enhanced createGameCard method to handle positioning
+    createGameCard(game, config, context) {
+        const isSpecial = config.isSpecial || false;
+        const isNew = config.isNew || false;
+        const isHot = config.isHot || false;
+        const hasVideo = config.videoUrl && config.videoUrl.trim() !== '';
+
+        let tagHtml = '';
+        if (isNew) {
+            tagHtml = '<div class="homepage-game-tag new">NEW</div>';
+        } else if (isHot) {
+            tagHtml = '<div class="homepage-game-tag hot">HOT</div>';
+        }
+
+        let videoHtml = '';
+        if (hasVideo) {
+            videoHtml = `
+                <video class="homepage-card-video" muted loop preload="metadata">
+                    <source src="${config.videoUrl}" type="video/mp4">
+                </video>
+            `;
+        }
+
+        return `
+            <div class="homepage-game-card${isSpecial ? ' special' : ''}" 
+                 data-game-slug="${game.slug}" 
+                 data-context="${context}"
+                 data-has-video="${hasVideo}">
+                <img src="${game.image}" alt="${game.name}" class="homepage-game-card-image" loading="lazy">
+                ${videoHtml}
+                <div class="homepage-game-card-overlay">
+                    <div class="homepage-game-card-name">${game.name}</div>
+                    <button class="homepage-game-card-play">Play Now</button>
+                </div>
+                ${tagHtml}
+            </div>
+        `;
+    }
+
+    // Initialize resize handler for responsive grid
+    initResizeHandler() {
+        const debounce = (func, wait) => {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        };
+
+        window.addEventListener('resize', debounce(() => {
+            // Only recalculate if screen size changes significantly
+            const currentWidth = window.innerWidth;
+            if (Math.abs(currentWidth - (window.lastGridWidth || 0)) > 100) {
+                window.lastGridWidth = currentWidth;
+                this.renderFeaturedGames();
+            }
+        }, 250));
+    }
+
+    // Add the remaining methods that would be in your complete class
+    attachGameCardEvents(context) {
+        const cards = document.querySelectorAll(`[data-context="${context}"] .homepage-game-card`);
+        
+        cards.forEach(card => {
+            const video = card.querySelector('.homepage-card-video');
+            
+            card.addEventListener('mouseenter', () => {
+                if (video && card.dataset.hasVideo === 'true') {
+                    video.style.opacity = '1';
+                    video.play().catch(e => console.log('Video autoplay failed:', e));
+                }
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                if (video && card.dataset.hasVideo === 'true') {
+                    video.style.opacity = '0';
+                    video.pause();
+                    video.currentTime = 0;
+                }
+            });
+            
+            card.addEventListener('click', (e) => {
+                const gameSlug = card.dataset.gameSlug;
+                if (gameSlug) {
+                    window.location.href = `/game/${gameSlug}`;
+                }
+            });
+        });
     }
 
     renderCategoryGames() {

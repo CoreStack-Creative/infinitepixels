@@ -5565,11 +5565,25 @@ select:focus {
     background-clip: text;
 }
 
+/* Updated Games Grid - Dynamic Layout */
 .homepage-games-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 15px;
     margin-bottom: 20px;
+    /* Grid will be set dynamically by JavaScript */
+}
+
+/* Responsive grid fallback */
+@media (max-width: 768px) {
+    .homepage-games-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .homepage-games-grid {
+        grid-template-columns: 1fr !important;
+    }
 }
 
 /* Game Card Styles */
@@ -5582,6 +5596,7 @@ select:focus {
     background: var(--bg-secondary);
     border: 2px solid transparent;
     aspect-ratio: 16/9;
+    /* Remove default grid positioning */
 }
 
 .homepage-game-card:hover,
@@ -5596,13 +5611,12 @@ select:focus {
     opacity: 0;
 }
 
-/* Special large cards */
+/* Special large cards - positioning will be handled by JavaScript */
 .homepage-game-card.special {
-    grid-column: span 2;
-    grid-row: span 2;
+    /* Dynamic positioning via JavaScript */
 }
 
-/* Game Card Image - Updated for better layering */
+/* Game Card Image */
 .homepage-game-card-image {
     width: 100%;
     height: 100%;
@@ -5612,7 +5626,7 @@ select:focus {
     z-index: 2;
 }
 
-/* NEW: Embedded video styles for each card */
+/* Embedded video styles */
 .homepage-card-video {
     position: absolute;
     top: 0;
@@ -5633,7 +5647,7 @@ select:focus {
     filter: brightness(0.7);
 }
 
-/* Game Card Overlay - Updated z-index */
+/* Game Card Overlay */
 .homepage-game-card-overlay {
     position: absolute;
     top: 0;
@@ -5647,7 +5661,7 @@ select:focus {
     align-items: center;
     opacity: 0;
     transition: all 0.3s ease;
-    z-index: 3; /* Ensure overlay is always on top */
+    z-index: 3;
 }
 
 .homepage-game-card:hover .homepage-game-card-overlay,
