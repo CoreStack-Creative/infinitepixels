@@ -819,7 +819,6 @@ body {
 .game-spotlight {
    padding: 100px 40px;
    background: linear-gradient(135deg, rgba(138, 43, 226, 0.1) 0%, rgba(75, 0, 130, 0.1) 100%);
-   margin: 60px 0;
 }
 
 .spotlight-container {
@@ -892,7 +891,6 @@ body {
 .game-spotlight {
    padding: 100px 40px;
    background: linear-gradient(135deg, rgba(138, 43, 226, 0.1) 0%, rgba(75, 0, 130, 0.1) 100%);
-   margin: 60px 0;
 }
 
 .spotlight-container {
@@ -5476,7 +5474,7 @@ select:focus {
     padding: 4rem 2rem;
     max-width: 1400px;
     margin: 0 auto;
-    background: var(--card-bg);
+    background: linear-gradient(135deg, #0a0a23 0%, #1a1a3e 50%, #2d1b69 100%);
     border: 1px solid var(--border-color);
     border-radius: 30px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
@@ -5547,7 +5545,7 @@ select:focus {
 /* Main Games Grid Section */
 .homepage-games-section {
     padding: 40px 0;
-    background: linear-gradient(135deg, var(--bg-secondary), #16213e);
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.1) 0%, rgba(75, 0, 130, 0.1) 100%);
 }
 
 .homepage-games-container {
@@ -5708,7 +5706,7 @@ select:focus {
 /* Category Section */
 .homepage-category-section {
     padding: 30px 0;
-    background: var(--bg-secondary);
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.1) 0%, rgba(75, 0, 130, 0.1) 100%);
 }
 
 .homepage-category-container {
@@ -5758,7 +5756,7 @@ select:focus {
 /* New Games Section */
 .homepage-new-section {
     padding: 30px 0;
-    background: linear-gradient(135deg, #16213e, var(--bg-secondary));
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.1) 0%, rgba(75, 0, 130, 0.1) 100%);
 }
 
 .homepage-new-container {
