@@ -5592,6 +5592,10 @@ select:focus {
     box-shadow: var(--about-glow-purple);
 }
 
+.homepage-game-card:hover .homepage-game-tag {
+    opacity: 0;
+}
+
 /* Special large cards */
 .homepage-game-card.special {
     grid-column: span 2;

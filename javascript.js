@@ -6791,18 +6791,39 @@ class HomepageGamesManager {
         };
     }
 
+
     // Configuration for featured games
     getFeaturedGamesConfig() {
         return [
             { slug: "1v1lol", isNew: false, isHot: true },
             { slug: "cookieclicker", isNew: false, isHot: false },
-            { slug: "cubearena2048", isNew: true, isHot: false },
             { 
-                slug: "3dformularacing", 
+                slug: "slope", 
                 isSpecial: true, 
                 isNew: false, 
                 isHot: true,
-                videoUrl: "videos/3dformularacing-preview.mp4"
+                videoUrl: "images/sloperec.mp4"
+            },
+            { 
+                slug: "subwaysurfers", 
+                isSpecial: true, 
+                isNew: false, 
+                isHot: true,
+                videoUrl: "images/subwaysurfersrec.mp4"
+            },
+            { 
+                slug: "paperio", 
+                isSpecial: true, 
+                isNew: false, 
+                isHot: true,
+                videoUrl: "images/paperiorec.mp4"
+            },
+            { 
+                slug: "polytrack", 
+                isSpecial: true, 
+                isNew: false, 
+                isHot: true,
+                videoUrl: "images/polytrackrec.mp4"
             },
             { slug: "basketrandom", isNew: false, isHot: false },
         ];
