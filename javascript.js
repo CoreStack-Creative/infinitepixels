@@ -6295,159 +6295,8 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 });
 
-// Homepage New Releases JavaScript
-document.addEventListener('DOMContentLoaded', function() {
-    const homepageNewGamesGrid = document.getElementById('homepageNewGamesGrid');
-    const homepageGamesCount = document.getElementById('homepageGamesCount');
-    
-    // Check if this is the homepage
-    if (!homepageNewGamesGrid) return;
-    
-    // Check if gamesDatabase exists
-    if (typeof gamesDatabase === 'undefined' || !gamesDatabase || gamesDatabase.length === 0) {
-        console.error('gamesDatabase is not loaded for homepage');
-        homepageNewGamesGrid.innerHTML = `
-            <div class="loading-placeholder">
-                <i class="fas fa-exclamation-circle"></i>
-                <span>No new games available</span>
-            </div>
-        `;
-        return;
-    }
-    
-    // Number of games to show on homepage (always 8 to fill the grid)
-    function getGamesToShow() {
-        return 8; // Always show 8 games to fill the responsive grid properly
-    }
 
-    // Get the newest games for homepage
-    const newestGames = gamesDatabase.slice(-30).reverse();
-    const gamesToShow = getGamesToShow();
-    const homepageGames = newestGames.slice(0, gamesToShow);
 
-    // Update games count
-    function updateHomepageCount() {
-        if (homepageGamesCount) {
-            homepageGamesCount.textContent = newestGames.length;
-        }
-    }
-
-    // Function to escape HTML
-    function escapeHtml(text) {
-        if (!text) return '';
-        const div = document.createElement('div');
-        div.textContent = text;
-        return div.innerHTML;
-    }
-
-    // Create compact game card for homepage
-    function createHomepageGameCard(game) {
-        if (!game || !game.name || !game.slug) {
-            return '<div class="error-card">Invalid game data</div>';
-        }
-
-        const gameName = escapeHtml(game.name);
-        const gameImage = game.image || 'images/default-game.jpg';
-        const gameSlug = game.slug;
-        const gameTags = game.tags || [];
-
-        return `
-            <div class="homepage-game-card" onclick="playGame('${gameSlug}')">
-                <div class="homepage-game-image">
-                    <img src="${gameImage}" alt="${gameName}" loading="lazy" onerror="this.src='images/default-game.jpg'">
-                    <div class="homepage-new-badge">New</div>
-                    <div class="homepage-game-overlay">
-                        <button class="homepage-play-button">
-                            <i class="fas fa-play"></i>
-                            Play Now
-                        </button>
-                    </div>
-                </div>
-                <div class="homepage-game-info">
-                    <h3>${gameName}</h3>
-                    <div class="homepage-game-tags">
-                        ${gameTags.slice(0, 3).map(tag => `<span class="homepage-tag">${escapeHtml(tag)}</span>`).join('')}
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    // Load homepage games
-    function loadHomepageGames() {
-        // Clear loading placeholder
-        homepageNewGamesGrid.innerHTML = '';
-
-        if (homepageGames.length === 0) {
-            homepageNewGamesGrid.innerHTML = `
-                <div class="loading-placeholder">
-                    <i class="fas fa-exclamation-circle"></i>
-                    <span>No new games available</span>
-                </div>
-            `;
-            return;
-        }
-
-        // Create and append game cards
-        homepageGames.forEach(game => {
-            const gameCardHTML = createHomepageGameCard(game);
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = gameCardHTML;
-            
-            if (tempDiv.firstElementChild) {
-                homepageNewGamesGrid.appendChild(tempDiv.firstElementChild);
-            } else {
-                console.error('Failed to create homepage game card for:', game);
-            }
-        });
-
-        // Update count
-        updateHomepageCount();
-
-        // Add entrance animation
-        addHomepageAnimation();
-    }
-
-    // Play game function (reuse from main new releases if not already defined)
-    if (typeof window.playGame === 'undefined') {
-        window.playGame = function(gameSlug) {
-            if (gameSlug) {
-                window.location.href = `game.html?game=${gameSlug}`;
-            }
-        };
-    }
-
-    // Add entrance animation for homepage cards
-    function addHomepageAnimation() {
-        const gameCards = document.querySelectorAll('.homepage-game-card');
-        gameCards.forEach((card, index) => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(30px)';
-            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            
-            setTimeout(() => {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-            }, index * 100); // Stagger the animation
-        });
-    }
-
-    // Handle window resize to adjust number of games shown
-    let resizeTimeout;
-    window.addEventListener('resize', function() {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            const newGamesToShow = getGamesToShow();
-            if (newGamesToShow !== homepageGames.length) {
-                // Reload with new number of games if screen size changed significantly
-                location.reload();
-            }
-        }, 250);
-    });
-
-    // Initialize homepage new releases
-    loadHomepageGames();
-});
 
 // Favorites Management
 class FavoritesManager {
@@ -6656,63 +6505,20 @@ class FavoritesManager {
     }
 
     initHomepageFavorites() {
-        // Create favorites section for homepage
-        const mainContent = document.getElementById('mainContent');
-        if (!mainContent) return;
 
-        // Check if favorites section already exists
-        if (document.querySelector('.favorites-section')) return;
 
-        const favoriteGames = this.getFavoriteGames('newest').slice(0, 6); // Show max 6 games
 
-        if (favoriteGames.length === 0) return; // Don't show section if no favorites
 
-        const favoritesSection = document.createElement('section');
-        favoritesSection.className = 'favorites-section';
 
-        const gamesList = favoriteGames.map(game => {
-            const gameUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
-            return `
-                <a href="${gameUrl}" class="favorite-item">
-                    <img src="${game.image}" alt="${game.name}" class="favorite-item-image">
-                    <div class="favorite-item-info">
-                        <h4>${game.name}</h4>
-                        <p>Added ${new Date(game.dateAdded).toLocaleDateString()}</p>
-                    </div>
-                </a>
-            `;
-        }).join('');
 
-        favoritesSection.innerHTML = `
-            <div class="favorites-section-header">
-                <h2 class="favorites-section-title">Your Favorite Games</h2>
-                <a href="favorites.html" class="view-all-favorites">View All →</a>
-            </div>
-            <div class="favorites-list">
-                ${gamesList}
-            </div>
-        `;
 
-        // Insert after the second section
-        const sections = mainContent.querySelectorAll('section');
-        if (sections.length >= 2) {
-            const secondSection = sections[1];
-            // insert after second section
-            secondSection.parentNode.insertBefore(favoritesSection, secondSection.nextSibling);
-        } else {
-            // fallback if less than 2 sections
-            mainContent.appendChild(favoritesSection);
-        }
+
+
+
+
     }
 
-    // Method to refresh homepage favorites (call when favorites change)
-    refreshHomepageFavorites() {
-        const existingSection = document.querySelector('.favorites-section');
-        if (existingSection) {
-            existingSection.remove();
-        }
-        this.initHomepageFavorites();
-    }
+
 }
 
 // Initialize Favorites Manager
@@ -6919,314 +6725,364 @@ class InfinitePixelsGameSection {
         this.maxDescriptionLength = options.maxDescriptionLength || 100;
     }
 
-    getElements() {
-        return {
-            section: document.getElementById(`${this.sectionId}-section`),
-            title: document.getElementById(`${this.sectionId}-category-title`),
-            subtitle: document.getElementById(`${this.sectionId}-category-subtitle`),
-            grid: document.getElementById(`${this.sectionId}-games-grid`)
-        };
+
+}
+
+// Homepage Games Manager
+class HomepageGamesManager {
+    constructor() {
+        this.favoritesManager = null;
+        this.init();
     }
 
-    getCategoryInfo() {
-        const categoryInfo = {
-            multiplayer: {
-                title: 'Multiplayer Games',
-            },
-            racing: {
-                title: 'Racing Games',
-            },
-            action: {
-                title: 'Action Games',
-            },
-            shooter: {
-                title: 'Shooter Games',
-            },
-            fighting: {
-                title: '2 Player Games',
-            },
-            cars: {
-                title: 'Car Games',
-            },
-            '3d': {
-                title: '3D Games',
-            },
-            sports: {
-                title: 'Sports Games',
+    init() {
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.setup());
+        } else {
+            this.setup();
+        }
+    }
+
+    setup() {
+        // Wait for both favorites manager and games database to be available
+        const checkDependencies = () => {
+            if (typeof gamesDatabase !== 'undefined' && gamesDatabase.length > 0) {
+                console.log('Dependencies loaded, initializing homepage games...');
+                
+                // Wait for the global favorites manager to be available
+                const waitForFavorites = () => {
+                    if (window.favoritesManager) {
+                        this.favoritesManager = window.favoritesManager;
+                        console.log('Using global favorites manager');
+                    } else {
+                        console.log('Global favorites manager not found, continuing without it');
+                    }
+                    
+                    this.renderFeaturedGames();
+                    this.renderCategoryGames();
+                    this.renderNewGames();
+                    this.initFavoritesPopup();
+                };
+                
+                // Try to get favorites manager, but don't block initialization
+                setTimeout(waitForFavorites, 100);
+                
+            } else {
+                console.log('Still waiting for dependencies...');
+                // Retry after a short delay
+                setTimeout(checkDependencies, 200);
             }
         };
-
-        return categoryInfo[this.category] || {
-            title: `${this.category.charAt(0).toUpperCase() + this.category.slice(1)} Games`,
-        };
-    }
-
-    loadGames() {
-        const elements = this.getElements();
-        if (!elements.grid) return;
-
-        let filteredGames = this.getGamesByCategory();
-
-        if (this.maxGames && filteredGames.length > this.maxGames) {
-            filteredGames = filteredGames.slice(0, this.maxGames);
-        }
-
-        if (filteredGames.length === 0) {
-            elements.grid.innerHTML = `
-                <div class="infinite-pixels-no-games">
-                    <p>No games found in the "${this.category}" category.</p>
-                    <p>Check back soon for new additions!</p>
-                </div>
-            `;
-            return;
-        }
-
-        elements.grid.innerHTML = filteredGames.map(game => this.createGameCard(game)).join('');
-        this.updateCategoryHeader();
-    }
-
-    updateCategoryHeader() {
-        const elements = this.getElements();
-        if (!this.showHeader) return;
-
-        const categoryInfo = this.getCategoryInfo();
-        const title = this.customTitle || categoryInfo.title;
-        const subtitle = this.customSubtitle || categoryInfo.subtitle;
-
-        if (elements.title) elements.title.textContent = title;
-        if (elements.subtitle) elements.subtitle.textContent = subtitle;
-    }
-
-    getGamesByCategory() {
-        if (typeof gamesDatabase === 'undefined') {
-            console.warn('gamesDatabase not found');
-            return [];
-        }
         
-        return gamesDatabase.filter(game => 
-            game.tags && game.tags.some(tag => tag.toLowerCase() === this.category.toLowerCase())
-        );
+        checkDependencies();
     }
 
-    createGameCard(game) {
-        const shortDescription = this.truncateDescription(game.description);
-        const gamePageUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
+    // Configuration for featured games
+    getFeaturedGamesConfig() {
+        return [
+            // Regular games
+            { slug: "1v1lol", isNew: false, isHot: true },
+            { slug: "cookieclicker", isNew: false, isHot: false },
+            { slug: "cubearena2048", isNew: true, isHot: false },
+            
+            // Special large games with videos (you'll need to add video URLs)
+            { 
+                slug: "3dformularacing", 
+                isSpecial: true, 
+                isNew: false, 
+                isHot: true,
+                videoUrl: "videos/3dformularacing-preview.mp4" // You'll need to add this
+            },
+            
+            // Regular game (removed duplicate basketrandom)
+            { slug: "basketrandom", isNew: false, isHot: false },
+        ];
+    }
+
+    renderFeaturedGames() {
+        const grid = document.getElementById('homepageGamesGrid');
+        if (!grid || typeof gamesDatabase === 'undefined') return;
+
+        const config = this.getFeaturedGamesConfig();
+        let html = '';
+
+        config.forEach(gameConfig => {
+            const game = gamesDatabase.find(g => g.slug === gameConfig.slug);
+            if (!game) return;
+
+            html += this.createGameCard(game, gameConfig, 'featured');
+        });
+
+        grid.innerHTML = html;
+        this.attachGameCardEvents('featured');
+    }
+
+    renderCategoryGames() {
+        const grid = document.getElementById('homepageCategoryGrid');
+        if (!grid || typeof gamesDatabase === 'undefined') return;
+
+        // Get action games (you can change this category)
+        const categoryGames = gamesDatabase
+            .filter(game => game.tags && game.tags.includes('action'))
+            .slice(0, 6); // Show first 6 games
+
+        let html = '';
+        categoryGames.forEach(game => {
+            html += this.createGameCard(game, {}, 'category');
+        });
+
+        grid.innerHTML = html;
+        this.attachGameCardEvents('category');
+    }
+
+    renderNewGames() {
+        const grid = document.getElementById('homepageNewGrid');
+        if (!grid || typeof gamesDatabase === 'undefined') return;
+
+        // Get the 8 newest games (assuming higher IDs are newer)
+        const newGames = gamesDatabase
+            .slice(-8)
+            .reverse();
+
+        let html = '';
+        newGames.forEach(game => {
+            html += this.createGameCard(game, { isNew: true }, 'new');
+        });
+
+        grid.innerHTML = html;
+        this.attachGameCardEvents('new');
+    }
+
+    createGameCard(game, config = {}, section = 'featured') {
+        const gameUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
+        const specialClass = config.isSpecial ? ' special' : '';
+        const videoData = config.videoUrl ? `data-video="${config.videoUrl}"` : '';
+        
+        let tagsHtml = '';
+        if (config.isNew) {
+            tagsHtml += '<div class="homepage-game-tag new">NEW</div>';
+        }
+        if (config.isHot) {
+            tagsHtml += '<div class="homepage-game-tag hot">🔥</div>';
+        }
 
         return `
-            <div class="infinite-pixels-game-card" data-game-id="${game.id}" data-section="${this.sectionId}">
-                <img src="${game.image}" alt="${game.name}" class="infinite-pixels-game-image" onerror="this.src='images/placeholder-game.jpg'">
-                <div class="infinite-pixels-game-content">
-                    <a href="${gamePageUrl}" class="infinite-pixels-game-title">${game.name}</a>
-                    <div class="infinite-pixels-game-tags">
-                        ${game.tags.map(tag => `<span class="infinite-pixels-game-tag">${tag}</span>`).join('')}
-                    </div>
-                    <div class="infinite-pixels-game-description">
-                        <span class="infinite-pixels-description-preview">
-                            ${shortDescription.text}
-                            ${shortDescription.isTruncated ? 
-                                `<button class="infinite-pixels-read-more-btn" onclick="infinitePixelsGameManager.toggleDescription('${this.sectionId}', ${game.id})">read more</button>` : 
-                                ''
-                            }
-                        </span>
-                        <span class="infinite-pixels-description-full" style="display: none;">
-                            ${game.description}
-                            <button class="infinite-pixels-read-more-btn" onclick="infinitePixelsGameManager.toggleDescription('${this.sectionId}', ${game.id})">read less</button>
-                        </span>
-                    </div>
-                    <a href="${gamePageUrl}" class="infinite-pixels-play-button">Play Now</a>
+            <div class="homepage-game-card${specialClass}" data-game-slug="${game.slug}" data-game-url="${gameUrl}" ${videoData}>
+                ${tagsHtml}
+                <img src="${game.image}" alt="${game.name}" class="homepage-game-card-image" loading="lazy">
+                <div class="homepage-game-card-overlay">
+                    <h3 class="homepage-game-card-name">${game.name}</h3>
+                    <button class="homepage-game-card-play">Play Now</button>
                 </div>
             </div>
         `;
     }
 
-    truncateDescription(description) {
-        if (!description || description.length <= this.maxDescriptionLength) {
-            return { text: description || '', isTruncated: false };
-        }
-
-        const truncated = description.substring(0, this.maxDescriptionLength);
-        const lastSpaceIndex = truncated.lastIndexOf(' ');
+    attachGameCardEvents(section) {
+        const selector = section === 'featured' ? '#homepageGamesGrid' : 
+                        section === 'category' ? '#homepageCategoryGrid' : 
+                        '#homepageNewGrid';
         
-        return {
-            text: truncated.substring(0, lastSpaceIndex > 0 ? lastSpaceIndex : this.maxDescriptionLength) + '...',
-            isTruncated: true
-        };
-    }
+        const container = document.querySelector(selector);
+        if (!container) return;
 
-    refresh(newCategory = null, newOptions = {}) {
-        if (newCategory) this.category = newCategory.toLowerCase();
-        Object.assign(this, newOptions);
-        this.loadGames();
-    }
-}
-
-class InfinitePixelsGameSectionsManager {
-    constructor(containerSelector) {
-        this.container = document.querySelector(containerSelector);
-        this.sections = new Map();
+        const cards = container.querySelectorAll('.homepage-game-card');
         
-        if (!this.container) {
-            console.error(`Container not found: ${containerSelector}`);
-            return;
-        }
-    }
+        cards.forEach(card => {
+            const gameUrl = card.getAttribute('data-game-url');
+            const videoUrl = card.getAttribute('data-video');
+            
+            // Click event to navigate to game
+            card.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.location.href = gameUrl;
+            });
 
-    generateSectionHTML(sectionId, showHeader, category = '', viewMoreUrl = '') {
-        // Generate the view more URL if not provided
-        if (!viewMoreUrl && category) {
-            viewMoreUrl = `https://www.infinite-pixels.com/category.html?category=${category.toLowerCase().replace(/\s+/g, '+')}`;
-        }
-    
-        const viewMoreButton = viewMoreUrl ? `
-            <a href="${viewMoreUrl}" class="infinite-pixels-view-more-btn">
-                View More ${category} Games
-            </a>
-        ` : '';
-
-        return `
-            <section class="infinite-pixels-game-category-section" id="${sectionId}-section">
-                ${showHeader ? `
-                <div class="infinite-pixels-category-header">
-                    <h2 class="infinite-pixels-category-title" id="${sectionId}-category-title"></h2>
-                    <p class="infinite-pixels-category-subtitle" id="${sectionId}-category-subtitle"></p>
-                    ${viewMoreButton}
-                </div>
-                ` : ''}
-                <div class="infinite-pixels-games-grid" id="${sectionId}-games-grid">
-                    <!-- Games will be populated here -->
-                </div>
-            </section>
-        `;
-    }
-
-// Update the createSection method to pass category and custom URL
-createSection(sectionId, category, options = {}) {
-    const viewMoreUrl = options.viewMoreUrl || `https://www.infinite-pixels.com/category.html?category=${category.toLowerCase().replace(/\s+/g, '+')}`;
-    const sectionHTML = this.generateSectionHTML(sectionId, options.showHeader !== false, category, viewMoreUrl);
-    this.container.insertAdjacentHTML('beforeend', sectionHTML);
-    
-    const section = new InfinitePixelsGameSection(sectionId, category, options);
-    this.sections.set(sectionId, section);
-    
-    setTimeout(() => section.loadGames(), 10);
-    
-    return section;
-}
-
-    removeSection(sectionId) {
-        const sectionElement = document.getElementById(`${sectionId}-section`);
-        if (sectionElement) {
-            sectionElement.remove();
-        }
-        this.sections.delete(sectionId);
-    }
-
-    getSection(sectionId) {
-        return this.sections.get(sectionId);
-    }
-
-    refreshAllSections() {
-        this.sections.forEach(section => section.loadGames());
-    }
-
-    createMultipleSections(sectionsConfig) {
-        sectionsConfig.forEach(config => {
-            this.createSection(config.id, config.category, config.options || {});
+            // Video hover events for special cards
+            if (videoUrl && card.classList.contains('special')) {
+                this.setupVideoHover(card, videoUrl);
+            }
         });
     }
 
-    toggleDescription(sectionId, gameId) {
-        const section = this.getSection(sectionId);
-        if (!section) return;
+    setupVideoHover(card, videoUrl) {
+        const overlay = document.getElementById('homepageVideoOverlay');
+        const video = document.getElementById('homepageVideo');
+        
+        if (!overlay || !video) return;
 
-        const gameCard = document.querySelector(`[data-game-id="${gameId}"][data-section="${sectionId}"]`);
-        if (!gameCard) return;
+        card.addEventListener('mouseenter', () => {
+            // Position the video overlay over the card
+            const rect = card.getBoundingClientRect();
+            overlay.style.position = 'fixed';
+            overlay.style.top = rect.top + 'px';
+            overlay.style.left = rect.left + 'px';
+            overlay.style.width = rect.width + 'px';
+            overlay.style.height = rect.height + 'px';
+            overlay.style.borderRadius = '12px';
+            overlay.style.overflow = 'hidden';
+            
+            // Set video source and play
+            video.src = videoUrl;
+            video.currentTime = 0;
+            video.play().catch(console.error);
+            
+            overlay.style.opacity = '1';
+        });
 
-        const preview = gameCard.querySelector('.infinite-pixels-description-preview');
-        const full = gameCard.querySelector('.infinite-pixels-description-full');
+        card.addEventListener('mouseleave', () => {
+            overlay.style.opacity = '0';
+            video.pause();
+            video.currentTime = 0;
+        });
+    }
 
-        if (preview && full) {
-            if (preview.style.display !== 'none') {
-                preview.style.display = 'none';
-                full.style.display = 'block';
+    initFavoritesPopup() {
+        const floatBtn = document.getElementById('homepageFavoritesBtn');
+        const popup = document.getElementById('homepageFavoritesPopup');
+        const closeBtn = document.getElementById('homepageFavoritesClose');
+        
+        console.log('Initializing favorites popup...', { floatBtn, popup, closeBtn });
+        
+        if (!floatBtn || !popup || !closeBtn) {
+            console.error('Favorites popup elements not found');
+            return;
+        }
+
+        // Toggle popup
+        floatBtn.addEventListener('click', (e) => {
+            console.log('Favorites button clicked!');
+            e.stopPropagation();
+            const isActive = popup.classList.contains('active');
+            if (isActive) {
+                this.closeFavoritesPopup();
             } else {
-                preview.style.display = 'block';
-                full.style.display = 'none';
+                this.openFavoritesPopup();
             }
+        });
+
+        // Close popup
+        closeBtn.addEventListener('click', () => {
+            console.log('Close button clicked');
+            this.closeFavoritesPopup();
+        });
+
+        // Close popup when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!popup.contains(e.target) && !floatBtn.contains(e.target)) {
+                this.closeFavoritesPopup();
+            }
+        });
+        
+        console.log('Favorites popup initialized successfully');
+    }
+
+    openFavoritesPopup() {
+        console.log('Opening favorites popup...');
+        const popup = document.getElementById('homepageFavoritesPopup');
+        const content = document.getElementById('homepageFavoritesContent');
+        
+        if (!popup || !content) {
+            console.error('Popup elements not found');
+            return;
+        }
+
+        // Render favorites
+        this.renderFavoritesPopup();
+        
+        popup.classList.add('active');
+        console.log('Popup should be visible now');
+    }
+
+    closeFavoritesPopup() {
+        const popup = document.getElementById('homepageFavoritesPopup');
+        if (popup) {
+            popup.classList.remove('active');
+        }
+    }
+
+    renderFavoritesPopup() {
+        const content = document.getElementById('homepageFavoritesContent');
+        if (!content) return;
+
+        // Use the global favorites manager if available
+        const favManager = window.favoritesManager || this.favoritesManager;
+        if (!favManager) {
+            content.innerHTML = `
+                <div class="homepage-favorites-empty">
+                    <p>Loading favorites...</p>
+                </div>
+            `;
+            return;
+        }
+
+        const favorites = favManager.getFavoriteGames('newest').slice(0, 8);
+
+        if (favorites.length === 0) {
+            content.innerHTML = `
+                <div class="homepage-favorites-empty">
+                    <p>No favorite games yet!</p>
+                    <p>Click the heart icon on any game to add it to your favorites.</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+        favorites.forEach(game => {
+            const gameUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
+            const truncatedDesc = this.truncateText(game.description, 50);
+            
+            html += `
+                <div class="homepage-favorites-item" onclick="window.location.href='${gameUrl}'">
+                    <img src="${game.image}" alt="${game.name}" class="homepage-favorites-item-image" loading="lazy">
+                    <div class="homepage-favorites-item-info">
+                        <h4>${game.name}</h4>
+                        <p>${truncatedDesc}</p>
+                    </div>
+                </div>
+            `;
+        });
+
+        content.innerHTML = html;
+    }
+
+    truncateText(text, maxLength) {
+        if (!text || text.length <= maxLength) return text || '';
+        return text.substring(0, maxLength) + '...';
+    }
+
+    // Method to refresh favorites popup when favorites change
+    refreshFavoritesPopup() {
+        const popup = document.getElementById('homepageFavoritesPopup');
+        if (popup && popup.classList.contains('active')) {
+            this.renderFavoritesPopup();
         }
     }
 }
 
-// Initialize the manager
-const infinitePixelsGameManager = new InfinitePixelsGameSectionsManager('#infinite-pixels-game-sections-container');
+// Initialize when everything is ready
+let homepageGamesManager;
 
-// Create multiple sections automatically
-infinitePixelsGameManager.createMultipleSections([
-    {
-        id: 'multiplayer-zone',
-        category: 'multiplayer',
-        options: {
-            maxGames: 4,
-            customTitle: 'Top Multiplayer Games',
-            customSubtitle: ''
-        }
-    },
-    {
-        id: 'featured-racing',
-        category: 'racing',
-        options: {
-            maxGames: 4,
-            customTitle: 'Top Racing Games',
-            customSubtitle: ''
-        }
-    },
-    {
-        id: 'top-action',
-        category: 'action',
-        options: {
-            maxGames: 4,
-            customTitle: 'Top Action Games',
-            customSubtitle: ''
-        }
-    },
-    {
-        id: 'best-shooters',
-        category: 'shooter',
-        options: {
-            maxGames: 4,
-            customTitle: 'Top Shooter Games',
-            customSubtitle: ''
-        }
-    },
-    {
-        id: '2-player',
-        category: '2 player',
-        options: {
-            maxGames: 4,
-            customTitle: 'Top 2 Player Games',
-            customSubtitle: ''
-        }
-    },
-    {
-        id: 'car-collection',
-        category: 'cars',
-        options: {
-            maxGames: 4,
-            customTitle: 'Top Car Games',
-            customSubtitle: ''
-        }
+// Wait for DOM and other scripts to load
+document.addEventListener('DOMContentLoaded', function() {
+    // Only initialize if we're on a page that has the homepage games elements
+    if (document.getElementById('homepageGamesGrid')) {
+        // Wait a bit more to ensure all scripts are loaded
+        setTimeout(() => {
+            homepageGamesManager = new HomepageGamesManager();
+            window.homepageGamesManager = homepageGamesManager;
+        }, 200);
     }
-]);
+});
 
-// Optional utility functions
-function refreshInfinitePixelsGameSections() {
-    infinitePixelsGameManager.refreshAllSections();
-}
-
-function addInfinitePixelsGameSection(id, category, options = {}) {
-    return infinitePixelsGameManager.createSection(id, category, options);
-}
-
-function removeInfinitePixelsGameSection(id) {
-    infinitePixelsGameManager.removeSection(id);
+// Also initialize immediately if DOM is already ready
+if (document.readyState !== 'loading') {
+    if (document.getElementById('homepageGamesGrid')) {
+        setTimeout(() => {
+            homepageGamesManager = new HomepageGamesManager();
+            window.homepageGamesManager = homepageGamesManager;
+        }, 200);
+    }
 }
