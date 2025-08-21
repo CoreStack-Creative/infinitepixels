@@ -6311,13 +6311,9 @@ class FavoritesManager {
             this.initFavoritesPage();
         }
         
-        // Initialize game control bar if present
-        this.initGameControlBar();
+
         
-        // Initialize homepage favorites if on homepage
-        if (window.location.pathname.includes('index.html') || window.location.pathname === '/') {
-            this.initHomepageFavorites();
-        }
+
     }
 
     loadFavorites() {
