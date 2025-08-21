@@ -6800,7 +6800,7 @@ class HomepageGamesManager {
         return [
             { slug: "1v1lol", isNew: false, isHot: true },
             { slug: "cookieclicker", isNew: false, isHot: false },
-            { slug: "snowrider3d", isNew: false, isHot: false },
+            { slug: "snowrider3d", isNew: true, isHot: false },
             { slug: "golfclash", isNew: false, isHot: false },
             { 
                 slug: "slope", 
@@ -6821,7 +6821,7 @@ class HomepageGamesManager {
             },
             { slug: "happywheels", isNew: false, isHot: false },
             { slug: "maskedspecialforces", isNew: false, isHot: false },
-            { slug: "retrobowl", isNew: false, isHot: false },
+            { slug: "retrobowl", isNew: false, isHot: true },
             { slug: "fruitninja", isNew: false, isHot: false },
             { 
                 slug: "paperio", 
