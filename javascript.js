@@ -7146,7 +7146,7 @@ class HomepageGamesManager {
             tagsHtml += '<div class="homepage-game-tag new">NEW</div>';
         }
         if (config.isHot) {
-            tagsHtml += '<div class="homepage-game-tag hot">🔥</div>';
+            tagsHtml += '<div class="homepage-game-tag hot">HOT</div>';
         }
 
         return `

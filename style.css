@@ -5549,10 +5549,12 @@ select:focus {
 }
 
 .homepage-games-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+    max-width: none;
+    margin: 0;
+    padding: 0 10px; /* keeps a little breathing room */
+    width: 100%;
 }
+
 
 .homepage-games-title {
     font-size: 2.5rem;
@@ -5569,7 +5571,7 @@ select:focus {
 .homepage-games-grid {
     display: grid;
     gap: 15px;
-    margin-bottom: 20px;
+    margin-bottom: -80px;
     /* Grid will be set dynamically by JavaScript */
 }
 
@@ -5724,9 +5726,10 @@ select:focus {
 }
 
 .homepage-category-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+    max-width: none;
+    margin: 0;
+    padding: 0 10px; /* keeps a little breathing room */
+    width: 100%;
 }
 
 .homepage-category-title {
@@ -5774,9 +5777,10 @@ select:focus {
 }
 
 .homepage-new-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+    max-width: none;
+    margin: 0;
+    padding: 0 10px; /* keeps a little breathing room */
+    width: 100%;
 }
 
 .homepage-new-title {
