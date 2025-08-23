@@ -312,35 +312,8 @@
                 </div>
             </section>
         </div>
-        </div>
     </main>
 
-    <script>
-        // Global games database - loaded dynamically from games.json
-        let gamesDatabase = [];
-
-        // Load games database and initialize random games page
-        fetch("games.json")
-            .then(response => response.json())
-            .then(data => {
-                gamesDatabase = data;
-                window.gamesDatabase = gamesDatabase;
-                window.allGamesDatabase = gamesDatabase; // Fallback for old format
-                console.log("Loaded games for random games page:", gamesDatabase.length, "games");
-                
-                // Initialize general site functionality (includes carousel)
-                initSite();
-            })
-            .catch(error => {
-                console.error("Error loading games database:", error);
-                gamesDatabase = [];
-                window.gamesDatabase = gamesDatabase;
-                window.allGamesDatabase = gamesDatabase;
-                
-                // Initialize with empty games
-                initSite();
-            });
-    </script>
     <script src="javascript.js"></script>
 </body>
 </html>
