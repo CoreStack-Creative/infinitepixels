@@ -6857,6 +6857,19 @@ class HomepageGamesManager {
             { slug: "shellshockers", isNew: false, isHot: false },
             { slug: "tallmanrun", isNew: false, isHot: false },
             { slug: "tinyfishing", isNew: false, isHot: false },
+            { slug: "ball2048", isNew: false, isHot: false },
+            { slug: "bitlife", isNew: false, isHot: false },
+            { slug: "crowdycityio", isNew: false, isHot: false },
+            { slug: "drawclimber", isNew: false, isHot: false },
+            { slug: "helixjump", isNew: false, isHot: false },
+            { slug: "parkourblock3d", isNew: false, isHot: false },
+            { slug: "mrracer", isNew: false, isHot: false },
+            { slug: "rocketbikehighwayrace", isNew: false, isHot: false },
+            { slug: "rocketleague", isNew: false, isHot: false },
+            { slug: "savethedummy", isNew: false, isHot: false },
+            { slug: "slope3", isNew: false, isHot: false },
+            { slug: "smilingglass", isNew: false, isHot: false },
+            { slug: "snowballio", isNew: false, isHot: false },
         ];
     }
 
@@ -6864,13 +6877,13 @@ class HomepageGamesManager {
     calculateGridLayoutAndAdjustConfig(config) {
         const specialCards = config.filter(c => c.isSpecial).length;
         const totalCards = config.length;
-        
+    
         // Base columns calculation
         const baseColumns = Math.min(6, Math.max(3, Math.ceil(Math.sqrt(totalCards * 1.5))));
-        
+    
         // Ensure we can accommodate special cards (2x2) without gaps
         let columns = baseColumns;
-        
+    
         // If we have special cards, make sure columns is even and at least 4
         if (specialCards > 0) {
             if (columns < 4) columns = 4;
@@ -6882,28 +6895,12 @@ class HomepageGamesManager {
         const regularCardsCount = totalCards - specialCards;
         const totalSpace = specialCardSpace + regularCardsCount;
         
-        // Calculate how many full rows we can make
-        const fullRows = Math.floor(totalSpace / columns);
-        const remainingSpace = totalSpace % columns;
-        
-        let adjustedConfig = [...config];
-        
-        // If we have remaining space that's not a full row, remove some regular cards
-        if (remainingSpace > 0) {
-            const spacesToRemove = remainingSpace;
-            let removedCount = 0;
-            
-            // Remove regular cards from the end until we have full rows
-            for (let i = adjustedConfig.length - 1; i >= 0 && removedCount < spacesToRemove; i--) {
-                if (!adjustedConfig[i].isSpecial) {
-                    adjustedConfig.splice(i, 1);
-                    removedCount++;
-                }
-            }
-        }
-        
-        const rows = Math.ceil((specialCardSpace + (adjustedConfig.length - specialCards)) / columns);
-        
+        // Calculate rows needed to fit all cards
+        const rows = Math.ceil(totalSpace / columns);
+    
+        // Return all cards without removing any
+        const adjustedConfig = [...config];
+    
         return { columns, rows, adjustedConfig };
     }
 
