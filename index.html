@@ -523,12 +523,15 @@
    <script src="javascript.js"></script> <!-- Main javascript with games.json fetching -->
    
    <script>
-       // Wait for games data to be loaded before initializing homepage-specific functionality
+       // Global games database - loaded dynamically from games.json
+       let gamesDatabase = [];
+
+       // Homepage-specific initialization (runs after initSite)
        function initializeHomepageFeatures() {
            // Add class to body to hide loading states
            document.body.classList.add('games-loaded');
            
-           // Video hover play/pause logic for featured games (wait for games to load)
+           // Video hover play/pause logic for featured games
            document.querySelectorAll('.featured-games .game-card').forEach(card => {
                const video = card.querySelector('.game-video');
                if (!video) return;
@@ -542,31 +545,34 @@
                });
            });
 
-           // Add any other homepage-specific functionality here
-           console.log('Homepage features initialized with', window.gamesDatabase?.length || 0, 'games');
+           console.log('Homepage features initialized');
        }
 
-       // Check if games are already loaded, otherwise wait for them
-       if (window.gamesDatabase && window.gamesDatabase.length > 0) {
-           initializeHomepageFeatures();
-       } else {
-           // Wait for games to be loaded
-           const checkGamesLoaded = setInterval(() => {
-               if (window.gamesDatabase && window.gamesDatabase.length > 0) {
-                   clearInterval(checkGamesLoaded);
-                   initializeHomepageFeatures();
-               }
-           }, 100);
-           
-           // Fallback timeout in case something goes wrong
-           setTimeout(() => {
-               clearInterval(checkGamesLoaded);
-               console.log('Games loading timeout - initializing homepage features anyway');
-               // Still add the class to hide loading states even if games failed to load
-               document.body.classList.add('games-loaded');
+       // Load games database and initialize homepage
+       fetch("games.json")
+           .then(response => response.json())
+           .then(data => {
+               gamesDatabase = data;
+               window.gamesDatabase = gamesDatabase;
+               window.allGamesDatabase = gamesDatabase; // Fallback for old format
+               console.log("Loaded games for homepage:", gamesDatabase.length, "games");
+               
+               // Initialize general site functionality
+               initSite();
+               
+               // Initialize homepage-specific features
                initializeHomepageFeatures();
-           }, 5000);
-       }
+           })
+           .catch(error => {
+               console.error("Error loading games database:", error);
+               gamesDatabase = [];
+               window.gamesDatabase = gamesDatabase;
+               window.allGamesDatabase = gamesDatabase;
+               
+               // Initialize with empty games
+               initSite();
+               initializeHomepageFeatures();
+           });
    </script>
 </body>
 </html>

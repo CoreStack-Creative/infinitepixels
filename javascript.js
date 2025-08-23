@@ -7,34 +7,11 @@ const navLinks = document.querySelectorAll('.nav-links a');
 const searchInput = document.getElementById('searchInput');
 const searchResults = document.getElementById('searchResults');
 
-// Global games database - will be populated from games.json
+// Global games database - will be populated from games.json by each page
 let gamesDatabase = [];
 
-// Fetch games data from JSON file and initialize site
-fetch("games.json")
-  .then(response => response.json())
-  .then(data => {
-    gamesDatabase = data;
-    
-    // Make games database globally accessible
-    window.gamesDatabase = gamesDatabase;
-    window.allGamesDatabase = gamesDatabase; // Fallback for old format
-    
-    console.log("Loaded games:", gamesDatabase.length, "games from JSON");
-    
-    // Initialize all functionality that depends on gamesDatabase
-    initSite();
-  })
-  .catch(error => {
-    console.error("Error loading games database:", error);
-    // Initialize with empty array as fallback
-    gamesDatabase = [];
-    window.gamesDatabase = gamesDatabase;
-    window.allGamesDatabase = gamesDatabase;
-    initSite();
-  });
-
 // Function to initialize all site functionality that depends on gamesDatabase
+// This is now called by individual pages after they load their games data
 function initSite() {
     console.log("Initializing site with", gamesDatabase.length, "games");
     

@@ -293,9 +293,38 @@
         </div>
     </main>
 
-    <!-- Include the games database -->
-    <script src="games-database.js"></script>
-    <script src="new-releases-script.js"></script>
+        </div>
+    </main>
+
+    <script>
+        // Global games database - loaded dynamically from games.json
+        let gamesDatabase = [];
+
+        // Load games database and initialize new games page
+        fetch("games.json")
+            .then(response => response.json())
+            .then(data => {
+                gamesDatabase = data;
+                window.gamesDatabase = gamesDatabase;
+                window.allGamesDatabase = gamesDatabase; // Fallback for old format
+                console.log("Loaded games for new games page:", gamesDatabase.length, "games");
+                
+                // Initialize general site functionality
+                initSite();
+                
+                // Initialize new games-specific functionality
+                console.log('New games page initialized');
+            })
+            .catch(error => {
+                console.error("Error loading games database:", error);
+                gamesDatabase = [];
+                window.gamesDatabase = gamesDatabase;
+                window.allGamesDatabase = gamesDatabase;
+                
+                // Initialize with empty games
+                initSite();
+            });
+    </script>
     <script src="javascript.js"></script>
 </body>
 </html>

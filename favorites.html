@@ -242,11 +242,39 @@
                     <h2>No Favorite Games Yet</h2>
                     <p>Start adding games to your favorites by clicking the heart icon while playing!</p>
                     <a href="games.html" class="browse-games-btn">Browse Games</a>
-                </div>
             </div>
         </div>
     </main>
 
+    <script>
+        // Global games database - loaded dynamically from games.json
+        let gamesDatabase = [];
+
+        // Load games database and initialize favorites page
+        fetch("games.json")
+            .then(response => response.json())
+            .then(data => {
+                gamesDatabase = data;
+                window.gamesDatabase = gamesDatabase;
+                window.allGamesDatabase = gamesDatabase; // Fallback for old format
+                console.log("Loaded games for favorites page:", gamesDatabase.length, "games");
+                
+                // Initialize general site functionality
+                initSite();
+                
+                // Initialize favorites-specific functionality
+                console.log('Favorites page initialized');
+            })
+            .catch(error => {
+                console.error("Error loading games database:", error);
+                gamesDatabase = [];
+                window.gamesDatabase = gamesDatabase;
+                window.allGamesDatabase = gamesDatabase;
+                
+                // Initialize with empty games
+                initSite();
+            });
+    </script>
     <script src="javascript.js"></script>
 </body>
 </html>

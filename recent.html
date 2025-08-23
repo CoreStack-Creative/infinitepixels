@@ -249,6 +249,35 @@
         </div>
     </main>
 
+    <script>
+        // Global games database - loaded dynamically from games.json
+        let gamesDatabase = [];
+
+        // Load games database and initialize recent games page
+        fetch("games.json")
+            .then(response => response.json())
+            .then(data => {
+                gamesDatabase = data;
+                window.gamesDatabase = gamesDatabase;
+                window.allGamesDatabase = gamesDatabase; // Fallback for old format
+                console.log("Loaded games for recent games page:", gamesDatabase.length, "games");
+                
+                // Initialize general site functionality
+                initSite();
+                
+                // Initialize recent games-specific functionality
+                console.log('Recent games page initialized');
+            })
+            .catch(error => {
+                console.error("Error loading games database:", error);
+                gamesDatabase = [];
+                window.gamesDatabase = gamesDatabase;
+                window.allGamesDatabase = gamesDatabase;
+                
+                // Initialize with empty games
+                initSite();
+            });
+    </script>
     <script src="javascript.js"></script>
 </body>
 </html>
