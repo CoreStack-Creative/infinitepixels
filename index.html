@@ -15,6 +15,51 @@
   />
   <link rel="canonical" href="https://infinite-pixels.com/" />
 
+  <!-- Loading spinner styles -->
+  <style>
+    .homepage-games-loading,
+    .homepage-category-loading,
+    .homepage-new-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      color: #b8b8d4;
+      min-height: 200px;
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(184, 184, 212, 0.2);
+      border-top: 3px solid #8a2be2;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 1rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .homepage-games-loading p,
+    .homepage-category-loading p,
+    .homepage-new-loading p {
+      margin: 0;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    /* Hide loading states once games are loaded */
+    .games-loaded .homepage-games-loading,
+    .games-loaded .homepage-category-loading,
+    .games-loaded .homepage-new-loading {
+      display: none;
+    }
+  </style>
+
   <!-- ✅ Logo structured data for Google -->
   <script type="application/ld+json">
   {
@@ -253,7 +298,12 @@
        <section class="homepage-games-section">
            <div class="homepage-games-container">
                <div class="homepage-games-grid" id="homepageGamesGrid">
-                   <!-- Games will be populated by JavaScript -->
+                   <!-- Loading state while games are being fetched -->
+                   <div class="homepage-games-loading" id="homepageGamesLoading">
+                       <div class="loading-spinner"></div>
+                       <p>Loading games...</p>
+                   </div>
+                   <!-- Games will be populated by JavaScript after fetch completes -->
                </div>
            </div>
        </section>
@@ -298,7 +348,12 @@
            <div class="homepage-category-container">
                <h2 class="homepage-category-title">Action Games</h2>
                <div class="homepage-category-grid" id="homepageCategoryGrid">
-                   <!-- Category games will be populated by JavaScript -->
+                   <!-- Loading state while games are being fetched -->
+                   <div class="homepage-category-loading" id="homepageCategoryLoading">
+                       <div class="loading-spinner"></div>
+                       <p>Loading action games...</p>
+                   </div>
+                   <!-- Category games will be populated by JavaScript after fetch completes -->
                </div>
                <div class="homepage-category-more">
                    <a href="https://www.infinite-pixels.com/category.html?category=action" class="homepage-category-btn">
@@ -313,7 +368,12 @@
            <div class="homepage-new-container">
                <h2 class="homepage-new-title">New Games</h2>
                <div class="homepage-new-grid" id="homepageNewGrid">
-                   <!-- New games will be populated by JavaScript -->
+                   <!-- Loading state while games are being fetched -->
+                   <div class="homepage-new-loading" id="homepageNewLoading">
+                       <div class="loading-spinner"></div>
+                       <p>Loading new games...</p>
+                   </div>
+                   <!-- New games will be populated by JavaScript after fetch completes -->
                </div>
                <div class="homepage-new-more">
                    <a href="newgames.html" class="homepage-new-btn">View All New Games</a>
@@ -460,22 +520,53 @@
    </div>
 
    <!-- Load scripts in correct order -->
-   <script src="javascript.js"></script> <!-- Then main javascript -->
+   <script src="javascript.js"></script> <!-- Main javascript with games.json fetching -->
    
    <script>
-       // Video hover play/pause logic for featured games
-       document.querySelectorAll('.featured-games .game-card').forEach(card => {
-           const video = card.querySelector('.game-video');
-           if (!video) return;
-           card.addEventListener('mouseenter', () => {
-               video.currentTime = 0;
-               video.play();
+       // Wait for games data to be loaded before initializing homepage-specific functionality
+       function initializeHomepageFeatures() {
+           // Add class to body to hide loading states
+           document.body.classList.add('games-loaded');
+           
+           // Video hover play/pause logic for featured games (wait for games to load)
+           document.querySelectorAll('.featured-games .game-card').forEach(card => {
+               const video = card.querySelector('.game-video');
+               if (!video) return;
+               card.addEventListener('mouseenter', () => {
+                   video.currentTime = 0;
+                   video.play();
+               });
+               card.addEventListener('mouseleave', () => {
+                   video.pause();
+                   video.currentTime = 0;
+               });
            });
-           card.addEventListener('mouseleave', () => {
-               video.pause();
-               video.currentTime = 0;
-           });
-       });
+
+           // Add any other homepage-specific functionality here
+           console.log('Homepage features initialized with', window.gamesDatabase?.length || 0, 'games');
+       }
+
+       // Check if games are already loaded, otherwise wait for them
+       if (window.gamesDatabase && window.gamesDatabase.length > 0) {
+           initializeHomepageFeatures();
+       } else {
+           // Wait for games to be loaded
+           const checkGamesLoaded = setInterval(() => {
+               if (window.gamesDatabase && window.gamesDatabase.length > 0) {
+                   clearInterval(checkGamesLoaded);
+                   initializeHomepageFeatures();
+               }
+           }, 100);
+           
+           // Fallback timeout in case something goes wrong
+           setTimeout(() => {
+               clearInterval(checkGamesLoaded);
+               console.log('Games loading timeout - initializing homepage features anyway');
+               // Still add the class to hide loading states even if games failed to load
+               document.body.classList.add('games-loaded');
+               initializeHomepageFeatures();
+           }, 5000);
+       }
    </script>
 </body>
 </html>

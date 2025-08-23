@@ -7,116 +7,66 @@ const navLinks = document.querySelectorAll('.nav-links a');
 const searchInput = document.getElementById('searchInput');
 const searchResults = document.getElementById('searchResults');
 
+// Global games database - will be populated from games.json
+let gamesDatabase = [];
 
-// Sample Game Data (Replace with your actual data source)
-const gameData = [
-   { name: "1v1 Lol", link: "/game.html?game=1v1lol" },
-   { name: "3D Formula Racing", link: "/game.html?game=3dformularacing" },
-   { name: "Basket Random", link: "/game.html?game=basketrandom" },
-   { name: "Cookie Clicker", link: "/game.html?game=cookieclicker" },
-   { name: "Cube Arena 2048", link: "/game.html?game=cubearena2048" },
-   { name: "Draw Climber", link: "/game.html?game=drawclimber" },
-   { name: "Fruit Merge", link: "/game.html?game=fruitmerge" },
-   { name: "Helix Jump", link: "/game.html?game=helixjump" },
-   { name: "Masked Special Forces", link: "/game.html?game=maskedspecialforces" },
-   { name: "Paper Io", link: "/game.html?game=paperio" },
-   { name: "Parkour Block 3D", link: "/game.html?game=parkourblock3d" },
-   { name: "Poly Track", link: "/game.html?game=polytrack" },
-   { name: "Rodeo Stampede", link: "/game.html?game=rodeostampede" },
-   { name: "Spiral Roll", link: "/game.html?game=spiralroll" },
-   { name: "Subway Surfers", link: "/game.html?game=subwaysurfers" },
-   { name: "Tiny Fishing", link: "/game.html?game=tinyfishing" },
-   { name: "Bloxd io", link: "/game.html?game=bloxdio" },
-   { name: "Moto X3M", link: "/game.html?game=motox3m" },
-   { name: "Tall Man Run", link: "/game.html?game=tallmanrun" },
-   { name: "Happy Wheels", link: "/game.html?game=happywheels" },
-   { name: "Madalin Stunt Cars Pro", link: "/game.html?game=madalinstuntcarspro" },
-   { name: "Fall Cars: Hexagon", link: "/game.html?game=fallcarshexagon" },
-   { name: "Fruit Ninja", link: "/game.html?game=fruitninja" },
-   { name: "Ball 2048", link: "/game.html?game=ball2048" },
-   { name: "Ice Fishing", link: "/game.html?game=icefishing" },
-   { name: "Stick Fighter", link: "/game.html?game=stickfighter" },
-   { name: "Papas Burgeria", link: "/game.html?game=papasburgeria" },
-   { name: "Bullet Army Run", link: "/game.html?game=bulletarmyrun" },
-   { name: "Survival Race", link: "/game.html?game=survivalrace" },
-   { name: "Block Stack 3D", link: "/game.html?game=blockstack3d" },
-   { name: "Rocket Bikes Highway Race", link: "/game.html?game=rocketbikeshighwayrace" },
-   { name: "Offroad Cycle 3D", link: "/game.html?game=offroadcycle3d" },
-   { name: "Funny Shooter 2", link: "/game.html?game=funnyshooter2" },
-   { name: "Draw the Car Path", link: "/game.html?game=drawthecarpath" },
-   { name: "Ninja Arashi", link: "/game.html?game=ninjaarashi" },
-   { name: "Shell Shockers", link: "/game.html?game=shellschockers" },
-   { name: "Smash Karts", link: "/game.html?game=smashkarts" },
-   { name: "Ships 3D", link: "/game.html?game=ships3d" },
-   { name: "Goober Dash", link: "/game.html?game=gooberdash" },
-   { name: "Golf Clash", link: "/game.html?game=golfclash" }, 
-   { name: "Similing Glass", link: "/game.html?game=similingglass" },
-   { name: "Crowdy City IO", link: "/game.html?game=crowdycityio" }, 
-   { name: "Archery King 3D", link: "/game.html?game=archeryking3d" },
-   { name: "Scooter Touchgrind", link: "/game.html?game=scootertouchgrind" },
-   { name: "Dunk Shot", link: "/game.html?game=dunkshot" },
-   { name: "Uno Online", link: "/game.html?game=unoonline" },
-   { name: "Snowball IO", link: "/game.html?game=snowballio" },
-   { name: "Realistic Lion Hunting", link: "/game.html?game=realisticlionhunting" },
-   { name: "Iron Legion", link: "/game.html?game=ironlegion" },
-   { name: "Narrow One", link: "/game.html?game=narrowone" },
-   { name: "Hole IO", link: "/game.html?game=holeio" },
-   { name: "Only Up! Parkour", link: "/game.html?game=onlyup!parkour" },
-   { name: "Bit Life", link: "/game.html?game=bitlife" },
-   { name: "Gulper IO", link: "/game.html?game=gulperio" },
-   { name: "Moto X3M Winter", link: "/game.html?game=motox3mwinter" },
-   { name: "Rocket Bot Royale", link: "/game.html?game=rocketbotroyale" },
-   { name: "Rocket League", link: "/game.html?game=rocketleague" },
-   { name: "Slope 3", link: "/game.html?game=slope3" },
-   { name: "Stair Race 3D", link: "/game.html?game=stairrace3d" },
-   { name: "Rise Up", link: "/game.html?game=riseup" },  
-   { name: "Mr Racer", link: "/game.html?game=mrracer" }, 
-   { name: "Stick Duel Battle", link: "/game.html?game=stickduelbattle" },  
-   { name: "Gansta Duel", link: "/game.html?game=Gansta Duel" },  
-   { name: "Power Slap", link: "/game.html?game=powerslap" },  
-   { name: "Rise Up", link: "/game.html?game=riseup" },  
-   { name: "Archer Hero", link: "/game.html?game=archerhero" }, 
-   { name: "Jelly Run 2048", link: "/game.html?game=jellyrun2048" },  
-   { name: "Winter Clash 3D", link: "/game.html?game=winterclash3d" }, 
-   { name: "Stickman Sniper", link: "/game.html?game=stickmansniper" },   
-   { name: "American 18 Wheeler Sim", link: "/game.html?game=american18wheelersim" },  
-   { name: "Billard 8Ball Pool", link: "/game.html?game=billard8ballpool" },
-   { name: "Flip Master", link: "/game.html?game=flipmaster" },
-   { name: "Curvy Punch 2", link: "/game.html?game=curvypunch2" },
-   { name: "Rider Online Pro", link: "/game.html?game=rideronlinepro" },
-   { name: "Sniper Simulator", link: "/game.html?game=snipersimulator" },
-   { name: "Momo Horror Story", link: "/game.html?game=momohorrorstory" },
-   { name: "Boat Rescue", link: "/game.html?game=boatrescue" }, 
-   { name: "Bus Simulator", link: "/game.html?game=snipersimulator" },
-   { name: "Stickman Online", link: "/game.html?game=momohorrorstory" },
-   { name: "Bird Simulator", link: "/game.html?game=Bird Simulator" },
-   { name: "Nightwalkers IO", link: "/game.html?game=nightwalkersio" }, 
-   { name: "Zombie Escape", link: "/game.html?game=zombieescape" }, 
-   { name: "Escape Your Birthday", link: "/game.html?game=escapeyourbirthday" }, 
-   { name: "Night Racer", link: "/game.html?game=nightracer" }, 
-   { name: "Mirage Online Clasic", link: "/game.html?game=mirageonlineclasic" },
-   { name: "Gang Fall Party", link: "/game.html?game=gangfallparty" },
-   { name: "Trial Bike Racing Clash", link: "/game.html?game=trialbikeracingclash" },
-   { name: "Stickman Sports Badminton", link: "/game.html?game=stickmansportsbadminton" },
-   { name: "Command Strike FPS", link: "/game.html?game=commandstrikefps" },
-   { name: "Zombie Survival 2", link: "/game.html?game=zombiesurvival2" },
-   { name: "Silent Fear", link: "/game.html?game=silentfear" },
-   { name: "Save the Dummy", link: "/game.html?game=savethedummy" },
-   { name: "Slowroads IO", link: "/game.html?game=slowroadsio" },
-   { name: "Slope", link: "/game.html?game=slope" },
-   { name: "Snow Rider 3D", link: "/game.html?game=snowrider3d" },
-   { name: "Retro Bowl", link: "/game.html?game=retrobowl" },
-   { name: "Basketball Line", link: "/game.html?game=basketballline" },
-   { name: "Pop the Bubble", link: "/game.html?game=popthebubble" }, 
-   { name: "Classic Car Parking", link: "/game.html?game=classiccarparking" },
-   { name: "Airport Manager", link: "/game.html?game=airportmanager" }, 
-   { name: "Sausage Flip", link: "/game.html?game=sausageflip" }, 
-];
+// Fetch games data from JSON file and initialize site
+fetch("games.json")
+  .then(response => response.json())
+  .then(data => {
+    gamesDatabase = data;
+    
+    // Make games database globally accessible
+    window.gamesDatabase = gamesDatabase;
+    window.allGamesDatabase = gamesDatabase; // Fallback for old format
+    
+    console.log("Loaded games:", gamesDatabase.length, "games from JSON");
+    
+    // Initialize all functionality that depends on gamesDatabase
+    initSite();
+  })
+  .catch(error => {
+    console.error("Error loading games database:", error);
+    // Initialize with empty array as fallback
+    gamesDatabase = [];
+    window.gamesDatabase = gamesDatabase;
+    window.allGamesDatabase = gamesDatabase;
+    initSite();
+  });
 
+// Function to initialize all site functionality that depends on gamesDatabase
+function initSite() {
+    console.log("Initializing site with", gamesDatabase.length, "games");
+    
+    // Initialize carousel functionality
+    if (document.getElementById('carouselSlides')) {
+        initializeElements();
+        createDynamicCarousel();
+        attachEventListeners();
+        startCarouselAnimation();
+    }
+    
+    // Initialize game loader if on game page
+    if (document.getElementById('gameFrame')) {
+        new GameLoader();
+    }
+    
+    // Initialize all games manager if on games page
+    if (document.querySelector('.primary-games-grid')) {
+        allGamesController = new AllGamesManager();
+    }
+    
+    // Initialize homepage games manager if on homepage
+    initializeHomepageGamesManager();
+    
+    // Initialize categories system
+    if (typeof cosmicCategoriesInitializeUniverse === 'function') {
+        cosmicCategoriesInitializeUniverse();
+    }
+}
 
 // Sidebar functionality
 let sidebarCollapsed = false;
-
 
 // DOM references for Paper.io simulation
 const gameCanvas = document.getElementById('gameCanvas');
@@ -399,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            const filteredGames = gameData.filter(game =>
+            const filteredGames = (window.gamesDatabase || []).filter(game =>
                 game.name.toLowerCase().includes(searchTerm)
             );
 
@@ -423,14 +373,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 resultElement.textContent = game.name;
                 resultElement.style.cursor = 'pointer';
                 resultElement.addEventListener('click', () => {
-                    if (game.link) {
-                        let destination = game.link;
-
+                    // Use slug from JSON data, fallback to old link format
+                    let destination;
+                    if (game.slug) {
+                        destination = `game.html?game=${game.slug}`;
+                    } else if (game.link) {
+                        destination = game.link;
                         // If link is relative (starts with "/"), prepend domain
                         if (destination.startsWith('/')) {
                             destination = 'https://www.infinite-pixels.com' + destination;
                         }
+                    }
 
+                    if (destination) {
                         window.location.href = destination;
                     }
 
@@ -1838,14 +1793,6 @@ let currentSelectedGame = null;
 let carouselAnimationId = null;
 let carouselPosition = 0;
 
-// Initialize the page
-document.addEventListener('DOMContentLoaded', function() {
-    initializeElements();
-    createDynamicCarousel();
-    attachEventListeners();
-    startCarouselAnimation();
-});
-
 function initializeElements() {
     carouselSlides = document.getElementById('carouselSlides');
     randomButton = document.getElementById('randomButton');
@@ -2155,20 +2102,6 @@ window.randomPageUtils = {
     selectRandomGameFromCategoryEnhanced
 };
 
-fetch("games.json")
-  .then(response => response.json())
-  .then(data => {
-    const gamesDatabase = data;
-
-    // ✅ now use gamesDatabase exactly like before
-    console.log("Loaded games:", gamesDatabase);
-  });
-
-
-// Make games database globally accessible
-window.gamesDatabase = gamesDatabase;
-window.allGamesDatabase = gamesDatabase; // Fallback for old format
-
 // Game loader functionality for individual game pages
 class GameLoader {
  constructor() {
@@ -2214,7 +2147,7 @@ class GameLoader {
  // Update game iframe
  const gameFrame = document.getElementById('gameFrame');
  if (gameFrame) {
- gameFrame.src = game.gameUrl;
+ gameFrame.src = game.gameurl || game.gameUrl; // Support both naming conventions
  gameFrame.title = game.name;
  }
 
@@ -2812,21 +2745,6 @@ class AllGamesManager {
 
 // Global variable for external access
 let allGamesController;
-
-// Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    // Only initialize if we're on the games page (check for specific elements) - updated class name
-    if (document.querySelector('.primary-games-grid')) {
-        allGamesController = new AllGamesManager();
-        console.log('Games page initialized with A-Z sorting');
-    }
-    
-    // Initialize GameLoader if we're on an individual game page
-    if (document.getElementById('gameFrame')) {
-        new GameLoader();
-        console.log('Game page initialized');
-    }
-});
 
 // Utility functions to add games from external scripts
 function addNewGameToCollection(name, image, url, tags) {
@@ -4301,27 +4219,11 @@ function cosmicCategoriesInitializeUniverse() {
     cosmicCategoriesCheckUrlOnLoad();
 }
 
-// Initialize when DOM is loaded
+// Setup browser navigation listener for categories
 document.addEventListener('DOMContentLoaded', function() {
-    // Small delay to ensure allGamesDatabase is loaded
-    setTimeout(cosmicCategoriesInitializeUniverse, 100);
-    
     // Add popstate listener for browser navigation
     window.addEventListener('popstate', cosmicCategoriesHandlePopState);
 });
-
-// Also initialize if script loads after DOM
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', function() {
-        cosmicCategoriesInitializeUniverse();
-        window.addEventListener('popstate', cosmicCategoriesHandlePopState);
-    });
-} else {
-    setTimeout(() => {
-        cosmicCategoriesInitializeUniverse();
-        window.addEventListener('popstate', cosmicCategoriesHandlePopState);
-    }, 100);
-}
 
 // About Page Interactions JavaScript - OPTIMIZED VERSION
 
@@ -6047,6 +5949,12 @@ class HomepageGamesManager {
         // Calculate layout and position cards
         const { positioned, columns, rows } = this.positionCardsInGrid(config);
         
+        // Preload images for better performance
+        const games = positioned.map(gameConfig => 
+            gamesDatabase.find(g => g.slug === gameConfig.slug)
+        ).filter(Boolean);
+        this.preloadGameImages(games);
+        
         // Set grid CSS properties
         grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
         grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
@@ -6073,6 +5981,28 @@ class HomepageGamesManager {
         });
         
         this.attachGameCardEvents('featured');
+        
+        // Mark loading as complete
+        this.markLoadingComplete('featured');
+    }
+
+    // Mark loading as complete and hide loading indicators
+    markLoadingComplete(section) {
+        // Add games-loaded class to body to hide loading states via CSS
+        document.body.classList.add('games-loaded');
+        
+        // Hide specific loading indicators
+        const loadingElements = {
+            'featured': document.getElementById('homepageGamesLoading'),
+            'category': document.getElementById('homepageCategoryLoading'),
+            'new': document.getElementById('homepageNewLoading')
+        };
+        
+        if (loadingElements[section]) {
+            loadingElements[section].style.display = 'none';
+        }
+        
+        console.log(`${section} games loading complete`);
     }
 
     // Enhanced createGameCard method to handle positioning
@@ -6103,7 +6033,7 @@ class HomepageGamesManager {
                  data-game-slug="${game.slug}" 
                  data-context="${context}"
                  data-has-video="${hasVideo}">
-                <img src="${game.image}" alt="${game.name}" class="homepage-game-card-image" loading="lazy">
+                <img src="${game.image}" alt="${game.name}" class="homepage-game-card-image" loading="lazy" onerror="if(this.src!=='images/infinitepixelslogo.png') this.src='images/infinitepixelslogo.png'; else this.style.display='none';">
                 ${videoHtml}
                 <div class="homepage-game-card-overlay">
                     <div class="homepage-game-card-name">${game.name}</div>
@@ -6177,6 +6107,9 @@ class HomepageGamesManager {
             .filter(game => game.tags && game.tags.includes('action'))
             .slice(0, 6);
 
+        // Preload images for better performance
+        this.preloadGameImages(categoryGames);
+
         let html = '';
         categoryGames.forEach(game => {
             html += this.createGameCard(game, {}, 'category');
@@ -6184,6 +6117,9 @@ class HomepageGamesManager {
 
         grid.innerHTML = html;
         this.attachGameCardEvents('category');
+        
+        // Mark loading as complete
+        this.markLoadingComplete('category');
     }
 
     renderNewGames() {
@@ -6194,6 +6130,9 @@ class HomepageGamesManager {
             .slice(-8)
             .reverse();
 
+        // Preload images for better performance
+        this.preloadGameImages(newGames);
+
         let html = '';
         newGames.forEach(game => {
             html += this.createGameCard(game, { isNew: true }, 'new');
@@ -6201,6 +6140,9 @@ class HomepageGamesManager {
 
         grid.innerHTML = html;
         this.attachGameCardEvents('new');
+        
+        // Mark loading as complete
+        this.markLoadingComplete('new');
     }
 
     createGameCard(game, config = {}, section = 'featured') {
@@ -6219,13 +6161,29 @@ class HomepageGamesManager {
         return `
             <div class="homepage-game-card${specialClass}" data-game-slug="${game.slug}" data-game-url="${gameUrl}" ${videoData}>
                 ${tagsHtml}
-                <img src="${game.image}" alt="${game.name}" class="homepage-game-card-image" loading="lazy">
+                <img src="${game.image}" alt="${game.name}" class="homepage-game-card-image" loading="lazy" onerror="if(this.src!=='images/infinitepixelslogo.png') this.src='images/infinitepixelslogo.png'; else this.style.display='none';">
                 <div class="homepage-game-card-overlay">
                     <h3 class="homepage-game-card-name">${game.name}</h3>
                     <button class="homepage-game-card-play">Play Now</button>
                 </div>
             </div>
         `;
+    }
+
+    // Preload images for better performance
+    preloadGameImages(games) {
+        games.forEach(game => {
+            if (game.image) {
+                const img = new Image();
+                img.onload = () => {
+                    console.log(`Image loaded: ${game.name}`);
+                };
+                img.onerror = () => {
+                    console.warn(`Failed to load image for ${game.name}: ${game.image}`);
+                };
+                img.src = game.image;
+            }
+        });
     }
 
     attachGameCardEvents(section) {
@@ -6241,6 +6199,19 @@ class HomepageGamesManager {
         cards.forEach(card => {
             const gameUrl = card.getAttribute('data-game-url');
             const videoUrl = card.getAttribute('data-video');
+            const image = card.querySelector('.homepage-game-card-image');
+            
+            // Handle image loading events
+            if (image) {
+                image.addEventListener('load', () => {
+                    card.classList.add('image-loaded');
+                });
+                
+                image.addEventListener('error', () => {
+                    console.warn(`Failed to load image: ${image.src}`);
+                    card.classList.add('image-error');
+                });
+            }
             
             card.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -6465,21 +6436,6 @@ function initializeHomepageGamesManager() {
     }
     return false;
 }
-
-// Multiple initialization attempts
-document.addEventListener('DOMContentLoaded', function() {
-    initializeHomepageGamesManager();
-});
-
-// Also try after a delay in case other scripts are still loading
-setTimeout(() => {
-    initializeHomepageGamesManager();
-}, 500);
-
-// And try again after window load
-window.addEventListener('load', function() {
-    initializeHomepageGamesManager();
-});
 
 // Export for global access
 if (typeof window !== 'undefined') {
