@@ -2209,7 +2209,7 @@ class GameLoader {
  // Update game iframe
  const gameFrame = document.getElementById('gameFrame');
  if (gameFrame) {
- gameFrame.src = game.gameUrl;
+ gameFrame.src = game.gameurl;
  gameFrame.title = game.name;
  }
 
