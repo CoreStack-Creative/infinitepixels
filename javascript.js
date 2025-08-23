@@ -8,112 +8,6 @@ const searchInput = document.getElementById('searchInput');
 const searchResults = document.getElementById('searchResults');
 
 
-// Sample Game Data (Replace with your actual data source)
-const gameData = [
-   { name: "1v1 Lol", link: "/game.html?game=1v1lol" },
-   { name: "3D Formula Racing", link: "/game.html?game=3dformularacing" },
-   { name: "Basket Random", link: "/game.html?game=basketrandom" },
-   { name: "Cookie Clicker", link: "/game.html?game=cookieclicker" },
-   { name: "Cube Arena 2048", link: "/game.html?game=cubearena2048" },
-   { name: "Draw Climber", link: "/game.html?game=drawclimber" },
-   { name: "Fruit Merge", link: "/game.html?game=fruitmerge" },
-   { name: "Helix Jump", link: "/game.html?game=helixjump" },
-   { name: "Masked Special Forces", link: "/game.html?game=maskedspecialforces" },
-   { name: "Paper Io", link: "/game.html?game=paperio" },
-   { name: "Parkour Block 3D", link: "/game.html?game=parkourblock3d" },
-   { name: "Poly Track", link: "/game.html?game=polytrack" },
-   { name: "Rodeo Stampede", link: "/game.html?game=rodeostampede" },
-   { name: "Spiral Roll", link: "/game.html?game=spiralroll" },
-   { name: "Subway Surfers", link: "/game.html?game=subwaysurfers" },
-   { name: "Tiny Fishing", link: "/game.html?game=tinyfishing" },
-   { name: "Bloxd io", link: "/game.html?game=bloxdio" },
-   { name: "Moto X3M", link: "/game.html?game=motox3m" },
-   { name: "Tall Man Run", link: "/game.html?game=tallmanrun" },
-   { name: "Happy Wheels", link: "/game.html?game=happywheels" },
-   { name: "Madalin Stunt Cars Pro", link: "/game.html?game=madalinstuntcarspro" },
-   { name: "Fall Cars: Hexagon", link: "/game.html?game=fallcarshexagon" },
-   { name: "Fruit Ninja", link: "/game.html?game=fruitninja" },
-   { name: "Ball 2048", link: "/game.html?game=ball2048" },
-   { name: "Ice Fishing", link: "/game.html?game=icefishing" },
-   { name: "Stick Fighter", link: "/game.html?game=stickfighter" },
-   { name: "Papas Burgeria", link: "/game.html?game=papasburgeria" },
-   { name: "Bullet Army Run", link: "/game.html?game=bulletarmyrun" },
-   { name: "Survival Race", link: "/game.html?game=survivalrace" },
-   { name: "Block Stack 3D", link: "/game.html?game=blockstack3d" },
-   { name: "Rocket Bikes Highway Race", link: "/game.html?game=rocketbikeshighwayrace" },
-   { name: "Offroad Cycle 3D", link: "/game.html?game=offroadcycle3d" },
-   { name: "Funny Shooter 2", link: "/game.html?game=funnyshooter2" },
-   { name: "Draw the Car Path", link: "/game.html?game=drawthecarpath" },
-   { name: "Ninja Arashi", link: "/game.html?game=ninjaarashi" },
-   { name: "Shell Shockers", link: "/game.html?game=shellschockers" },
-   { name: "Smash Karts", link: "/game.html?game=smashkarts" },
-   { name: "Ships 3D", link: "/game.html?game=ships3d" },
-   { name: "Goober Dash", link: "/game.html?game=gooberdash" },
-   { name: "Golf Clash", link: "/game.html?game=golfclash" }, 
-   { name: "Similing Glass", link: "/game.html?game=similingglass" },
-   { name: "Crowdy City IO", link: "/game.html?game=crowdycityio" }, 
-   { name: "Archery King 3D", link: "/game.html?game=archeryking3d" },
-   { name: "Scooter Touchgrind", link: "/game.html?game=scootertouchgrind" },
-   { name: "Dunk Shot", link: "/game.html?game=dunkshot" },
-   { name: "Uno Online", link: "/game.html?game=unoonline" },
-   { name: "Snowball IO", link: "/game.html?game=snowballio" },
-   { name: "Realistic Lion Hunting", link: "/game.html?game=realisticlionhunting" },
-   { name: "Iron Legion", link: "/game.html?game=ironlegion" },
-   { name: "Narrow One", link: "/game.html?game=narrowone" },
-   { name: "Hole IO", link: "/game.html?game=holeio" },
-   { name: "Only Up! Parkour", link: "/game.html?game=onlyup!parkour" },
-   { name: "Bit Life", link: "/game.html?game=bitlife" },
-   { name: "Gulper IO", link: "/game.html?game=gulperio" },
-   { name: "Moto X3M Winter", link: "/game.html?game=motox3mwinter" },
-   { name: "Rocket Bot Royale", link: "/game.html?game=rocketbotroyale" },
-   { name: "Rocket League", link: "/game.html?game=rocketleague" },
-   { name: "Slope 3", link: "/game.html?game=slope3" },
-   { name: "Stair Race 3D", link: "/game.html?game=stairrace3d" },
-   { name: "Rise Up", link: "/game.html?game=riseup" },  
-   { name: "Mr Racer", link: "/game.html?game=mrracer" }, 
-   { name: "Stick Duel Battle", link: "/game.html?game=stickduelbattle" },  
-   { name: "Gansta Duel", link: "/game.html?game=Gansta Duel" },  
-   { name: "Power Slap", link: "/game.html?game=powerslap" },  
-   { name: "Rise Up", link: "/game.html?game=riseup" },  
-   { name: "Archer Hero", link: "/game.html?game=archerhero" }, 
-   { name: "Jelly Run 2048", link: "/game.html?game=jellyrun2048" },  
-   { name: "Winter Clash 3D", link: "/game.html?game=winterclash3d" }, 
-   { name: "Stickman Sniper", link: "/game.html?game=stickmansniper" },   
-   { name: "American 18 Wheeler Sim", link: "/game.html?game=american18wheelersim" },  
-   { name: "Billard 8Ball Pool", link: "/game.html?game=billard8ballpool" },
-   { name: "Flip Master", link: "/game.html?game=flipmaster" },
-   { name: "Curvy Punch 2", link: "/game.html?game=curvypunch2" },
-   { name: "Rider Online Pro", link: "/game.html?game=rideronlinepro" },
-   { name: "Sniper Simulator", link: "/game.html?game=snipersimulator" },
-   { name: "Momo Horror Story", link: "/game.html?game=momohorrorstory" },
-   { name: "Boat Rescue", link: "/game.html?game=boatrescue" }, 
-   { name: "Bus Simulator", link: "/game.html?game=snipersimulator" },
-   { name: "Stickman Online", link: "/game.html?game=momohorrorstory" },
-   { name: "Bird Simulator", link: "/game.html?game=Bird Simulator" },
-   { name: "Nightwalkers IO", link: "/game.html?game=nightwalkersio" }, 
-   { name: "Zombie Escape", link: "/game.html?game=zombieescape" }, 
-   { name: "Escape Your Birthday", link: "/game.html?game=escapeyourbirthday" }, 
-   { name: "Night Racer", link: "/game.html?game=nightracer" }, 
-   { name: "Mirage Online Clasic", link: "/game.html?game=mirageonlineclasic" },
-   { name: "Gang Fall Party", link: "/game.html?game=gangfallparty" },
-   { name: "Trial Bike Racing Clash", link: "/game.html?game=trialbikeracingclash" },
-   { name: "Stickman Sports Badminton", link: "/game.html?game=stickmansportsbadminton" },
-   { name: "Command Strike FPS", link: "/game.html?game=commandstrikefps" },
-   { name: "Zombie Survival 2", link: "/game.html?game=zombiesurvival2" },
-   { name: "Silent Fear", link: "/game.html?game=silentfear" },
-   { name: "Save the Dummy", link: "/game.html?game=savethedummy" },
-   { name: "Slowroads IO", link: "/game.html?game=slowroadsio" },
-   { name: "Slope", link: "/game.html?game=slope" },
-   { name: "Snow Rider 3D", link: "/game.html?game=snowrider3d" },
-   { name: "Retro Bowl", link: "/game.html?game=retrobowl" },
-   { name: "Basketball Line", link: "/game.html?game=basketballline" },
-   { name: "Pop the Bubble", link: "/game.html?game=popthebubble" }, 
-   { name: "Classic Car Parking", link: "/game.html?game=classiccarparking" },
-   { name: "Airport Manager", link: "/game.html?game=airportmanager" }, 
-   { name: "Sausage Flip", link: "/game.html?game=sausageflip" }, 
-];
-
-
 // Sidebar functionality
 let sidebarCollapsed = false;
 
@@ -399,7 +293,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            const filteredGames = gameData.filter(game =>
+            // Check if games database is loaded
+            if (!gamesDatabase || gamesDatabase.length === 0) {
+                // Games not loaded yet, show loading message
+                if (searchResults) {
+                    searchResults.innerHTML = '<p class="loading-results">Loading games...</p>';
+                    searchResults.classList.add('active');
+                }
+                return;
+            }
+
+            const filteredGames = gamesDatabase.filter(game =>
                 game.name.toLowerCase().includes(searchTerm)
             );
 
@@ -423,15 +327,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 resultElement.textContent = game.name;
                 resultElement.style.cursor = 'pointer';
                 resultElement.addEventListener('click', () => {
-                    if (game.link) {
-                        let destination = game.link;
-
-                        // If link is relative (starts with "/"), prepend domain
-                        if (destination.startsWith('/')) {
-                            destination = 'https://www.infinite-pixels.com' + destination;
-                        }
-
+                    // Use the new data format with slug
+                    if (game.slug) {
+                        const destination = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
                         window.location.href = destination;
+                    } else if (game.gameurl) {
+                        // Fallback to direct game URL if no slug
+                        window.location.href = game.gameurl;
                     }
 
                     searchResults.classList.remove('active');
@@ -2155,19 +2057,112 @@ window.randomPageUtils = {
     selectRandomGameFromCategoryEnhanced
 };
 
-fetch("games.json")
-  .then(response => response.json())
-  .then(data => {
-    const gamesDatabase = data;
+// Declare global games database variable
+let gamesDatabase = [];
 
-    // ✅ now use gamesDatabase exactly like before
-    console.log("Loaded games:", gamesDatabase);
-  });
+// Function to load games data
+function loadGamesData() {
+    console.log('Starting to fetch games.json...');
 
+    fetch("games.json")
+      .then(response => {
+        console.log('Fetch response received:', response.status, response.statusText);
+        console.log('Response headers:', response.headers);
+        console.log('Response URL:', response.url);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        // Clone response to read as text first for debugging
+        const responseClone = response.clone();
+        responseClone.text().then(text => {
+            console.log('Response text preview (first 200 chars):', text.substring(0, 200));
+        });
+        
+        return response.json();
+      })
+      .then(data => {
+        console.log('JSON parsed successfully, games count:', data.length);
+        gamesDatabase = data;
 
-// Make games database globally accessible
-window.gamesDatabase = gamesDatabase;
-window.allGamesDatabase = gamesDatabase; // Fallback for old format
+        // ✅ now use gamesDatabase exactly like before
+        console.log("Loaded games:", gamesDatabase.length, "games");
+
+        // Make games database globally accessible
+        window.gamesDatabase = gamesDatabase;
+        window.allGamesDatabase = gamesDatabase; // Fallback for old format
+
+        // Verify some expected games exist
+        const testSlugs = ['1v1lol', 'cookieclicker', 'slope', 'maskedspecialforces'];
+        console.log('Testing for expected games:');
+        testSlugs.forEach(slug => {
+            const found = gamesDatabase.find(g => g.slug === slug);
+            console.log(`- ${slug}: ${found ? 'FOUND' : 'MISSING'}`);
+        });
+
+        // Initialize components that depend on games data
+        console.log('Initializing homepage games manager...');
+        initializeHomepageGamesManager();
+        
+        // Simple test - try to populate grid with basic cards
+        const testGrid = document.getElementById('homepageGamesGrid');
+        if (testGrid && gamesDatabase.length > 0) {
+            console.log('Running simple test - creating basic game cards...');
+            const testHtml = gamesDatabase.slice(0, 6).map(game => `
+                <div class="test-game-card" style="border: 1px solid #ccc; padding: 10px; margin: 5px;">
+                    <h3>${game.name}</h3>
+                    <img src="${game.image}" alt="${game.name}" style="width: 100px; height: 60px; object-fit: cover;">
+                    <p>Slug: ${game.slug}</p>
+                </div>
+            `).join('');
+            
+            // Only set test HTML if the grid is empty (meaning the manager didn't work)
+            setTimeout(() => {
+                if (testGrid.children.length === 0) {
+                    console.log('Main rendering failed, showing test cards...');
+                    testGrid.innerHTML = testHtml;
+                    testGrid.style.display = 'grid';
+                    testGrid.style.gridTemplateColumns = 'repeat(auto-fit, minmax(200px, 1fr))';
+                    testGrid.style.gap = '10px';
+                }
+            }, 1000);
+        }
+        initializeHomepageGamesManager();
+        
+        // Trigger any other initialization functions that need games data
+        if (typeof initializeAllGamesManager === 'function') {
+            console.log('Initializing all games manager...');
+            initializeAllGamesManager();
+        }
+        
+        // Initialize game loader for individual game pages
+        console.log('Initializing game loader...');
+        initializeGameLoader();
+        
+        // Initialize category manager if it exists
+        if (typeof cosmicCategoriesInit === 'function') {
+            console.log('Initializing cosmic categories...');
+            cosmicCategoriesInit();
+        }
+        
+        // Dispatch a custom event for other scripts that might need the games data
+        window.dispatchEvent(new CustomEvent('gamesDataLoaded', { detail: gamesDatabase }));
+        
+        console.log('All game-related components initialized successfully!');
+      })
+      .catch(error => {
+        console.error('Error loading games data:', error);
+        console.error('Make sure games.json exists and is valid JSON');
+      });
+}
+
+// Ensure DOM is ready before loading games
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadGamesData);
+} else {
+    // DOM is already ready
+    loadGamesData();
+}
 
 // Game loader functionality for individual game pages
 class GameLoader {
@@ -2813,19 +2808,11 @@ class AllGamesManager {
 // Global variable for external access
 let allGamesController;
 
-// Initialize when DOM is loaded
+// Initialize when DOM is loaded - Updated to wait for games data
 document.addEventListener('DOMContentLoaded', () => {
-    // Only initialize if we're on the games page (check for specific elements) - updated class name
-    if (document.querySelector('.primary-games-grid')) {
-        allGamesController = new AllGamesManager();
-        console.log('Games page initialized with A-Z sorting');
-    }
-    
-    // Initialize GameLoader if we're on an individual game page
-    if (document.getElementById('gameFrame')) {
-        new GameLoader();
-        console.log('Game page initialized');
-    }
+    // Note: All game-related initializations are now handled by the games data fetch
+    // This ensures the games database is loaded before trying to create any managers
+    console.log('DOM loaded, waiting for games data...');
 });
 
 // Utility functions to add games from external scripts
@@ -2847,7 +2834,41 @@ function addMultipleGamesToCollection(gamesArray) {
     }
 }
 
+// Function to initialize AllGamesManager when games data is available
+function initializeAllGamesManager() {
+    // Only initialize if we're on the games page and haven't initialized yet
+    if (document.querySelector('.primary-games-grid') && !allGamesController) {
+        console.log('Initializing All Games Manager with loaded data...');
+        allGamesController = new AllGamesManager();
+        return true;
+    }
+    return false;
+}
 
+// Function to initialize cosmic categories when games data is available
+function cosmicCategoriesInit() {
+    // Check if we're on the categories page
+    if (document.querySelector('.cosmic-categories-universe') || 
+        document.querySelector('[class*="category"]')) {
+        console.log('Initializing Cosmic Categories...');
+        if (typeof cosmicCategoriesInitializeUniverse === 'function') {
+            cosmicCategoriesInitializeUniverse();
+        }
+        return true;
+    }
+    return false;
+}
+
+// Function to initialize GameLoader when games data is available
+function initializeGameLoader() {
+    // Only initialize if we're on a game page
+    if (document.getElementById('gameFrame')) {
+        console.log('Initializing Game Loader with loaded data...');
+        new GameLoader();
+        return true;
+    }
+    return false;
+}
 
 
 // Settings.js - Handle all settings functionality
@@ -6040,12 +6061,22 @@ class HomepageGamesManager {
 
     renderFeaturedGames() {
         const grid = document.getElementById('homepageGamesGrid');
-        if (!grid || typeof gamesDatabase === 'undefined') return;
+        console.log('renderFeaturedGames called:');
+        console.log('- grid element found:', !!grid);
+        console.log('- gamesDatabase defined:', typeof gamesDatabase !== 'undefined');
+        console.log('- gamesDatabase length:', gamesDatabase ? gamesDatabase.length : 'N/A');
+        
+        if (!grid || typeof gamesDatabase === 'undefined') {
+            console.log('Exiting renderFeaturedGames - missing grid or gamesDatabase');
+            return;
+        }
 
         const config = this.getFeaturedGamesConfig();
+        console.log('Featured games config:', config);
         
         // Calculate layout and position cards
         const { positioned, columns, rows } = this.positionCardsInGrid(config);
+        console.log('Positioned games:', positioned.length, 'columns:', columns, 'rows:', rows);
         
         // Set grid CSS properties
         grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
@@ -6055,12 +6086,17 @@ class HomepageGamesManager {
 
         positioned.forEach(gameConfig => {
             const game = gamesDatabase.find(g => g.slug === gameConfig.slug);
-            if (!game) return;
+            if (!game) {
+                console.log('Game not found for slug:', gameConfig.slug);
+                return;
+            }
 
             html += this.createGameCard(game, gameConfig, 'featured');
         });
 
+        console.log('Generated HTML length:', html.length);
         grid.innerHTML = html;
+        console.log('HTML set to grid, children count:', grid.children.length);
         
         // Apply grid positioning to cards after they're in the DOM
         positioned.forEach((gameConfig, index) => {
@@ -6457,13 +6493,22 @@ let homepageGamesManager;
 
 // Function to initialize homepage games manager
 function initializeHomepageGamesManager() {
-    if (document.getElementById('homepageGamesGrid') && !homepageGamesManager) {
+    const gridElement = document.getElementById('homepageGamesGrid');
+    
+    console.log('initializeHomepageGamesManager called:');
+    console.log('- homepageGamesGrid element found:', !!gridElement);
+    console.log('- homepageGamesManager exists:', !!homepageGamesManager);
+    console.log('- gamesDatabase length:', gamesDatabase ? gamesDatabase.length : 'undefined');
+    
+    if (gridElement && !homepageGamesManager && gamesDatabase && gamesDatabase.length > 0) {
         console.log('Initializing Homepage Games Manager...');
         homepageGamesManager = new HomepageGamesManager();
         window.homepageGamesManager = homepageGamesManager;
         return true;
+    } else {
+        console.log('Skipping Homepage Games Manager initialization - conditions not met');
+        return false;
     }
-    return false;
 }
 
 // Multiple initialization attempts
