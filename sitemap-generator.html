@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Sitemap Generator</title>
+</head>
+<body>
+  <h1>Sitemap Generator</h1>
+  <button onclick="generateSitemap()">Generate Sitemap</button>
+  <pre id="output"></pre>
+
+  <script>
+    const baseUrl = "https://www.infinite-pixels.com";
+
+    const staticPages = [
+      "/",
+      "/index.html",
+      "/recent.html",
+      "/games.html",
+      "/favorites.html",
+      "/random.html",
+      "/newgames.html",
+      "/category.html",
+      "/news.html",
+      "/about.html",
+      "/privacypolicy.html",
+      "/termsandconditions.html",
+      "/contact.html"
+    ];
+
+    async function generateSitemap() {
+      // Fetch games.json instead of hardcoding the array
+      const response = await fetch("games.json");
+      const gamesDatabase = await response.json();
+
+      const staticUrls = staticPages.map(path => `
+  <url>
+    <loc>${baseUrl}${path}</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+    <priority>0.80</priority>
+  </url>`).join("");
+
+      const gameUrls = gamesDatabase.map(game => `
+  <url>
+    <loc>${baseUrl}/game.html?game=${game.slug}</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+    <priority>0.80</priority>
+  </url>`).join("");
+
+      const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${staticUrls}
+${gameUrls}
+</urlset>`;
+
+      document.getElementById("output").textContent = sitemap;
+    }
+  </script>
+</body>
+</html>
