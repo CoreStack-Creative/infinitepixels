@@ -2149,6 +2149,10 @@ function loadGamesData() {
         console.log('Initializing favorites manager...');
         initializeFavoritesManager();
         
+        // Initialize new games page
+        console.log('Initializing new games page...');
+        initializeNewGamesPageWhenReady();
+        
         // Dispatch a custom event for other scripts that might need the games data
         window.dispatchEvent(new CustomEvent('gamesDataLoaded', { detail: gamesDatabase }));
         
@@ -5129,14 +5133,16 @@ window.RelatedGames = {
 };
 
 // New Releases JavaScript
-document.addEventListener('DOMContentLoaded', function() {
+function initializeNewGamesPage() {
     const newGamesGrid = document.getElementById('newGamesGrid');
     
-    // ADD THIS CHECK - Exit early if not on the new releases page
+    // Exit early if not on the new releases page
     if (!newGamesGrid) {
         console.log('Not on new releases page - skipping new games functionality');
         return;
     }
+    
+    console.log('Initializing new games page...');
     
     const loadMoreBtn = document.getElementById('loadMoreBtn');
     const loadMoreSection = document.getElementById('loadMoreSection');
@@ -5162,9 +5168,13 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     
+    console.log('Games database found:', gamesDatabase.length, 'games');
+    
     // Get the newest 30 games (assuming the games are ordered by ID, newest first)
     const newestGames = gamesDatabase.slice(-30).reverse();
     
+    console.log('Newest games to display:', newestGames.length);
+
     // Update count displays
     function updateCountDisplays() {
         const totalCount = newestGames.length;
@@ -5249,7 +5259,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Store full descriptions for toggle function
-    const gameDescriptions = {};
+    newGamesDescriptions = {};
 
     // Load games function
     function loadGames() {
@@ -5268,7 +5278,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const cardId = `game-card-${cardIndex}`;
             
             // Store descriptions for toggle function
-            gameDescriptions[cardId] = {
+            newGamesDescriptions[cardId] = {
                 full: game.description || '',
                 truncated: truncateDescription(game.description || '').truncated
             };
@@ -5305,36 +5315,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Toggle description function - simplified
-    window.toggleDescription = function(cardId) {
-        const descElement = document.getElementById(`desc-${cardId}`);
-        if (!descElement) return;
-        
-        const textElement = descElement.querySelector('.description-text');
-        const readMoreBtn = descElement.querySelector('.read-more-btn');
-        
-        if (!textElement || !readMoreBtn) return;
-        
-        const descriptions = gameDescriptions[cardId];
-        if (!descriptions) return;
-        
-        if (readMoreBtn.textContent.trim() === 'Read more') {
-            textElement.textContent = descriptions.full;
-            readMoreBtn.textContent = 'Show less';
-            readMoreBtn.classList.add('expanded');
-        } else {
-            textElement.textContent = descriptions.truncated;
-            readMoreBtn.textContent = 'Read more';
-            readMoreBtn.classList.remove('expanded');
-        }
-    };
 
-    // Play game function
-    window.playGame = function(gameSlug) {
-        if (gameSlug) {
-            window.location.href = `game.html?game=${gameSlug}`;
-        }
-    };
 
     // Initialize the page
     function initializePage() {
@@ -5387,6 +5368,62 @@ document.addEventListener('DOMContentLoaded', function() {
         originalLoadGames();
         setTimeout(addScrollAnimation, 100);
     };
+    
+    console.log('New games page initialization complete');
+}
+
+// Global functions for new games page
+let newGamesDescriptions = {};
+
+// Toggle description function - global scope
+window.toggleDescription = function(cardId) {
+    const descElement = document.getElementById(`desc-${cardId}`);
+    if (!descElement) return;
+    
+    const textElement = descElement.querySelector('.description-text');
+    const readMoreBtn = descElement.querySelector('.read-more-btn');
+    
+    if (!textElement || !readMoreBtn) return;
+    
+    const descriptions = newGamesDescriptions[cardId];
+    if (!descriptions) return;
+    
+    if (readMoreBtn.textContent.trim() === 'Read more') {
+        textElement.textContent = descriptions.full;
+        readMoreBtn.textContent = 'Show less';
+        readMoreBtn.classList.add('expanded');
+    } else {
+        textElement.textContent = descriptions.truncated;
+        readMoreBtn.textContent = 'Read more';
+        readMoreBtn.classList.remove('expanded');
+    }
+};
+
+// Play game function - global scope
+window.playGame = function(gameSlug) {
+    if (gameSlug) {
+        window.location.href = `game.html?game=${gameSlug}`;
+    }
+};
+
+// Initialize new games page when games data is loaded
+function initializeNewGamesPageWhenReady() {
+    if (typeof gamesDatabase !== 'undefined' && gamesDatabase.length > 0) {
+        initializeNewGamesPage();
+    }
+}
+
+// Listen for games data loaded event
+window.addEventListener('gamesDataLoaded', () => {
+    initializeNewGamesPageWhenReady();
+});
+
+// Also initialize on DOM load if games are already loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if games are already loaded
+    if (typeof gamesDatabase !== 'undefined' && gamesDatabase.length > 0) {
+        initializeNewGamesPageWhenReady();
+    }
 });
 
 
