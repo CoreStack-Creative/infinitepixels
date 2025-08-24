@@ -5732,11 +5732,17 @@ select:focus {
     width: 100%;
 }
 
+.homepage-category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
 .homepage-category-title {
     font-size: 2rem;
     color: var(--about-text-primary);
-    text-align: center;
-    margin-bottom: 30px;
+    margin: 0;
     background: var(--about-gradient-nebula);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -5755,19 +5761,30 @@ select:focus {
 }
 
 .homepage-category-btn {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
     background: var(--about-gradient-cosmic);
     color: white;
     text-decoration: none;
-    padding: 12px 30px;
+    padding: 10px 20px;
     border-radius: 25px;
     font-weight: 600;
+    font-size: 0.9rem;
     transition: all 0.3s ease;
 }
 
 .homepage-category-btn:hover {
     transform: translateY(-2px);
     box-shadow: var(--about-glow-purple);
+}
+
+.homepage-category-btn i {
+    transition: transform 0.3s ease;
+}
+
+.homepage-category-btn:hover i {
+    transform: translateX(3px);
 }
 
 /* New Games Section */
@@ -6010,6 +6027,18 @@ select:focus {
     
     .homepage-category-grid {
         grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    }
+    
+    .homepage-category-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .homepage-category-btn {
+        align-self: flex-end;
+        font-size: 0.8rem;
+        padding: 8px 16px;
     }
     
     .homepage-new-grid {
