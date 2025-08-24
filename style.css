@@ -10174,6 +10174,23 @@ body.light-theme ::-webkit-scrollbar-thumb {
     margin: 0 0 0.5rem 0;
 }
 
+.favorite-game-info .game-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.favorite-game-info .game-tags .tag {
+    background: rgba(138, 43, 226, 0.2);
+    color: var(--about-purple-light);
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid rgba(138, 43, 226, 0.3);
+}
+
 .favorite-game-info p {
     color: var(--about-text-secondary);
     font-size: 0.9rem;

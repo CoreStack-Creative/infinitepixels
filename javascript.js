@@ -2145,6 +2145,10 @@ function loadGamesData() {
             cosmicCategoriesInit();
         }
         
+        // Initialize favorites manager
+        console.log('Initializing favorites manager...');
+        initializeFavoritesManager();
+        
         // Dispatch a custom event for other scripts that might need the games data
         window.dispatchEvent(new CustomEvent('gamesDataLoaded', { detail: gamesDatabase }));
         
@@ -5396,15 +5400,21 @@ class FavoritesManager {
     }
 
     init() {
-        // Initialize favorites page if we're on it
+        // Initialize game control bar if present (this can work without games data)
+        this.initGameControlBar();
+        
+        // Initialize favorites page if we're on it and games are loaded
+        if (window.location.pathname.includes('favorites.html') && 
+            typeof gamesDatabase !== 'undefined' && gamesDatabase.length > 0) {
+            this.initFavoritesPage();
+        }
+    }
+
+    // Method to be called when games data is loaded
+    onGamesDataLoaded() {
         if (window.location.pathname.includes('favorites.html')) {
             this.initFavoritesPage();
         }
-        
-        // Initialize game control bar if present
-        this.initGameControlBar();
-        
-
     }
 
     loadFavorites() {
@@ -5526,15 +5536,23 @@ class FavoritesManager {
     }
 
     initFavoritesPage() {
+        console.log('Initializing favorites page...');
         const favoritesGrid = document.getElementById('favoritesGrid');
         const noFavorites = document.getElementById('noFavorites');
         const favoritesFilter = document.getElementById('favoritesFilter');
 
-        if (!favoritesGrid || !noFavorites) return;
+        if (!favoritesGrid || !noFavorites) {
+            console.log('Favorites page elements not found');
+            return;
+        }
+
+        console.log('Found favorites page elements, proceeding with initialization');
 
         const renderFavorites = () => {
             const sortOrder = favoritesFilter?.value || 'newest';
             const favoriteGames = this.getFavoriteGames(sortOrder);
+
+            console.log('Rendering favorites:', favoriteGames.length, 'games');
 
             if (favoriteGames.length === 0) {
                 favoritesGrid.style.display = 'none';
@@ -5546,40 +5564,31 @@ class FavoritesManager {
             noFavorites.style.display = 'none';
 
             favoritesGrid.innerHTML = favoriteGames.map(game => {
-                const gameUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
+                const gameUrl = `game.html?game=${game.slug}`;
                 const dateAdded = new Date(game.dateAdded).toLocaleDateString();
 
                 return `
                     <div class="favorite-game-card" onclick="window.location.href='${gameUrl}'">
-                        <button class="remove-favorite-btn" onclick="event.stopPropagation(); this.removeFavorite('${game.slug}')" title="Remove from favorites">
-                            <span class="minus-icon">−</span>
+                        <button class="remove-favorite-btn" onclick="event.stopPropagation(); window.favoritesManager.removeFavoriteAndRefresh('${game.slug}')" title="Remove from favorites">
+                            <i class="fas fa-times"></i>
                         </button>
-                        <div class="favorite-date">${dateAdded}</div>
+                        <div class="favorite-date">Added: ${dateAdded}</div>
                         <img src="${game.image}" alt="${game.name}" class="favorite-game-image">
                         <div class="favorite-game-info">
                             <h3>${game.name}</h3>
-                            <p>${game.description}</p>
+                            <div class="game-tags">
+                                ${game.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
                         </div>
                     </div>
                 `;
             }).join('');
-
-            // Add event listeners to remove buttons
-            favoritesGrid.querySelectorAll('.remove-favorite-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const gameSlug = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
-                    this.removeFavoriteAndRefresh(gameSlug);
-                });
-            });
         };
 
         // Method to remove favorite and refresh the display
         this.removeFavoriteAndRefresh = (gameSlug) => {
-            // Assuming you have a method to remove from favorites
-            // Replace this with your actual favorite removal logic
-            this.toggleFavorite(gameSlug); // or this.removeFavorite(gameSlug);
-            renderFavorites(); // Re-render the favorites
+            this.removeFromFavorites(gameSlug);
+            renderFavorites();
         };
 
         // Initial render
@@ -5589,6 +5598,8 @@ class FavoritesManager {
         if (favoritesFilter) {
             favoritesFilter.addEventListener('change', renderFavorites);
         }
+
+        console.log('Favorites page initialization complete');
     }
 
     initHomepageFavorites() {
@@ -5611,15 +5622,33 @@ class FavoritesManager {
 // Initialize Favorites Manager
 let favoritesManager;
 
-// Initialize when DOM is loaded
+// Initialize favorites manager when games data is loaded
+function initializeFavoritesManager() {
+    if (!favoritesManager) {
+        favoritesManager = new FavoritesManager();
+        window.favoritesManager = favoritesManager;
+    } else {
+        // If already initialized, just call the games data loaded handler
+        favoritesManager.onGamesDataLoaded();
+    }
+}
+
+// Listen for games data loaded event
+window.addEventListener('gamesDataLoaded', () => {
+    initializeFavoritesManager();
+});
+
+// Also initialize on DOM load if games are already loaded
 document.addEventListener('DOMContentLoaded', () => {
-    favoritesManager = new FavoritesManager();
+    // Check if games are already loaded
+    if (typeof gamesDatabase !== 'undefined' && gamesDatabase.length > 0) {
+        initializeFavoritesManager();
+    }
 });
 
 // Export for use in other scripts
 if (typeof window !== 'undefined') {
     window.FavoritesManager = FavoritesManager;
-    window.favoritesManager = favoritesManager;
 }
 
 // Recently Played Manager
