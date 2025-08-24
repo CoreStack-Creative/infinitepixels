@@ -5737,6 +5737,8 @@ select:focus {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
 .homepage-category-title {
@@ -5747,6 +5749,8 @@ select:focus {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    flex: 1;
+    min-width: 0; /* Allow title to shrink */
 }
 
 .homepage-category-grid {
@@ -5772,6 +5776,8 @@ select:focus {
     font-weight: 600;
     font-size: 0.9rem;
     transition: all 0.3s ease;
+    white-space: nowrap;
+    flex-shrink: 0; /* Prevent button from shrinking */
 }
 
 .homepage-category-btn:hover {
@@ -6030,14 +6036,15 @@ select:focus {
     }
     
     .homepage-category-header {
-        flex-direction: column;
-        align-items: flex-start;
         gap: 15px;
     }
     
+    .homepage-category-title {
+        font-size: 1.8rem;
+    }
+    
     .homepage-category-btn {
-        align-self: flex-end;
-        font-size: 0.8rem;
+        font-size: 0.85rem;
         padding: 8px 16px;
     }
     
@@ -6072,10 +6079,39 @@ select:focus {
         grid-template-columns: repeat(2, 1fr);
     }
     
+    .homepage-category-title {
+        font-size: 1.6rem;
+    }
+    
+    .homepage-category-btn {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+        gap: 6px;
+    }
+    
     .homepage-favorites-popup {
         width: 280px;
         bottom: 90px;
         right: 15px;
+    }
+}
+
+/* Very small screens - wrap when titles would overlap */
+@media (max-width: 400px) {
+    .homepage-category-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .homepage-category-btn {
+        align-self: flex-end;
+        font-size: 0.8rem;
+        padding: 6px 12px;
+    }
+    
+    .homepage-category-title {
+        font-size: 1.5rem;
     }
 }
 
