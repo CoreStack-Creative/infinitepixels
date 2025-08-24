@@ -5571,7 +5571,7 @@ select:focus {
 .homepage-games-grid {
     display: grid;
     gap: 15px;
-    margin-bottom: -80px;
+    margin-bottom: -120px;
     /* Grid will be set dynamically by JavaScript */
 }
 

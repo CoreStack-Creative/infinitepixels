@@ -2144,7 +2144,7 @@ const FEATURED_GAMES_SLUGS = [
     'jellyrun2048',
     'ninjaarashi',
     'narrowone',
-    'rocketbikehighwayrace',
+    'rocketbikeshighwayrace',
     'slowroadsio',
     'stickfighter',
     'spiralroll'
