@@ -2032,10 +2032,10 @@ function getGamesByCategory(category) {
 
 // Enhanced category mapping for better filtering
 const categoryMappings = {
-    'shooter': ['shooter', 'action'],
+    'shooter': ['shooter'],
     'racing': ['racing', 'cars'],
-    'puzzle': ['puzzle', '2048', 'clicker'],
-    'io': ['io', 'multiplayer', 'online'],
+    'puzzle': ['puzzle', '2048'],
+    'io': ['io', 'online'],
     'sports': ['sports', 'basketball'],
     'arcade': ['arcade', 'endless', 'platformer']
 };
