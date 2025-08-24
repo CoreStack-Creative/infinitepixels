@@ -2135,6 +2135,80 @@ document.addEventListener('DOMContentLoaded', () => {
 // Declare global games database variable
 let gamesDatabase = [];
 
+// Featured games configuration - just add/remove slugs to update the featured games
+// To change featured games: Simply modify this array with the desired game slugs
+// The grid will automatically populate with the correct game data (name, image, etc.)
+const FEATURED_GAMES_SLUGS = [
+    'curvypunch2',
+    'fallcarshexagon', 
+    'jellyrun2048',
+    'ninjaarashi',
+    'narrowone',
+    'rocketbikehighwayrace',
+    'slowroadsio',
+    'stickfighter',
+    'spiralroll'
+];
+
+// Function to populate featured games grid dynamically
+function populateFeaturedGamesGrid() {
+    const featuredGamesGrid = document.getElementById('featuredGamesGrid');
+    if (!featuredGamesGrid || !gamesDatabase || gamesDatabase.length === 0) {
+        return;
+    }
+
+    // Clear existing content
+    featuredGamesGrid.innerHTML = '';
+
+    // Create cards for each featured game slug
+    FEATURED_GAMES_SLUGS.forEach(slug => {
+        const game = gamesDatabase.find(g => g.slug === slug);
+        if (game) {
+            const gameCard = document.createElement('div');
+            gameCard.className = 'featured-game-card';
+            gameCard.setAttribute('data-game-slug', game.slug);
+            
+            gameCard.innerHTML = `
+                <img src="${game.image}" alt="${game.name}" class="featured-game-card-image">
+                <div class="featured-game-card-overlay">
+                    <div class="featured-game-card-name">${game.name}</div>
+                    <button class="featured-game-play-btn">Play Now</button>
+                </div>
+            `;
+            
+            featuredGamesGrid.appendChild(gameCard);
+        }
+    });
+
+    // Initialize click events for the newly created cards
+    initializeFeaturedGamesCards();
+}
+
+// Utility functions for managing featured games
+function addFeaturedGame(gameSlug) {
+    if (!FEATURED_GAMES_SLUGS.includes(gameSlug)) {
+        FEATURED_GAMES_SLUGS.push(gameSlug);
+        populateFeaturedGamesGrid();
+        console.log(`Added ${gameSlug} to featured games`);
+    }
+}
+
+function removeFeaturedGame(gameSlug) {
+    const index = FEATURED_GAMES_SLUGS.indexOf(gameSlug);
+    if (index > -1) {
+        FEATURED_GAMES_SLUGS.splice(index, 1);
+        populateFeaturedGamesGrid();
+        console.log(`Removed ${gameSlug} from featured games`);
+    }
+}
+
+function updateFeaturedGames(newSlugs) {
+    FEATURED_GAMES_SLUGS.length = 0;
+    FEATURED_GAMES_SLUGS.push(...newSlugs);
+    populateFeaturedGamesGrid();
+    console.log(`Updated featured games:`, FEATURED_GAMES_SLUGS);
+}
+
 // Function to load games data
 function loadGamesData() {
     console.log('Starting to fetch games.json...');
@@ -2166,6 +2240,16 @@ function loadGamesData() {
         // Make games database globally accessible
         window.gamesDatabase = gamesDatabase;
         window.allGamesDatabase = gamesDatabase; // Fallback for old format
+
+        // Make featured games utilities globally accessible
+        window.addFeaturedGame = addFeaturedGame;
+        window.removeFeaturedGame = removeFeaturedGame;
+        window.updateFeaturedGames = updateFeaturedGames;
+        window.populateFeaturedGamesGrid = populateFeaturedGamesGrid;
+
+        // Populate featured games grid dynamically
+        console.log('Populating featured games grid...');
+        populateFeaturedGamesGrid();
 
         // Verify some expected games exist
         const testSlugs = ['1v1lol', 'cookieclicker', 'slope', 'maskedspecialforces'];
