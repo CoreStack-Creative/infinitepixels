@@ -6161,6 +6161,8 @@ class HomepageGamesManager {
             { slug: "stickfighters", isNew: false, isHot: false },
             { slug: "rocketbikehighwayrace", isNew: false, isHot: false },
             { slug: "funnyshooter2", isNew: false, isHot: false },
+            { slug: "basketrandom", isNew: false, isHot: false },
+            { slug: "rocketbotroyale", isNew: false, isHot: true },
             { 
                 slug: "polytrack", 
                 isSpecial: true, 
@@ -6168,8 +6170,6 @@ class HomepageGamesManager {
                 isHot: true,
                 videoUrl: "images/polytrackrec.mp4"
             },
-            { slug: "basketrandom", isNew: false, isHot: false },
-            { slug: "rocketbotroyale", isNew: false, isHot: true },
             { slug: "shellshockers", isNew: false, isHot: false },
             { slug: "tallmanrun", isNew: false, isHot: false },
             { slug: "tinyfishing", isNew: false, isHot: false },
