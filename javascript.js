@@ -1740,12 +1740,36 @@ let currentSelectedGame = null;
 let carouselAnimationId = null;
 let carouselPosition = 0;
 
-// Initialize the page
-document.addEventListener('DOMContentLoaded', function() {
+// Initialize the random page
+function initializeRandomPage() {
+    console.log('Initializing random page...');
+    
+    // Only initialize if we're on the random page and have games data
+    if (!window.location.pathname.includes('random.html') || !gamesDatabase || gamesDatabase.length === 0) {
+        console.log('Not on random page or games data not loaded yet');
+        return;
+    }
+    
+    console.log('Random page initialization starting with', gamesDatabase.length, 'games');
+    
     initializeElements();
     createDynamicCarousel();
     attachEventListeners();
     startCarouselAnimation();
+    
+    console.log('Random page initialization complete');
+}
+
+// Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize elements first (they don't need games data)
+    initializeElements();
+    attachEventListeners();
+    
+    // Try to initialize with games data if already loaded
+    if (gamesDatabase && gamesDatabase.length > 0) {
+        initializeRandomPage();
+    }
 });
 
 function initializeElements() {
@@ -1760,6 +1784,12 @@ function initializeElements() {
 
 function createDynamicCarousel() {
     if (!carouselSlides || !gamesDatabase) return;
+    
+    console.log('Creating dynamic carousel with', gamesDatabase.length, 'games');
+    
+    // Disable CSS animation and enable JavaScript control
+    carouselSlides.style.animation = 'none';
+    carouselSlides.style.transform = 'translateX(0px)';
     
     carouselSlides.innerHTML = '';
     
@@ -1786,6 +1816,8 @@ function createDynamicCarousel() {
     
     // Set initial width for smooth animation
     updateCarouselWidth();
+    
+    console.log('Carousel created with', tripleGames.length, 'slides');
 }
 
 function updateCarouselWidth() {
@@ -1877,7 +1909,7 @@ function attachEventListeners() {
         selectedGameImageWrapper.addEventListener('click', function() {
             if (currentSelectedGame) {
                 // Navigate to the game page with slug parameter
-                window.location.href = `https://www.infinite-pixels.com/game.html?game=${currentSelectedGame.slug}`;
+                window.location.href = `game.html?game=${currentSelectedGame.slug}`;
             }
         });
     }
@@ -1895,15 +1927,29 @@ function attachEventListeners() {
 }
 
 function selectRandomGame() {
+    console.log('selectRandomGame called, gamesDatabase length:', gamesDatabase ? gamesDatabase.length : 'undefined');
+    
+    if (!gamesDatabase || gamesDatabase.length === 0) {
+        console.error('No games available for random selection');
+        return;
+    }
+    
     // Add spinning animation to button
-    randomButton.classList.add('spinning');
+    if (randomButton) {
+        randomButton.classList.add('spinning');
+        console.log('Added spinning class to random button');
+    }
     
     // Select random game after animation
     setTimeout(() => {
         const randomIndex = Math.floor(Math.random() * gamesDatabase.length);
         const selectedGame = gamesDatabase[randomIndex];
+        console.log('Selected random game:', selectedGame.name, 'at index:', randomIndex);
         displaySelectedGame(selectedGame);
-        randomButton.classList.remove('spinning');
+        
+        if (randomButton) {
+            randomButton.classList.remove('spinning');
+        }
     }, 1000);
 }
 
@@ -1932,33 +1978,48 @@ function selectRandomGameFromCategory(category) {
 }
 
 function displaySelectedGame(game) {
+    console.log('displaySelectedGame called with:', game.name);
+    
     currentSelectedGame = game;
     
     // Update game details
     if (selectedGameImage) {
         selectedGameImage.src = game.image;
         selectedGameImage.alt = game.name;
+        console.log('Updated game image:', game.image);
+    } else {
+        console.warn('selectedGameImage element not found');
     }
     
     if (selectedGameTitle) {
         selectedGameTitle.textContent = game.name;
+        console.log('Updated game title:', game.name);
+    } else {
+        console.warn('selectedGameTitle element not found');
     }
     
     if (selectedGameDescription) {
         selectedGameDescription.textContent = game.description;
+        console.log('Updated game description');
+    } else {
+        console.warn('selectedGameDescription element not found');
     }
     
     // Show the selected game section with animation
     if (selectedGameSection) {
+        console.log('Showing selected game section');
         selectedGameSection.style.display = 'block';
         setTimeout(() => {
             selectedGameSection.classList.add('show');
+            console.log('Added show class to selected game section');
             // Scroll to the selected game section
             selectedGameSection.scrollIntoView({ 
                 behavior: 'smooth', 
                 block: 'center' 
             });
         }, 100);
+    } else {
+        console.warn('selectedGameSection element not found');
     }
 }
 
@@ -2056,6 +2117,20 @@ window.randomPageUtils = {
     selectRandomGame,
     selectRandomGameFromCategoryEnhanced
 };
+
+// Initialize random page when games data is loaded
+window.addEventListener('gamesDataLoaded', () => {
+    console.log('Random page: received gamesDataLoaded event');
+    initializeRandomPage();
+});
+
+// Also check on DOM load if games are already loaded
+document.addEventListener('DOMContentLoaded', () => {
+    if (gamesDatabase && gamesDatabase.length > 0) {
+        console.log('Random page: games already loaded on DOM ready');
+        initializeRandomPage();
+    }
+});
 
 // Declare global games database variable
 let gamesDatabase = [];
