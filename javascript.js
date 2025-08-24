@@ -5980,6 +5980,7 @@ class HomepageGamesManager {
                 
                 this.renderFeaturedGames();
                 this.renderCategoryGames();
+                this.renderMultiplayerGames();
                 this.renderNewGames();
                 this.initFavoritesPopup();
                 
@@ -6363,6 +6364,28 @@ class HomepageGamesManager {
         this.attachGameCardEvents('category');
     }
 
+    renderMultiplayerGames() {
+        const grid = document.getElementById('homepageMultiplayerGrid');
+        if (!grid || typeof gamesDatabase === 'undefined') return;
+
+        const multiplayerGames = gamesDatabase
+            .filter(game => game.tags && (
+                game.tags.includes('multiplayer') || 
+                game.tags.includes('io') || 
+                game.tags.includes('2 player') ||
+                game.tags.includes('online')
+            ))
+            .slice(0, 6);
+
+        let html = '';
+        multiplayerGames.forEach(game => {
+            html += this.createGameCard(game, {}, 'multiplayer');
+        });
+
+        grid.innerHTML = html;
+        this.attachGameCardEvents('multiplayer');
+    }
+
     renderNewGames() {
         const grid = document.getElementById('homepageNewGrid');
         if (!grid || typeof gamesDatabase === 'undefined') return;
@@ -6408,6 +6431,7 @@ class HomepageGamesManager {
     attachGameCardEvents(section) {
         const selector = section === 'featured' ? '#homepageGamesGrid' : 
                         section === 'category' ? '#homepageCategoryGrid' : 
+                        section === 'multiplayer' ? '#homepageMultiplayerGrid' :
                         '#homepageNewGrid';
         
         const container = document.querySelector(selector);
