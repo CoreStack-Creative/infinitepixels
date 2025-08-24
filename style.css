@@ -5783,28 +5783,44 @@ select:focus {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.8) 100%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    background: rgba(0, 0, 0, 0.8);
     display: flex;
-    align-items: center;
+    flex-direction: column;
     justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 3;
 }
 
 .featured-game-card:hover .featured-game-card-overlay {
     opacity: 1;
 }
 
+.featured-game-card-name {
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 15px;
+    padding: 0 10px;
+}
+
 .featured-game-play-btn {
-    background: rgba(138, 43, 226, 0.9);
+    background: linear-gradient(45deg, #8a2be2, #4b0082);
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 25px;
+    padding: 8px 16px;
+    border-radius: 20px;
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     transition: all 0.3s ease;
     cursor: pointer;
+}
+
+.featured-game-play-btn:hover {
+    background: linear-gradient(45deg, #9b3df3, #5c1a93);
+    transform: scale(1.05);
 }
 
 .featured-game-play-btn:hover {

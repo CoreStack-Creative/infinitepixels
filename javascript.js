@@ -6691,6 +6691,38 @@ window.addEventListener('load', function() {
     initializeHomepageGamesManager();
 });
 
+// Featured Games Click Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click event listeners to featured game cards
+    function initializeFeaturedGamesCards() {
+        const featuredGameCards = document.querySelectorAll('.featured-game-card[data-game-slug]');
+        
+        featuredGameCards.forEach(card => {
+            const gameSlug = card.getAttribute('data-game-slug');
+            
+            // Add click event to the entire card
+            card.addEventListener('click', function() {
+                window.location.href = `game.html?game=${gameSlug}`;
+            });
+            
+            // Add click event to the play button
+            const playBtn = card.querySelector('.featured-game-play-btn');
+            if (playBtn) {
+                playBtn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Prevent card click
+                    window.location.href = `game.html?game=${gameSlug}`;
+                });
+            }
+        });
+    }
+    
+    // Initialize immediately if DOM is ready
+    initializeFeaturedGamesCards();
+    
+    // Also initialize when games data is loaded (in case cards are dynamic)
+    window.addEventListener('gamesDataLoaded', initializeFeaturedGamesCards);
+});
+
 // Export for global access
 if (typeof window !== 'undefined') {
     window.HomepageGamesManager = HomepageGamesManager;
