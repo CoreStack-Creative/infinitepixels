@@ -3100,6 +3100,7 @@ function initializeAllGamesManager() {
     if (document.querySelector('.primary-games-grid') && !allGamesController) {
         console.log('Initializing All Games Manager with loaded data...');
         allGamesController = new AllGamesManager();
+        window.allGamesController = allGamesController; // Make it globally accessible
         return true;
     }
     return false;

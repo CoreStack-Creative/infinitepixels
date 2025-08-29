@@ -4717,7 +4717,7 @@ select:focus {
     right: 12px;
     width: 40px;
     height: 40px;
-    background: rgba(255, 255, 255, 0.9);
+    background: rgba(0, 0, 0, 0.3);
     border: none;
     border-radius: 50%;
     display: flex;
@@ -4732,12 +4732,12 @@ select:focus {
 
 .game-card-favorite-btn i {
     font-size: 18px;
-    color: #666;
+    color: #fff;
     transition: all 0.3s ease;
 }
 
 .game-card-favorite-btn:hover {
-    background: rgba(255, 255, 255, 1);
+    background: rgba(0, 0, 0, 0.5);
     transform: scale(1.1);
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
