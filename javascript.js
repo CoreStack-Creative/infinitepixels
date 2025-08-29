@@ -2833,10 +2833,19 @@ class AllGamesManager {
                 ? `game.html?game=${gameItem.slug}`
                 : gameItem.url || `${gameItem.name.toLowerCase().replace(/\s+/g, '')}.html`;
             
+            // Check if game is favorited (ensure favoritesManager exists)
+            const isFavorited = window.favoritesManager && window.favoritesManager.isFavorited(gameItem.slug || gameItem.name.toLowerCase().replace(/\s+/g, '-'));
+            
             return `
                 <div class="single-game-tile" data-game="${gameItem.slug || gameItem.name.toLowerCase().replace(/\s+/g, '-')}">
                     <div class="game-thumbnail-container">
                         <img src="${gameItem.image}" alt="${gameItem.name}" loading="lazy" onerror="this.src='images/placeholder-game.jpg'" />
+                        <button class="game-card-favorite-btn ${isFavorited ? 'favorited' : ''}" 
+                                data-game-slug="${gameItem.slug || gameItem.name.toLowerCase().replace(/\s+/g, '-')}"
+                                title="${isFavorited ? 'Remove from favorites' : 'Add to favorites'}"
+                                onclick="event.stopPropagation(); window.allGamesController.toggleGameFavorite('${gameItem.slug || gameItem.name.toLowerCase().replace(/\s+/g, '-')}', this)">
+                            <i class="fas fa-heart"></i>
+                        </button>
                         <div class="tile-hover-effect">
                             <button class="tile-play-action">
                                 <i class="fas fa-play"></i>
@@ -2969,6 +2978,90 @@ class AllGamesManager {
         if (gameCountElement) {
             gameCountElement.textContent = `Showing ${this.filteredGamesList.length} games (A-Z)`;
         }
+    }
+
+    toggleGameFavorite(gameSlug, buttonElement) {
+        // Ensure favoritesManager exists
+        if (!window.favoritesManager) {
+            console.error('FavoritesManager not initialized');
+            return;
+        }
+
+        try {
+            const isCurrentlyFavorited = window.favoritesManager.isFavorited(gameSlug);
+            let success = false;
+
+            if (isCurrentlyFavorited) {
+                success = window.favoritesManager.removeFromFavorites(gameSlug);
+            } else {
+                success = window.favoritesManager.addToFavorites(gameSlug);
+            }
+
+            if (success) {
+                // Update button appearance
+                const newFavoritedState = !isCurrentlyFavorited;
+                buttonElement.classList.toggle('favorited', newFavoritedState);
+                buttonElement.title = newFavoritedState ? 'Remove from favorites' : 'Add to favorites';
+
+                // Add visual feedback
+                buttonElement.style.transform = 'scale(1.2)';
+                setTimeout(() => {
+                    buttonElement.style.transform = 'scale(1)';
+                }, 150);
+
+                // Show brief notification
+                this.showFavoriteNotification(newFavoritedState);
+            }
+        } catch (error) {
+            console.error('Error toggling favorite:', error);
+        }
+    }
+
+    showFavoriteNotification(isFavorited) {
+        // Create and show a brief notification
+        const notification = document.createElement('div');
+        notification.className = 'favorite-notification';
+        notification.innerHTML = `
+            <i class="fas fa-heart"></i>
+            <span>${isFavorited ? 'Added to favorites!' : 'Removed from favorites!'}</span>
+        `;
+        
+        // Add CSS styles
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--accent-color, #8a2be2);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 4px 20px rgba(138, 43, 226, 0.3);
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        `;
+
+        document.body.appendChild(notification);
+
+        // Animate in
+        requestAnimationFrame(() => {
+            notification.style.transform = 'translateX(0)';
+        });
+
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 300);
+        }, 3000);
     }
 }
 

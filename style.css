@@ -4710,6 +4710,78 @@ select:focus {
     transform: scale(1.15);
 }
 
+/* Heart favorite button */
+.game-card-favorite-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.game-card-favorite-btn i {
+    font-size: 18px;
+    color: #666;
+    transition: all 0.3s ease;
+}
+
+.game-card-favorite-btn:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.game-card-favorite-btn:hover i {
+    color: #e74c3c;
+}
+
+.game-card-favorite-btn.favorited {
+    background: rgba(231, 76, 60, 0.95);
+}
+
+.game-card-favorite-btn.favorited i {
+    color: white;
+}
+
+.game-card-favorite-btn.favorited:hover {
+    background: rgba(231, 76, 60, 1);
+}
+
+/* Favorite notification */
+.favorite-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--accent-color, #8a2be2);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 20px rgba(138, 43, 226, 0.3);
+    z-index: 10000;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+}
+
+.favorite-notification.show {
+    transform: translateX(0);
+}
+
 .tile-hover-effect {
     position: absolute;
     top: 0;
