@@ -2312,6 +2312,14 @@ function loadGamesData() {
         console.log('Initializing new games page...');
         initializeNewGamesPageWhenReady();
         
+        // Refresh favorite states for AllGamesManager if it exists
+        if (window.allGamesController && window.allGamesController.refreshFavoriteStates) {
+            console.log('Refreshing favorite states for all games...');
+            setTimeout(() => {
+                window.allGamesController.refreshFavoriteStates();
+            }, 200);
+        }
+        
         // Dispatch a custom event for other scripts that might need the games data
         window.dispatchEvent(new CustomEvent('gamesDataLoaded', { detail: gamesDatabase }));
         
@@ -2833,17 +2841,20 @@ class AllGamesManager {
                 ? `game.html?game=${gameItem.slug}`
                 : gameItem.url || `${gameItem.name.toLowerCase().replace(/\s+/g, '')}.html`;
             
+            // Use game slug as the unique identifier - create one if it doesn't exist
+            const gameIdentifier = gameItem.slug || gameItem.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+            
             // Check if game is favorited (ensure favoritesManager exists)
-            const isFavorited = window.favoritesManager && window.favoritesManager.isFavorited(gameItem.slug || gameItem.name.toLowerCase().replace(/\s+/g, '-'));
+            const isFavorited = window.favoritesManager && window.favoritesManager.isFavorited(gameIdentifier);
             
             return `
-                <div class="single-game-tile" data-game="${gameItem.slug || gameItem.name.toLowerCase().replace(/\s+/g, '-')}">
+                <div class="single-game-tile" data-game="${gameIdentifier}">
                     <div class="game-thumbnail-container">
                         <img src="${gameItem.image}" alt="${gameItem.name}" loading="lazy" onerror="this.src='images/placeholder-game.jpg'" />
                         <button class="game-card-favorite-btn ${isFavorited ? 'favorited' : ''}" 
-                                data-game-slug="${gameItem.slug || gameItem.name.toLowerCase().replace(/\s+/g, '-')}"
+                                data-game-slug="${gameIdentifier}"
                                 title="${isFavorited ? 'Remove from favorites' : 'Add to favorites'}"
-                                onclick="event.stopPropagation(); window.allGamesController.toggleGameFavorite('${gameItem.slug || gameItem.name.toLowerCase().replace(/\s+/g, '-')}', this)">
+                                onclick="event.stopPropagation(); window.allGamesController.toggleGameFavorite('${gameIdentifier}', this)">
                             <i class="fas fa-heart"></i>
                         </button>
                         <div class="tile-hover-effect">
@@ -2868,9 +2879,10 @@ class AllGamesManager {
         // Add click handlers for individual game cards - updated class name
         document.querySelectorAll('.single-game-tile').forEach(cardElement => {
             cardElement.addEventListener('click', (e) => {
-                const gameData = currentPageGames.find(game => 
-                    (game.slug || game.name.toLowerCase().replace(/\s+/g, '-')) === cardElement.dataset.game
-                );
+                const gameData = currentPageGames.find(game => {
+                    const gameIdentifier = game.slug || game.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                    return gameIdentifier === cardElement.dataset.game;
+                });
                 if (gameData) {
                     const gameLink = gameData.slug 
                         ? `game.html?game=${gameData.slug}`
@@ -2879,6 +2891,11 @@ class AllGamesManager {
                 }
             });
         });
+
+        // Refresh favorite states after a short delay to ensure FavoritesManager is loaded
+        setTimeout(() => {
+            this.refreshFavoriteStates();
+        }, 100);
     }
 
     renderPaginationControls() {
@@ -3062,6 +3079,19 @@ class AllGamesManager {
                 }
             }, 300);
         }, 3000);
+    }
+
+    // Method to refresh favorite states for all visible cards
+    refreshFavoriteStates() {
+        const favoriteButtons = document.querySelectorAll('.game-card-favorite-btn');
+        favoriteButtons.forEach(button => {
+            const gameSlug = button.getAttribute('data-game-slug');
+            if (gameSlug && window.favoritesManager) {
+                const isFavorited = window.favoritesManager.isFavorited(gameSlug);
+                button.classList.toggle('favorited', isFavorited);
+                button.title = isFavorited ? 'Remove from favorites' : 'Add to favorites';
+            }
+        });
     }
 }
 
@@ -5726,14 +5756,27 @@ class FavoritesManager {
     }
 
     addToFavorites(gameSlug) {
-        const game = gamesDatabase.find(g => g.slug === gameSlug);
-        if (!game) return false;
+        // Find game by slug first, then by generated identifier
+        let game = gamesDatabase.find(g => g.slug === gameSlug);
+        
+        // If not found by slug, try to find by game name converted to slug format
+        if (!game) {
+            game = gamesDatabase.find(g => {
+                const generatedSlug = g.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                return generatedSlug === gameSlug;
+            });
+        }
+        
+        if (!game) {
+            console.warn(`Game not found for slug: ${gameSlug}`);
+            return false;
+        }
 
         // Check if already favorited
         if (this.isFavorited(gameSlug)) return false;
 
         const favoriteData = {
-            slug: gameSlug,
+            slug: gameSlug, // Use the provided slug (which could be generated)
             dateAdded: new Date().toISOString(),
             timestamp: Date.now()
         };
@@ -5921,6 +5964,14 @@ function initializeFavoritesManager() {
         // If already initialized, just call the games data loaded handler
         favoritesManager.onGamesDataLoaded();
     }
+    
+    // Refresh AllGamesManager favorite states if it exists
+    setTimeout(() => {
+        if (window.allGamesController && window.allGamesController.refreshFavoriteStates) {
+            console.log('Refreshing favorite states after FavoritesManager initialization...');
+            window.allGamesController.refreshFavoriteStates();
+        }
+    }, 100);
 }
 
 // Listen for games data loaded event
