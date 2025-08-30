@@ -793,5 +793,23 @@
     </main>
 
     <script src="javascript.js"></script>
+    
+    <!-- Load theme from settings -->
+    <script>
+        // Apply theme from main settings
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedSettings = localStorage.getItem('infinitePixelsSettings');
+            if (savedSettings) {
+                try {
+                    const settings = JSON.parse(savedSettings);
+                    if (settings.theme === 'light') {
+                        document.body.classList.add('light-theme');
+                    }
+                } catch (e) {
+                    console.log('Error loading theme settings:', e);
+                }
+            }
+        });
+    </script>
 </body>
 </html>

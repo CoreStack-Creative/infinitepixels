@@ -14853,3 +14853,352 @@ body.light-theme ::-webkit-scrollbar-thumb {
         gap: 10px;
     }
 }
+
+/* ====== LIGHT MODE STYLES FOR CONTENT PAGES ====== */
+
+/* Light Mode Color Variables */
+.light-theme {
+    --content-bg-primary: #ffffff;
+    --content-bg-secondary: #f8fafc;
+    --content-bg-tertiary: #f1f5f9;
+    --content-text-primary: #1e293b;
+    --content-text-secondary: #475569;
+    --content-text-muted: #64748b;
+    --content-border: #e2e8f0;
+    --content-border-hover: #cbd5e1;
+    --content-shadow: rgba(0, 0, 0, 0.1);
+    --content-shadow-hover: rgba(0, 0, 0, 0.15);
+    --content-accent-primary: #8b5cf6;
+    --content-accent-secondary: #a78bfa;
+    --content-success: #10b981;
+    --content-warning: #f59e0b;
+    --content-danger: #ef4444;
+    --content-info: #3b82f6;
+}
+
+/* Apply light mode to content pages */
+.light-theme .guides-container,
+.light-theme .faq-container,
+.light-theme .reviews-container,
+.light-theme .tips-container,
+.light-theme .blog-container {
+    background: var(--content-bg-primary);
+    color: var(--content-text-primary);
+    min-height: 100vh;
+}
+
+/* Light Mode Headers */
+.light-theme .guides-header,
+.light-theme .faq-header,
+.light-theme .reviews-header,
+.light-theme .tips-header,
+.light-theme .blog-header {
+    background: linear-gradient(135deg, var(--content-bg-secondary), var(--content-bg-tertiary));
+    border-bottom: 2px solid var(--content-border);
+}
+
+.light-theme .guides-header h1,
+.light-theme .faq-header h1,
+.light-theme .reviews-header h1,
+.light-theme .tips-header h1,
+.light-theme .blog-header h1 {
+    color: var(--content-text-primary);
+    background: linear-gradient(45deg, var(--content-accent-primary), var(--content-accent-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.light-theme .guides-description,
+.light-theme .faq-description,
+.light-theme .reviews-description,
+.light-theme .tips-description,
+.light-theme .blog-description {
+    color: var(--content-text-secondary);
+}
+
+/* Light Mode Guide Cards */
+.light-theme .guide-card,
+.light-theme .review-card,
+.light-theme .tip-card,
+.light-theme .blog-card {
+    background: var(--content-bg-secondary);
+    border: 1px solid var(--content-border);
+    box-shadow: 0 2px 10px var(--content-shadow);
+}
+
+.light-theme .guide-card:hover,
+.light-theme .review-card:hover,
+.light-theme .tip-card:hover,
+.light-theme .blog-card:hover {
+    border-color: var(--content-accent-primary);
+    box-shadow: 0 8px 30px var(--content-shadow-hover);
+    transform: translateY(-5px);
+}
+
+.light-theme .guide-card h3,
+.light-theme .review-card h3,
+.light-theme .tip-card h3,
+.light-theme .blog-card h3 {
+    color: var(--content-text-primary);
+}
+
+.light-theme .guide-excerpt,
+.light-theme .review-excerpt,
+.light-theme .tip-excerpt,
+.light-theme .blog-excerpt {
+    color: var(--content-text-secondary);
+}
+
+.light-theme .guide-meta span,
+.light-theme .review-meta span,
+.light-theme .tip-meta span,
+.light-theme .blog-meta span {
+    color: var(--content-text-muted);
+}
+
+.light-theme .guide-category,
+.light-theme .review-category,
+.light-theme .tip-category,
+.light-theme .blog-category {
+    background: var(--content-accent-primary);
+    color: white;
+}
+
+/* Light Mode Sections */
+.light-theme .category-guides,
+.light-theme .popular-guides,
+.light-theme .general-tips,
+.light-theme .guides-faq,
+.light-theme .reviews-section,
+.light-theme .faq-section {
+    background: var(--content-bg-primary);
+}
+
+.light-theme .category-section {
+    background: var(--content-bg-secondary);
+    border: 1px solid var(--content-border);
+    border-radius: 15px;
+}
+
+.light-theme .category-section h3 {
+    color: var(--content-text-primary);
+}
+
+.light-theme .category-content p {
+    color: var(--content-text-secondary);
+}
+
+.light-theme .guide-list li {
+    border-bottom: 1px solid var(--content-border);
+    color: var(--content-text-secondary);
+}
+
+.light-theme .guide-list li strong {
+    color: var(--content-text-primary);
+}
+
+/* Light Mode FAQ Items */
+.light-theme .faq-item {
+    background: var(--content-bg-secondary);
+    border: 1px solid var(--content-border);
+    box-shadow: 0 2px 8px var(--content-shadow);
+}
+
+.light-theme .faq-question {
+    color: var(--content-text-primary);
+    background: var(--content-bg-tertiary);
+    border-bottom: 1px solid var(--content-border);
+}
+
+.light-theme .faq-question:hover {
+    background: var(--content-bg-secondary);
+}
+
+.light-theme .faq-answer {
+    background: var(--content-bg-secondary);
+    color: var(--content-text-secondary);
+}
+
+.light-theme .faq-answer p {
+    color: var(--content-text-secondary);
+}
+
+/* Light Mode Tips Grid */
+.light-theme .tips-grid .tip-card {
+    background: var(--content-bg-secondary);
+    border: 1px solid var(--content-border);
+}
+
+.light-theme .tip-icon {
+    background: linear-gradient(45deg, var(--content-accent-primary), var(--content-accent-secondary));
+}
+
+.light-theme .tip-card h4 {
+    color: var(--content-text-primary);
+}
+
+.light-theme .tip-card p {
+    color: var(--content-text-secondary);
+}
+
+/* Light Mode Modal */
+.light-theme .guide-modal {
+    background: var(--content-bg-primary);
+    border: 1px solid var(--content-border);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.light-theme .guide-modal-header {
+    background: var(--content-bg-secondary);
+    border-bottom: 1px solid var(--content-border);
+}
+
+.light-theme .guide-modal-header h2 {
+    color: var(--content-text-primary);
+    background: linear-gradient(45deg, var(--content-accent-primary), var(--content-accent-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.light-theme .guide-modal-close {
+    color: var(--content-text-secondary);
+}
+
+.light-theme .guide-modal-close:hover {
+    background: var(--content-accent-primary);
+    color: white;
+}
+
+.light-theme .guide-modal-article {
+    background: var(--content-bg-primary);
+}
+
+.light-theme .guide-article-content {
+    color: var(--content-text-secondary);
+}
+
+.light-theme .guide-article-content h3,
+.light-theme .guide-article-content h4 {
+    color: var(--content-text-primary);
+}
+
+.light-theme .guide-article-content h4 i {
+    color: var(--content-accent-primary);
+}
+
+.light-theme .guide-list li::before {
+    color: var(--content-accent-primary);
+}
+
+.light-theme .guide-tip {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(167, 139, 250, 0.1));
+    border: 1px solid rgba(139, 92, 246, 0.2);
+}
+
+.light-theme .guide-tip i {
+    color: var(--content-accent-primary);
+}
+
+.light-theme .guide-tip strong {
+    color: var(--content-text-primary);
+}
+
+/* Light Mode Difficulty Badges */
+.light-theme .difficulty-badge.beginner {
+    background: rgba(16, 185, 129, 0.2);
+    color: var(--content-success);
+}
+
+.light-theme .difficulty-badge.intermediate {
+    background: rgba(245, 158, 11, 0.2);
+    color: var(--content-warning);
+}
+
+.light-theme .difficulty-badge.advanced {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--content-danger);
+}
+
+/* Light Mode Read Button */
+.light-theme .guide-read-btn {
+    color: var(--content-accent-primary);
+}
+
+.light-theme .guide-card.clickable:hover .guide-read-btn {
+    color: var(--content-accent-secondary);
+}
+
+/* Light Mode Hover Effects */
+.light-theme .guide-card.clickable::before {
+    background: linear-gradient(45deg, rgba(139, 92, 246, 0.1), rgba(167, 139, 250, 0.1));
+}
+
+.light-theme .guide-card.clickable:hover {
+    box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+}
+
+/* Light Mode Category Icons */
+.light-theme .category-section h3 i {
+    color: var(--content-accent-primary);
+}
+
+/* Light Mode Section Headers */
+.light-theme .popular-guides h2,
+.light-theme .category-guides h2,
+.light-theme .general-tips h2,
+.light-theme .guides-faq h2,
+.light-theme .reviews-section h2,
+.light-theme .faq-section h2 {
+    color: var(--content-text-primary);
+    background: linear-gradient(45deg, var(--content-accent-primary), var(--content-accent-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.light-theme .popular-guides h2 i,
+.light-theme .category-guides h2 i,
+.light-theme .general-tips h2 i,
+.light-theme .guides-faq h2 i,
+.light-theme .reviews-section h2 i,
+.light-theme .faq-section h2 i {
+    color: var(--content-accent-primary);
+}
+
+/* Light Mode Video Placeholder */
+.light-theme .video-placeholder {
+    background: linear-gradient(135deg, var(--content-bg-tertiary), var(--content-bg-secondary));
+    color: var(--content-text-primary);
+}
+
+.light-theme .video-placeholder i {
+    color: var(--content-accent-primary);
+}
+
+/* Light Mode Responsive Adjustments */
+
+/* Light Mode Transition Effects */
+.guides-container,
+.faq-container,
+.reviews-container,
+.tips-container,
+.blog-container,
+.guide-card,
+.faq-item,
+.tip-card,
+.review-card,
+.blog-card,
+.guide-modal,
+.category-section {
+    transition: all 0.3s ease;
+}
+
+/* Light Mode Focus States */
+.light-theme .guide-card:focus,
+.light-theme .faq-item:focus,
+.light-theme .tip-card:focus {
+    outline: 2px solid var(--content-accent-primary);
+    outline-offset: 2px;
+}
