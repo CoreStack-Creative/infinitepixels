@@ -1726,6 +1726,70 @@ document.addEventListener('DOMContentLoaded', function() {
 
 console.log('🎮 JavaScript loaded successfully!');
 
+// ================= FAQ, Reviews, Guides Functionality =================
+
+// FAQ Accordion
+function initializeFAQAccordion() {
+    document.querySelectorAll('.faq-question').forEach(q => {
+        q.addEventListener('click', function() {
+            const answer = this.nextElementSibling;
+            if (answer && answer.classList.contains('faq-answer')) {
+                answer.classList.toggle('active');
+                this.classList.toggle('active');
+            }
+        });
+    });
+}
+
+// Game Reviews Expand/Collapse
+function initializeGameReviews() {
+    document.querySelectorAll('.review-summary').forEach(summary => {
+        summary.addEventListener('click', function() {
+            const details = this.nextElementSibling;
+            if (details && details.classList.contains('review-details')) {
+                details.classList.toggle('active');
+                this.classList.toggle('active');
+            }
+        });
+    });
+}
+
+// Game Guides Expand/Collapse
+function initializeGameGuides() {
+    document.querySelectorAll('.guide-title').forEach(title => {
+        title.addEventListener('click', function() {
+            const content = this.nextElementSibling;
+            if (content && content.classList.contains('guide-content')) {
+                content.classList.toggle('active');
+                this.classList.toggle('active');
+            }
+        });
+    });
+}
+
+// Ratings (for reviews)
+function initializeRatings() {
+    document.querySelectorAll('.star-rating .star').forEach(star => {
+        star.addEventListener('click', function() {
+            const parent = this.parentElement;
+            parent.querySelectorAll('.star').forEach(s => s.classList.remove('selected'));
+            this.classList.add('selected');
+            // Optionally store rating value
+            parent.setAttribute('data-rating', this.getAttribute('data-value'));
+        });
+    });
+}
+
+function initializeContentExtras() {
+    initializeFAQAccordion();
+    initializeGameReviews();
+    initializeGameGuides();
+    initializeRatings();
+}
+
+// Call on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', initializeContentExtras);
+
 // DOM elements
 let carouselSlides;
 let randomButton;
