@@ -7003,16 +7003,57 @@ function initializeFAQAccordion() {
             });
         }
     });
+    
+    // Add resize handler to recalculate heights of open FAQ items
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            adjustOpenFAQHeights();
+        }, 150);
+    });
+}
+
+// Function to adjust heights of currently open FAQ items
+function adjustOpenFAQHeights() {
+    const activeFAQItems = document.querySelectorAll('.faq-item.active');
+    
+    activeFAQItems.forEach(item => {
+        const answer = item.querySelector('.faq-answer');
+        if (answer) {
+            // Temporarily disable transitions for resize
+            const originalTransition = answer.style.transition;
+            answer.style.transition = 'none';
+            
+            // Set max-height to none to allow natural height calculation
+            answer.style.maxHeight = 'none';
+            
+            // Force a reflow to ensure the height is calculated
+            answer.offsetHeight;
+            
+            // Re-enable transitions
+            setTimeout(() => {
+                answer.style.transition = originalTransition;
+            }, 10);
+        }
+    });
 }
 
 function toggleFAQItem(item, answer, chevron) {
-    const isOpen = answer.style.maxHeight && answer.style.maxHeight !== '0px';
+    const isOpen = item.classList.contains('active');
     
     if (isOpen) {
         // Close the item
+        // First get the current height to animate from
+        const currentHeight = answer.scrollHeight;
+        answer.style.maxHeight = currentHeight + 'px';
+        
+        // Force a reflow then animate to 0
+        answer.offsetHeight;
         answer.style.maxHeight = '0';
         answer.style.paddingTop = '0';
         answer.style.paddingBottom = '0';
+        
         if (chevron) {
             chevron.style.transform = 'rotate(0deg)';
         }
@@ -7021,10 +7062,13 @@ function toggleFAQItem(item, answer, chevron) {
         // Close other open items first (optional accordion behavior)
         const allItems = document.querySelectorAll('.faq-item');
         allItems.forEach(otherItem => {
-            if (otherItem !== item) {
+            if (otherItem !== item && otherItem.classList.contains('active')) {
                 const otherAnswer = otherItem.querySelector('.faq-answer');
                 const otherChevron = otherItem.querySelector('.faq-question i');
                 if (otherAnswer) {
+                    const otherCurrentHeight = otherAnswer.scrollHeight;
+                    otherAnswer.style.maxHeight = otherCurrentHeight + 'px';
+                    otherAnswer.offsetHeight;
                     otherAnswer.style.maxHeight = '0';
                     otherAnswer.style.paddingTop = '0';
                     otherAnswer.style.paddingBottom = '0';
@@ -7037,13 +7081,30 @@ function toggleFAQItem(item, answer, chevron) {
         });
         
         // Open the clicked item
-        answer.style.maxHeight = answer.scrollHeight + 'px';
-        answer.style.paddingTop = '1rem';
-        answer.style.paddingBottom = '1rem';
+        item.classList.add('active');
+        
+        // Get the full height the content needs
+        answer.style.maxHeight = 'none';
+        const fullHeight = answer.scrollHeight;
+        answer.style.maxHeight = '0';
+        
+        // Animate to the full height
+        requestAnimationFrame(() => {
+            answer.style.maxHeight = fullHeight + 'px';
+            answer.style.paddingTop = '1.5rem';
+            answer.style.paddingBottom = '1.5rem';
+        });
+        
         if (chevron) {
             chevron.style.transform = 'rotate(180deg)';
         }
-        item.classList.add('active');
+        
+        // After animation completes, set to 'none' for dynamic content
+        setTimeout(() => {
+            if (item.classList.contains('active')) {
+                answer.style.maxHeight = 'none';
+            }
+        }, 400); // Match the CSS transition duration
         
         // Smooth scroll to the question
         setTimeout(() => {

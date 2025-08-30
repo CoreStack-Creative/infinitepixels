@@ -13160,7 +13160,7 @@ body.light-theme ::-webkit-scrollbar-thumb {
 }
 
 .faq-item.active .faq-answer {
-    max-height: 1000px;
+    max-height: none; /* Remove the 1000px limit */
     padding: 1.5rem;
     border-top: 1px solid var(--content-border);
 }
