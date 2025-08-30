@@ -945,412 +945,117 @@ document.addEventListener('keydown', (e) => {
 
 
 // ========================================
-// NEW PAGES INTERACTIVE FUNCTIONALITY
+// GLOBAL FUNCTION EXPORTS AND INITIALIZATION
 // ========================================
 
-// FAQ Accordion Functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // FAQ Accordion
-    const faqItems = document.querySelectorAll('.faq-item');
-    
-    faqItems.forEach(item => {
-        const question = item.querySelector('.faq-question');
-        const answer = item.querySelector('.faq-answer');
+// Export functions for global access and ensure they're available
+window.ContentPageManager = {
+    performContentSearch,
+    displaySearchResults,
+    initializePageSpecificFeatures,
+    showNotification,
+    scrollToResult
+};
+
+// Make sure global functions are available
+if (typeof window.shareArticle === 'undefined') {
+    window.shareArticle = function(platform, title) {
+        const url = encodeURIComponent(window.location.href);
+        const text = encodeURIComponent(`Check out this article: ${title}`);
+        let shareUrl;
         
-        if (question && answer) {
-            question.addEventListener('click', () => {
-                const isActive = item.classList.contains('active');
-                
-                // Close all other FAQ items
-                faqItems.forEach(otherItem => {
-                    if (otherItem !== item) {
-                        otherItem.classList.remove('active');
-                    }
-                });
-                
-                // Toggle current item
-                if (isActive) {
-                    item.classList.remove('active');
-                } else {
-                    item.classList.add('active');
-                }
+        switch(platform) {
+            case 'twitter':
+                shareUrl = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+                break;
+            case 'facebook':
+                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                break;
+            case 'linkedin':
+                shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`;
+                break;
+        }
+        
+        if (shareUrl) {
+            window.open(shareUrl, '_blank', 'width=600,height=400');
+        }
+    };
+}
+
+if (typeof window.copyArticleLink === 'undefined') {
+    window.copyArticleLink = function(title) {
+        const url = window.location.href;
+        
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(url).then(() => {
+                showNotification('Article link copied to clipboard!');
+            }).catch(() => {
+                fallbackCopyToClipboard(url);
+            });
+        } else {
+            fallbackCopyToClipboard(url);
+        }
+        
+        function fallbackCopyToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showNotification('Article link copied to clipboard!');
+            } catch (err) {
+                showNotification('Unable to copy link. Please copy manually.');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+    };
+}
+
+if (typeof window.scrollToArticle === 'undefined') {
+    window.scrollToArticle = function(index) {
+        const articles = document.querySelectorAll('.blog-article');
+        if (articles[index]) {
+            const headerOffset = 100;
+            const elementPosition = articles[index].getBoundingClientRect().top;
+            const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
             });
         }
+    };
+}
+
+// Enhanced initialization with multiple fallbacks
+function initializeContentPages() {
+    // Check if functions exist before calling
+    if (typeof initializeFAQAccordion === 'function') initializeFAQAccordion();
+    if (typeof initializeQuickLinks === 'function') initializeQuickLinks();
+    if (typeof initializeBlogReadMore === 'function') initializeBlogReadMore();
+    if (typeof initializeContentSearch === 'function') initializeContentSearch();
+    if (typeof initializePageSpecificFeatures === 'function') initializePageSpecificFeatures();
+}
+
+// Multiple initialization approaches for maximum compatibility
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(initializeContentPages, 100);
     });
+} else {
+    // DOM is already loaded
+    setTimeout(initializeContentPages, 100);
+}
 
-    // Smooth scrolling for quick links
-    const quickLinks = document.querySelectorAll('.quick-link');
-    quickLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href');
-            const targetElement = document.querySelector(targetId);
-            
-            if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        });
-    });
-
-    // Blog article "Read More" functionality
-    const readMoreBtns = document.querySelectorAll('.read-more-btn');
-    readMoreBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            const excerpt = this.previousElementSibling;
-            const fullText = this.dataset.fullText;
-            const shortText = this.dataset.shortText;
-            
-            if (this.classList.contains('expanded')) {
-                excerpt.textContent = shortText;
-                this.textContent = 'Read more';
-                this.classList.remove('expanded');
-            } else {
-                excerpt.textContent = fullText;
-                this.textContent = 'Read less';
-                this.classList.add('expanded');
-            }
-        });
-    });
-
-    // Enhanced search functionality for content pages
-    const searchInput = document.getElementById('searchInput');
-    const searchResults = document.getElementById('searchResults');
-    
-    if (searchInput && searchResults) {
-        let searchTimeout;
-        
-        searchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            const query = this.value.trim().toLowerCase();
-            
-            if (query.length < 2) {
-                searchResults.innerHTML = '';
-                searchResults.style.display = 'none';
-                return;
-            }
-            
-            searchTimeout = setTimeout(() => {
-                performContentSearch(query);
-            }, 300);
-        });
-        
-        // Close search results when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-                searchResults.style.display = 'none';
-            }
-        });
-    }
-
-    // Initialize page-specific functionality
-    initializePageSpecificFeatures();
+// Backup initialization
+window.addEventListener('load', function() {
+    setTimeout(initializeContentPages, 200);
 });
 
-// Content Search Function
-function performContentSearch(query) {
-    const searchResults = document.getElementById('searchResults');
-    if (!searchResults) return;
-
-    // Search through different content types based on current page
-    const currentPage = window.location.pathname.split('/').pop();
-    let searchItems = [];
-    
-    if (currentPage.includes('blog')) {
-        searchItems = searchBlogContent(query);
-    } else if (currentPage.includes('faq')) {
-        searchItems = searchFAQContent(query);
-    } else if (currentPage.includes('guides')) {
-        searchItems = searchGuidesContent(query);
-    } else if (currentPage.includes('reviews')) {
-        searchItems = searchReviewsContent(query);
-    } else if (currentPage.includes('tips')) {
-        searchItems = searchTipsContent(query);
-    }
-    
-    displaySearchResults(searchItems);
-}
-
-// Search Functions for Different Content Types
-function searchBlogContent(query) {
-    const articles = document.querySelectorAll('.blog-article, .featured-article');
-    const results = [];
-    
-    articles.forEach(article => {
-        const title = article.querySelector('h3')?.textContent?.toLowerCase() || '';
-        const content = article.querySelector('.article-excerpt, .article-content')?.textContent?.toLowerCase() || '';
-        const category = article.querySelector('.article-category')?.textContent?.toLowerCase() || '';
-        
-        if (title.includes(query) || content.includes(query) || category.includes(query)) {
-            results.push({
-                title: article.querySelector('h3')?.textContent || 'Article',
-                excerpt: article.querySelector('.article-excerpt')?.textContent?.substring(0, 100) + '...' || '',
-                element: article,
-                type: 'Article'
-            });
-        }
-    });
-    
-    return results;
-}
-
-function searchFAQContent(query) {
-    const faqItems = document.querySelectorAll('.faq-item');
-    const results = [];
-    
-    faqItems.forEach(item => {
-        const question = item.querySelector('.faq-question h3, .faq-question h4')?.textContent?.toLowerCase() || '';
-        const answer = item.querySelector('.faq-answer p')?.textContent?.toLowerCase() || '';
-        
-        if (question.includes(query) || answer.includes(query)) {
-            results.push({
-                title: item.querySelector('.faq-question h3, .faq-question h4')?.textContent || 'FAQ',
-                excerpt: item.querySelector('.faq-answer p')?.textContent?.substring(0, 100) + '...' || '',
-                element: item,
-                type: 'FAQ'
-            });
-        }
-    });
-    
-    return results;
-}
-
-function searchGuidesContent(query) {
-    const guides = document.querySelectorAll('.guide-card');
-    const results = [];
-    
-    guides.forEach(guide => {
-        const title = guide.querySelector('h3')?.textContent?.toLowerCase() || '';
-        const content = guide.querySelector('.guide-excerpt')?.textContent?.toLowerCase() || '';
-        const category = guide.querySelector('.guide-category')?.textContent?.toLowerCase() || '';
-        
-        if (title.includes(query) || content.includes(query) || category.includes(query)) {
-            results.push({
-                title: guide.querySelector('h3')?.textContent || 'Guide',
-                excerpt: guide.querySelector('.guide-excerpt')?.textContent?.substring(0, 100) + '...' || '',
-                element: guide,
-                type: 'Guide'
-            });
-        }
-    });
-    
-    return results;
-}
-
-function searchReviewsContent(query) {
-    const reviews = document.querySelectorAll('.review-card, .review-featured');
-    const results = [];
-    
-    reviews.forEach(review => {
-        const title = review.querySelector('h3, h4')?.textContent?.toLowerCase() || '';
-        const content = review.querySelector('.review-excerpt')?.textContent?.toLowerCase() || '';
-        
-        if (title.includes(query) || content.includes(query)) {
-            results.push({
-                title: review.querySelector('h3, h4')?.textContent || 'Review',
-                excerpt: review.querySelector('.review-excerpt')?.textContent?.substring(0, 100) + '...' || '',
-                element: review,
-                type: 'Review'
-            });
-        }
-    });
-    
-    return results;
-}
-
-function searchTipsContent(query) {
-    const tips = document.querySelectorAll('.tip-card, .category-section');
-    const results = [];
-    
-    tips.forEach(tip => {
-        const title = tip.querySelector('h3, h4')?.textContent?.toLowerCase() || '';
-        const content = tip.querySelector('p, .tip-content')?.textContent?.toLowerCase() || '';
-        
-        if (title.includes(query) || content.includes(query)) {
-            results.push({
-                title: tip.querySelector('h3, h4')?.textContent || 'Tip',
-                excerpt: tip.querySelector('p')?.textContent?.substring(0, 100) + '...' || '',
-                element: tip,
-                type: 'Tip'
-            });
-        }
-    });
-    
-    return results;
-}
-
-// Display Search Results
-function displaySearchResults(results) {
-    const searchResults = document.getElementById('searchResults');
-    if (!searchResults) return;
-    
-    if (results.length === 0) {
-        searchResults.innerHTML = '<div class="no-results">No results found</div>';
-        searchResults.style.display = 'block';
-        return;
-    }
-    
-    const resultsHTML = results.map(result => `
-        <div class="search-result-item" data-type="${result.type}">
-            <div class="result-type">${result.type}</div>
-            <h4 class="result-title">${result.title}</h4>
-            <p class="result-excerpt">${result.excerpt}</p>
-        </div>
-    `).join('');
-    
-    searchResults.innerHTML = resultsHTML;
-    searchResults.style.display = 'block';
-    
-    // Add click handlers to search results
-    const resultItems = searchResults.querySelectorAll('.search-result-item');
-    resultItems.forEach((item, index) => {
-        item.addEventListener('click', () => {
-            const targetElement = results[index].element;
-            if (targetElement) {
-                targetElement.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-                searchResults.style.display = 'none';
-                
-                // Highlight the target element briefly
-                targetElement.style.transition = 'all 0.3s ease';
-                targetElement.style.backgroundColor = 'rgba(138, 43, 226, 0.1)';
-                setTimeout(() => {
-                    targetElement.style.backgroundColor = '';
-                }, 2000);
-            }
-        });
-    });
-}
-
-// Page-Specific Feature Initialization
-function initializePageSpecificFeatures() {
-    const currentPage = window.location.pathname.split('/').pop();
-    
-    if (currentPage.includes('blog')) {
-        initializeBlogFeatures();
-    } else if (currentPage.includes('reviews')) {
-        initializeReviewsFeatures();
-    } else if (currentPage.includes('guides')) {
-        initializeGuidesFeatures();
-    } else if (currentPage.includes('tips')) {
-        initializeTipsFeatures();
-    } else if (currentPage.includes('faq')) {
-        initializeFAQFeatures();
-    }
-}
-
-// Blog-specific features
-function initializeBlogFeatures() {
-    // Auto-expand long articles with "Read More" functionality
-    const articles = document.querySelectorAll('.blog-article');
-    articles.forEach(article => {
-        const content = article.querySelector('.article-content');
-        if (content && content.textContent.length > 500) {
-            addReadMoreFunctionality(content);
-        }
-    });
-    
-    // Article sharing functionality
-    initializeArticleSharing();
-}
-
-// Reviews-specific features
-function initializeReviewsFeatures() {
-    // Initialize rating interactions
-    const ratingStars = document.querySelectorAll('.stars');
-    ratingStars.forEach(stars => {
-        const starElements = stars.querySelectorAll('i');
-        starElements.forEach((star, index) => {
-            star.addEventListener('mouseenter', () => {
-                highlightStars(starElements, index);
-            });
-        });
-        
-        stars.addEventListener('mouseleave', () => {
-            resetStars(starElements);
-        });
-    });
-}
-
-// Guides-specific features
-function initializeGuidesFeatures() {
-    // Initialize guide difficulty indicators
-    const difficultyBadges = document.querySelectorAll('.difficulty');
-    difficultyBadges.forEach(badge => {
-        const level = badge.textContent.trim().toLowerCase();
-        badge.classList.add(`difficulty-${level}`);
-    });
-    
-    // Initialize guide progress tracking
-    initializeGuideProgress();
-}
-
-// Tips-specific features
-function initializeTipsFeatures() {
-    // Initialize tip favoriting
-    initializeTipFavorites();
-    
-    // Initialize tip categories filtering
-    initializeTipFiltering();
-}
-
-// FAQ-specific features
-function initializeFAQFeatures() {
-    // Initialize FAQ voting
-    initializeFAQVoting();
-    
-    // Initialize FAQ search highlighting
-    initializeFAQSearchHighlighting();
-}
-
-// Helper Functions
-function addReadMoreFunctionality(content) {
-    const text = content.textContent;
-    const shortText = text.substring(0, 300) + '...';
-    const fullText = text;
-    
-    if (text.length > 300) {
-        content.innerHTML = `
-            <span class="article-text">${shortText}</span>
-            <button class="read-more-btn" data-short-text="${shortText}" data-full-text="${fullText}">
-                Read more
-            </button>
-        `;
-    }
-}
-
-function initializeArticleSharing() {
-    const shareButtons = document.querySelectorAll('.share-article');
-    shareButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const articleTitle = this.closest('article').querySelector('h3').textContent;
-            const articleUrl = window.location.href;
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: articleTitle,
-                    url: articleUrl
-                });
-            } else {
-                // Fallback: copy to clipboard
-                navigator.clipboard.writeText(articleUrl).then(() => {
-                    showNotification('Article link copied to clipboard!');
-                });
-            }
-        });
-    });
-}
-
-function highlightStars(stars, index) {
-    stars.forEach((star, i) => {
-        if (i <= index) {
-            star.style.color = '#ffd700';
-        } else {
-            star.style.color = '#ddd';
-        }
-    });
-}
+console.log('InfinitePixels content pages JavaScript loaded successfully');
