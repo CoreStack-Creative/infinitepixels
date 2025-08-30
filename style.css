@@ -12511,6 +12511,13 @@ body.light-theme ::-webkit-scrollbar-thumb {
     background: var(--content-bg-primary);
     min-height: 100vh;
 }
+.blog-content,
+.reviews-content,
+.tips-content,
+.guides-content,
+.faq-content {
+    padding: 0 2rem; /* Add your desired padding here */
+}
 
 /* Page Headers */
 .blog-header,
