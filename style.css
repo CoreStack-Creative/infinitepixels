@@ -2592,6 +2592,26 @@ body {
    width: 100%;
 }
 
+/* Break footer out of container constraints on special pages */
+.reviews-container .site-footer,
+.guides-container .site-footer,
+.faq-container .site-footer {
+   position: relative;
+   left: 50%;
+   right: 50%;
+   margin-left: -50vw;
+   margin-right: -50vw;
+   width: 100vw;
+}
+
+/* Remove footer padding on special pages */
+.reviews-container .footer-container,
+.guides-container .footer-container,
+.faq-container .footer-container {
+   padding-left: 40px;
+   padding-right: 40px;
+}
+
 /* When sidebar is collapsed on those specific pages */
 .reviews-container .site-footer.expanded,
 .guides-container .site-footer.expanded,
@@ -2615,6 +2635,26 @@ body {
     .news-page-container .site-footer.expanded,
     .about-page-container .site-footer.expanded {
         width: 100%;
+    }
+
+    /* Break footer out of container constraints on special pages for mobile */
+    .reviews-container .site-footer,
+    .guides-container .site-footer,
+    .faq-container .site-footer {
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        width: 100vw;
+    }
+
+    /* Restore footer padding on special pages for mobile */
+    .reviews-container .footer-container,
+    .guides-container .footer-container,
+    .faq-container .footer-container {
+        padding-left: 20px;
+        padding-right: 20px;
     }
 }
 
