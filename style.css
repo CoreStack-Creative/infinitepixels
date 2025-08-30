@@ -11116,3 +11116,190 @@ body.light-theme ::-webkit-scrollbar-thumb {
         padding: 0 0.25rem;
     }
 }
+
+/* FAQ Section Styling */
+.faq-section {
+    margin: 2rem auto;
+    max-width: 700px;
+    background: var(--faq-bg, #f8f8fa);
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 2rem;
+    transition: background 0.3s;
+}
+.faq-question {
+    font-weight: 600;
+    cursor: pointer;
+    padding: 1rem;
+    border-bottom: 1px solid var(--faq-border, #e0e0e0);
+    background: none;
+    transition: background 0.3s;
+}
+.faq-question.active {
+    background: var(--faq-active, #eaeaff);
+}
+.faq-answer {
+    display: none;
+    padding: 1rem;
+    color: var(--faq-answer, #444);
+}
+.faq-answer.active {
+    display: block;
+}
+
+/* Game Reviews Styling */
+.reviews-section {
+    margin: 2rem auto;
+    max-width: 700px;
+    background: var(--reviews-bg, #f8f8fa);
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 2rem;
+    transition: background 0.3s;
+}
+.review-summary {
+    font-weight: 600;
+    cursor: pointer;
+    padding: 1rem;
+    border-bottom: 1px solid var(--reviews-border, #e0e0e0);
+    background: none;
+    transition: background 0.3s;
+}
+.review-summary.active {
+    background: var(--reviews-active, #eaeaff);
+}
+.review-details {
+    display: none;
+    padding: 1rem;
+    color: var(--reviews-answer, #444);
+}
+.review-details.active {
+    display: block;
+}
+.star-rating {
+    display: flex;
+    gap: 0.3em;
+    margin: 0.5em 0;
+}
+.star {
+    font-size: 1.5em;
+    color: #bbb;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.star.selected {
+    color: #8a2be2;
+}
+
+/* Game Guides Styling */
+.guides-section {
+    margin: 2rem auto;
+    max-width: 700px;
+    background: var(--guides-bg, #f8f8fa);
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 2rem;
+    transition: background 0.3s;
+}
+.guide-title {
+    font-weight: 600;
+    cursor: pointer;
+    padding: 1rem;
+    border-bottom: 1px solid var(--guides-border, #e0e0e0);
+    background: none;
+    transition: background 0.3s;
+}
+.guide-title.active {
+    background: var(--guides-active, #eaeaff);
+}
+.guide-content {
+    display: none;
+    padding: 1rem;
+    color: var(--guides-answer, #444);
+}
+.guide-content.active {
+    display: block;
+}
+
+/* Blog Styling */
+.blog-section {
+    margin: 2rem auto;
+    max-width: 700px;
+    background: var(--blog-bg, #f8f8fa);
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 2rem;
+    transition: background 0.3s;
+}
+.blog-article {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--blog-border, #e0e0e0);
+    padding-bottom: 1rem;
+}
+.blog-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+.blog-meta {
+    font-size: 0.95rem;
+    color: var(--blog-meta, #888);
+    margin-bottom: 0.5rem;
+}
+.blog-content {
+    color: var(--blog-answer, #444);
+    margin-bottom: 1rem;
+}
+.blog-actions button {
+    background: #8a2be2;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5em 1em;
+    margin-right: 0.5em;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.blog-actions button:hover {
+    background: #4b0082;
+}
+
+/* Light/Dark Theme Support */
+:root {
+    --faq-bg: #f8f8fa;
+    --faq-border: #e0e0e0;
+    --faq-active: #eaeaff;
+    --faq-answer: #444;
+    --reviews-bg: #f8f8fa;
+    --reviews-border: #e0e0e0;
+    --reviews-active: #eaeaff;
+    --reviews-answer: #444;
+    --guides-bg: #f8f8fa;
+    --guides-border: #e0e0e0;
+    --guides-active: #eaeaff;
+    --guides-answer: #444;
+    --blog-bg: #f8f8fa;
+    --blog-border: #e0e0e0;
+    --blog-meta: #888;
+    --blog-answer: #444;
+}
+@media (prefers-color-scheme: dark) {
+    :root {
+        --faq-bg: #23233a;
+        --faq-border: #444466;
+        --faq-active: #2d2d4d;
+        --faq-answer: #e0e0e0;
+        --reviews-bg: #23233a;
+        --reviews-border: #444466;
+        --reviews-active: #2d2d4d;
+        --reviews-answer: #e0e0e0;
+        --guides-bg: #23233a;
+        --guides-border: #444466;
+        --guides-active: #2d2d4d;
+        --guides-answer: #e0e0e0;
+        --blog-bg: #23233a;
+        --blog-border: #444466;
+        --blog-meta: #aaa;
+        --blog-answer: #e0e0e0;
+    }
+}
