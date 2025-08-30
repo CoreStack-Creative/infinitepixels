@@ -253,7 +253,7 @@
             <section class="popular-guides">
                 <h2><i class="fas fa-fire"></i> Most Popular Guides</h2>
                 <div class="guides-grid">
-                    <article class="guide-card featured">
+                    <article class="guide-card featured clickable" data-guide="1v1lol" id="guide-1v1lol">
                         <div class="guide-image">
                             <img src="images/1v1lolimage.jpg" alt="1v1.LOL Guide" loading="lazy">
                             <div class="guide-category">Shooter</div>
@@ -273,10 +273,14 @@
                                 <span><i class="fas fa-eye"></i> 15,234 views</span>
                                 <span><i class="fas fa-thumbs-up"></i> 892 likes</span>
                             </div>
+                            <div class="guide-read-btn">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>Read Full Guide</span>
+                            </div>
                         </div>
                     </article>
 
-                    <article class="guide-card">
+                    <article class="guide-card clickable" data-guide="cookieclicker">
                         <div class="guide-image">
                             <img src="images/cookieclickerimage.jpg" alt="Cookie Clicker Guide" loading="lazy">
                             <div class="guide-category">Idle</div>
@@ -296,10 +300,14 @@
                                 <span><i class="fas fa-eye"></i> 12,587 views</span>
                                 <span><i class="fas fa-thumbs-up"></i> 743 likes</span>
                             </div>
+                            <div class="guide-read-btn">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>Read Full Guide</span>
+                            </div>
                         </div>
                     </article>
 
-                    <article class="guide-card">
+                    <article class="guide-card clickable" data-guide="basketrandom">
                         <div class="guide-image">
                             <img src="images/basketrandomimage.jpg" alt="Basket Random Guide" loading="lazy">
                             <div class="guide-category">Sports</div>
@@ -318,6 +326,10 @@
                             <div class="guide-stats">
                                 <span><i class="fas fa-eye"></i> 9,234 views</span>
                                 <span><i class="fas fa-thumbs-up"></i> 521 likes</span>
+                            </div>
+                            <div class="guide-read-btn">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>Read Full Guide</span>
                             </div>
                         </div>
                     </article>
@@ -461,6 +473,26 @@
 
         </div> <!-- This closes the guides-container -->
 
+        <!-- Guide Detail Modals -->
+        <div class="guide-modal-overlay" id="guideModalOverlay">
+            <div class="guide-modal" id="guideModal">
+                <div class="guide-modal-header">
+                    <h2 id="guideModalTitle">Guide Title</h2>
+                    <button class="guide-modal-close" id="guideModalClose">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="guide-modal-content">
+                    <div class="guide-modal-video" id="guideModalVideo">
+                        <!-- Video will be inserted here -->
+                    </div>
+                    <div class="guide-modal-article" id="guideModalArticle">
+                        <!-- Article content will be inserted here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
        <!-- Footer Section -->
        <footer class="site-footer">
            <div class="footer-container">
@@ -552,5 +584,262 @@
     </main>
 
     <script src="javascript.js"></script>
+    
+    <script>
+        // Guide content data
+        const guideData = {
+            '1v1lol': {
+                title: 'Complete 1v1.LOL Guide: Building & Combat Mastery',
+                video: `
+                    <div class="video-player">
+                        <video controls width="100%" height="400">
+                            <source src="images/1v1lolrec.mov" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                `,
+                article: `
+                    <div class="guide-article-content">
+                        <div class="guide-meta-bar">
+                            <span class="difficulty-badge advanced">Advanced</span>
+                            <span class="read-time"><i class="fas fa-clock"></i> 8 min read</span>
+                            <span class="views"><i class="fas fa-eye"></i> 15,234 views</span>
+                        </div>
+                        
+                        <h3>Master the Ultimate Battle Royale Building Game</h3>
+                        <p>1v1.LOL combines the intense shooting mechanics of battle royale games with the strategic building elements that have made construction-based combat so popular. This comprehensive guide will transform you from a beginner into a formidable opponent.</p>
+                        
+                        <h4><i class="fas fa-hammer"></i> Essential Building Techniques</h4>
+                        <ul class="guide-list">
+                            <li><strong>Wall Rushing:</strong> Quickly place walls while advancing toward enemies to close distance safely</li>
+                            <li><strong>Ramp Rushing:</strong> Build ramps to gain height advantage and better shooting angles</li>
+                            <li><strong>Box Fighting:</strong> Master close-quarters combat within confined building structures</li>
+                            <li><strong>90s and Cranking:</strong> Learn rapid vertical building techniques for ultimate high ground</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-crosshairs"></i> Advanced Combat Strategies</h4>
+                        <ul class="guide-list">
+                            <li><strong>Peek Shooting:</strong> Use building pieces to expose minimal surface area while shooting</li>
+                            <li><strong>Edit Plays:</strong> Quickly edit building pieces to create unexpected shooting angles</li>
+                            <li><strong>Third Partying:</strong> Take advantage of ongoing fights to eliminate weakened opponents</li>
+                            <li><strong>Zone Positioning:</strong> Master late-game positioning for zone rotations</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-gamepad"></i> Key Bindings & Settings</h4>
+                        <p>Optimize your controls for maximum efficiency:</p>
+                        <ul class="guide-list">
+                            <li><strong>Building Binds:</strong> Use easily accessible keys for wall, floor, ramp, and pyramid</li>
+                            <li><strong>Edit Key:</strong> Bind edit to a comfortable key for quick modifications</li>
+                            <li><strong>Sensitivity:</strong> Find the perfect balance between precision and speed</li>
+                            <li><strong>Graphics Settings:</strong> Optimize for performance over visual quality</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-trophy"></i> Game Mode Strategies</h4>
+                        <p><strong>Battle Royale:</strong> Focus on survival early game, aggressive mid-game, and positioning late game.</p>
+                        <p><strong>Zone Wars:</strong> Practice your end-game scenarios and learn rotation techniques.</p>
+                        <p><strong>Build Fights:</strong> Perfect your building mechanics in dedicated practice modes.</p>
+                        
+                        <div class="guide-tip">
+                            <i class="fas fa-lightbulb"></i>
+                            <strong>Pro Tip:</strong> Spend 15-20 minutes in creative mode before each session practicing building patterns and edits.
+                        </div>
+                    </div>
+                `
+            },
+            'cookieclicker': {
+                title: 'Cookie Clicker Optimization: Maximize Your Production',
+                video: `
+                    <div class="video-player">
+                        <video controls width="100%" height="400">
+                            <source src="images/cookieclickerrec.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                `,
+                article: `
+                    <div class="guide-article-content">
+                        <div class="guide-meta-bar">
+                            <span class="difficulty-badge intermediate">Intermediate</span>
+                            <span class="read-time"><i class="fas fa-clock"></i> 6 min read</span>
+                            <span class="views"><i class="fas fa-eye"></i> 12,587 views</span>
+                        </div>
+                        
+                        <h3>The Science of Cookie Production</h3>
+                        <p>Cookie Clicker may seem simple, but underneath its deceptively basic interface lies a complex economy system that rewards strategic thinking and patience. This guide will help you maximize your cookie production efficiency.</p>
+                        
+                        <h4><i class="fas fa-chart-line"></i> Early Game Strategy (0-1 Million Cookies)</h4>
+                        <ul class="guide-list">
+                            <li><strong>Focus on Cursors:</strong> Buy your first 10-15 cursors before investing in other buildings</li>
+                            <li><strong>Grandma Power:</strong> Grandmas become extremely efficient with cursor synergy bonuses</li>
+                            <li><strong>Click Regularly:</strong> Manual clicking is crucial in early game for fast progression</li>
+                            <li><strong>Golden Cookies:</strong> Never miss a golden cookie - they provide massive early game boosts</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-coins"></i> Mid Game Optimization (1M-1B Cookies)</h4>
+                        <ul class="guide-list">
+                            <li><strong>Building Balance:</strong> Maintain roughly equal numbers of each building type</li>
+                            <li><strong>Upgrade Priority:</strong> Buy upgrades as soon as they become available</li>
+                            <li><strong>Research Lab:</strong> Unlock laboratory for powerful research upgrades</li>
+                            <li><strong>Prestige Planning:</strong> Start planning for your first prestige around 1 billion cookies</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-star"></i> Prestige System Mastery</h4>
+                        <p>The prestige system is the key to exponential growth:</p>
+                        <ul class="guide-list">
+                            <li><strong>First Prestige:</strong> Prestige when you have 1 billion cookies for optimal efficiency</li>
+                            <li><strong>Heavenly Chips:</strong> Each chip provides +2% CpS bonus permanently</li>
+                            <li><strong>Prestige Upgrades:</strong> Invest in Legacy upgrades for permanent benefits</li>
+                            <li><strong>Timing:</strong> Prestige when progress slows significantly (usually every few days)</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-magic"></i> Advanced Techniques</h4>
+                        <ul class="guide-list">
+                            <li><strong>Cookie Chain:</strong> Click golden cookies in sequence for exponential rewards</li>
+                            <li><strong>Frenzy Stacking:</strong> Combine multiple effects for massive temporary boosts</li>
+                            <li><strong>Garden Management:</strong> Use the garden minigame for powerful plant effects</li>
+                            <li><strong>Stock Market:</strong> Trade cookie stocks for additional income streams</li>
+                        </ul>
+                        
+                        <div class="guide-tip">
+                            <i class="fas fa-lightbulb"></i>
+                            <strong>Pro Tip:</strong> Always keep the game open in a background tab - passive production is the key to long-term success!
+                        </div>
+                    </div>
+                `
+            },
+            'basketrandom': {
+                title: 'Basket Random: Physics-Based Basketball Mastery',
+                video: `
+                    <div class="video-player">
+                        <video controls width="100%" height="400">
+                            <source src="images/basketrandomrec.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                `,
+                article: `
+                    <div class="guide-article-content">
+                        <div class="guide-meta-bar">
+                            <span class="difficulty-badge beginner">Beginner</span>
+                            <span class="read-time"><i class="fas fa-clock"></i> 4 min read</span>
+                            <span class="views"><i class="fas fa-eye"></i> 9,234 views</span>
+                        </div>
+                        
+                        <h3>Mastering Chaotic Basketball Physics</h3>
+                        <p>Basket Random's unpredictable physics engine creates hilarious and challenging gameplay. While luck plays a role, understanding the game's mechanics can give you a significant advantage.</p>
+                        
+                        <h4><i class="fas fa-running"></i> Movement Fundamentals</h4>
+                        <ul class="guide-list">
+                            <li><strong>Timing is Everything:</strong> Press and hold the action button for optimal jump timing</li>
+                            <li><strong>Momentum Control:</strong> Use brief taps for small adjustments, holds for big movements</li>
+                            <li><strong>Landing Strategy:</strong> Try to land near the center for better balance</li>
+                            <li><strong>Recovery Techniques:</strong> Learn to quickly recover from awkward positions</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-basketball-ball"></i> Shooting Techniques</h4>
+                        <ul class="guide-list">
+                            <li><strong>Arc Control:</strong> Longer button holds create higher arcs for better shooting angles</li>
+                            <li><strong>Distance Adjustment:</strong> Jump closer to the basket for easier shots</li>
+                            <li><strong>Timing Release:</strong> Release the button at the peak of your jump</li>
+                            <li><strong>Bank Shots:</strong> Use the backboard when shooting from the sides</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-shield-alt"></i> Defensive Strategies</h4>
+                        <ul class="guide-list">
+                            <li><strong>Position Blocking:</strong> Stay between the opponent and the basket</li>
+                            <li><strong>Steal Attempts:</strong> Time your jumps to intercept passes and shots</li>
+                            <li><strong>Rebound Control:</strong> Position yourself under the basket for missed shots</li>
+                            <li><strong>Disruption Tactics:</strong> Jump when opponents are shooting to disrupt their timing</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-map"></i> Court Awareness</h4>
+                        <p>Different court layouts require different strategies:</p>
+                        <ul class="guide-list">
+                            <li><strong>Standard Courts:</strong> Focus on positioning and timing</li>
+                            <li><strong>Moving Platforms:</strong> Anticipate platform movement for strategic positioning</li>
+                            <li><strong>Obstacle Courts:</strong> Use obstacles to your advantage for unique shooting angles</li>
+                            <li><strong>Multi-Level Courts:</strong> Master vertical movement between different levels</li>
+                        </ul>
+                        
+                        <div class="guide-tip">
+                            <i class="fas fa-lightbulb"></i>
+                            <strong>Pro Tip:</strong> Practice in single-player mode to get familiar with physics before challenging friends!
+                        </div>
+                    </div>
+                `
+            }
+        };
+
+        // Modal functionality
+        const modal = document.getElementById('guideModalOverlay');
+        const modalTitle = document.getElementById('guideModalTitle');
+        const modalVideo = document.getElementById('guideModalVideo');
+        const modalArticle = document.getElementById('guideModalArticle');
+        const closeBtn = document.getElementById('guideModalClose');
+
+        // Add click handlers to all clickable guide cards
+        document.querySelectorAll('.guide-card.clickable').forEach(card => {
+            card.addEventListener('click', () => {
+                const guideId = card.getAttribute('data-guide');
+                openGuideModal(guideId);
+            });
+        });
+
+        function openGuideModal(guideId) {
+            const guide = guideData[guideId];
+            if (!guide) return;
+
+            modalTitle.textContent = guide.title;
+            modalVideo.innerHTML = guide.video;
+            modalArticle.innerHTML = guide.article;
+            
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeGuideModal() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            // Pause any videos
+            const videos = modal.querySelectorAll('video');
+            videos.forEach(video => {
+                video.pause();
+                video.currentTime = 0;
+            });
+        }
+
+        // Close modal handlers
+        closeBtn.addEventListener('click', closeGuideModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeGuideModal();
+            }
+        });
+
+        // Escape key handler
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.style.display === 'flex') {
+                closeGuideModal();
+            }
+        });
+
+        // Check if we should open a specific guide (from homepage link)
+        window.addEventListener('load', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const guideParam = urlParams.get('guide');
+            
+            if (guideParam && guideData[guideParam]) {
+                // Scroll to the guide first
+                const guideElement = document.getElementById(`guide-${guideParam}`);
+                if (guideElement) {
+                    guideElement.scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => {
+                        openGuideModal(guideParam);
+                    }, 500);
+                }
+            }
+        });
+    </script>
 </body>
 </html>
