@@ -13155,31 +13155,207 @@ body.light-theme ::-webkit-scrollbar-thumb {
 .faq-answer {
     max-height: 0;
     overflow: hidden;
-    transition: all 0.4s ease;
-    border-top: 1px solid var(--content-border);
+    transition: max-height 0.4s ease, padding 0.4s ease;
+    padding: 0 1.5rem;
 }
 
 .faq-item.active .faq-answer {
-    max-height: 500px;
+    max-height: 1000px;
     padding: 1.5rem;
+    border-top: 1px solid var(--content-border);
 }
 
 .faq-answer p {
     color: var(--content-text-muted);
     line-height: 1.7;
-    margin: 0;
+    margin: 0 0 1rem 0;
     font-size: 1rem;
 }
 
-.faq-answer ul {
+.faq-answer p:last-child {
+    margin-bottom: 0;
+}
+
+.faq-answer ul,
+.faq-answer ol {
     color: var(--content-text-muted);
     margin: 1rem 0;
     padding-left: 1.5rem;
 }
 
+.faq-answer h4 {
+    color: var(--content-text-primary);
+    font-weight: 600;
+    margin: 1.5rem 0 0.5rem 0;
+    font-size: 1.1rem;
+}
+
 .faq-answer li {
     margin-bottom: 0.5rem;
     line-height: 1.6;
+}
+
+/* FAQ Contact Section */
+.faq-contact {
+    background: var(--content-bg-card);
+    border: 1px solid var(--content-border);
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    margin-top: 4rem;
+    box-shadow: var(--content-shadow);
+    backdrop-filter: blur(10px);
+}
+
+.faq-contact h2 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--content-text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.faq-contact h2 i {
+    color: var(--content-accent);
+}
+
+.faq-contact p {
+    color: var(--content-text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.contact-options {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.contact-option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 2rem;
+    background: var(--content-bg-secondary);
+    border: 1px solid var(--content-border);
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--content-text-primary);
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.contact-option:hover {
+    background: var(--content-accent);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--content-shadow-hover);
+}
+
+.contact-option i {
+    font-size: 1.2rem;
+    color: var(--content-accent);
+    transition: color 0.3s ease;
+}
+
+.contact-option:hover i {
+    color: white;
+}
+
+.contact-option div h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.contact-option div p {
+    margin: 0;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+.contact-info {
+    margin-bottom: 2rem;
+}
+
+.contact-info p {
+    color: var(--content-text-muted);
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+/* FAQ Mobile Responsiveness */
+@media (max-width: 768px) {
+    .faq-container {
+        padding: 2rem 1rem;
+    }
+    
+    .faq-header h1 {
+        font-size: 2.5rem;
+    }
+    
+    .faq-section h2 {
+        font-size: 1.8rem;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .quick-links-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+    }
+    
+    .quick-link {
+        padding: 1rem;
+    }
+    
+    .quick-link span {
+        font-size: 1rem;
+    }
+    
+    .faq-question {
+        padding: 1rem;
+    }
+    
+    .faq-question h3,
+    .faq-question h4 {
+        font-size: 1.1rem;
+    }
+    
+    .faq-item.active .faq-answer {
+        padding: 1rem;
+    }
+    
+    .contact-options {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .contact-option {
+        justify-content: center;
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .quick-links-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .faq-header h1 {
+        font-size: 2rem;
+    }
+    
+    .faq-section h2 {
+        font-size: 1.5rem;
+    }
 }
 
 /* ========================================
