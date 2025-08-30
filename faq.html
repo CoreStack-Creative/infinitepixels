@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frequently Asked Questions - InfinitePixels</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Find answers to frequently asked questions about InfinitePixels gaming platform, technical support, account management, and game features.">
+    <meta name="keywords" content="FAQ, help, support, gaming platform, technical support, account help, game issues">
+    <link rel="canonical" href="https://infinite-pixels.com/faq.html">
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            {
+                "@type": "Question",
+                "name": "How do I create an account on InfinitePixels?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "InfinitePixels doesn't require account creation to play games. Simply visit our website and start playing immediately. However, we recommend bookmarking our site for easy access to your favorite games."
+                }
+            },
+            {
+                "@type": "Question",
+                "name": "Are all games free to play?",
+                "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Yes, all games on InfinitePixels are completely free to play. We believe gaming should be accessible to everyone, regardless of budget constraints."
+                }
+            }
+        ]
+    }
+    </script>
+</head>
+<body>
+    <!-- Navigation (same structure as other pages) -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="logo-link">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <img src="images/infinitepixleslogo.webp" alt="InfinitePixels Logo" width="85" height="85">
+                    </div>
+                    <h2>InfinitePixels</h2>
+                </div>
+            </a>
+        </div>
+        
+        <ul class="nav-links">
+            <li><a href="index.html"><span>Home</span></a></li>
+            <li><a href="games.html"><span>All Games</span></a></li>
+            <li><a href="favorites.html"><span>Favorites</span></a></li>
+            <li><a href="random.html"><span>Random</span></a></li>
+            <li><a href="newgames.html"><span>New</span></a></li>
+            <li><a href="category.html"><span>Categories</span></a></li>
+        </ul>
+        
+        <hr class="sidebar-divider">
+        
+        <ul class="nav-links secondary-links">
+            <li><a href="game-guides.html"><span>Game Guides</span></a></li>
+            <li><a href="game-reviews.html"><span>Reviews</span></a></li>
+            <li><a href="gaming-tips.html"><span>Gaming Tips</span></a></li>
+            <li><a href="faq.html" class="active"><span>FAQ</span></a></li>
+            <li><a href="news.html"><span>News</span></a></li>
+            <li><a href="about.html"><span>About</span></a></li>
+            <li><a href="privacypolicy.html"><span>Privacy Policy</span></a></li>
+            <li><a href="termsandconditions.html"><span>Terms and Conditions</span></a></li>
+            <li><a href="settings.html"><span>Settings</span></a></li>
+        </ul>
+        
+        <div class="contact-btn-wrapper">
+            <a href="contact.html" class="contact-btn">Contact</a>
+        </div>
+    </nav>
+
+    <div class="top-bar">
+        <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="search-container">
+            <div class="search-wrapper">
+                <button class="search-icon-btn" id="searchIconBtn">
+                    <i class="fas fa-search"></i>
+                </button>
+                <div class="search-box" id="searchBox">
+                    <input type="text" id="searchInput" placeholder="Search FAQ...">
+                </div>
+            </div>
+            <div class="search-results" id="searchResults"></div>
+        </div>
+    </div>
+
+    <main class="main-content" id="mainContent">
+        <div class="faq-container">
+            <!-- Header Section -->
+            <section class="faq-header">
+                <h1>Frequently Asked Questions</h1>
+                <p class="faq-description">
+                    Find quick answers to common questions about InfinitePixels. If you can't find what you're 
+                    looking for, don't hesitate to contact our support team for personalized assistance.
+                </p>
+            </section>
+
+            <!-- Quick Links -->
+            <section class="faq-quick-links">
+                <h2>Quick Navigation</h2>
+                <div class="quick-links-grid">
+                    <a href="#general" class="quick-link">
+                        <i class="fas fa-info-circle"></i>
+                        <span>General Questions</span>
+                    </a>
+                    <a href="#technical" class="quick-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Technical Support</span>
+                    </a>
+                    <a href="#games" class="quick-link">
+                        <i class="fas fa-gamepad"></i>
+                        <span>Games & Features</span>
+                    </a>
+                    <a href="#account" class="quick-link">
+                        <i class="fas fa-user"></i>
+                        <span>Account & Privacy</span>
+                    </a>
+                    <a href="#troubleshooting" class="quick-link">
+                        <i class="fas fa-wrench"></i>
+                        <span>Troubleshooting</span>
+                    </a>
+                    <a href="#mobile" class="quick-link">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Mobile Gaming</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- General Questions -->
+            <section id="general" class="faq-section">
+                <h2><i class="fas fa-info-circle"></i> General Questions</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What is InfinitePixels?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>InfinitePixels is a comprehensive online gaming platform that offers over 100 carefully curated games spanning multiple genres. We provide a seamless, ad-supported gaming experience that's completely free for all users. Our platform features action games, puzzles, racing, strategy games, and much more, all playable directly in your web browser without downloads or installations.</p>
+                        <p>Founded with the mission to make high-quality gaming accessible to everyone, InfinitePixels combines entertainment with convenience. We continuously expand our game library, add new features, and optimize performance to ensure the best possible gaming experience for our community.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Do I need to create an account to play games?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>No account creation is required to enjoy games on InfinitePixels. Our platform is designed for immediate access - simply visit our website and start playing right away. This approach ensures maximum convenience and privacy for our users.</p>
+                        <p>However, we do offer a favorites system that uses your browser's local storage to save your preferred games for easy access. While this doesn't require an account, your favorites are stored locally on your device and may not sync across multiple devices.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Are all games free to play?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, absolutely! Every game on InfinitePixels is completely free to play. We believe that high-quality gaming should be accessible to everyone, regardless of financial circumstances. Our platform is supported by carefully placed, non-intrusive advertisements that allow us to keep all content free.</p>
+                        <p>There are no hidden fees, premium subscriptions, or pay-to-play mechanics. Once you access our website, you have unlimited access to our entire game library. We're committed to maintaining this free access model as we continue to grow and expand our offerings.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How often do you add new games?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We regularly add new games to our platform, typically several times per month. Our content team continuously researches and evaluates potential additions to ensure each new game meets our quality standards and adds value to our collection.</p>
+                        <p>The frequency of additions depends on several factors including game quality, genre diversity, and community requests. We prioritize games that offer unique experiences, demonstrate technical excellence, and appeal to our diverse user base. Follow our news section or social media channels to stay updated on the latest additions.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Can I suggest games to be added to the platform?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! We actively encourage game suggestions from our community. User recommendations are a valuable source of new content ideas, and many games in our library were added based on community feedback.</p>
+                        <p>To suggest a game, simply email us at contact.infinitepixels@gmail.com with the game name, a link if available, and a brief description of why you think it would be a good addition. While we can't guarantee every suggestion will be added, we review each submission carefully and respond to all emails. Your input helps us build a better gaming platform for everyone.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Technical Support -->
+            <section id="technical" class="faq-section">
+                <h2><i class="fas fa-cog"></i> Technical Support</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What browsers are supported?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>InfinitePixels is optimized for all modern web browsers including Google Chrome, Mozilla Firefox, Safari, Microsoft Edge, and Opera. We recommend using the latest version of your preferred browser for the best performance and security.</p>
+                        <p>Most games are built using HTML5 technology, which ensures broad compatibility across different browsers and operating systems. If you encounter compatibility issues, try updating your browser to the latest version or switching to a different browser temporarily.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Why are games loading slowly?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Game loading speeds can be affected by several factors including your internet connection speed, browser performance, and system resources. Here are some steps to improve loading times:</p>
+                        <ul>
+                            <li>Ensure you have a stable internet connection with adequate bandwidth</li>
+                            <li>Close unnecessary browser tabs and applications to free up memory</li>
+                            <li>Clear your browser cache and cookies periodically</li>
+                            <li>Disable browser extensions that might interfere with game loading</li>
+                            <li>Try switching to a wired internet connection instead of Wi-Fi</li>
+                        </ul>
+                        <p>If problems persist, the issue might be temporary server load. Try refreshing the page or returning later when traffic is lower.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What should I do if a game isn't working?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>If you encounter issues with a specific game, try these troubleshooting steps:</p>
+                        <ol>
+                            <li>Refresh the page and try loading the game again</li>
+                            <li>Clear your browser cache and cookies</li>
+                            <li>Disable ad blockers temporarily, as they might interfere with game loading</li>
+                            <li>Try accessing the game in a private/incognito browser window</li>
+                            <li>Check if the same issue occurs in a different browser</li>
+                            <li>Ensure JavaScript is enabled in your browser settings</li>
+                        </ol>
+                        <p>If these steps don't resolve the issue, please contact us at contact.infinitepixels@gmail.com with details about the specific game, your browser version, and any error messages you received.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Do you support gaming controllers?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Controller support depends on the individual game and your browser's gamepad API compatibility. Many modern browsers support standard gaming controllers (Xbox, PlayStation, generic USB controllers) for HTML5 games that include controller support.</p>
+                        <p>To use a controller:</p>
+                        <ul>
+                            <li>Connect your controller before loading the game</li>
+                            <li>Look for controller settings within the game's options menu</li>
+                            <li>Some games automatically detect and configure controllers</li>
+                            <li>Ensure your controller drivers are up to date</li>
+                        </ul>
+                        <p>Not all games support controllers, as some are designed specifically for keyboard and mouse or touch input.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Games & Features -->
+            <section id="games" class="faq-section">
+                <h2><i class="fas fa-gamepad"></i> Games & Features</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How does the favorites system work?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>The favorites system allows you to save your preferred games for quick access. Simply click the heart icon on any game to add it to your favorites collection. Your favorites are automatically saved and can be accessed through the dedicated Favorites page or the Favorites section on the homepage.</p>
+                        <p>Important notes about favorites:</p>
+                        <ul>
+                            <li>Favorites are stored locally in your browser's storage</li>
+                            <li>They will persist as long as you don't clear your browser data</li>
+                            <li>Favorites don't sync across different devices or browsers</li>
+                            <li>You can add or remove favorites at any time</li>
+                            <li>There's no limit to how many games you can favorite</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>How does the random game feature work?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our random game feature is designed to help you discover new games and break out of your usual gaming patterns. When you visit the random games page or click the random button, our system selects a game from our entire library using sophisticated algorithms.</p>
+                        <p>The random selection considers:</p>
+                        <ul>
+                            <li>Game quality and popularity ratings</li>
+                            <li>Genre diversity to expose you to different types of games</li>
+                            <li>Your recent gaming activity to avoid repetition</li>
+                            <li>Seasonal and trending games when applicable</li>
+                        </ul>
+                        <p>You can also filter random selections by category if you want to discover new games within a specific genre.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Can I play games offline?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Most games on InfinitePixels require an active internet connection to load and play. This is because games are streamed from our servers and many include online features or real-time updates.</p>
+                        <p>However, some single-player HTML5 games may continue to work temporarily if your connection is interrupted after they've fully loaded. This isn't guaranteed and varies by game. For the best experience, we recommend maintaining a stable internet connection while gaming.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Are there multiplayer games available?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! InfinitePixels features a variety of multiplayer games including real-time competitive games, cooperative experiences, and io-style games where you play against other online players.</p>
+                        <p>Types of multiplayer games available:</p>
+                        <ul>
+                            <li>Real-time competitive shooters and battle games</li>
+                            <li>IO games with large-scale multiplayer battles</li>
+                            <li>Turn-based strategy and puzzle games</li>
+                            <li>Cooperative games where you can team up with friends</li>
+                            <li>Local multiplayer games for playing with friends on the same device</li>
+                        </ul>
+                        <p>Look for the "multiplayer" tag when browsing games to find these experiences.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Account & Privacy -->
+            <section id="account" class="faq-section">
+                <h2><i class="fas fa-user"></i> Account & Privacy</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>What information do you collect about users?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>InfinitePixels is committed to user privacy and data protection. We collect minimal information necessary to provide our services and improve user experience. This includes:</p>
+                        <ul>
+                            <li>Anonymous usage analytics (pages visited, games played, session duration)</li>
+                            <li>Technical information (browser type, device type, screen resolution)</li>
+                            <li>Performance data to optimize loading times and fix issues</li>
+                            <li>Feedback and support communications when you contact us</li>
+                        </ul>
+                        <p>We do not collect personal identifying information unless you voluntarily provide it (such as when contacting support). All data collection complies with privacy regulations including GDPR and CCPA. For detailed information, please review our Privacy Policy.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Do you use cookies?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, InfinitePixels uses cookies and similar technologies to enhance your browsing experience and provide essential functionality. We use different types of cookies:</p>
+                        <ul>
+                            <li><strong>Essential cookies:</strong> Required for basic site functionality and security</li>
+                            <li><strong>Preference cookies:</strong> Remember your settings and favorites</li>
+                            <li><strong>Analytics cookies:</strong> Help us understand how users interact with our site</li>
+                            <li><strong>Advertising cookies:</strong> Enable us to display relevant ads that support our free service</li>
+                        </ul>
+                        <p>You can manage cookie preferences through your browser settings or our cookie consent banner. Note that disabling essential cookies may impact site functionality.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Is InfinitePixels safe for children?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>InfinitePixels is designed to be a family-friendly platform suitable for players of all ages. We carefully curate our game selection to ensure appropriate content:</p>
+                        <ul>
+                            <li>All games are reviewed for age-appropriate content</li>
+                            <li>We avoid games with excessive violence, adult themes, or inappropriate language</li>
+                            <li>Educational and puzzle games are specifically included for younger players</li>
+                            <li>We don't require personal information or account creation</li>
+                            <li>Our advertising partners are required to display family-friendly ads</li>
+                        </ul>
+                        <p>However, we recommend parental supervision for younger children and encourage parents to review games before allowing children to play independently.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Troubleshooting -->
+            <section id="troubleshooting" class="faq-section">
+                <h2><i class="fas fa-wrench"></i> Troubleshooting</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>The website won't load properly. What should I do?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>If InfinitePixels isn't loading correctly, try these troubleshooting steps in order:</p>
+                        <ol>
+                            <li><strong>Refresh the page:</strong> Press Ctrl+F5 (Windows) or Cmd+Shift+R (Mac) for a hard refresh</li>
+                            <li><strong>Check your internet connection:</strong> Ensure you have a stable connection</li>
+                            <li><strong>Clear browser data:</strong> Clear cache, cookies, and browsing data</li>
+                            <li><strong>Disable extensions:</strong> Temporarily disable ad blockers and other extensions</li>
+                            <li><strong>Try incognito mode:</strong> Load the site in a private browsing window</li>
+                            <li><strong>Switch browsers:</strong> Try accessing the site using a different browser</li>
+                            <li><strong>Check for updates:</strong> Ensure your browser is up to date</li>
+                            <li><strong>Restart your device:</strong> Sometimes a simple restart resolves connection issues</li>
+                        </ol>
+                        <p>If none of these steps work, please contact our support team with details about your browser, operating system, and any error messages you're seeing.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Games are running slowly or lagging. How can I fix this?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Game performance issues can be caused by various factors. Here's how to optimize your gaming experience:</p>
+                        <h4>Browser Optimization:</h4>
+                        <ul>
+                            <li>Close unnecessary browser tabs and applications</li>
+                            <li>Clear browser cache and restart your browser</li>
+                            <li>Disable browser extensions temporarily</li>
+                            <li>Enable hardware acceleration in browser settings</li>
+                        </ul>
+                        <h4>System Optimization:</h4>
+                        <ul>
+                            <li>Close resource-heavy applications (video editors, streaming software)</li>
+                            <li>Check available RAM and disk space</li>
+                            <li>Restart your computer to clear memory</li>
+                            <li>Update graphics drivers if using dedicated graphics</li>
+                        </ul>
+                        <h4>Network Optimization:</h4>
+                        <ul>
+                            <li>Use a wired connection instead of Wi-Fi when possible</li>
+                            <li>Pause other bandwidth-heavy activities (downloads, streaming)</li>
+                            <li>Move closer to your Wi-Fi router if using wireless</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>I'm getting error messages. What do they mean?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Common error messages and their solutions:</p>
+                        <h4>"Game failed to load" or "Loading error":</h4>
+                        <ul>
+                            <li>Refresh the page and try again</li>
+                            <li>Check your internet connection</li>
+                            <li>Clear browser cache</li>
+                            <li>Disable ad blockers temporarily</li>
+                        </ul>
+                        <h4>"JavaScript is disabled":</h4>
+                        <ul>
+                            <li>Enable JavaScript in your browser settings</li>
+                            <li>Add InfinitePixels to your browser's trusted sites</li>
+                        </ul>
+                        <h4>"Content blocked" messages:</h4>
+                        <ul>
+                            <li>Disable ad blockers for our site</li>
+                            <li>Check if your antivirus is blocking content</li>
+                            <li>Try using a different browser</li>
+                        </ul>
+                        <p>If you encounter other error messages, please note the exact text and contact our support team for assistance.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mobile Gaming -->
+            <section id="mobile" class="faq-section">
+                <h2><i class="fas fa-mobile-alt"></i> Mobile Gaming</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Can I play games on my mobile device?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! InfinitePixels is fully optimized for mobile devices including smartphones and tablets. Our responsive design ensures that games and interface elements adapt to different screen sizes and orientations.</p>
+                        <p>Mobile features include:</p>
+                        <ul>
+                            <li>Touch-optimized controls for games that support mobile play</li>
+                            <li>Responsive layout that adapts to your screen size</li>
+                            <li>Optimized loading for mobile internet connections</li>
+                            <li>Support for both portrait and landscape orientations</li>
+                            <li>Simplified navigation for easier mobile browsing</li>
+                        </ul>
+                        <p>While most games work on mobile devices, some games designed for keyboard and mouse may have limited functionality on touch devices.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Why do some games not work well on mobile?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Some games may have limited functionality on mobile devices due to design constraints:</p>
+                        <ul>
+                            <li><strong>Input methods:</strong> Games designed for keyboard and mouse may not translate well to touch controls</li>
+                            <li><strong>Screen size:</strong> Complex games with detailed interfaces may be difficult to play on smaller screens</li>
+                            <li><strong>Performance:</strong> Graphics-intensive games may run slowly on older mobile devices</li>
+                            <li><strong>Browser limitations:</strong> Some mobile browsers have restrictions on certain web technologies</li>
+                        </ul>
+                        <p>We're continuously working to improve mobile compatibility and clearly mark games that are optimized for mobile play. Look for mobile-friendly indicators when browsing our game library.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h3>Is there a mobile app for InfinitePixels?</h3>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Currently, InfinitePixels operates as a web-based platform accessible through any modern mobile browser. We don't have a dedicated mobile app at this time, but our website is optimized to provide an app-like experience on mobile devices.</p>
+                        <p>Benefits of our web-based approach:</p>
+                        <ul>
+                            <li>No app store downloads or updates required</li>
+                            <li>Works on any device with a web browser</li>
+                            <li>Always access to the latest features and games</li>
+                            <li>No storage space required on your device</li>
+                            <li>Universal compatibility across different mobile platforms</li>
+                        </ul>
+                        <p>You can add InfinitePixels to your mobile home screen for quick access by using your browser's "Add to Home Screen" feature.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section class="faq-contact">
+                <h2>Still Need Help?</h2>
+                <p>
+                    If you couldn't find the answer to your question in our FAQ, don't hesitate to reach out to our 
+                    support team. We're here to help and typically respond to inquiries within 24 hours.
+                </p>
+                <div class="contact-options">
+                    <a href="contact.html" class="contact-option">
+                        <i class="fas fa-envelope"></i>
+                        <span>Contact Support</span>
+                    </a>
+                    <a href="mailto:contact.infinitepixels@gmail.com" class="contact-option">
+                        <i class="fas fa-at"></i>
+                        <span>Direct Email</span>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="footer-logo">
+                        <div class="logo-icon">
+                            <img src="images/infinitepixleslogo.webp" alt="InfinitePixels Logo" width="48" height="48">
+                        </div>
+                        <div class="logo-text">
+                            <span class="company-name">InfinitePixels</span>
+                            <span class="company-tagline">Your questions answered</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="javascript.js"></script>
+    <script>
+        // FAQ accordion functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const faqItems = document.querySelectorAll('.faq-item');
+            
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question');
+                const answer = item.querySelector('.faq-answer');
+                const icon = question.querySelector('i');
+                
+                question.addEventListener('click', function() {
+                    const isOpen = item.classList.contains('active');
+                    
+                    // Close all other items
+                    faqItems.forEach(otherItem => {
+                        if (otherItem !== item) {
+                            otherItem.classList.remove('active');
+                            otherItem.querySelector('.faq-answer').style.maxHeight = '0';
+                            otherItem.querySelector('.faq-question i').style.transform = 'rotate(0deg)';
+                        }
+                    });
+                    
+                    // Toggle current item
+                    if (isOpen) {
+                        item.classList.remove('active');
+                        answer.style.maxHeight = '0';
+                        icon.style.transform = 'rotate(0deg)';
+                    } else {
+                        item.classList.add('active');
+                        answer.style.maxHeight = answer.scrollHeight + 'px';
+                        icon.style.transform = 'rotate(180deg)';
+                    }
+                });
+            });
+            
+            // Smooth scrolling for quick links
+            const quickLinks = document.querySelectorAll('.quick-link');
+            quickLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href').substring(1);
+                    const targetElement = document.getElementById(targetId);
+                    
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
