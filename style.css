@@ -2602,6 +2602,7 @@ body {
    margin-left: -50vw;
    margin-right: -50vw;
    width: 100vw;
+   margin-bottom: 0;
 }
 
 /* Remove footer padding on special pages */
@@ -2610,12 +2611,22 @@ body {
 .faq-container .footer-container {
    padding-left: 40px;
    padding-right: 40px;
+   padding-bottom: 0;
 }
 
 /* When sidebar is collapsed on those specific pages */
 .reviews-container .site-footer.expanded,
 .guides-container .site-footer.expanded,
-.faq-container .site-footer.expanded,
+.faq-container .site-footer.expanded {
+    position: relative;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    width: 100vw;
+    margin-bottom: 0;
+}
+
 .news-page-container .site-footer.expanded,
 .about-page-container .site-footer.expanded {
     width: 100%;
@@ -2631,7 +2642,16 @@ body {
     
     .reviews-container .site-footer.expanded,
     .guides-container .site-footer.expanded,
-    .faq-container .site-footer.expanded,
+    .faq-container .site-footer.expanded {
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        width: 100vw;
+        margin-bottom: 0;
+    }
+
     .news-page-container .site-footer.expanded,
     .about-page-container .site-footer.expanded {
         width: 100%;
@@ -2647,6 +2667,7 @@ body {
         margin-left: -50vw;
         margin-right: -50vw;
         width: 100vw;
+        margin-bottom: 0;
     }
 
     /* Restore footer padding on special pages for mobile */
@@ -2655,6 +2676,7 @@ body {
     .faq-container .footer-container {
         padding-left: 20px;
         padding-right: 20px;
+        padding-bottom: 0;
     }
 }
 
