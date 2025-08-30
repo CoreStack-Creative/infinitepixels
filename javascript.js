@@ -139,7 +139,26 @@ if (sidebarToggle) {
        if (sidebar) sidebar.classList.toggle('collapsed');
        if (mainContent) mainContent.classList.toggle('expanded');
        
-       // ADD THESE LINES: Toggle expanded class for news page elements
+       // Only toggle expanded class for footers on pages that need it
+       const pageContainers = [
+           '.reviews-container',
+           '.guides-container', 
+           '.faq-container',
+           '.news-page-container',
+           '.about-page-container'
+       ];
+       
+       pageContainers.forEach(containerClass => {
+           const container = document.querySelector(containerClass);
+           if (container) {
+               const footer = container.querySelector('.site-footer');
+               if (footer) {
+                   footer.classList.toggle('expanded');
+               }
+           }
+       });
+       
+       // Existing news page specific code (keep this for compatibility)
        const newsMainContent = document.querySelector('.news-page-container .news-main-content');
        const newsFooter = document.querySelector('.news-page-container .site-footer');
        
