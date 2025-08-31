@@ -2383,7 +2383,7 @@ class GameLoader {
  this.currentGame = game;
  this.displayGame(game);
  this.loadRelatedGames(game);
- this.setupVotingSystem(game);
+ this.setupStarRating(game);
  }
 
  displayGame(game) {
@@ -2475,108 +2475,177 @@ class GameLoader {
  });
  }
 
- setupVotingSystem(game) {
- const thumbsUpBtn = document.getElementById('thumbsUpBtn');
- const thumbsDownBtn = document.getElementById('thumbsDownBtn');
- const floatingThumbs = document.getElementById('floatingThumbs');
- const voteLock = document.getElementById('voteLock');
+    setupStarRating(game) {
+        // Generate sample rating data if not exists
+        const gameRatings = this.getGameRatings();
+        if (!gameRatings[game.slug]) {
+            // Initialize with random sample data for demonstration
+            gameRatings[game.slug] = {
+                totalStars: Math.floor(Math.random() * 400) + 100, // Random total between 100-500
+                totalVotes: Math.floor(Math.random() * 80) + 20,   // Random votes between 20-100
+                average: 0
+            };
+            gameRatings[game.slug].average = (gameRatings[game.slug].totalStars / gameRatings[game.slug].totalVotes);
+            this.saveGameRatings(gameRatings);
+        }
 
- if (!thumbsUpBtn || !thumbsDownBtn) return;
+        const starsInteractive = document.getElementById('starsInteractive');
+        const starButtons = document.querySelectorAll('.star-display-btn');
 
- // Use game-specific storage key
- const voteKey = `${game.slug}Voted`;
- let voted = sessionStorage.getItem(voteKey) === '1';
+        if (!starsInteractive || !starButtons.length) return;
 
- const createFloatingThumbs = (type, originBtn) => {
- if (!floatingThumbs) return;
- floatingThumbs.innerHTML = '';
- const count = 7;
- 
- for (let i = 0; i < count; i++) {
- const el = document.createElement('span');
- el.className = 'floating-thumb';
- el.innerHTML = type === 'up'
- ? '<i class="fas fa-thumbs-up"></i>'
- : '<i class="fas fa-thumbs-down"></i>';
- 
- el.style.fontSize = '1em';
- el.style.opacity = '0.85';
- el.style.color = type === 'up' ? '#4CAF50' : '#e74c3c';
- el.style.position = 'absolute';
- el.style.pointerEvents = 'none';
- 
- const angle = Math.random() * 2 * Math.PI;
- const distance = 40 + Math.random() * 30;
- const x = Math.cos(angle) * distance;
- const y = Math.sin(angle) * distance * (type === 'up' ? -1 : 1);
- const delay = Math.random() * 0.15;
- 
- let startX = 0, startY = 0;
- if (type === 'down' && originBtn && floatingThumbs) {
- const parentRect = originBtn.parentElement.getBoundingClientRect();
- const btnRect = originBtn.getBoundingClientRect();
- startX = btnRect.left - parentRect.left + btnRect.width / 2 - 14;
- startY = btnRect.top - parentRect.top + btnRect.height / 2 - 14;
- } else if (floatingThumbs) {
- startX = floatingThumbs.offsetWidth / 2;
- startY = floatingThumbs.offsetHeight / 2;
- }
- 
- el.style.left = type === 'down' ? `${startX}px` : '50%';
- el.style.top = type === 'down' ? `${startY}px` : '50%';
- el.style.transform = 'translate(-50%, -50%)';
- el.style.animation = type === 'up'
- ? `thumbsUpFloatSmall 1.1s ${delay}s cubic-bezier(.4,1.4,.7,1) forwards`
- : `thumbsDownFloatSmall 1.1s ${delay}s cubic-bezier(.4,1.4,.7,1) forwards`;
- el.style.setProperty('--x', `${x}px`);
- el.style.setProperty('--y', `${y}px`);
- 
- floatingThumbs.appendChild(el);
- }
- 
- setTimeout(() => {
- if (floatingThumbs) floatingThumbs.innerHTML = '';
- }, 1300);
- };
+        // Check if user has already rated
+        const userRatingKey = `${game.slug}_userRating`;
+        const hasRated = localStorage.getItem(userRatingKey);
 
- const lockVoting = () => {
- thumbsUpBtn.disabled = true;
- thumbsDownBtn.disabled = true;
- if (voteLock) {
- voteLock.style.display = 'flex';
- voteLock.style.animation = 'voteLockPop 0.5s cubic-bezier(.4,1.4,.7,1)';
- }
- };
+        // Update the display with current ratings
+        this.updateRatingDisplay(game.slug);
 
- // On load, show lock if already voted
- if (voted) {
- lockVoting();
- }
+        if (hasRated) {
+            // Show user's rating with permanent bold underlines
+            const userRating = parseInt(hasRated);
+            starsInteractive.classList.add('rated');
+            this.showUserRating(userRating);
+            // Disable further interaction
+            starButtons.forEach(btn => btn.disabled = true);
+        } else {
+            // Enable interactive rating
+            starsInteractive.classList.remove('rated');
+            
+            starButtons.forEach((button, index) => {
+                const rating = parseInt(button.dataset.rating);
 
- [thumbsUpBtn, thumbsDownBtn].forEach(btn => {
- btn.addEventListener('mousedown', () => btn.style.transform = 'scale(0.92)');
- btn.addEventListener('mouseup', () => btn.style.transform = '');
- btn.addEventListener('mouseleave', () => btn.style.transform = '');
- });
+                // Hover effects
+                button.addEventListener('mouseenter', () => {
+                    this.highlightStarsUpTo(rating);
+                });
 
- thumbsUpBtn.addEventListener('click', function() {
- if (voted) return;
- lockVoting();
- createFloatingThumbs('up', thumbsUpBtn);
- sessionStorage.setItem(voteKey, '1');
- voted = true;
- });
+                // Click to rate
+                button.addEventListener('click', () => {
+                    if (!starsInteractive.classList.contains('rated')) {
+                        this.submitRating(game.slug, rating);
+                        starsInteractive.classList.add('rated');
+                        this.showUserRating(rating);
+                        
+                        // Disable further interaction
+                        starButtons.forEach(btn => btn.disabled = true);
+                        
+                        // Add selection animation
+                        button.classList.add('animate');
+                        setTimeout(() => button.classList.remove('animate'), 400);
+                    }
+                });
+            });
 
- thumbsDownBtn.addEventListener('click', function() {
- if (voted) return;
- lockVoting();
- createFloatingThumbs('down', thumbsDownBtn);
- sessionStorage.setItem(voteKey, '1');
- voted = true;
- });
- }
+            // Reset on mouse leave from container
+            starsInteractive.addEventListener('mouseleave', () => {
+                if (!starsInteractive.classList.contains('rated')) {
+                    this.resetStarsHighlight();
+                }
+            });
+        }
+    }
 
- setupEventListeners() {
+    highlightStarsUpTo(rating) {
+        const starButtons = document.querySelectorAll('.star-display-btn');
+        starButtons.forEach((button, index) => {
+            const buttonRating = parseInt(button.dataset.rating);
+            const underline = button.querySelector('.star-underline');
+            const icon = button.querySelector('i');
+            
+            if (buttonRating <= rating) {
+                underline.style.width = '80%';
+                icon.style.color = 'rgba(255, 255, 255, 0.7)';
+                icon.style.transform = 'scale(1.05)';
+            } else {
+                underline.style.width = '0';
+                icon.style.color = 'rgba(255, 255, 255, 0.3)';
+                icon.style.transform = 'scale(1)';
+            }
+        });
+    }
+
+    resetStarsHighlight() {
+        const starButtons = document.querySelectorAll('.star-display-btn');
+        starButtons.forEach(button => {
+            const underline = button.querySelector('.star-underline');
+            const icon = button.querySelector('i');
+            underline.style.width = '0';
+            icon.style.color = 'rgba(255, 255, 255, 0.3)';
+            icon.style.transform = 'scale(1)';
+        });
+    }
+
+    showUserRating(userRating) {
+        const starButtons = document.querySelectorAll('.star-display-btn');
+        starButtons.forEach((button, index) => {
+            const buttonRating = parseInt(button.dataset.rating);
+            const underline = button.querySelector('.star-underline');
+            
+            if (buttonRating <= userRating) {
+                button.classList.add('selected');
+                underline.style.width = '100%';
+                underline.style.height = '3px';
+                underline.style.boxShadow = '0 0 4px rgba(255, 215, 0, 0.5)';
+            } else {
+                button.classList.remove('selected');
+                underline.style.width = '0';
+                underline.style.height = '2px';
+                underline.style.boxShadow = 'none';
+            }
+        });
+    }
+
+    getGameRatings() {
+        const saved = localStorage.getItem('gameRatings');
+        return saved ? JSON.parse(saved) : {};
+    }
+
+    saveGameRatings(ratings) {
+        localStorage.setItem('gameRatings', JSON.stringify(ratings));
+    }
+
+    updateRatingDisplay(gameSlug) {
+        const gameRatings = this.getGameRatings();
+        const rating = gameRatings[gameSlug];
+        
+        if (!rating) return;
+
+        const averageRating = document.getElementById('averageRating');
+        const starsFilled = document.getElementById('starsFilled');
+        const ratingCount = document.getElementById('ratingCount');
+
+        if (averageRating) {
+            averageRating.textContent = rating.average.toFixed(1);
+        }
+
+        if (starsFilled) {
+            const percentage = (rating.average / 5) * 100;
+            starsFilled.style.width = `${percentage}%`;
+        }
+
+        if (ratingCount) {
+            ratingCount.textContent = `(${rating.totalVotes} vote${rating.totalVotes !== 1 ? 's' : ''})`;
+        }
+    }
+
+    submitRating(gameSlug, rating) {
+        // Save user's rating
+        localStorage.setItem(`${gameSlug}_userRating`, rating.toString());
+
+        // Update global ratings
+        const gameRatings = this.getGameRatings();
+        if (!gameRatings[gameSlug]) {
+            gameRatings[gameSlug] = { totalStars: 0, totalVotes: 0, average: 0 };
+        }
+
+        gameRatings[gameSlug].totalStars += rating;
+        gameRatings[gameSlug].totalVotes += 1;
+        gameRatings[gameSlug].average = gameRatings[gameSlug].totalStars / gameRatings[gameSlug].totalVotes;
+
+        this.saveGameRatings(gameRatings);
+        this.updateRatingDisplay(gameSlug);
+    } setupEventListeners() {
  // Share functionality
  const shareBtn = document.getElementById('shareBtn');
  const shareModal = document.getElementById('shareModal');
