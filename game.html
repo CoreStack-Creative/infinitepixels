@@ -288,35 +288,26 @@
                                 <div class="average-rating">
                                     <span class="rating-number" id="averageRating">0.0</span>
                                     <div class="stars-interactive" id="starsInteractive">
-                                        <div class="stars-background">
-                                            <button class="star-display-btn" data-rating="1">
-                                                <i class="fas fa-star"></i>
-                                                <div class="star-underline"></div>
-                                            </button>
-                                            <button class="star-display-btn" data-rating="2">
-                                                <i class="fas fa-star"></i>
-                                                <div class="star-underline"></div>
-                                            </button>
-                                            <button class="star-display-btn" data-rating="3">
-                                                <i class="fas fa-star"></i>
-                                                <div class="star-underline"></div>
-                                            </button>
-                                            <button class="star-display-btn" data-rating="4">
-                                                <i class="fas fa-star"></i>
-                                                <div class="star-underline"></div>
-                                            </button>
-                                            <button class="star-display-btn" data-rating="5">
-                                                <i class="fas fa-star"></i>
-                                                <div class="star-underline"></div>
-                                            </button>
-                                        </div>
-                                        <div class="stars-filled" id="starsFilled">
-                                            <div class="filled-star" data-position="1"><i class="fas fa-star"></i></div>
-                                            <div class="filled-star" data-position="2"><i class="fas fa-star"></i></div>
-                                            <div class="filled-star" data-position="3"><i class="fas fa-star"></i></div>
-                                            <div class="filled-star" data-position="4"><i class="fas fa-star"></i></div>
-                                            <div class="filled-star" data-position="5"><i class="fas fa-star"></i></div>
-                                        </div>
+                                        <button class="star-display-btn" data-rating="1">
+                                            <i class="fas fa-star"></i>
+                                            <div class="star-underline"></div>
+                                        </button>
+                                        <button class="star-display-btn" data-rating="2">
+                                            <i class="fas fa-star"></i>
+                                            <div class="star-underline"></div>
+                                        </button>
+                                        <button class="star-display-btn" data-rating="3">
+                                            <i class="fas fa-star"></i>
+                                            <div class="star-underline"></div>
+                                        </button>
+                                        <button class="star-display-btn" data-rating="4">
+                                            <i class="fas fa-star"></i>
+                                            <div class="star-underline"></div>
+                                        </button>
+                                        <button class="star-display-btn" data-rating="5">
+                                            <i class="fas fa-star"></i>
+                                            <div class="star-underline"></div>
+                                        </button>
                                     </div>
                                     <span class="rating-count" id="ratingCount">(0 votes)</span>
                                 </div>
@@ -430,16 +421,8 @@
     }
 
     .stars-interactive {
-        position: relative;
         display: flex;
         gap: 2px;
-    }
-
-    .stars-background {
-        display: flex;
-        gap: 2px;
-        position: relative;
-        z-index: 2;
     }
 
     .star-display-btn {
@@ -462,6 +445,11 @@
         display: block;
     }
 
+    /* Show average rating by default */
+    .star-display-btn.filled i {
+        color: #ffd700;
+    }
+
     .star-underline {
         position: absolute;
         bottom: -2px;
@@ -474,16 +462,9 @@
         border-radius: 1px;
     }
 
-    /* Hover effects for interactive stars */
-    .stars-interactive:not(.rated) .star-display-btn:hover .star-underline,
-    .stars-interactive:not(.rated) .star-display-btn:hover ~ .star-display-btn .star-underline {
-        width: 80%;
-    }
-
-    .stars-interactive:not(.rated) .star-display-btn:hover i,
-    .stars-interactive:not(.rated) .star-display-btn:hover ~ .star-display-btn i {
-        color: rgba(255, 255, 255, 0.7);
-        transform: scale(1.05);
+    /* Reset stars to show hover preview */
+    .stars-interactive:not(.rated):hover .star-display-btn i {
+        color: rgba(255, 255, 255, 0.3);
     }
 
     /* Selected state - bold underline that persists */
@@ -492,32 +473,6 @@
         height: 3px;
         background: #ffd700;
         box-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
-    }
-
-    .stars-filled {
-        position: absolute;
-        top: 0;
-        left: 0;
-        display: flex;
-        gap: 2px;
-        z-index: 1;
-        overflow: hidden;
-        transition: width 0.3s ease;
-        pointer-events: none;
-    }
-
-    .filled-star {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 20px;
-        height: 20px;
-    }
-
-    .filled-star i {
-        font-size: 16px;
-        color: #ffd700;
-        transition: color 0.3s ease;
     }
 
     .rating-count {
@@ -563,14 +518,8 @@
             font-size: 16px;
         }
         
-        .star-display-btn i,
-        .filled-star i {
+        .star-display-btn i {
             font-size: 14px;
-        }
-        
-        .filled-star {
-            width: 18px;
-            height: 18px;
         }
     }
     </style>

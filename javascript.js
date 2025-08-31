@@ -2476,16 +2476,14 @@ class GameLoader {
  }
 
     setupStarRating(game) {
-        // Generate sample rating data if not exists
+        // Initialize empty rating data if not exists
         const gameRatings = this.getGameRatings();
         if (!gameRatings[game.slug]) {
-            // Initialize with random sample data for demonstration
             gameRatings[game.slug] = {
-                totalStars: Math.floor(Math.random() * 400) + 100, // Random total between 100-500
-                totalVotes: Math.floor(Math.random() * 80) + 20,   // Random votes between 20-100
+                totalStars: 0,
+                totalVotes: 0,
                 average: 0
             };
-            gameRatings[game.slug].average = (gameRatings[game.slug].totalStars / gameRatings[game.slug].totalVotes);
             this.saveGameRatings(gameRatings);
         }
 
@@ -2540,7 +2538,7 @@ class GameLoader {
             // Reset on mouse leave from container
             starsInteractive.addEventListener('mouseleave', () => {
                 if (!starsInteractive.classList.contains('rated')) {
-                    this.resetStarsHighlight();
+                    this.showAverageRating(game.slug);
                 }
             });
         }
@@ -2553,6 +2551,9 @@ class GameLoader {
             const underline = button.querySelector('.star-underline');
             const icon = button.querySelector('i');
             
+            button.classList.remove('filled');
+            
+            // Show underlines and highlights from star 1 up to the hovered rating
             if (buttonRating <= rating) {
                 underline.style.width = '80%';
                 icon.style.color = 'rgba(255, 255, 255, 0.7)';
@@ -2565,14 +2566,30 @@ class GameLoader {
         });
     }
 
-    resetStarsHighlight() {
+    showAverageRating(gameSlug) {
+        const gameRatings = this.getGameRatings();
+        const rating = gameRatings[gameSlug];
         const starButtons = document.querySelectorAll('.star-display-btn');
-        starButtons.forEach(button => {
+        
+        if (!rating) return;
+        
+        starButtons.forEach((button, index) => {
+            const buttonRating = parseInt(button.dataset.rating);
             const underline = button.querySelector('.star-underline');
             const icon = button.querySelector('i');
+            
+            // Reset hover styles
             underline.style.width = '0';
-            icon.style.color = 'rgba(255, 255, 255, 0.3)';
             icon.style.transform = 'scale(1)';
+            
+            // Show average rating
+            if (buttonRating <= Math.ceil(rating.average)) {
+                button.classList.add('filled');
+                icon.style.color = '#ffd700';
+            } else {
+                button.classList.remove('filled');
+                icon.style.color = 'rgba(255, 255, 255, 0.3)';
+            }
         });
     }
 
@@ -2581,17 +2598,22 @@ class GameLoader {
         starButtons.forEach((button, index) => {
             const buttonRating = parseInt(button.dataset.rating);
             const underline = button.querySelector('.star-underline');
+            const icon = button.querySelector('i');
+            
+            button.classList.remove('filled');
             
             if (buttonRating <= userRating) {
                 button.classList.add('selected');
                 underline.style.width = '100%';
                 underline.style.height = '3px';
                 underline.style.boxShadow = '0 0 4px rgba(255, 215, 0, 0.5)';
+                icon.style.color = '#ffd700';
             } else {
                 button.classList.remove('selected');
                 underline.style.width = '0';
                 underline.style.height = '2px';
                 underline.style.boxShadow = 'none';
+                icon.style.color = 'rgba(255, 255, 255, 0.3)';
             }
         });
     }
@@ -2612,21 +2634,18 @@ class GameLoader {
         if (!rating) return;
 
         const averageRating = document.getElementById('averageRating');
-        const starsFilled = document.getElementById('starsFilled');
         const ratingCount = document.getElementById('ratingCount');
 
         if (averageRating) {
             averageRating.textContent = rating.average.toFixed(1);
         }
 
-        if (starsFilled) {
-            const percentage = (rating.average / 5) * 100;
-            starsFilled.style.width = `${percentage}%`;
-        }
-
         if (ratingCount) {
             ratingCount.textContent = `(${rating.totalVotes} vote${rating.totalVotes !== 1 ? 's' : ''})`;
         }
+
+        // Show average rating as filled stars
+        this.showAverageRating(gameSlug);
     }
 
     submitRating(gameSlug, rating) {
@@ -2641,7 +2660,7 @@ class GameLoader {
 
         gameRatings[gameSlug].totalStars += rating;
         gameRatings[gameSlug].totalVotes += 1;
-        gameRatings[gameSlug].average = gameRatings[gameSlug].totalStars / gameRatings[gameSlug].totalVotes;
+        gameRatings[gameSlug].average = Math.min(5, gameRatings[gameSlug].totalStars / gameRatings[gameSlug].totalVotes);
 
         this.saveGameRatings(gameRatings);
         this.updateRatingDisplay(gameSlug);
