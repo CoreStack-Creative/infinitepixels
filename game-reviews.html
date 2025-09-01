@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Frequently Asked Questions - InfinitePixels</title>
+  <title>Game Reviews - InfinitePixels</title>
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="stylesheet" href="style.css" />
   <link
@@ -72,6 +72,52 @@
 
   <!-- ❌ DO NOT put AdSense in <head> with data-cookieconsent -->
   <!-- ✅ Place AdSense inside <body>, controlled by Cookiebot -->
+  
+  <style>
+    .loading-reviews {
+      text-align: center;
+      padding: 2rem;
+      font-size: 1.1rem;
+      color: #666;
+    }
+    
+    .review-count {
+      margin-left: 0.5rem;
+      font-size: 0.9rem;
+      color: #888;
+    }
+    
+    .review-meta {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    .review-meta span {
+      padding: 0.25rem 0.5rem;
+      background-color: rgba(0, 0, 0, 0.05);
+      border-radius: 4px;
+    }
+    
+    .highlight {
+      margin-bottom: 0.5rem;
+      padding: 0.5rem;
+      background-color: rgba(0, 0, 0, 0.02);
+      border-radius: 4px;
+      border-left: 3px solid #007bff;
+    }
+    
+    .dark-theme .review-meta span,
+    .dark-theme .highlight {
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .dark-theme .review-count {
+      color: #aaa;
+    }
+  </style>
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
@@ -292,109 +338,11 @@
                 </article>
             </section>
 
-            <!-- Recent Reviews -->
+            <!-- Game Reviews -->
             <section class="recent-reviews">
-                <h2><i class="fas fa-newspaper"></i> Latest Reviews</h2>
+                <h2><i class="fas fa-gamepad"></i> Game Reviews</h2>
                 <div class="reviews-grid">
-                    <article class="review-card">
-                        <div class="review-image">
-                            <img src="images/1v1lolimage.jpg" alt="1v1.LOL Review" loading="lazy">
-                        </div>
-                        <div class="review-content">
-                            <h4>1v1.LOL: Building Meets Combat</h4>
-                            <div class="review-rating">
-                                <div class="stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                                <span class="rating-score">4.2/5</span>
-                            </div>
-                            <p>A unique blend of building mechanics and fast-paced shooting that creates endless strategic possibilities. The game successfully merges two popular gaming concepts into a cohesive and entertaining experience.</p>
-                            <div class="review-stats">
-                                <span><strong>Gameplay:</strong> 9/10</span>
-                                <span><strong>Graphics:</strong> 7/10</span>
-                                <span><strong>Replay Value:</strong> 9/10</span>
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="review-card">
-                        <div class="review-image">
-                            <img src="images/fruitmergeimage.jpg" alt="Fruit Merge Review" loading="lazy">
-                        </div>
-                        <div class="review-content">
-                            <h4>Fruit Merge: Satisfying Simplicity</h4>
-                            <div class="review-rating">
-                                <div class="stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <span class="rating-score">4.8/5</span>
-                            </div>
-                            <p>This delightful puzzle game offers the perfect balance of simplicity and challenge. The satisfying merge mechanics and colorful visuals create a relaxing yet engaging experience perfect for casual gaming sessions.</p>
-                            <div class="review-stats">
-                                <span><strong>Addictiveness:</strong> 10/10</span>
-                                <span><strong>Visuals:</strong> 9/10</span>
-                                <span><strong>Accessibility:</strong> 10/10</span>
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="review-card">
-                        <div class="review-image">
-                            <img src="images/helixjumpimage.jpg" alt="Helix Jump Review" loading="lazy">
-                        </div>
-                        <div class="review-content">
-                            <h4>Helix Jump: Addictive Vertical Challenge</h4>
-                            <div class="review-rating">
-                                <div class="stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="far fa-star"></i>
-                                </div>
-                                <span class="rating-score">4.1/5</span>
-                            </div>
-                            <p>A brilliantly simple concept executed with precision. The escalating difficulty and one-more-try gameplay loop make Helix Jump incredibly addictive, though the repetitive nature may limit long-term appeal.</p>
-                            <div class="review-stats">
-                                <span><strong>Controls:</strong> 9/10</span>
-                                <span><strong>Challenge:</strong> 8/10</span>
-                                <span><strong>Longevity:</strong> 6/10</span>
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="review-card">
-                        <div class="review-image">
-                            <img src="images/cookieclickerimage.jpg" alt="Cookie Clicker Review" loading="lazy">
-                        </div>
-                        <div class="review-content">
-                            <h4>Cookie Clicker: The Original Idle Gaming Experience</h4>
-                            <div class="review-rating">
-                                <div class="stars">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <span class="rating-score">4.6/5</span>
-                            </div>
-                            <p>The grandfather of idle games continues to captivate with its deceptively simple premise and surprisingly deep progression systems. Years after its release, Cookie Clicker remains the gold standard for incremental gaming.</p>
-                            <div class="review-stats">
-                                <span><strong>Innovation:</strong> 10/10</span>
-                                <span><strong>Progression:</strong> 9/10</span>
-                                <span><strong>Entertainment:</strong> 8/10</span>
-                            </div>
-                        </div>
-                    </article>
+                    <!-- Reviews will be loaded dynamically -->
                 </div>
             </section>
 
@@ -407,15 +355,7 @@
                         <h3><i class="fas fa-crosshairs"></i> Action & Shooter Games</h3>
                         <p>Our action game reviews focus on combat mechanics, weapon variety, level design, and overall excitement factor. We evaluate how well games balance challenge with accessibility, and whether the action maintains intensity throughout the experience.</p>
                         <div class="review-highlights">
-                            <div class="highlight">
-                                <strong>Top Rated:</strong> Masked Special Forces (4.7/5)
-                            </div>
-                            <div class="highlight">
-                                <strong>Most Innovative:</strong> 1v1.LOL (4.2/5)
-                            </div>
-                            <div class="highlight">
-                                <strong>Best Multiplayer:</strong> Narrow One (4.3/5)
-                            </div>
+                            <!-- Dynamic content will be loaded here -->
                         </div>
                     </div>
 
@@ -423,15 +363,7 @@
                         <h3><i class="fas fa-puzzle-piece"></i> Puzzle & Strategy Games</h3>
                         <p>Puzzle game reviews examine problem-solving mechanics, difficulty progression, visual clarity, and mental engagement. We consider how effectively games teach their mechanics and whether they provide satisfying "aha!" moments.</p>
                         <div class="review-highlights">
-                            <div class="highlight">
-                                <strong>Most Satisfying:</strong> Fruit Merge (4.8/5)
-                            </div>
-                            <div class="highlight">
-                                <strong>Best Brain Training:</strong> 2048 (4.4/5)
-                            </div>
-                            <div class="highlight">
-                                <strong>Most Creative:</strong> Draw Climber (4.1/5)
-                            </div>
+                            <!-- Dynamic content will be loaded here -->
                         </div>
                     </div>
 
@@ -439,15 +371,7 @@
                         <h3><i class="fas fa-car"></i> Racing & Sports Games</h3>
                         <p>Racing and sports reviews evaluate control responsiveness, physics accuracy, visual presentation, and competitive balance. We assess how well games capture the excitement of their real-world counterparts while remaining accessible to casual players.</p>
                         <div class="review-highlights">
-                            <div class="highlight">
-                                <strong>Best Physics:</strong> Basket Random (4.0/5)
-                            </div>
-                            <div class="highlight">
-                                <strong>Most Realistic:</strong> 3D Formula Racing (4.2/5)
-                            </div>
-                            <div class="highlight">
-                                <strong>Most Fun:</strong> Moto X3M (4.5/5)
-                            </div>
+                            <!-- Dynamic content will be loaded here -->
                         </div>
                     </div>
                 </div>
@@ -641,10 +565,212 @@
 
     <script src="javascript.js"></script>
     
-    <!-- Load theme from settings -->
+    <!-- Reviews Page JavaScript -->
     <script>
-        // Apply theme from main settings
+        class ReviewsPageManager {
+            constructor() {
+                this.selectedGames = [
+                    'maskedspecialforces', 'cookieclicker', 'fruitmerge', 
+                    '1v1lol', 'helixjump', 'drawclimber'
+                ];
+                
+                this.categoryGames = {
+                    action: ['maskedspecialforces', '1v1lol', 'paperio'],
+                    puzzle: ['fruitmerge', 'drawclimber', 'cubearena2048'],
+                    racing: ['3dformularacing', 'basketrandom', 'motox3m']
+                };
+                
+                this.init();
+            }
+            
+            async init() {
+                await this.loadGamesData();
+                this.loadGeneralReviews();
+                this.loadCategoryReviews();
+            }
+            
+            async loadGamesData() {
+                try {
+                    const response = await fetch('/games.json');
+                    this.gamesData = await response.json();
+                } catch (error) {
+                    console.error('Error loading games data:', error);
+                    this.gamesData = [];
+                }
+            }
+            
+            getGameData(slug) {
+                return this.gamesData.find(game => game.slug === slug);
+            }
+            
+            async fetchGameReviews(gameSlug) {
+                const endpoints = [
+                    `http://localhost:3000/reviews/${gameSlug}`,
+                    `http://localhost:3000/api/reviews/${gameSlug}`,
+                    `/api/reviews/${gameSlug}`
+                ];
+                
+                for (const endpoint of endpoints) {
+                    try {
+                        const response = await fetch(endpoint);
+                        if (response.ok) {
+                            const reviews = await response.json();
+                            return Array.isArray(reviews) ? reviews : [reviews];
+                        }
+                    } catch (error) {
+                        console.log(`Endpoint ${endpoint} failed:`, error.message);
+                    }
+                }
+                return [];
+            }
+            
+            async fetchGameRating(gameSlug) {
+                const endpoints = [
+                    `http://localhost:3000/reviews/game/${gameSlug}`,
+                    `http://localhost:3000/reviews/${gameSlug}/average`,
+                    `http://localhost:3000/api/reviews/${gameSlug}/average`
+                ];
+                
+                for (const endpoint of endpoints) {
+                    try {
+                        const response = await fetch(endpoint);
+                        if (response.ok) {
+                            const data = await response.json();
+                            return {
+                                average: data.average_rating || data.average || data.avg_rating || 0,
+                                count: data.review_count || data.total_reviews || data.count || data.votes || 0
+                            };
+                        }
+                    } catch (error) {
+                        console.log(`Rating endpoint ${endpoint} failed:`, error.message);
+                    }
+                }
+                return { average: 0, count: 0 };
+            }
+            
+            generateStars(rating) {
+                const fullStars = Math.floor(rating);
+                const hasHalfStar = rating % 1 >= 0.5;
+                let starsHTML = '';
+                
+                for (let i = 0; i < fullStars; i++) {
+                    starsHTML += '<i class="fas fa-star"></i>';
+                }
+                
+                if (hasHalfStar) {
+                    starsHTML += '<i class="fas fa-star-half-alt"></i>';
+                }
+                
+                const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+                for (let i = 0; i < emptyStars; i++) {
+                    starsHTML += '<i class="far fa-star"></i>';
+                }
+                
+                return starsHTML;
+            }
+            
+            async loadGeneralReviews() {
+                const reviewsGrid = document.querySelector('.recent-reviews .reviews-grid');
+                if (!reviewsGrid) return;
+                
+                reviewsGrid.innerHTML = '<div class="loading-reviews">Loading reviews...</div>';
+                
+                let reviewCards = '';
+                
+                for (const gameSlug of this.selectedGames) {
+                    const gameData = this.getGameData(gameSlug);
+                    if (!gameData) continue;
+                    
+                    const reviews = await this.fetchGameReviews(gameSlug);
+                    const rating = await this.fetchGameRating(gameSlug);
+                    
+                    let reviewContent;
+                    if (reviews.length > 0) {
+                        const latestReview = reviews[0];
+                        reviewContent = `
+                            <p>${latestReview.review_text || 'Great game with exciting gameplay!'}</p>
+                            <div class="review-meta">
+                                <span><strong>Player Review</strong></span>
+                                <span>Rating: ${latestReview.rating || rating.average}/5</span>
+                            </div>
+                        `;
+                    } else if (gameData.review) {
+                        // Fallback to static review data
+                        reviewContent = `
+                            <p>${gameData.review.excerpt}</p>
+                            <div class="review-stats">
+                                ${Object.entries(gameData.review.scores).map(([key, value]) => 
+                                    `<span><strong>${key.charAt(0).toUpperCase() + key.slice(1)}:</strong> ${value}/10</span>`
+                                ).join('')}
+                            </div>
+                        `;
+                    } else {
+                        reviewContent = '<p>No reviews yet. Be the first to review this game!</p>';
+                    }
+                    
+                    const displayRating = rating.average > 0 ? rating.average : (gameData.review ? gameData.review.rating : 0);
+                    
+                    reviewCards += `
+                        <article class="review-card">
+                            <div class="review-image">
+                                <img src="${gameData.image}" alt="${gameData.name} Review" loading="lazy">
+                            </div>
+                            <div class="review-content">
+                                <h4>${gameData.name}</h4>
+                                <div class="review-rating">
+                                    <div class="stars">
+                                        ${this.generateStars(displayRating)}
+                                    </div>
+                                    <span class="rating-score">${displayRating.toFixed(1)}/5</span>
+                                    ${rating.count > 0 ? `<span class="review-count">(${rating.count} reviews)</span>` : ''}
+                                </div>
+                                ${reviewContent}
+                            </div>
+                        </article>
+                    `;
+                }
+                
+                reviewsGrid.innerHTML = reviewCards;
+            }
+            
+            async loadCategoryReviews() {
+                const categoryHighlights = document.querySelectorAll('.category-section .review-highlights');
+                const categories = Object.keys(this.categoryGames);
+                
+                for (let i = 0; i < categoryHighlights.length && i < categories.length; i++) {
+                    const categoryKey = categories[i];
+                    const gamesSlugs = this.categoryGames[categoryKey];
+                    const highlightElement = categoryHighlights[i];
+                    
+                    let highlightHTML = '';
+                    
+                    for (const gameSlug of gamesSlugs) {
+                        const gameData = this.getGameData(gameSlug);
+                        if (!gameData) continue;
+                        
+                        const rating = await this.fetchGameRating(gameSlug);
+                        const reviews = await this.fetchGameReviews(gameSlug);
+                        
+                        const displayRating = rating.average > 0 ? rating.average : (gameData.review ? gameData.review.rating : 0);
+                        const reviewText = reviews.length > 0 ? 
+                            `"${reviews[0].review_text?.substring(0, 100)}..."` : 
+                            (gameData.review ? `"${gameData.review.excerpt.substring(0, 100)}..."` : 'No reviews yet');
+                        
+                        highlightHTML += `
+                            <div class="highlight">
+                                <strong>${gameData.name}:</strong> ${displayRating.toFixed(1)}/5 - ${reviewText}
+                            </div>
+                        `;
+                    }
+                    
+                    highlightElement.innerHTML = highlightHTML;
+                }
+            }
+        }
+        
+        // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
+            // Apply theme from main settings
             const savedSettings = localStorage.getItem('infinitePixelsSettings');
             if (savedSettings) {
                 try {
@@ -656,6 +782,9 @@
                     console.log('Error loading theme settings:', e);
                 }
             }
+            
+            // Initialize reviews page
+            new ReviewsPageManager();
         });
     </script>
 </body>
