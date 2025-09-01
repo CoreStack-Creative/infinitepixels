@@ -2498,6 +2498,9 @@ class GameLoader {
 
         // Update the display with current ratings
         this.updateRatingDisplay(game.slug);
+        
+        // Load global ratings from server
+        this.loadGlobalRating(game.slug);
 
         if (hasRated) {
             // Show user's rating with permanent bold underlines
@@ -2538,7 +2541,7 @@ class GameLoader {
             // Reset on mouse leave from container
             starsInteractive.addEventListener('mouseleave', () => {
                 if (!starsInteractive.classList.contains('rated')) {
-                    this.showAverageRating(game.slug);
+                    this.loadGlobalRating(game.slug);
                 }
             });
         }
@@ -2648,11 +2651,46 @@ class GameLoader {
         this.showAverageRating(gameSlug);
     }
 
-    submitRating(gameSlug, rating) {
-        // Save user's rating
+    async submitRating(gameSlug, rating) {
+        try {
+            // Send rating to server for global storage
+            const response = await fetch('http://localhost:3000/reviews', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    game_id: gameSlug,
+                    rating: rating,
+                    review_text: `${rating} star rating`,
+                    user_id: this.generateUserId()
+                })
+            });
+
+            if (response.ok) {
+                console.log('Rating submitted to server successfully');
+                
+                // Save user's rating locally to prevent re-rating
+                localStorage.setItem(`${gameSlug}_userRating`, rating.toString());
+                
+                // Load and display updated global ratings from server
+                await this.loadGlobalRating(gameSlug);
+            } else {
+                console.error('Failed to submit rating to server');
+                // Fallback to local storage if server fails
+                this.submitRatingLocally(gameSlug, rating);
+            }
+        } catch (error) {
+            console.error('Error submitting rating:', error);
+            // Fallback to local storage if server fails
+            this.submitRatingLocally(gameSlug, rating);
+        }
+    }
+
+    // Fallback method for local storage
+    submitRatingLocally(gameSlug, rating) {
         localStorage.setItem(`${gameSlug}_userRating`, rating.toString());
 
-        // Update global ratings
         const gameRatings = this.getGameRatings();
         if (!gameRatings[gameSlug]) {
             gameRatings[gameSlug] = { totalStars: 0, totalVotes: 0, average: 0 };
@@ -2664,6 +2702,16 @@ class GameLoader {
 
         this.saveGameRatings(gameRatings);
         this.updateRatingDisplay(gameSlug);
+    }
+
+    // Generate a simple user ID for tracking (you can make this more sophisticated)
+    generateUserId() {
+        let userId = localStorage.getItem('userId');
+        if (!userId) {
+            userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+            localStorage.setItem('userId', userId);
+        }
+        return userId;
     } setupEventListeners() {
  // Share functionality
  const shareBtn = document.getElementById('shareBtn');
