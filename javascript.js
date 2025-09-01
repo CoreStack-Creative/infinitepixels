@@ -7268,6 +7268,319 @@ function initializeTipFiltering() {
     console.log('Tip filtering initialized');
 }
 
+// Reviews Page Management
+class ReviewsManager {
+    constructor() {
+        this.selectedGames = [];
+        this.allGames = [];
+        this.filteredGames = [];
+        this.categoryFilter = document.getElementById('categoryFilter');
+        this.gameSearch = document.getElementById('gameSearch');
+        this.gameSelectorGrid = document.getElementById('gameSelectorGrid');
+        this.reviewsGrid = document.getElementById('reviewsGrid');
+        this.noReviewsMessage = document.getElementById('noReviewsMessage');
+        
+        this.categoryMap = {
+            'action': ['shooter', 'action', 'multiplayer', 'online'],
+            'puzzle': ['puzzle', 'strategy', 'satisfying', 'merge'],
+            'racing': ['racing', 'cars', 'sports', 'basketball', '2 player'],
+            'idle': ['idle', 'clicker', 'cooking'],
+            'arcade': ['arcade', 'endless', 'platformer', 'parkour']
+        };
+        
+        this.init();
+    }
+    
+    init() {
+        if (!this.gameSelectorGrid || !this.reviewsGrid) {
+            console.log('Review page elements not found, skipping reviews manager initialization');
+            return;
+        }
+        
+        // Wait for games data to load
+        if (window.gamesDatabase && window.gamesDatabase.length > 0) {
+            this.loadGames();
+        } else {
+            window.addEventListener('gamesDataLoaded', () => {
+                this.loadGames();
+            });
+        }
+        
+        this.setupEventListeners();
+    }
+    
+    loadGames() {
+        this.allGames = window.gamesDatabase || [];
+        this.filteredGames = [...this.allGames];
+        this.renderGameSelector();
+        this.updateReviewsDisplay();
+    }
+    
+    setupEventListeners() {
+        if (this.categoryFilter) {
+            this.categoryFilter.addEventListener('change', () => {
+                this.filterGames();
+            });
+        }
+        
+        if (this.gameSearch) {
+            this.gameSearch.addEventListener('input', () => {
+                this.filterGames();
+            });
+        }
+    }
+    
+    filterGames() {
+        const category = this.categoryFilter?.value || 'all';
+        const searchTerm = this.gameSearch?.value.toLowerCase() || '';
+        
+        this.filteredGames = this.allGames.filter(game => {
+            // Category filter
+            let categoryMatch = true;
+            if (category !== 'all') {
+                const categoryTags = this.categoryMap[category] || [];
+                categoryMatch = game.tags?.some(tag => 
+                    categoryTags.includes(tag.toLowerCase())
+                ) || false;
+            }
+            
+            // Search filter
+            const searchMatch = searchTerm === '' || 
+                game.name.toLowerCase().includes(searchTerm) ||
+                game.tags?.some(tag => tag.toLowerCase().includes(searchTerm)) ||
+                false;
+            
+            return categoryMatch && searchMatch;
+        });
+        
+        this.renderGameSelector();
+    }
+    
+    renderGameSelector() {
+        if (!this.gameSelectorGrid) return;
+        
+        this.gameSelectorGrid.innerHTML = '';
+        
+        if (this.filteredGames.length === 0) {
+            this.gameSelectorGrid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: var(--text-secondary);">
+                    <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <p>No games found matching your criteria.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        this.filteredGames.forEach(game => {
+            const gameItem = this.createGameSelectorItem(game);
+            this.gameSelectorGrid.appendChild(gameItem);
+        });
+    }
+    
+    createGameSelectorItem(game) {
+        const item = document.createElement('div');
+        item.className = 'game-selector-item';
+        item.dataset.gameId = game.id;
+        
+        const isSelected = this.selectedGames.includes(game.id);
+        if (isSelected) {
+            item.classList.add('selected');
+        }
+        
+        const hasReview = game.review && game.review.rating;
+        const rating = hasReview ? game.review.rating : 0;
+        const stars = this.generateStars(rating);
+        
+        item.innerHTML = `
+            <img src="${game.image}" alt="${game.name}" class="game-selector-image" loading="lazy">
+            <div class="game-selector-name">${game.name}</div>
+            ${hasReview ? `
+                <div class="game-selector-rating">
+                    <span class="game-selector-stars">${stars}</span>
+                    <span>${rating.toFixed(1)}/5</span>
+                </div>
+            ` : `
+                <div class="game-selector-rating">
+                    <span style="color: var(--text-secondary); font-size: 0.8rem;">No review yet</span>
+                </div>
+            `}
+        `;
+        
+        item.addEventListener('click', () => {
+            if (hasReview) {
+                this.toggleGameSelection(game.id);
+            }
+        });
+        
+        if (!hasReview) {
+            item.style.opacity = '0.6';
+            item.style.cursor = 'not-allowed';
+        }
+        
+        return item;
+    }
+    
+    toggleGameSelection(gameId) {
+        const index = this.selectedGames.indexOf(gameId);
+        if (index > -1) {
+            this.selectedGames.splice(index, 1);
+        } else {
+            this.selectedGames.push(gameId);
+        }
+        
+        this.updateGameSelectorDisplay();
+        this.updateReviewsDisplay();
+    }
+    
+    updateGameSelectorDisplay() {
+        const items = this.gameSelectorGrid?.querySelectorAll('.game-selector-item') || [];
+        items.forEach(item => {
+            const gameId = parseInt(item.dataset.gameId);
+            const isSelected = this.selectedGames.includes(gameId);
+            
+            if (isSelected) {
+                item.classList.add('selected');
+            } else {
+                item.classList.remove('selected');
+            }
+        });
+    }
+    
+    updateReviewsDisplay() {
+        if (!this.reviewsGrid) return;
+        
+        this.reviewsGrid.innerHTML = '';
+        
+        if (this.selectedGames.length === 0) {
+            this.reviewsGrid.appendChild(this.noReviewsMessage);
+            return;
+        }
+        
+        const selectedGameData = this.selectedGames
+            .map(id => this.allGames.find(game => game.id === id))
+            .filter(game => game && game.review);
+        
+        selectedGameData.forEach(game => {
+            const reviewCard = this.createReviewCard(game);
+            this.reviewsGrid.appendChild(reviewCard);
+        });
+    }
+    
+    createReviewCard(game) {
+        const review = game.review;
+        const card = document.createElement('article');
+        card.className = 'review-card';
+        
+        const stars = this.generateStars(review.rating);
+        const pros = review.pros ? review.pros.join(', ') : '';
+        const cons = review.cons ? review.cons.join(', ') : '';
+        
+        // Generate score display
+        let scoresHtml = '';
+        if (review.scores) {
+            scoresHtml = Object.entries(review.scores)
+                .map(([key, value]) => `<span><strong>${this.formatScoreLabel(key)}:</strong> ${value}/10</span>`)
+                .join('');
+        }
+        
+        card.innerHTML = `
+            <div class="review-image">
+                <img src="${game.image}" alt="${game.name} Review" loading="lazy">
+            </div>
+            <div class="review-content">
+                <h4>${review.title || game.name}</h4>
+                <div class="review-rating">
+                    <div class="stars">${stars}</div>
+                    <span class="rating-score">${review.rating.toFixed(1)}/5</span>
+                </div>
+                <p>${review.excerpt}</p>
+                ${pros ? `<div class="review-highlights">
+                    <div class="highlight-item">
+                        <strong>Pros:</strong> ${pros}
+                    </div>
+                    ${cons ? `<div class="highlight-item">
+                        <strong>Cons:</strong> ${cons}
+                    </div>` : ''}
+                </div>` : ''}
+                ${scoresHtml ? `<div class="review-stats">${scoresHtml}</div>` : ''}
+                <div class="review-meta">
+                    <span><i class="fas fa-calendar"></i> ${review.date || 'Recently'}</span>
+                    <span><i class="fas fa-user"></i> ${review.author || 'Gaming Expert Team'}</span>
+                    <span><i class="fas fa-clock"></i> ${review.readTime || '3 min read'}</span>
+                </div>
+            </div>
+        `;
+        
+        return card;
+    }
+    
+    generateStars(rating) {
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+        
+        let stars = '';
+        
+        // Full stars
+        for (let i = 0; i < fullStars; i++) {
+            stars += '<i class="fas fa-star"></i>';
+        }
+        
+        // Half star
+        if (hasHalfStar) {
+            stars += '<i class="fas fa-star-half-alt"></i>';
+        }
+        
+        // Empty stars
+        for (let i = 0; i < emptyStars; i++) {
+            stars += '<i class="far fa-star"></i>';
+        }
+        
+        return stars;
+    }
+    
+    formatScoreLabel(key) {
+        const labelMap = {
+            'gameplay': 'Gameplay',
+            'graphics': 'Graphics',
+            'replayValue': 'Replay Value',
+            'addictiveness': 'Addictiveness',
+            'visuals': 'Visuals',
+            'accessibility': 'Accessibility',
+            'controls': 'Controls',
+            'challenge': 'Challenge',
+            'longevity': 'Longevity',
+            'innovation': 'Innovation',
+            'progression': 'Progression',
+            'entertainment': 'Entertainment',
+            'fun': 'Fun Factor',
+            'physics': 'Physics',
+            'replayability': 'Replayability',
+            'multiplayer': 'Multiplayer'
+        };
+        
+        return labelMap[key] || key.charAt(0).toUpperCase() + key.slice(1);
+    }
+}
+
+// Initialize reviews manager when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    // Only initialize on the reviews page
+    if (window.location.pathname.includes('game-reviews.html') || 
+        document.querySelector('.reviews-container')) {
+        window.reviewsManager = new ReviewsManager();
+    }
+});
+
+// Also initialize if games data loads after DOM ready
+window.addEventListener('gamesDataLoaded', () => {
+    if ((window.location.pathname.includes('game-reviews.html') || 
+         document.querySelector('.reviews-container')) && 
+        !window.reviewsManager) {
+        window.reviewsManager = new ReviewsManager();
+    }
+});
+
 // Debug function to test API endpoints (call from browser console)
 window.debugRatingAPI = async function(gameSlug = 'cookieclicker') {
     console.log('🔍 Testing rating API endpoints for game:', gameSlug);
