@@ -2490,7 +2490,12 @@ class GameLoader {
         const starsInteractive = document.getElementById('starsInteractive');
         const starButtons = document.querySelectorAll('.star-display-btn');
 
-        if (!starsInteractive || !starButtons.length) return;
+        if (!starsInteractive || !starButtons.length) {
+            console.log('Star rating elements not found');
+            return;
+        }
+        
+        console.log('Setting up star rating for:', game.name, 'Found', starButtons.length, 'star buttons');
 
         // Check if user has already rated
         const userRatingKey = `${game.slug}_userRating`;
@@ -2508,10 +2513,21 @@ class GameLoader {
             starsInteractive.classList.add('rated');
             this.showUserRating(userRating);
             // Disable further interaction
-            starButtons.forEach(btn => btn.disabled = true);
+            starButtons.forEach(btn => {
+                btn.disabled = true;
+                btn.style.pointerEvents = 'none';
+                btn.style.cursor = 'default';
+            });
         } else {
             // Enable interactive rating
             starsInteractive.classList.remove('rated');
+            
+            // Make sure buttons are enabled and clickable
+            starButtons.forEach(btn => {
+                btn.disabled = false;
+                btn.style.pointerEvents = 'auto';
+                btn.style.cursor = 'pointer';
+            });
             
             starButtons.forEach((button, index) => {
                 const rating = parseInt(button.dataset.rating);
@@ -2522,18 +2538,34 @@ class GameLoader {
                 });
 
                 // Click to rate
-                button.addEventListener('click', () => {
+                button.addEventListener('click', async (e) => {
+                    console.log('Star clicked:', rating, 'Rated status:', starsInteractive.classList.contains('rated'));
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
                     if (!starsInteractive.classList.contains('rated')) {
-                        this.submitRating(game.slug, rating);
+                        console.log('Processing rating submission...');
+                        
+                        // Add immediate visual feedback
                         starsInteractive.classList.add('rated');
                         this.showUserRating(rating);
                         
-                        // Disable further interaction
-                        starButtons.forEach(btn => btn.disabled = true);
+                        // Disable further interaction immediately
+                        starButtons.forEach(btn => {
+                            btn.disabled = true;
+                            btn.style.pointerEvents = 'none';
+                            btn.style.cursor = 'default';
+                        });
                         
                         // Add selection animation
                         button.classList.add('animate');
                         setTimeout(() => button.classList.remove('animate'), 400);
+                        
+                        // Submit rating in the background
+                        await this.submitRating(game.slug, rating);
+                        console.log('Rating submission complete');
+                    } else {
+                        console.log('Already rated, ignoring click');
                     }
                 });
             });
