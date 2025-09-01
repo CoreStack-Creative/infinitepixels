@@ -6110,83 +6110,105 @@ select:focus {
     padding-right: 15px;
 }
 
-.featured-game-card {
-    position: relative;
-    aspect-ratio: 16/9;
-    border-radius: 16px;
+/* Use consistent card styling matching homepage games grid */
+.featured-games-grid .game-card {
+    background: rgba(30, 30, 63, 0.6);
+    border-radius: 15px;
     overflow: hidden;
-    background: rgba(138, 43, 226, 0.1);
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     border: 1px solid rgba(138, 43, 226, 0.2);
-    transition: all 0.3s ease;
     cursor: pointer;
+    backdrop-filter: blur(10px);
+    aspect-ratio: 16/9;
+    position: relative;
 }
 
-.featured-game-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(138, 43, 226, 0.3);
-    border-color: rgba(138, 43, 226, 0.4);
+.featured-games-grid .game-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(138, 43, 226, 0.3);
+    border-color: rgba(138, 43, 226, 0.6);
 }
 
-.featured-game-card-image {
+.featured-games-grid .game-image {
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+}
+
+.featured-games-grid .placeholder-image {
     width: 100%;
     height: 100%;
+    position: relative;
+    transition: transform 0.4s ease;
     object-fit: cover;
-    border-radius: 16px;
-    transition: transform 0.3s ease;
 }
 
-.featured-game-card:hover .featured-game-card-image {
-    transform: scale(1.05);
+.featured-games-grid .game-card:hover .placeholder-image {
+    transform: scale(1.1);
 }
 
-.featured-game-card-overlay {
+.featured-games-grid .game-overlay {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.7);
     display: flex;
-    flex-direction: column;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
     opacity: 0;
-    transition: all 0.3s ease;
-    z-index: 3;
+    transition: opacity 0.3s ease;
+    flex-direction: column;
 }
 
-.featured-game-card:hover .featured-game-card-overlay {
+.featured-games-grid .game-card:hover .game-overlay {
     opacity: 1;
 }
 
-.featured-game-card-name {
+.featured-games-grid .game-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    padding: 20px 15px 15px;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.featured-games-grid .game-card:hover .game-info {
+    transform: translateY(0);
+}
+
+.featured-games-grid .game-title {
     color: white;
     font-size: 1rem;
     font-weight: 600;
+    margin-bottom: 5px;
     text-align: center;
-    margin-bottom: 15px;
-    padding: 0 10px;
 }
 
-.featured-game-play-btn {
+.featured-games-grid .play-btn {
     background: linear-gradient(45deg, #8a2be2, #4b0082);
-    color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 20px;
+    padding: 12px 25px;
+    border-radius: 25px;
+    color: white;
     font-weight: 600;
-    font-size: 0.85rem;
-    transition: all 0.3s ease;
     cursor: pointer;
+    transition: all 0.3s ease;
+    transform: translateY(10px);
+    margin: 0 auto;
+    display: block;
 }
 
-.featured-game-play-btn:hover {
-    background: linear-gradient(45deg, #9b3df3, #5c1a93);
-    transform: scale(1.05);
+.featured-games-grid .game-card:hover .play-btn {
+    transform: translateY(0);
 }
 
-.featured-game-play-btn:hover {
-    background: rgba(138, 43, 226, 1);
+.featured-games-grid .play-btn:hover {
+    background: linear-gradient(45deg, #9932cc, #8a2be2);
     transform: scale(1.05);
 }
 
@@ -6350,6 +6372,10 @@ select:focus {
         width: 100%;
         height: 380px;
     }
+    
+    .featured-games-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
 }
 
 @media (max-width: 900px) {
@@ -6358,15 +6384,14 @@ select:focus {
         gap: 20px;
     }
     
-    .featured-games-grid {
-        padding-right: 0;
+    .games-spotlight-container {
+        padding: 0 15px 30px 15px;
     }
     
-    .compact-spotlight {
-        width: 100%;
-        height: 300px;
-        padding: 15px;
-        margin-left: 0;
+    .featured-games-grid {
+        padding-right: 0;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
     }
     
     .compact-spotlight {
@@ -6397,15 +6422,10 @@ select:focus {
     }
 }
 
-@media (max-width: 1200px) {
-    .featured-games-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
 @media (max-width: 768px) {
     .featured-games-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
     }
     
     .compact-spotlight {
@@ -6423,7 +6443,8 @@ select:focus {
 
 @media (max-width: 480px) {
     .featured-games-grid {
-        grid-template-columns: repeat(1, 1fr);
+        grid-template-columns: 1fr;
+        gap: 15px;
     }
     
     .compact-spotlight-content {
