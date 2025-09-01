@@ -156,6 +156,39 @@
     .dark-theme .game-link:hover {
       color: #74c0fc;
     }
+    
+    /* Player review quote styling */
+    .player-review-quote {
+      font-style: italic;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      margin: 1rem 0;
+      padding: 1rem;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+      border-left: 4px solid #3b82f6;
+      border-radius: 8px;
+      position: relative;
+    }
+    
+    .player-review-quote::before {
+      content: '"';
+      font-size: 3rem;
+      color: #3b82f6;
+      position: absolute;
+      top: -10px;
+      left: 10px;
+      font-family: Georgia, serif;
+      opacity: 0.3;
+    }
+    
+    .dark-theme .player-review-quote {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+      border-left-color: #4dabf7;
+    }
+    
+    .dark-theme .player-review-quote::before {
+      color: #4dabf7;
+    }
   </style>
 </head>
 <body>
@@ -739,8 +772,11 @@
                     let reviewContent;
                     if (reviews.length > 0) {
                         const latestReview = reviews[0];
+                        const playerQuote = latestReview.review_text || 'Great game with exciting gameplay!';
                         reviewContent = `
-                            <p>${latestReview.review_text || 'Great game with exciting gameplay!'}</p>
+                            <blockquote class="player-review-quote">
+                                "${playerQuote}"
+                            </blockquote>
                             <div class="review-meta">
                                 <span><strong>Player Review</strong></span>
                                 <span>Rating: ${latestReview.rating || rating.average}/5</span>
