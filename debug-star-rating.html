@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Star Rating</title>
+    <style>
+        body {
+            background: #2c2c2c;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .debug-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .stars-interactive {
+            display: flex;
+            gap: 5px;
+            margin: 20px 0;
+        }
+        
+        .star-display-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            position: relative;
+            padding: 5px;
+        }
+        
+        .star-display-btn i {
+            color: rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .star-display-btn.filled i {
+            color: #ffd700;
+        }
+        
+        .star-display-btn.selected i {
+            color: #ffd700;
+        }
+        
+        .star-underline {
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 2px;
+            background: #ffd700;
+            width: 0;
+            transition: width 0.3s ease;
+        }
+        
+        .star-display-btn.animate {
+            animation: starPulse 0.4s ease;
+        }
+        
+        @keyframes starPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .log {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        
+        .success { background: #4CAF50; }
+        .error { background: #f44336; }
+        .info { background: #2196F3; }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="debug-container">
+        <h1>Star Rating Debug Tool</h1>
+        
+        <div id="status" class="status info">
+            Initializing...
+        </div>
+        
+        <div>
+            <h3>Star Rating Component:</h3>
+            <div class="stars-interactive" id="starsInteractive">
+                <button class="star-display-btn" data-rating="1">
+                    <i class="fas fa-star"></i>
+                    <div class="star-underline"></div>
+                </button>
+                <button class="star-display-btn" data-rating="2">
+                    <i class="fas fa-star"></i>
+                    <div class="star-underline"></div>
+                </button>
+                <button class="star-display-btn" data-rating="3">
+                    <i class="fas fa-star"></i>
+                    <div class="star-underline"></div>
+                </button>
+                <button class="star-display-btn" data-rating="4">
+                    <i class="fas fa-star"></i>
+                    <div class="star-underline"></div>
+                </button>
+                <button class="star-display-btn" data-rating="5">
+                    <i class="fas fa-star"></i>
+                    <div class="star-underline"></div>
+                </button>
+            </div>
+        </div>
+        
+        <div>
+            <h3>Debug Information:</h3>
+            <div id="debugInfo">
+                <p>Checking elements...</p>
+            </div>
+        </div>
+        
+        <div>
+            <h3>Console Log:</h3>
+            <div id="log" class="log"></div>
+        </div>
+        
+        <div>
+            <button onclick="testStarRating()" style="padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 10px 5px;">
+                Test Star Rating Setup
+            </button>
+            <button onclick="clearLog()" style="padding: 10px 20px; background: #ff9800; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 10px 5px;">
+                Clear Log
+            </button>
+            <button onclick="resetRating()" style="padding: 10px 20px; background: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 10px 5px;">
+                Reset Rating
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced logging
+        let logContainer = null;
+        const originalConsoleLog = console.log;
+        const originalConsoleError = console.error;
+        
+        function addToLog(message, type = 'info') {
+            if (!logContainer) logContainer = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<span style="color: #888;">[${timestamp}]</span> <span style="color: ${type === 'error' ? '#f44336' : '#4CAF50'};">${message}</span>`;
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalConsoleLog.apply(console, args);
+            addToLog(args.join(' '), 'info');
+        };
+        
+        console.error = function(...args) {
+            originalConsoleError.apply(console, args);
+            addToLog(args.join(' '), 'error');
+        };
+        
+        function clearLog() {
+            document.getElementById('log').innerHTML = '';
+        }
+        
+        function resetRating() {
+            localStorage.removeItem('cookieclicker_userRating');
+            localStorage.removeItem('gameRatings');
+            updateStatus('Rating data cleared. Refresh to test again.', 'info');
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = `status ${type}`;
+        }
+        
+        function updateDebugInfo() {
+            const starsInteractive = document.getElementById('starsInteractive');
+            const starButtons = document.querySelectorAll('.star-display-btn');
+            
+            const debugInfo = document.getElementById('debugInfo');
+            debugInfo.innerHTML = `
+                <p><strong>starsInteractive element:</strong> ${starsInteractive ? '✅ Found' : '❌ Not found'}</p>
+                <p><strong>Star buttons found:</strong> ${starButtons.length}</p>
+                <p><strong>Button data attributes:</strong></p>
+                <ul>
+                    ${Array.from(starButtons).map((btn, i) => 
+                        `<li>Button ${i + 1}: data-rating="${btn.dataset.rating}", disabled="${btn.disabled}", pointer-events="${btn.style.pointerEvents || 'auto'}"</li>`
+                    ).join('')}
+                </ul>
+                <p><strong>Has rated cookieclicker:</strong> ${localStorage.getItem('cookieclicker_userRating') || 'No'}</p>
+                <p><strong>Rating data:</strong> ${JSON.stringify(JSON.parse(localStorage.getItem('gameRatings') || '{}'), null, 2)}</p>
+            `;
+        }
+        
+        function testStarRating() {
+            console.log('=== Starting Star Rating Test ===');
+            updateStatus('Testing star rating...', 'info');
+            
+            // Mock game object
+            const testGame = {
+                slug: 'cookieclicker',
+                name: 'Cookie Clicker'
+            };
+            
+            // Create a simple test implementation
+            class SimpleStarRatingTest {
+                setupStarRating(game) {
+                    console.log('Setting up star rating for:', game.name);
+                    
+                    // Wait for DOM
+                    setTimeout(() => {
+                        const starsInteractive = document.getElementById('starsInteractive');
+                        const starButtons = document.querySelectorAll('.star-display-btn');
+
+                        console.log('Stars setup - Interactive container:', !!starsInteractive);
+                        console.log('Stars setup - Star buttons found:', starButtons.length);
+
+                        if (!starsInteractive || !starButtons.length) {
+                            console.error('Star rating elements not found!');
+                            updateStatus('❌ Star rating elements not found!', 'error');
+                            return;
+                        }
+
+                        // Check if user has already rated
+                        const userRatingKey = `${game.slug}_userRating`;
+                        const hasRated = localStorage.getItem(userRatingKey);
+
+                        if (hasRated) {
+                            console.log('User has already rated:', hasRated);
+                            updateStatus(`✅ User has already rated: ${hasRated} stars`, 'success');
+                            this.showUserRating(parseInt(hasRated));
+                            
+                            // Disable further interaction
+                            starButtons.forEach(btn => {
+                                btn.disabled = true;
+                                btn.style.pointerEvents = 'none';
+                                btn.style.cursor = 'default';
+                            });
+                        } else {
+                            console.log('Setting up interactive rating...');
+                            updateStatus('⭐ Ready for rating! Click a star.', 'info');
+                            
+                            // Enable interactive rating
+                            starsInteractive.classList.remove('rated');
+                            
+                            // Make sure buttons are enabled and clickable
+                            starButtons.forEach(btn => {
+                                btn.disabled = false;
+                                btn.style.pointerEvents = 'auto';
+                                btn.style.cursor = 'pointer';
+                                
+                                // Remove any existing event listeners to prevent duplicates
+                                const newBtn = btn.cloneNode(true);
+                                btn.parentNode.replaceChild(newBtn, btn);
+                            });
+                            
+                            // Re-select the fresh buttons
+                            const freshStarButtons = document.querySelectorAll('.star-display-btn');
+                            
+                            freshStarButtons.forEach((button, index) => {
+                                const rating = parseInt(button.dataset.rating);
+                                console.log('Setting up button', index + 1, 'with rating:', rating);
+
+                                // Hover effects
+                                button.addEventListener('mouseenter', (e) => {
+                                    e.stopPropagation();
+                                    console.log('Mouse enter on star:', rating);
+                                    this.highlightStarsUpTo(rating);
+                                });
+
+                                // Click to rate
+                                button.addEventListener('click', async (e) => {
+                                    console.log('⭐ Star clicked:', rating);
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                    
+                                    if (!starsInteractive.classList.contains('rated')) {
+                                        console.log('Processing rating submission...');
+                                        updateStatus(`✅ Rating submitted: ${rating} stars!`, 'success');
+                                        
+                                        // Add immediate visual feedback
+                                        starsInteractive.classList.add('rated');
+                                        this.showUserRating(rating);
+                                        
+                                        // Disable further interaction immediately
+                                        freshStarButtons.forEach(btn => {
+                                            btn.disabled = true;
+                                            btn.style.pointerEvents = 'none';
+                                            btn.style.cursor = 'default';
+                                        });
+                                        
+                                        // Add selection animation
+                                        button.classList.add('animate');
+                                        setTimeout(() => button.classList.remove('animate'), 400);
+                                        
+                                        // Submit rating
+                                        await this.submitRating(game.slug, rating);
+                                        console.log('Rating submission complete');
+                                    } else {
+                                        console.log('Already rated, ignoring click');
+                                    }
+                                });
+                            });
+
+                            // Reset on mouse leave from container
+                            starsInteractive.addEventListener('mouseleave', () => {
+                                if (!starsInteractive.classList.contains('rated')) {
+                                    this.resetStarDisplay();
+                                }
+                            });
+                        }
+                        
+                        updateDebugInfo();
+                    }, 100);
+                }
+                
+                highlightStarsUpTo(rating) {
+                    const starButtons = document.querySelectorAll('.star-display-btn');
+                    starButtons.forEach((button) => {
+                        const buttonRating = parseInt(button.dataset.rating);
+                        const underline = button.querySelector('.star-underline');
+                        const icon = button.querySelector('i');
+                        
+                        button.classList.remove('filled');
+                        
+                        if (buttonRating <= rating) {
+                            underline.style.width = '80%';
+                            icon.style.color = 'rgba(255, 255, 255, 0.7)';
+                            icon.style.transform = 'scale(1.05)';
+                        } else {
+                            underline.style.width = '0';
+                            icon.style.color = 'rgba(255, 255, 255, 0.3)';
+                            icon.style.transform = 'scale(1)';
+                        }
+                    });
+                }
+                
+                showUserRating(userRating) {
+                    const starButtons = document.querySelectorAll('.star-display-btn');
+                    starButtons.forEach((button) => {
+                        const buttonRating = parseInt(button.dataset.rating);
+                        const underline = button.querySelector('.star-underline');
+                        const icon = button.querySelector('i');
+                        
+                        button.classList.remove('filled');
+                        
+                        if (buttonRating <= userRating) {
+                            button.classList.add('selected');
+                            underline.style.width = '100%';
+                            underline.style.height = '3px';
+                            underline.style.boxShadow = '0 0 4px rgba(255, 215, 0, 0.5)';
+                            icon.style.color = '#ffd700';
+                        } else {
+                            button.classList.remove('selected');
+                            underline.style.width = '0';
+                            underline.style.height = '2px';
+                            underline.style.boxShadow = 'none';
+                            icon.style.color = 'rgba(255, 255, 255, 0.3)';
+                        }
+                    });
+                }
+                
+                resetStarDisplay() {
+                    const starButtons = document.querySelectorAll('.star-display-btn');
+                    starButtons.forEach((button) => {
+                        const underline = button.querySelector('.star-underline');
+                        const icon = button.querySelector('i');
+                        
+                        button.classList.remove('filled');
+                        underline.style.width = '0';
+                        icon.style.color = 'rgba(255, 255, 255, 0.3)';
+                        icon.style.transform = 'scale(1)';
+                    });
+                }
+                
+                async submitRating(gameSlug, rating) {
+                    console.log('Submitting rating:', rating, 'for game:', gameSlug);
+                    
+                    // Save to localStorage
+                    localStorage.setItem(`${gameSlug}_userRating`, rating.toString());
+                    
+                    // Update game ratings
+                    let gameRatings = JSON.parse(localStorage.getItem('gameRatings') || '{}');
+                    if (!gameRatings[gameSlug]) {
+                        gameRatings[gameSlug] = { totalStars: 0, totalVotes: 0, average: 0 };
+                    }
+
+                    gameRatings[gameSlug].totalStars += rating;
+                    gameRatings[gameSlug].totalVotes += 1;
+                    gameRatings[gameSlug].average = gameRatings[gameSlug].totalStars / gameRatings[gameSlug].totalVotes;
+
+                    localStorage.setItem('gameRatings', JSON.stringify(gameRatings));
+                    
+                    console.log('✅ Rating saved successfully!');
+                    updateDebugInfo();
+                }
+            }
+            
+            // Run the test
+            const tester = new SimpleStarRatingTest();
+            tester.setupStarRating(testGame);
+        }
+        
+        // Auto-run test when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDebugInfo();
+            setTimeout(() => {
+                console.log('Page loaded, running initial test...');
+                testStarRating();
+            }, 100);
+        });
+    </script>
+</body>
+</html>
