@@ -2844,7 +2844,7 @@ body {
 /* Footer Links */
 .footer-links {
    display: grid;
-   grid-template-columns: repeat(4, 1fr);
+   grid-template-columns: repeat(3, 1fr);
    gap: 40px;
 }
 
@@ -3075,13 +3075,18 @@ body {
        padding: 40px 20px 0;
    }
   
+   .footer-content {
+       gap: 30px;
+   }
+  
    .footer-links {
-       grid-template-columns: 1fr;
-       gap: 25px;
+       grid-template-columns: repeat(2, 1fr);
+       gap: 20px;
    }
   
    .footer-newsletter {
-       padding: 30px 20px;
+       padding: 25px 15px;
+       gap: 20px;
    }
   
    .newsletter-title {
@@ -3095,28 +3100,55 @@ body {
   
    .newsletter-input {
        border-bottom: 1px solid rgba(138, 43, 226, 0.3);
+       padding: 12px 15px;
    }
   
    .newsletter-btn {
        border-radius: 0 0 15px 15px;
+       padding: 12px 20px;
    }
   
    .footer-bottom-content {
        flex-direction: column;
        text-align: center;
+       gap: 15px;
    }
   
    .footer-bottom-links {
        justify-content: center;
+       flex-wrap: wrap;
+       gap: 20px;
    }
   
    .social-links {
        justify-content: center;
    }
+   
+   .footer-brand {
+       text-align: center;
+   }
+   
+   .footer-description {
+       text-align: center;
+       max-width: 100%;
+   }
 }
 
 
 @media (max-width: 480px) {
+   .footer-container {
+       padding: 30px 15px 0;
+   }
+   
+   .footer-content {
+       gap: 25px;
+   }
+   
+   .footer-links {
+       grid-template-columns: 1fr;
+       gap: 20px;
+   }
+   
    .footer-logo {
        flex-direction: column;
        text-align: center;
@@ -3128,12 +3160,38 @@ body {
    }
   
    .footer-newsletter {
-       padding: 25px 15px;
+       padding: 20px 15px;
+   }
+   
+   .newsletter-title {
+       font-size: 1.2rem;
+   }
+   
+   .newsletter-description {
+       font-size: 0.9rem;
    }
   
    .footer-bottom-links {
        flex-wrap: wrap;
        gap: 15px;
+   }
+   
+   .link-title {
+       font-size: 1rem;
+       text-align: center;
+   }
+   
+   .link-list {
+       text-align: center;
+   }
+   
+   .social-links {
+       gap: 12px;
+   }
+   
+   .social-link {
+       width: 40px;
+       height: 40px;
    }
 }
 /* Reviews Summary Card */
@@ -6380,8 +6438,23 @@ select:focus {
 
 /* Category Section */
 .homepage-category-section {
-    padding: 30px 0;
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.1) 0%, rgba(75, 0, 130, 0.1) 100%);
+    padding: 40px 0;
+    background: linear-gradient(135deg, rgba(138, 43, 226, 0.08) 0%, rgba(75, 0, 130, 0.08) 100%);
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.homepage-category-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 10% 20%, rgba(138, 43, 226, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 90% 80%, rgba(75, 0, 130, 0.05) 0%, transparent 50%);
+    pointer-events: none;
 }
 
 .homepage-category-container {
@@ -6398,6 +6471,47 @@ select:focus {
     margin-bottom: 30px;
     gap: 20px;
     flex-wrap: wrap;
+    position: relative;
+}
+
+.homepage-category-header .scroll-controls {
+    display: flex;
+    gap: 8px;
+    order: 2;
+}
+
+.homepage-category-btn {
+    order: 3;
+}
+
+.homepage-category-title {
+    order: 1;
+}
+
+.scroll-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(138, 43, 226, 0.2);
+    color: #8a2be2;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 14px;
+}
+
+.scroll-btn:hover {
+    background: rgba(138, 43, 226, 0.4);
+    transform: scale(1.05);
+}
+
+.scroll-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .homepage-category-title {
@@ -6413,10 +6527,38 @@ select:focus {
 }
 
 .homepage-category-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    display: flex;
+    overflow-x: auto;
     gap: 12px;
     margin-bottom: 25px;
+    padding-bottom: 10px;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(138, 43, 226, 0.5) transparent;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+.homepage-category-grid::-webkit-scrollbar {
+    height: 6px;
+}
+
+.homepage-category-grid::-webkit-scrollbar-track {
+    background: rgba(138, 43, 226, 0.1);
+    border-radius: 3px;
+}
+
+.homepage-category-grid::-webkit-scrollbar-thumb {
+    background: rgba(138, 43, 226, 0.5);
+    border-radius: 3px;
+}
+
+.homepage-category-grid::-webkit-scrollbar-thumb:hover {
+    background: rgba(138, 43, 226, 0.7);
+}
+
+.homepage-category-grid .homepage-game-card {
+    flex: 0 0 160px;
+    min-width: 160px;
 }
 
 .homepage-category-more {
@@ -6454,8 +6596,23 @@ select:focus {
 
 /* New Games Section */
 .homepage-new-section {
-    padding: 30px 0;
-    background: linear-gradient(135deg, rgba(138, 43, 226, 0.1) 0%, rgba(75, 0, 130, 0.1) 100%);
+    padding: 40px 0;
+    background: linear-gradient(135deg, rgba(186, 104, 200, 0.08) 0%, rgba(138, 43, 226, 0.08) 100%);
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.homepage-new-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+        radial-gradient(circle at 15% 30%, rgba(186, 104, 200, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 85% 70%, rgba(138, 43, 226, 0.05) 0%, transparent 50%);
+    pointer-events: none;
 }
 
 .homepage-new-container {
@@ -6463,6 +6620,26 @@ select:focus {
     margin: 0;
     padding: 0 10px; /* keeps a little breathing room */
     width: 100%;
+    position: relative;
+}
+
+.homepage-new-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.homepage-new-header .scroll-controls {
+    display: flex;
+    gap: 8px;
+    order: 2;
+}
+
+.homepage-new-title {
+    order: 1;
 }
 
 .homepage-new-title {
@@ -6477,10 +6654,38 @@ select:focus {
 }
 
 .homepage-new-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    display: flex;
+    overflow-x: auto;
     gap: 10px;
     margin-bottom: 25px;
+    padding-bottom: 10px;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(186, 104, 200, 0.5) transparent;
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+}
+
+.homepage-new-grid::-webkit-scrollbar {
+    height: 6px;
+}
+
+.homepage-new-grid::-webkit-scrollbar-track {
+    background: rgba(186, 104, 200, 0.1);
+    border-radius: 3px;
+}
+
+.homepage-new-grid::-webkit-scrollbar-thumb {
+    background: rgba(186, 104, 200, 0.5);
+    border-radius: 3px;
+}
+
+.homepage-new-grid::-webkit-scrollbar-thumb:hover {
+    background: rgba(186, 104, 200, 0.7);
+}
+
+.homepage-new-grid .homepage-game-card {
+    flex: 0 0 140px;
+    min-width: 140px;
 }
 
 .homepage-new-more {
@@ -15929,6 +16134,67 @@ body.light-theme ::-webkit-scrollbar-thumb {
     .homepage-review-card-compact-image {
         height: 120px;
     }
+    
+    /* Category Section Mobile */
+    .homepage-category-section {
+        padding: 25px 0;
+        margin-bottom: 15px;
+    }
+    
+    .homepage-category-container {
+        padding: 0 15px;
+    }
+    
+    .homepage-category-header {
+        margin-bottom: 20px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .homepage-category-header .scroll-controls {
+        display: none;
+    }
+    
+    .homepage-category-title {
+        font-size: 1.5rem;
+    }
+    
+    .homepage-category-grid .homepage-game-card {
+        flex: 0 0 140px;
+        min-width: 140px;
+    }
+    
+    /* New Games Section Mobile */
+    .homepage-new-section {
+        padding: 25px 0;
+        margin-bottom: 15px;
+    }
+    
+    .homepage-new-container {
+        padding: 0 15px;
+    }
+    
+    .homepage-new-header {
+        margin-bottom: 20px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .homepage-new-header .scroll-controls {
+        display: none;
+    }
+    
+    .homepage-new-title {
+        font-size: 1.5rem;
+        margin-bottom: 0;
+    }
+    
+    .homepage-new-grid .homepage-game-card {
+        flex: 0 0 120px;
+        min-width: 120px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -15955,5 +16221,43 @@ body.light-theme ::-webkit-scrollbar-thumb {
     
     .homepage-review-card-compact-image {
         height: 100px;
+    }
+    
+    /* Category Section Small Mobile */
+    .homepage-category-title {
+        font-size: 1.3rem;
+    }
+    
+    .homepage-category-btn {
+        padding: 8px 16px;
+        font-size: 0.8rem;
+    }
+    
+    .homepage-category-header {
+        gap: 10px;
+    }
+    
+    .homepage-category-grid .homepage-game-card {
+        flex: 0 0 120px;
+        min-width: 120px;
+    }
+    
+    /* New Games Section Small Mobile */
+    .homepage-new-title {
+        font-size: 1.3rem;
+    }
+    
+    .homepage-new-btn {
+        padding: 10px 24px;
+        font-size: 0.9rem;
+    }
+    
+    .homepage-new-header {
+        gap: 10px;
+    }
+    
+    .homepage-new-grid .homepage-game-card {
+        flex: 0 0 110px;
+        min-width: 110px;
     }
 }
