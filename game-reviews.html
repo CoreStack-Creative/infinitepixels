@@ -249,35 +249,6 @@
                 </p>
             </section>
 
-            <!-- Game Selection Section -->
-            <section class="game-selection">
-                <h2><i class="fas fa-filter"></i> Browse Games with Reviews</h2>
-                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
-                    Click on any game below to view detailed reviews, ratings, and user feedback. 
-                    Use the filters to find specific types of games.
-                </p>
-                <div class="selection-controls">
-                    <div class="filter-group">
-                        <label for="categoryFilter">Filter by Category:</label>
-                        <select id="categoryFilter">
-                            <option value="all">All Categories</option>
-                            <option value="action">Action & Shooter</option>
-                            <option value="puzzle">Puzzle & Strategy</option>
-                            <option value="racing">Racing & Sports</option>
-                            <option value="idle">Idle & Clicker</option>
-                            <option value="arcade">Arcade</option>
-                        </select>
-                    </div>
-                    <div class="search-group">
-                        <label for="gameSearch">Search Games:</label>
-                        <input type="text" id="gameSearch" placeholder="Search for games to review...">
-                    </div>
-                </div>
-                <div class="game-selector-grid" id="gameSelectorGrid">
-                    <!-- Games will be populated here -->
-                </div>
-            </section>
-
             <!-- Featured Review -->
             <section class="featured-review">
                 <h2><i class="fas fa-crown"></i> Featured Review</h2>
@@ -306,10 +277,10 @@
                         </p>
                         <div class="review-highlights">
                             <div class="highlight-item">
-                                <strong>Pros:</strong> Realistic gunplay, excellent team mechanics, diverse maps, strategic depth
+                                <strong>Pros:</strong> Realistic gunplay, excellent team mechanics, diverse maps
                             </div>
                             <div class="highlight-item">
-                                <strong>Cons:</strong> Steep learning curve for newcomers, requires good internet connection
+                                <strong>Cons:</strong> Steep learning curve for newcomers
                             </div>
                         </div>
                         <div class="review-meta">
@@ -323,14 +294,107 @@
 
             <!-- Recent Reviews -->
             <section class="recent-reviews">
-                <h2><i class="fas fa-newspaper"></i> Game Reviews Overview</h2>
-                <div class="reviews-grid" id="reviewsGrid">
-                    <!-- Reviews will be populated dynamically -->
-                    <div class="no-reviews-message" id="noReviewsMessage">
-                        <i class="fas fa-search"></i>
-                        <h3>Loading review data...</h3>
-                        <p>Please wait while we load the latest reviews and ratings from our database.</p>
-                    </div>
+                <h2><i class="fas fa-newspaper"></i> Latest Reviews</h2>
+                <div class="reviews-grid">
+                    <article class="review-card">
+                        <div class="review-image">
+                            <img src="images/1v1lolimage.jpg" alt="1v1.LOL Review" loading="lazy">
+                        </div>
+                        <div class="review-content">
+                            <h4>1v1.LOL: Building Meets Combat</h4>
+                            <div class="review-rating">
+                                <div class="stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="rating-score">4.2/5</span>
+                            </div>
+                            <p>A unique blend of building mechanics and fast-paced shooting that creates endless strategic possibilities. The game successfully merges two popular gaming concepts into a cohesive and entertaining experience.</p>
+                            <div class="review-stats">
+                                <span><strong>Gameplay:</strong> 9/10</span>
+                                <span><strong>Graphics:</strong> 7/10</span>
+                                <span><strong>Replay Value:</strong> 9/10</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="review-card">
+                        <div class="review-image">
+                            <img src="images/fruitmergeimage.jpg" alt="Fruit Merge Review" loading="lazy">
+                        </div>
+                        <div class="review-content">
+                            <h4>Fruit Merge: Satisfying Simplicity</h4>
+                            <div class="review-rating">
+                                <div class="stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="rating-score">4.8/5</span>
+                            </div>
+                            <p>This delightful puzzle game offers the perfect balance of simplicity and challenge. The satisfying merge mechanics and colorful visuals create a relaxing yet engaging experience perfect for casual gaming sessions.</p>
+                            <div class="review-stats">
+                                <span><strong>Addictiveness:</strong> 10/10</span>
+                                <span><strong>Visuals:</strong> 9/10</span>
+                                <span><strong>Accessibility:</strong> 10/10</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="review-card">
+                        <div class="review-image">
+                            <img src="images/helixjumpimage.jpg" alt="Helix Jump Review" loading="lazy">
+                        </div>
+                        <div class="review-content">
+                            <h4>Helix Jump: Addictive Vertical Challenge</h4>
+                            <div class="review-rating">
+                                <div class="stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                                <span class="rating-score">4.1/5</span>
+                            </div>
+                            <p>A brilliantly simple concept executed with precision. The escalating difficulty and one-more-try gameplay loop make Helix Jump incredibly addictive, though the repetitive nature may limit long-term appeal.</p>
+                            <div class="review-stats">
+                                <span><strong>Controls:</strong> 9/10</span>
+                                <span><strong>Challenge:</strong> 8/10</span>
+                                <span><strong>Longevity:</strong> 6/10</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="review-card">
+                        <div class="review-image">
+                            <img src="images/cookieclickerimage.jpg" alt="Cookie Clicker Review" loading="lazy">
+                        </div>
+                        <div class="review-content">
+                            <h4>Cookie Clicker: The Original Idle Gaming Experience</h4>
+                            <div class="review-rating">
+                                <div class="stars">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                <span class="rating-score">4.6/5</span>
+                            </div>
+                            <p>The grandfather of idle games continues to captivate with its deceptively simple premise and surprisingly deep progression systems. Years after its release, Cookie Clicker remains the gold standard for incremental gaming.</p>
+                            <div class="review-stats">
+                                <span><strong>Innovation:</strong> 10/10</span>
+                                <span><strong>Progression:</strong> 9/10</span>
+                                <span><strong>Entertainment:</strong> 8/10</span>
+                            </div>
+                        </div>
+                    </article>
                 </div>
             </section>
 
