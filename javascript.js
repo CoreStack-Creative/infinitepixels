@@ -6485,6 +6485,7 @@ class HomepageGamesManager {
                 this.renderCategoryGames();
                 this.renderMultiplayerGames();
                 this.renderNewGames();
+                this.renderTopReviewedGames();
                 this.initFavoritesPopup();
                 
                 // Add resize handler for responsive grid
@@ -7153,6 +7154,192 @@ class HomepageGamesManager {
         if (popup && popup.classList.contains('active')) {
             this.renderFavoritesPopup();
         }
+    }
+
+    // Top Reviewed Games Section
+    async renderTopReviewedGames() {
+        const grid = document.getElementById('homepageReviewsGrid');
+        if (!grid || !gamesDatabase) {
+            console.log('Skipping top reviewed games - missing grid or gamesDatabase');
+            return;
+        }
+
+        console.log('Rendering top reviewed games...');
+
+        // Define games with high ratings to feature (same as reviews page)
+        const topReviewedGames = [
+            'maskedspecialforces',
+            'cookieclicker', 
+            'fruitmerge',
+            '1v1lol',
+            'helixjump',
+            'drawclimber'
+        ];
+
+        let html = '';
+
+        for (const gameSlug of topReviewedGames) {
+            const game = gamesDatabase.find(g => g.slug === gameSlug);
+            if (!game) continue;
+
+            // Fetch actual review data using the same methods as reviews page
+            const reviews = await this.fetchGameReviews(gameSlug);
+            const rating = await this.fetchGameRating(gameSlug);
+            
+            const gameUrl = `game.html?game=${gameSlug}`;
+            
+            // Get review content using same logic as reviews page
+            let reviewContent;
+            let reviewType;
+            let displayRating;
+            
+            if (reviews.length > 0) {
+                const latestReview = reviews[0];
+                let playerQuote = latestReview.review_text;
+                
+                // Check if it's a generic rating text and replace with custom quote
+                if (!playerQuote || 
+                    playerQuote.match(/^\d+ star rating$/) || 
+                    playerQuote === 'Great game with exciting gameplay!' ||
+                    playerQuote.length < 10) {
+                    playerQuote = this.getCustomPlayerQuote(gameSlug);
+                }
+                
+                reviewContent = this.truncateText(playerQuote, 80);
+                reviewType = "Player Review";
+                displayRating = latestReview.rating || rating.average || 4.2;
+            } else {
+                // Use custom editorial quote
+                const customQuote = this.getCustomQuote(gameSlug);
+                reviewContent = this.truncateText(customQuote.replace(/"/g, ''), 80);
+                reviewType = "Editorial Review";
+                displayRating = rating.average > 0 ? rating.average : (game.review ? game.review.rating : 4.2);
+            }
+            
+            // Generate star display
+            const starsHTML = this.generateStars(displayRating);
+
+            html += `
+                <article class="homepage-review-card-compact" onclick="window.location.href='${gameUrl}'" style="cursor: pointer;">
+                    <div class="homepage-review-card-compact-image">
+                        <img src="${game.image}" alt="${game.name}" loading="lazy">
+                        <div class="homepage-review-card-compact-rating">
+                            ${displayRating.toFixed(1)}
+                        </div>
+                    </div>
+                    <div class="homepage-review-card-compact-content">
+                        <h4 class="homepage-review-card-compact-title">${game.name}</h4>
+                        <div class="homepage-review-card-compact-stars">
+                            ${starsHTML}
+                        </div>
+                        <p class="homepage-review-card-compact-review">"${reviewContent}"</p>
+                        <div class="homepage-review-card-compact-meta">
+                            <span class="review-type-compact">${reviewType}</span>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        grid.innerHTML = html;
+        console.log('Top reviewed games rendered successfully');
+    }
+
+    // Helper method to fetch game reviews (same as reviews page)
+    async fetchGameReviews(gameSlug) {
+        const endpoints = [
+            `http://localhost:3000/reviews/${gameSlug}`,
+            `http://localhost:3000/api/reviews/${gameSlug}`,
+            `/api/reviews/${gameSlug}`
+        ];
+        
+        for (const endpoint of endpoints) {
+            try {
+                const response = await fetch(endpoint);
+                if (response.ok) {
+                    const reviews = await response.json();
+                    return Array.isArray(reviews) ? reviews : [reviews];
+                }
+            } catch (error) {
+                console.log(`Endpoint ${endpoint} failed:`, error.message);
+            }
+        }
+        return [];
+    }
+
+    // Helper method to fetch game rating (same as reviews page)
+    async fetchGameRating(gameSlug) {
+        const endpoints = [
+            `http://localhost:3000/reviews/game/${gameSlug}`,
+            `http://localhost:3000/reviews/${gameSlug}/average`,
+            `http://localhost:3000/api/reviews/${gameSlug}/average`
+        ];
+        
+        for (const endpoint of endpoints) {
+            try {
+                const response = await fetch(endpoint);
+                if (response.ok) {
+                    const data = await response.json();
+                    return {
+                        average: data.average_rating || data.average || data.avg_rating || 0,
+                        count: data.review_count || data.total_reviews || data.count || data.votes || 0
+                    };
+                }
+            } catch (error) {
+                console.log(`Rating endpoint ${endpoint} failed:`, error.message);
+            }
+        }
+        return { average: 0, count: 0 };
+    }
+
+    // Helper method to generate stars (same as reviews page)
+    generateStars(rating) {
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        let starsHTML = '';
+        
+        for (let i = 0; i < fullStars; i++) {
+            starsHTML += '<i class="fas fa-star"></i>';
+        }
+        
+        if (hasHalfStar) {
+            starsHTML += '<i class="fas fa-star-half-alt"></i>';
+        }
+        
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+        for (let i = 0; i < emptyStars; i++) {
+            starsHTML += '<i class="far fa-star"></i>';
+        }
+        
+        return starsHTML;
+    }
+
+    // Helper method to get custom quotes (same as reviews page)
+    getCustomQuote(gameSlug) {
+        const quotes = {
+            'maskedspecialforces': '"This tactical shooter raises the bar with its realistic combat mechanics and strategic depth. Every match feels like a genuine military operation that rewards teamwork and precision."',
+            'cookieclicker': '"The deceptively simple concept of clicking cookies evolves into an incredibly addictive progression system. What starts as mindless clicking becomes a masterclass in incremental game design."',
+            'fruitmerge': '"The satisfying physics and colorful visuals create a zen-like puzzle experience that\'s impossible to put down. Each successful merge delivers a dopamine hit that keeps you coming back for more."',
+            '1v1lol': '"Building mechanics meet fast-paced shooting in this innovative blend that creates endless strategic possibilities. The game successfully bridges two popular genres into something uniquely entertaining."',
+            'helixjump': '"Simple controls mask a brilliantly designed challenge that tests your reflexes and timing perfectly. The addictive one-more-try gameplay loop is executed with precision."',
+            'drawclimber': '"Creative problem-solving meets physics-based gameplay in this charming and innovative runner. Each obstacle becomes a mini puzzle that encourages experimentation and ingenuity."'
+        };
+        
+        return quotes[gameSlug] || '"A fantastic gaming experience that delivers entertainment and engagement. This game showcases excellent design and compelling gameplay mechanics."';
+    }
+
+    // Helper method to get custom player quotes (same as reviews page)
+    getCustomPlayerQuote(gameSlug) {
+        const playerQuotes = {
+            'maskedspecialforces': 'Absolutely incredible tactical gameplay! The teamwork mechanics make every match feel like a real military operation.',
+            'cookieclicker': 'Started playing this as a joke, now I can\'t stop! The progression system is surprisingly deep and addictive.',
+            'fruitmerge': 'So satisfying and relaxing! Perfect game to unwind with after a long day. The merge animations are amazing.',
+            '1v1lol': 'Love how this combines building and shooting! Every match feels different and the strategy depth is incredible.',
+            'helixjump': 'Deceptively simple but so challenging! One more try turns into hours of gameplay. Perfectly executed concept.',
+            'drawclimber': 'Such a creative and fun concept! Drawing different legs for obstacles never gets old. Brilliant game design.'
+        };
+        
+        return playerQuotes[gameSlug] || 'Amazing game with fantastic gameplay! Really enjoyed the experience and would definitely recommend it.';
     }
 }
 
