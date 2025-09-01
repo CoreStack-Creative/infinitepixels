@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Reviews Functionality</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #1a1a3e;
+            color: white;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        button {
+            background: #8a2be2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #7016d1;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background: #333;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Review System Test Page</h1>
+    
+    <div class="test-section">
+        <h2>Test API Endpoints</h2>
+        <button onclick="testAverageRating(1)">Test Game 1 Average Rating</button>
+        <button onclick="testAverageRating(4)">Test Game 4 Average Rating</button>
+        <button onclick="testReviews(1)">Get Game 1 Reviews</button>
+        <button onclick="testAddReview()">Add Test Review</button>
+        <div id="apiResults" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Games Data Loading</h2>
+        <button onclick="loadGamesData()">Load Games Data</button>
+        <div id="gamesResults" class="result"></div>
+    </div>
+
+    <script>
+        // Test API endpoints
+        async function testAverageRating(gameId) {
+            try {
+                const response = await fetch(`http://localhost:3000/reviews/${gameId}/average`);
+                const data = await response.json();
+                document.getElementById('apiResults').innerHTML = `
+                    <h3>Average Rating for Game ${gameId}:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('apiResults').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testReviews(gameId) {
+            try {
+                const response = await fetch(`http://localhost:3000/reviews/${gameId}`);
+                const data = await response.json();
+                document.getElementById('apiResults').innerHTML = `
+                    <h3>Reviews for Game ${gameId}:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('apiResults').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function testAddReview() {
+            try {
+                const response = await fetch('http://localhost:3000/reviews', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        game_id: 2,
+                        user_id: 'test-browser-user',
+                        rating: 4,
+                        review_text: 'Test review from browser!'
+                    })
+                });
+                const data = await response.json();
+                document.getElementById('apiResults').innerHTML = `
+                    <h3>Added Review:</h3>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('apiResults').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+        
+        async function loadGamesData() {
+            try {
+                const response = await fetch('/games.json');
+                const games = await response.json();
+                document.getElementById('gamesResults').innerHTML = `
+                    <h3>Games Data Loaded:</h3>
+                    <p>Found ${games.length} games</p>
+                    <p>First 3 games:</p>
+                    <pre>${JSON.stringify(games.slice(0, 3), null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('gamesResults').innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

@@ -7274,6 +7274,7 @@ class ReviewsManager {
         this.selectedGames = [];
         this.allGames = [];
         this.filteredGames = [];
+        this.gameReviewCounts = new Map(); // Store real review counts from Supabase
         this.categoryFilter = document.getElementById('categoryFilter');
         this.gameSearch = document.getElementById('gameSearch');
         this.gameSelectorGrid = document.getElementById('gameSelectorGrid');
@@ -7291,7 +7292,7 @@ class ReviewsManager {
         this.init();
     }
     
-    init() {
+    async init() {
         if (!this.gameSelectorGrid || !this.reviewsGrid) {
             console.log('Review page elements not found, skipping reviews manager initialization');
             return;
@@ -7299,21 +7300,56 @@ class ReviewsManager {
         
         // Wait for games data to load
         if (window.gamesDatabase && window.gamesDatabase.length > 0) {
-            this.loadGames();
+            await this.loadGames();
         } else {
-            window.addEventListener('gamesDataLoaded', () => {
-                this.loadGames();
+            window.addEventListener('gamesDataLoaded', async () => {
+                await this.loadGames();
             });
         }
         
         this.setupEventListeners();
     }
     
-    loadGames() {
+    async loadGames() {
         this.allGames = window.gamesDatabase || [];
         this.filteredGames = [...this.allGames];
+        
+        // Load real review counts from Supabase for all games
+        await this.loadReviewCounts();
+        
         this.renderGameSelector();
         this.updateReviewsDisplay();
+    }
+    
+    async loadReviewCounts() {
+        console.log('Loading review counts from Supabase...');
+        
+        // Load review counts for all games
+        for (const game of this.allGames) {
+            try {
+                const response = await fetch(`http://localhost:3000/reviews/${game.id}/average`);
+                if (response.ok) {
+                    const data = await response.json();
+                    this.gameReviewCounts.set(game.id, {
+                        averageRating: data.average_rating || 0,
+                        totalReviews: data.total_reviews || 0
+                    });
+                    console.log(`Loaded ${data.total_reviews} reviews for ${game.name}`);
+                } else {
+                    console.warn(`Failed to load reviews for ${game.name}`);
+                    this.gameReviewCounts.set(game.id, {
+                        averageRating: 0,
+                        totalReviews: 0
+                    });
+                }
+            } catch (error) {
+                console.error(`Error loading reviews for ${game.name}:`, error);
+                this.gameReviewCounts.set(game.id, {
+                    averageRating: 0,
+                    totalReviews: 0
+                });
+            }
+        }
     }
     
     setupEventListeners() {
@@ -7382,138 +7418,256 @@ class ReviewsManager {
         item.className = 'game-selector-item';
         item.dataset.gameId = game.id;
         
-        const isSelected = this.selectedGames.includes(game.id);
-        if (isSelected) {
-            item.classList.add('selected');
-        }
-        
-        const hasReview = game.review && game.review.rating;
-        const rating = hasReview ? game.review.rating : 0;
+        // Get real review data from Supabase
+        const reviewData = this.gameReviewCounts.get(game.id);
+        const hasReviews = reviewData && reviewData.totalReviews > 0;
+        const rating = hasReviews ? reviewData.averageRating : (game.review ? game.review.rating : 0);
+        const reviewCount = hasReviews ? reviewData.totalReviews : 0;
         const stars = this.generateStars(rating);
         
         item.innerHTML = `
             <img src="${game.image}" alt="${game.name}" class="game-selector-image" loading="lazy">
             <div class="game-selector-name">${game.name}</div>
-            ${hasReview ? `
+            ${hasReviews || (game.review && game.review.rating) ? `
                 <div class="game-selector-rating">
                     <span class="game-selector-stars">${stars}</span>
                     <span>${rating.toFixed(1)}/5</span>
                 </div>
+                <div class="game-selector-reviews">
+                    <span>${reviewCount} review${reviewCount !== 1 ? 's' : ''}</span>
+                </div>
             ` : `
                 <div class="game-selector-rating">
-                    <span style="color: var(--text-secondary); font-size: 0.8rem;">No review yet</span>
+                    <span style="color: var(--text-secondary); font-size: 0.8rem;">No reviews yet</span>
                 </div>
             `}
         `;
         
         item.addEventListener('click', () => {
-            if (hasReview) {
-                this.toggleGameSelection(game.id);
+            if (hasReviews || (game.review && game.review.rating)) {
+                this.showGameReviewPopup(game, reviewData);
             }
         });
         
-        if (!hasReview) {
+        if (!hasReviews && (!game.review || !game.review.rating)) {
             item.style.opacity = '0.6';
             item.style.cursor = 'not-allowed';
+        } else {
+            item.style.cursor = 'pointer';
         }
         
         return item;
     }
     
-    toggleGameSelection(gameId) {
-        const index = this.selectedGames.indexOf(gameId);
-        if (index > -1) {
-            this.selectedGames.splice(index, 1);
-        } else {
-            this.selectedGames.push(gameId);
-        }
-        
-        this.updateGameSelectorDisplay();
-        this.updateReviewsDisplay();
-    }
     
-    updateGameSelectorDisplay() {
-        const items = this.gameSelectorGrid?.querySelectorAll('.game-selector-item') || [];
-        items.forEach(item => {
-            const gameId = parseInt(item.dataset.gameId);
-            const isSelected = this.selectedGames.includes(gameId);
-            
-            if (isSelected) {
-                item.classList.add('selected');
-            } else {
-                item.classList.remove('selected');
-            }
-        });
-    }
-    
-    updateReviewsDisplay() {
-        if (!this.reviewsGrid) return;
-        
-        this.reviewsGrid.innerHTML = '';
-        
-        if (this.selectedGames.length === 0) {
-            this.reviewsGrid.appendChild(this.noReviewsMessage);
-            return;
-        }
-        
-        const selectedGameData = this.selectedGames
-            .map(id => this.allGames.find(game => game.id === id))
-            .filter(game => game && game.review);
-        
-        selectedGameData.forEach(game => {
-            const reviewCard = this.createReviewCard(game);
-            this.reviewsGrid.appendChild(reviewCard);
-        });
-    }
-    
-    createReviewCard(game) {
-        const review = game.review;
-        const card = document.createElement('article');
-        card.className = 'review-card';
-        
-        const stars = this.generateStars(review.rating);
-        const pros = review.pros ? review.pros.join(', ') : '';
-        const cons = review.cons ? review.cons.join(', ') : '';
-        
-        // Generate score display
-        let scoresHtml = '';
-        if (review.scores) {
-            scoresHtml = Object.entries(review.scores)
-                .map(([key, value]) => `<span><strong>${this.formatScoreLabel(key)}:</strong> ${value}/10</span>`)
-                .join('');
-        }
-        
-        card.innerHTML = `
-            <div class="review-image">
-                <img src="${game.image}" alt="${game.name} Review" loading="lazy">
-            </div>
-            <div class="review-content">
-                <h4>${review.title || game.name}</h4>
-                <div class="review-rating">
-                    <div class="stars">${stars}</div>
-                    <span class="rating-score">${review.rating.toFixed(1)}/5</span>
+    async showGameReviewPopup(game, reviewData) {
+        // Create popup overlay
+        const popupOverlay = document.createElement('div');
+        popupOverlay.className = 'review-popup-overlay';
+        popupOverlay.innerHTML = `
+            <div class="review-popup-content">
+                <div class="review-popup-header">
+                    <h3>${game.name} - Reviews & Analysis</h3>
+                    <button class="review-popup-close">
+                        <i class="fas fa-times"></i>
+                    </button>
                 </div>
-                <p>${review.excerpt}</p>
-                ${pros ? `<div class="review-highlights">
-                    <div class="highlight-item">
-                        <strong>Pros:</strong> ${pros}
+                <div class="review-popup-body">
+                    <div class="review-popup-loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading reviews...</p>
                     </div>
-                    ${cons ? `<div class="highlight-item">
-                        <strong>Cons:</strong> ${cons}
-                    </div>` : ''}
-                </div>` : ''}
-                ${scoresHtml ? `<div class="review-stats">${scoresHtml}</div>` : ''}
-                <div class="review-meta">
-                    <span><i class="fas fa-calendar"></i> ${review.date || 'Recently'}</span>
-                    <span><i class="fas fa-user"></i> ${review.author || 'Gaming Expert Team'}</span>
-                    <span><i class="fas fa-clock"></i> ${review.readTime || '3 min read'}</span>
                 </div>
             </div>
         `;
         
-        return card;
+        document.body.appendChild(popupOverlay);
+        
+        // Add event listeners
+        const closeBtn = popupOverlay.querySelector('.review-popup-close');
+        closeBtn.addEventListener('click', () => this.closeReviewPopup(popupOverlay));
+        
+        popupOverlay.addEventListener('click', (e) => {
+            if (e.target === popupOverlay) {
+                this.closeReviewPopup(popupOverlay);
+            }
+        });
+        
+        // Add escape key listener
+        const escapeHandler = (e) => {
+            if (e.key === 'Escape') {
+                this.closeReviewPopup(popupOverlay);
+                document.removeEventListener('keydown', escapeHandler);
+            }
+        };
+        document.addEventListener('keydown', escapeHandler);
+        
+        // Store the escape handler for cleanup
+        popupOverlay._escapeHandler = escapeHandler;
+        
+        // Show popup with animation
+        setTimeout(() => {
+            popupOverlay.classList.add('active');
+        }, 10);
+        
+        // Load reviews and populate content
+        await this.loadPopupContent(game, reviewData, popupOverlay);
     }
     
+    async loadPopupContent(game, reviewData, popupOverlay) {
+        try {
+            // Load actual reviews from Supabase
+            const reviewsResponse = await fetch(`http://localhost:3000/reviews/${game.id}`);
+            let actualReviews = [];
+            
+            if (reviewsResponse.ok) {
+                actualReviews = await reviewsResponse.json();
+            }
+            
+            const popupBody = popupOverlay.querySelector('.review-popup-body');
+            const hasActualReviews = actualReviews.length > 0;
+            const hasStaticReview = game.review && game.review.rating;
+            
+            // Calculate average rating
+            let averageRating = 0;
+            let totalReviews = actualReviews.length;
+            
+            if (hasActualReviews) {
+                averageRating = actualReviews.reduce((sum, review) => sum + review.rating, 0) / actualReviews.length;
+            } else if (hasStaticReview) {
+                averageRating = game.review.rating;
+                totalReviews = 1; // Fallback count for static review
+            }
+            
+            const stars = this.generateStars(averageRating);
+            
+            popupBody.innerHTML = `
+                <div class="review-popup-game-info">
+                    <img src="${game.image}" alt="${game.name}" class="review-popup-image">
+                    <div class="review-popup-details">
+                        <div class="review-popup-rating">
+                            <div class="stars">${stars}</div>
+                            <span class="rating-score">${averageRating.toFixed(1)}/5</span>
+                            <span class="review-count">(${totalReviews} review${totalReviews !== 1 ? 's' : ''})</span>
+                        </div>
+                        <p class="review-popup-description">${game.description}</p>
+                        <div class="review-popup-tags">
+                            ${game.tags ? game.tags.map(tag => `<span class="tag">${tag}</span>`).join('') : ''}
+                        </div>
+                        <div class="review-popup-actions">
+                            <a href="${game.gameurl}" target="_blank" class="play-game-btn">
+                                <i class="fas fa-play"></i>
+                                Play Game
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="review-popup-reviews">
+                    <h4><i class="fas fa-comments"></i> Reviews</h4>
+                    
+                    ${hasStaticReview ? `
+                        <div class="review-expert">
+                            <div class="review-header">
+                                <h5>${game.review.title || game.name}</h5>
+                                <div class="review-meta">
+                                    <span class="review-author">
+                                        <i class="fas fa-user-check"></i>
+                                        ${game.review.author || 'Gaming Expert Team'}
+                                    </span>
+                                    <span class="review-date">
+                                        <i class="fas fa-calendar"></i>
+                                        ${game.review.date || 'Recently'}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                <div class="stars">${this.generateStars(game.review.rating)}</div>
+                                <span>${game.review.rating.toFixed(1)}/5</span>
+                            </div>
+                            <p class="review-excerpt">${game.review.excerpt}</p>
+                            ${game.review.pros ? `
+                                <div class="review-highlights">
+                                    <div class="highlight-item">
+                                        <strong>Pros:</strong> ${game.review.pros.join(', ')}
+                                    </div>
+                                    ${game.review.cons ? `
+                                        <div class="highlight-item">
+                                            <strong>Cons:</strong> ${game.review.cons.join(', ')}
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
+                            ${game.review.scores ? `
+                                <div class="review-scores">
+                                    ${Object.entries(game.review.scores)
+                                        .map(([key, value]) => `
+                                            <div class="score-item">
+                                                <span class="score-label">${this.formatScoreLabel(key)}:</span>
+                                                <span class="score-value">${value}/10</span>
+                                            </div>
+                                        `).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    ` : ''}
+                    
+                    ${hasActualReviews ? `
+                        <div class="user-reviews">
+                            <h5><i class="fas fa-users"></i> User Reviews</h5>
+                            ${actualReviews.map(review => `
+                                <div class="user-review">
+                                    <div class="review-header">
+                                        <div class="review-rating">
+                                            <div class="stars">${this.generateStars(review.rating)}</div>
+                                            <span>${review.rating}/5</span>
+                                        </div>
+                                        <span class="review-date">
+                                            ${new Date(review.created_at).toLocaleDateString()}
+                                        </span>
+                                    </div>
+                                    <p class="review-text">${review.review_text}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    
+                    ${!hasActualReviews && !hasStaticReview ? `
+                        <div class="no-reviews">
+                            <i class="fas fa-comment-slash"></i>
+                            <p>No reviews available for this game yet.</p>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+        } catch (error) {
+            console.error('Error loading popup content:', error);
+            const popupBody = popupOverlay.querySelector('.review-popup-body');
+            popupBody.innerHTML = `
+                <div class="review-popup-error">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Error loading reviews. Please try again later.</p>
+                </div>
+            `;
+        }
+    }
+    
+    closeReviewPopup(popupOverlay) {
+        popupOverlay.classList.remove('active');
+        
+        // Clean up escape key listener
+        if (popupOverlay._escapeHandler) {
+            document.removeEventListener('keydown', popupOverlay._escapeHandler);
+        }
+        
+        setTimeout(() => {
+            if (popupOverlay.parentNode) {
+                popupOverlay.parentNode.removeChild(popupOverlay);
+            }
+        }, 300);
+    }
+
     generateStars(rating) {
         const fullStars = Math.floor(rating);
         const hasHalfStar = rating % 1 >= 0.5;
@@ -7537,9 +7691,7 @@ class ReviewsManager {
         }
         
         return stars;
-    }
-    
-    formatScoreLabel(key) {
+    }    formatScoreLabel(key) {
         const labelMap = {
             'gameplay': 'Gameplay',
             'graphics': 'Graphics',
@@ -7564,20 +7716,22 @@ class ReviewsManager {
 }
 
 // Initialize reviews manager when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Only initialize on the reviews page
     if (window.location.pathname.includes('game-reviews.html') || 
         document.querySelector('.reviews-container')) {
         window.reviewsManager = new ReviewsManager();
+        await window.reviewsManager.init();
     }
 });
 
 // Also initialize if games data loads after DOM ready
-window.addEventListener('gamesDataLoaded', () => {
+window.addEventListener('gamesDataLoaded', async () => {
     if ((window.location.pathname.includes('game-reviews.html') || 
          document.querySelector('.reviews-container')) && 
         !window.reviewsManager) {
         window.reviewsManager = new ReviewsManager();
+        await window.reviewsManager.init();
     }
 });
 
