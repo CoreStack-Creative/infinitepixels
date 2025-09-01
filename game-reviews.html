@@ -708,6 +708,19 @@
                 return starsHTML;
             }
             
+            getCustomQuote(gameSlug) {
+                const quotes = {
+                    'maskedspecialforces': '"This tactical shooter raises the bar with its realistic combat mechanics and strategic depth. Every match feels like a genuine military operation that rewards teamwork and precision."',
+                    'cookieclicker': '"The deceptively simple concept of clicking cookies evolves into an incredibly addictive progression system. What starts as mindless clicking becomes a masterclass in incremental game design."',
+                    'fruitmerge': '"The satisfying physics and colorful visuals create a zen-like puzzle experience that\'s impossible to put down. Each successful merge delivers a dopamine hit that keeps you coming back for more."',
+                    '1v1lol': '"Building mechanics meet fast-paced shooting in this innovative blend that creates endless strategic possibilities. The game successfully bridges two popular genres into something uniquely entertaining."',
+                    'helixjump': '"Simple controls mask a brilliantly designed challenge that tests your reflexes and timing perfectly. The addictive one-more-try gameplay loop is executed with precision."',
+                    'drawclimber': '"Creative problem-solving meets physics-based gameplay in this charming and innovative runner. Each obstacle becomes a mini puzzle that encourages experimentation and ingenuity."'
+                };
+                
+                return quotes[gameSlug] || '"A fantastic gaming experience that delivers entertainment and engagement. This game showcases excellent design and compelling gameplay mechanics."';
+            }
+            
             async loadGeneralReviews() {
                 const reviewsGrid = document.querySelector('.recent-reviews .reviews-grid');
                 if (!reviewsGrid) return;
@@ -733,18 +746,16 @@
                                 <span>Rating: ${latestReview.rating || rating.average}/5</span>
                             </div>
                         `;
-                    } else if (gameData.review) {
-                        // Fallback to static review data
+                    } else {
+                        // Use custom editorial quote
+                        const customQuote = this.getCustomQuote(gameSlug);
                         reviewContent = `
-                            <p>${gameData.review.excerpt}</p>
-                            <div class="review-stats">
-                                ${Object.entries(gameData.review.scores).map(([key, value]) => 
-                                    `<span><strong>${key.charAt(0).toUpperCase() + key.slice(1)}:</strong> ${value}/10</span>`
-                                ).join('')}
+                            <p>${customQuote}</p>
+                            <div class="review-meta">
+                                <span><strong>Editorial Review</strong></span>
+                                <span>Professional Assessment</span>
                             </div>
                         `;
-                    } else {
-                        reviewContent = '<p>No reviews yet. Be the first to review this game!</p>';
                     }
                     
                     const displayRating = rating.average > 0 ? rating.average : (gameData.review ? gameData.review.rating : 0);
