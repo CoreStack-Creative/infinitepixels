@@ -2354,6 +2354,10 @@ if (document.readyState === 'loading') {
 class GameLoader {
  constructor() {
  this.currentGame = null;
+ 
+ // Store reference globally for debugging
+ window.currentGameLoader = this;
+ 
  this.init();
  }
 
@@ -2735,6 +2739,8 @@ class GameLoader {
 
     async submitRating(gameSlug, rating) {
         try {
+            console.log('Submitting rating:', rating, 'for game:', gameSlug);
+            
             // Send rating to server for global storage
             const response = await fetch('http://localhost:3000/reviews', {
                 method: 'POST',
@@ -2750,15 +2756,22 @@ class GameLoader {
             });
 
             if (response.ok) {
-                console.log('Rating submitted to server successfully');
+                console.log('✅ Rating submitted to server successfully');
                 
                 // Save user's rating locally to prevent re-rating
                 localStorage.setItem(`${gameSlug}_userRating`, rating.toString());
                 
-                // Load and display updated global ratings from server
-                await this.loadGlobalRating(gameSlug);
+                // Wait a moment for server to process, then load updated global ratings
+                setTimeout(async () => {
+                    console.log('Fetching updated global rating...');
+                    await this.loadGlobalRating(gameSlug);
+                }, 1000); // 1 second delay to ensure server processing
+                
+                // Also update local storage immediately for instant feedback
+                this.submitRatingLocally(gameSlug, rating);
+                
             } else {
-                console.error('Failed to submit rating to server');
+                console.error('Failed to submit rating to server, status:', response.status);
                 // Fallback to local storage if server fails
                 this.submitRatingLocally(gameSlug, rating);
             }
@@ -2799,28 +2812,73 @@ class GameLoader {
     // Load global rating from server or local storage
     async loadGlobalRating(gameSlug) {
         try {
-            // Try to fetch from server first
-            const response = await fetch(`http://localhost:3000/reviews/game/${gameSlug}`);
-            if (response.ok) {
-                const data = await response.json();
-                if (data.average_rating && data.review_count) {
-                    // Update local storage with server data
-                    const gameRatings = this.getGameRatings();
-                    gameRatings[gameSlug] = {
-                        totalStars: data.average_rating * data.review_count,
-                        totalVotes: data.review_count,
-                        average: data.average_rating
-                    };
-                    this.saveGameRatings(gameRatings);
-                    this.updateRatingDisplay(gameSlug);
-                    return;
+            // Try multiple API endpoints for different server configurations
+            const endpoints = [
+                `http://localhost:3000/reviews/game/${gameSlug}`,
+                `http://localhost:3000/reviews/${gameSlug}/average`,
+                `http://localhost:3000/api/reviews/${gameSlug}`,
+                `/api/reviews/${gameSlug}/average`
+            ];
+            
+            for (const endpoint of endpoints) {
+                try {
+                    console.log(`Trying to fetch rating from: ${endpoint}`);
+                    const response = await fetch(endpoint);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Server response data:', data);
+                        
+                        // Handle different response formats
+                        let averageRating = data.average_rating || data.average || data.avg_rating;
+                        let reviewCount = data.review_count || data.total_reviews || data.count || data.votes;
+                        
+                        if (averageRating !== undefined && reviewCount !== undefined) {
+                            console.log(`Found rating data: ${averageRating} average, ${reviewCount} reviews`);
+                            
+                            // Update the display elements directly for immediate feedback
+                            const averageRatingElement = document.getElementById('averageRating');
+                            const ratingCountElement = document.getElementById('ratingCount');
+                            
+                            if (averageRatingElement) {
+                                averageRatingElement.textContent = parseFloat(averageRating).toFixed(1);
+                                console.log('Updated averageRating display');
+                            }
+                            
+                            if (ratingCountElement) {
+                                ratingCountElement.textContent = `(${reviewCount} vote${reviewCount !== 1 ? 's' : ''})`;
+                                console.log('Updated ratingCount display');
+                            }
+                            
+                            // Update local storage with server data
+                            const gameRatings = this.getGameRatings();
+                            gameRatings[gameSlug] = {
+                                totalStars: averageRating * reviewCount,
+                                totalVotes: reviewCount,
+                                average: parseFloat(averageRating)
+                            };
+                            this.saveGameRatings(gameRatings);
+                            
+                            // Update visual star display
+                            this.showAverageRating(gameSlug);
+                            
+                            console.log('✅ Global rating loaded and displayed successfully');
+                            return;
+                        }
+                    }
+                } catch (endpointError) {
+                    console.log(`Endpoint ${endpoint} failed:`, endpointError.message);
+                    continue;
                 }
             }
+            
+            console.log('No working endpoint found, using local data');
         } catch (error) {
             console.log('Could not fetch rating from server, using local data:', error.message);
         }
         
         // Fallback to local storage display
+        console.log('Falling back to local storage data');
         this.updateRatingDisplay(gameSlug);
     }
 
@@ -7209,6 +7267,55 @@ function initializeTipFiltering() {
     // Placeholder for tip filtering functionality
     console.log('Tip filtering initialized');
 }
+
+// Debug function to test API endpoints (call from browser console)
+window.debugRatingAPI = async function(gameSlug = 'cookieclicker') {
+    console.log('🔍 Testing rating API endpoints for game:', gameSlug);
+    
+    const endpoints = [
+        `http://localhost:3000/reviews/game/${gameSlug}`,
+        `http://localhost:3000/reviews/${gameSlug}/average`,
+        `http://localhost:3000/api/reviews/${gameSlug}`,
+        `/api/reviews/${gameSlug}/average`,
+        `http://localhost:3000/reviews/${gameSlug}`,
+        `http://localhost:3000/api/games/${gameSlug}/rating`
+    ];
+    
+    for (const endpoint of endpoints) {
+        try {
+            console.log(`Testing: ${endpoint}`);
+            const response = await fetch(endpoint);
+            console.log(`Status: ${response.status}`);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('✅ SUCCESS! Data:', data);
+                
+                // Check what fields are available
+                const fields = Object.keys(data);
+                console.log('Available fields:', fields);
+                
+                return { endpoint, data, fields };
+            } else {
+                console.log('❌ Failed with status:', response.status);
+            }
+        } catch (error) {
+            console.log('❌ Error:', error.message);
+        }
+    }
+    
+    console.log('No working endpoints found');
+    return null;
+};
+
+// Also add a function to manually trigger rating refresh
+window.refreshRating = async function(gameSlug = 'cookieclicker') {
+    console.log('🔄 Manually refreshing rating for:', gameSlug);
+    
+    // Get the current GameLoader instance
+    const gameLoader = window.currentGameLoader || new GameLoader();
+    await gameLoader.loadGlobalRating(gameSlug);
+};
 
 function initializeFAQVoting() {
     // Placeholder for FAQ voting functionality
