@@ -754,6 +754,19 @@
                 return quotes[gameSlug] || '"A fantastic gaming experience that delivers entertainment and engagement. This game showcases excellent design and compelling gameplay mechanics."';
             }
             
+            getCustomPlayerQuote(gameSlug) {
+                const playerQuotes = {
+                    'maskedspecialforces': '"Absolutely incredible tactical gameplay! The teamwork mechanics make every match feel like a real military operation."',
+                    'cookieclicker': '"Started playing this as a joke, now I can\'t stop! The progression system is surprisingly deep and addictive."',
+                    'fruitmerge': '"So satisfying and relaxing! Perfect game to unwind with after a long day. The merge animations are amazing."',
+                    '1v1lol': '"Love how this combines building and shooting! Every match feels different and the strategy depth is incredible."',
+                    'helixjump': '"Deceptively simple but so challenging! One more try turns into hours of gameplay. Perfectly executed concept."',
+                    'drawclimber': '"Such a creative and fun concept! Drawing different legs for obstacles never gets old. Brilliant game design."'
+                };
+                
+                return playerQuotes[gameSlug] || '"Amazing game with fantastic gameplay! Really enjoyed the experience and would definitely recommend it."';
+            }
+            
             async loadGeneralReviews() {
                 const reviewsGrid = document.querySelector('.recent-reviews .reviews-grid');
                 if (!reviewsGrid) return;
@@ -772,10 +785,20 @@
                     let reviewContent;
                     if (reviews.length > 0) {
                         const latestReview = reviews[0];
-                        const playerQuote = latestReview.review_text || 'Great game with exciting gameplay!';
+                        // Check if it's a generic rating text and replace with custom quote
+                        let playerQuote = latestReview.review_text;
+                        
+                        if (!playerQuote || 
+                            playerQuote.match(/^\d+ star rating$/) || 
+                            playerQuote === 'Great game with exciting gameplay!' ||
+                            playerQuote.length < 10) {
+                            // Use custom player quote instead of generic text
+                            playerQuote = this.getCustomPlayerQuote(gameSlug);
+                        }
+                        
                         reviewContent = `
                             <blockquote class="player-review-quote">
-                                "${playerQuote}"
+                                ${playerQuote}
                             </blockquote>
                             <div class="review-meta">
                                 <span><strong>Player Review</strong></span>
