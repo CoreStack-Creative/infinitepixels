@@ -6857,7 +6857,7 @@ class HomepageGamesManager {
 
         const categoryGames = gamesDatabase
             .filter(game => game.tags && game.tags.includes('action'))
-            .slice(0, 6);
+            .slice(0, 20);
 
         let html = '';
         categoryGames.forEach(game => {
@@ -6879,7 +6879,7 @@ class HomepageGamesManager {
                 game.tags.includes('2 player') ||
                 game.tags.includes('online')
             ))
-            .slice(0, 6);
+            .slice(0, 20);
 
         let html = '';
         multiplayerGames.forEach(game => {
