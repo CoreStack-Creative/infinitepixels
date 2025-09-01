@@ -6895,7 +6895,7 @@ class HomepageGamesManager {
         if (!grid || typeof gamesDatabase === 'undefined') return;
 
         const newGames = gamesDatabase
-            .slice(-8)
+            .slice(-22)
             .reverse();
 
         let html = '';
