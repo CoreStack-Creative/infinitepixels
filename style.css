@@ -1926,24 +1926,54 @@ body {
    display: flex;
    gap: 10px;
    flex-wrap: wrap;
+   margin-bottom: 20px;
+   margin-top: 15px;
+   padding: 10px 0;
 }
 
 
 .genre-tag {
    background: linear-gradient(45deg, #8a2be2, #4b0082);
-   color: white;
+   color: white !important;
    padding: 6px 12px;
    border-radius: 20px;
    font-size: 0.85rem;
    font-weight: 500;
    cursor: pointer;
    transition: all 0.3s ease;
+   text-decoration: none;
+   display: inline-block;
+   border: 1px solid rgba(138, 43, 226, 0.3);
+   animation: fadeInScale 0.5s ease-out both;
+}
+
+@keyframes fadeInScale {
+   from {
+      opacity: 0;
+      transform: scale(0.8) translateY(10px);
+   }
+   to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+   }
 }
 
 
 .genre-tag:hover {
    transform: translateY(-2px);
    box-shadow: 0 4px 15px rgba(138, 43, 226, 0.4);
+   color: white !important;
+   text-decoration: none;
+   background: linear-gradient(45deg, #9a3bf2, #5b1092);
+}
+
+.genre-tag:visited {
+   color: white !important;
+}
+
+.genre-tag:focus {
+   outline: 2px solid rgba(138, 43, 226, 0.6);
+   outline-offset: 2px;
 }
 
 

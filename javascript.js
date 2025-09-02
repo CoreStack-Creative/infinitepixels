@@ -2427,10 +2427,13 @@ class GameLoader {
  const genresContainer = document.getElementById('gameGenres');
  if (genresContainer) {
  genresContainer.innerHTML = '';
- game.tags.forEach(tag => {
- const tagElement = document.createElement('span');
+ game.tags.forEach((tag, index) => {
+ const tagElement = document.createElement('a');
  tagElement.className = 'genre-tag';
  tagElement.textContent = tag.charAt(0).toUpperCase() + tag.slice(1);
+ tagElement.href = `category.html?category=${encodeURIComponent(tag)}`;
+ tagElement.title = `View all ${tag} games`;
+ tagElement.style.animationDelay = `${index * 0.1}s`;
  genresContainer.appendChild(tagElement);
  });
  }
