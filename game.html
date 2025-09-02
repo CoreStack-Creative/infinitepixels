@@ -316,6 +316,17 @@
                     </div>
                     <p id="gameDescription">Loading game description...</p>
                     
+                    <!-- Game Controls Section -->
+                    <div class="game-controls-section" id="gameControlsSection" style="display: none;">
+                        <div class="controls-header">
+                            <i class="fas fa-gamepad controls-icon"></i>
+                            <h4>Controls</h4>
+                        </div>
+                        <div class="controls-list" id="gameControlsList">
+                            <!-- Controls will be populated here -->
+                        </div>
+                    </div>
+                    
                     <div class="game-genres" id="gameGenres">
                         <!-- Tags will be populated here -->
                     </div>
@@ -508,10 +519,132 @@
         transform: none;
     }
 
+    /* Game Controls Section Styles */
+    .game-controls-section {
+        background: rgba(27, 27, 46, 0.7);
+        border: 1px solid rgba(138, 43, 226, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+        backdrop-filter: blur(10px);
+        animation: fadeInUp 0.6s ease-out;
+        transition: all 0.3s ease;
+    }
+
+    .game-controls-section:hover {
+        border-color: rgba(138, 43, 226, 0.5);
+        box-shadow: 0 4px 20px rgba(138, 43, 226, 0.1);
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .controls-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+    }
+
+    .controls-icon {
+        color: #8A2BE2;
+        font-size: 20px;
+    }
+
+    .controls-header h4 {
+        margin: 0;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .controls-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 12px;
+    }
+
+    .control-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(34, 34, 74, 0.6);
+        border: 1px solid rgba(138, 43, 226, 0.2);
+        border-radius: 8px;
+        padding: 12px 16px;
+        transition: all 0.3s ease;
+        animation: slideInLeft 0.5s ease-out both;
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .control-item:hover {
+        background: rgba(138, 43, 226, 0.1);
+        border-color: rgba(138, 43, 226, 0.4);
+        transform: translateY(-2px);
+    }
+
+    .control-key {
+        font-weight: 600;
+        color: #8A2BE2;
+        background: linear-gradient(145deg, rgba(138, 43, 226, 0.15), rgba(138, 43, 226, 0.05));
+        border: 1px solid rgba(138, 43, 226, 0.3);
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        min-width: 80px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .control-action {
+        color: #b8b8d4;
+        font-size: 14px;
+        margin-left: 12px;
+        flex: 1;
+        text-align: right;
+    }
+
     /* Responsive design */
     @media (max-width: 768px) {
         .star-rating-container {
             min-width: 160px;
+        }
+
+        .controls-list {
+            grid-template-columns: 1fr;
+        }
+
+        .control-item {
+            flex-direction: column;
+            gap: 8px;
+            text-align: center;
+        }
+
+        .control-action {
+            text-align: center;
+            margin-left: 0;
         }
         
         .rating-number {

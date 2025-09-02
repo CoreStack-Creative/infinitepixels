@@ -2420,6 +2420,9 @@ class GameLoader {
  const gameDescription = document.getElementById('gameDescription');
  if (gameDescription) gameDescription.textContent = game.description;
 
+ // Update controls section
+ this.displayGameControls(game);
+
  // Update tags
  const genresContainer = document.getElementById('gameGenres');
  if (genresContainer) {
@@ -2437,6 +2440,59 @@ class GameLoader {
  if (shareLink) {
  shareLink.value = `${window.location.origin}/game.html?game=${game.slug}`;
  }
+ }
+
+ displayGameControls(game) {
+ const controlsSection = document.getElementById('gameControlsSection');
+ const controlsList = document.getElementById('gameControlsList');
+ 
+ if (!controlsSection || !controlsList) return;
+ 
+ // Check if game has controls
+ if (!game.controls || Object.keys(game.controls).length === 0) {
+ controlsSection.style.display = 'none';
+ return;
+ }
+ 
+ // Show controls section
+ controlsSection.style.display = 'block';
+ 
+ // Clear existing controls
+ controlsList.innerHTML = '';
+ 
+ // Add each control item
+ Object.entries(game.controls).forEach(([key, action], index) => {
+ const controlItem = document.createElement('div');
+ controlItem.className = 'control-item';
+ controlItem.style.animationDelay = `${index * 0.1}s`;
+ 
+ // Format the key for better display
+ const formattedKey = this.formatControlKey(key);
+ 
+ controlItem.innerHTML = `
+ <span class="control-key">${formattedKey}</span>
+ <span class="control-action">${action}</span>
+ `;
+ controlsList.appendChild(controlItem);
+ });
+ }
+
+ formatControlKey(key) {
+ // Handle special formatting for common keys
+ const keyMappings = {
+ 'Left Click': '🖱️ Left Click',
+ 'Right Click': '🖱️ Right Click',
+ 'Mouse': '🖱️ Mouse',
+ 'WASD': 'W A S D',
+ 'Arrow Keys': '← ↑ → ↓',
+ 'Space': 'Space',
+ 'Shift': 'Shift',
+ 'Ctrl': 'Ctrl',
+ 'Enter': 'Enter',
+ 'Tab': 'Tab'
+ };
+ 
+ return keyMappings[key] || key;
  }
 
  loadRelatedGames(currentGame) {
