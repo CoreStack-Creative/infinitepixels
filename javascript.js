@@ -6735,7 +6735,6 @@ class HomepageGamesManager {
         
         // Set grid CSS properties
         grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
-        grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
         
         let html = '';
 
