@@ -3,17 +3,17 @@ class RecentGamesPageManager {
     constructor() {
         this.games = [];
         this.recentGames = [];
+        this.isLoading = false;
+        this.hasLoaded = false;
         this.init();
     }
 
     async init() {
-        // Load games data
+        // Load games data first
         await this.loadGamesData();
         
-        // Wait for account system to initialize
-        setTimeout(() => {
-            this.loadRecentGames();
-        }, 500);
+        // Load recent games immediately - don't wait for anything
+        this.loadRecentGames();
     }
 
     async loadGamesData() {
@@ -25,23 +25,43 @@ class RecentGamesPageManager {
         }
     }
 
+    // Public method that can be called by external systems
+    refresh() {
+        console.log('Refresh requested by external system');
+        // Only refresh if we're not currently loading and it's been a reasonable time
+        if (!this.isLoading) {
+            this.loadRecentGames();
+        }
+    }
+
     async loadRecentGames() {
+        // Prevent multiple simultaneous loads
+        if (this.isLoading) {
+            console.log('Recent games already loading, skipping...');
+            return;
+        }
+        
+        this.isLoading = true;
+        
         const recentGamesGrid = document.getElementById('recentGamesGrid') || 
                                 document.querySelector('.recent-games-grid') ||
                                 document.querySelector('.games-grid');
         
         if (!recentGamesGrid) {
             console.error('Recent games container not found');
+            this.isLoading = false;
             return;
         }
 
-        // Show loading state
-        recentGamesGrid.innerHTML = `
-            <div class="loading-recent">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Loading your recently played games...</p>
-            </div>
-        `;
+        // Only show loading state if we haven't loaded before
+        if (!this.hasLoaded) {
+            recentGamesGrid.innerHTML = `
+                <div class="loading-recent">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading your recently played games...</p>
+                </div>
+            `;
+        }
 
         try {
             if (window.accountSystem && window.accountSystem.isLoggedIn && window.accountSystem.isLoggedIn()) {
@@ -51,6 +71,7 @@ class RecentGamesPageManager {
                 // User not logged in - load from localStorage
                 this.loadLocalRecentGames();
             }
+            this.hasLoaded = true;
         } catch (error) {
             console.error('Error loading recent games:', error);
             recentGamesGrid.innerHTML = `
@@ -64,6 +85,8 @@ class RecentGamesPageManager {
                     </button>
                 </div>
             `;
+        } finally {
+            this.isLoading = false;
         }
     }
 
