@@ -142,41 +142,26 @@ class RecentGamesPageManager {
         this.addEventListeners();
     }
 
-    createGameCard(game, recentGame) {
-        const lastPlayed = new Date(recentGame.last_played);
-        const timeAgo = this.getTimeAgo(lastPlayed);
-        
-        return `
-            <div class="recent-game-card" data-game-id="${game.id || game.slug}">
-                <div class="game-image-container">
-                    <img src="${game.image}" alt="${game.name}" class="game-image">
-                    <div class="game-overlay">
-                        <button class="play-btn" title="Play Again">
-                            <i class="fas fa-play"></i>
-                            Play Again
-                        </button>
-                        <button class="favorite-btn ${this.isFavorited(game.id || game.slug) ? 'favorited' : ''}" title="Add to favorites">
-                            <i class="${this.isFavorited(game.id || game.slug) ? 'fas' : 'far'} fa-heart"></i>
-                        </button>
-                    </div>
-                    <div class="last-played-badge">
-                        <i class="fas fa-clock"></i>
-                        ${timeAgo}
+        createGameCard(game) {
+            const timeAgo = this.formatTimeAgo(game.lastPlayed);
+            
+            return `
+                <div class="game-card" onclick="window.location.href='game.html?game=${game.slug}'">
+                    <img src="${game.image}" alt="${game.name}" class="recent-game-image" 
+                         onerror="this.src='images/placeholder-game.jpg'">
+                    <div class="game-info">
+                        <h3 class="game-name">${game.name}</h3>
+                        <div class="game-tags">
+                            ${game.tags ? game.tags.map(tag => `<span class="game-tag">${tag}</span>`).join('') : ''}
+                        </div>
+                        <div class="last-played">
+                            <i class="fas fa-clock"></i>
+                            <span>Played ${timeAgo}</span>
+                        </div>
                     </div>
                 </div>
-                <div class="game-info">
-                    <h3 class="game-title">${game.name}</h3>
-                    <div class="game-meta">
-                        <span class="game-category">${game.category}</span>
-                        <span class="last-played-full">Last played: ${lastPlayed.toLocaleDateString()}</span>
-                    </div>
-                    ${game.description ? `<p class="game-description">${game.description}</p>` : ''}
-                </div>
-            </div>
-        `;
-    }
-
-    isFavorited(gameId) {
+            `;
+        }    isFavorited(gameId) {
         // Check both account-based and local favorites
         if (accountSystem && accountSystem.isLoggedIn()) {
             // For logged-in users, this would need to be populated from account favorites
@@ -208,32 +193,31 @@ class RecentGamesPageManager {
     }
 
     addEventListeners() {
-        // Add click handlers for game cards
-        document.querySelectorAll('.recent-game-card').forEach(card => {
-            const gameImage = card.querySelector('.game-image-container');
-            const gameId = card.dataset.gameId;
-            
-            gameImage.addEventListener('click', (e) => {
+        // Add click handlers for game cards (main card click)
+        document.querySelectorAll('.game-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                // Don't trigger if clicking on buttons
                 if (!e.target.closest('button')) {
+                    const gameId = card.dataset.gameId;
                     this.playGame(gameId);
                 }
             });
         });
 
         // Add click handlers for play buttons
-        document.querySelectorAll('.recent-game-card .play-btn').forEach(btn => {
+        document.querySelectorAll('.game-card .play-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const gameId = btn.closest('.recent-game-card').dataset.gameId;
+                const gameId = btn.closest('.game-card').dataset.gameId;
                 this.playGame(gameId);
             });
         });
 
         // Add click handlers for favorite buttons
-        document.querySelectorAll('.recent-game-card .favorite-btn').forEach(btn => {
+        document.querySelectorAll('.game-card .favorite-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const gameId = btn.closest('.recent-game-card').dataset.gameId;
+                const gameId = btn.closest('.game-card').dataset.gameId;
                 this.toggleFavorite(gameId, btn);
             });
         });
