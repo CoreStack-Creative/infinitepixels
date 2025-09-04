@@ -44,7 +44,7 @@ class RecentGamesPageManager {
         `;
 
         try {
-            if (accountSystem && accountSystem.isLoggedIn()) {
+            if (window.accountSystem && window.accountSystem.isLoggedIn && window.accountSystem.isLoggedIn()) {
                 // User is logged in - load from server
                 await this.loadServerRecentGames();
             } else {
@@ -142,8 +142,10 @@ class RecentGamesPageManager {
         this.addEventListeners();
     }
 
-        createGameCard(game) {
-            const timeAgo = this.formatTimeAgo(game.lastPlayed);
+        createGameCard(game, recentGame) {
+            // Get timestamp from recentGame object (either server or local format)
+            const timestamp = recentGame.last_played ? new Date(recentGame.last_played).getTime() : recentGame.lastPlayed;
+            const timeAgo = this.formatTimeAgo(timestamp);
             
             return `
                 <div class="game-card" onclick="window.location.href='game.html?game=${game.slug}'">
@@ -180,15 +182,21 @@ class RecentGamesPageManager {
         }
     }
 
-    getTimeAgo(date) {
-        const now = new Date();
-        const diffInSeconds = Math.floor((now - date) / 1000);
+    formatTimeAgo(timestamp) {
+        const now = Date.now();
+        const diff = now - timestamp;
         
-        if (diffInSeconds < 60) return 'Just now';
-        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-        if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+        const minutes = Math.floor(diff / (1000 * 60));
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
         
+        if (minutes < 1) return 'just now';
+        if (minutes < 60) return `${minutes}m ago`;
+        if (hours < 24) return `${hours}h ago`;
+        if (days < 7) return `${days}d ago`;
+        
+        // For older dates, show actual date
+        const date = new Date(timestamp);
         return date.toLocaleDateString();
     }
 
