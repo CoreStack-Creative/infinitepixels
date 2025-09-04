@@ -334,6 +334,37 @@
                     </div>
                 </div>
 
+                <!-- Reviews Section -->
+                <div class="reviews-section" id="reviewsSection">
+                    <div class="reviews-header">
+                        <h3>Player Reviews</h3>
+                        <button class="write-review-btn" onclick="reviewSystem.showReviewForm()" style="display: none;">
+                            <i class="fas fa-star"></i>
+                            Write a Review
+                        </button>
+                    </div>
+                    
+                    <!-- Review Statistics -->
+                    <div class="review-stats" id="reviewStats">
+                        <!-- Stats will be populated here -->
+                    </div>
+                    
+                    <!-- Reviews Container -->
+                    <div class="reviews-container">
+                        <!-- Review form will be inserted here when needed -->
+                        
+                        <!-- Reviews List -->
+                        <div class="reviews-list">
+                            <div class="reviews-loading">Loading reviews...</div>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div class="review-pagination">
+                            <!-- Pagination will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Ad Section -->
                 <div class="ad-section">
                     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8164325902033897"
@@ -399,6 +430,8 @@
     </div>
 
     <script src="javascript.js"></script>
+    <script src="account-system.js"></script>
+    <script src="review-system.js"></script>
 
     <style>
     /* Star Rating System Styles */

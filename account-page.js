@@ -244,11 +244,21 @@ class AccountPageManager {
                 document.getElementById('recentGamesCount').textContent = recentGames.length;
             }
 
-            // Load reviews count (placeholder - you might need to add this endpoint)
-            document.getElementById('reviewsCount').textContent = '0';
+            // Load reviews count
+            const reviewsResponse = await fetch(`${this.baseURL}/user/review-count`, {
+                headers: accountSystem.getAuthHeaders()
+            });
+            if (reviewsResponse.ok) {
+                const reviewData = await reviewsResponse.json();
+                document.getElementById('reviewsCount').textContent = reviewData.review_count;
+            }
 
         } catch (error) {
             console.error('Error loading account stats:', error);
+            // Set fallback values
+            document.getElementById('favoritesCount').textContent = '0';
+            document.getElementById('recentGamesCount').textContent = '0';
+            document.getElementById('reviewsCount').textContent = '0';
         }
     }
 

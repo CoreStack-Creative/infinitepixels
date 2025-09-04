@@ -712,16 +712,19 @@ app.post('/user/recent-games', async (req, res) => {
 
 // ============ EXISTING REVIEW ROUTES ============
 
-// GET /reviews/:gameId - Get all reviews for a specific game
+// GET /reviews/:gameId - Get all reviews for a specific game (enhanced)
 app.get('/reviews/:gameId', async (req, res) => {
     try {
         const { gameId } = req.params;
+        const { limit = 50, offset = 0 } = req.query;
         
+        // Use the enhanced view for better data
         const { data, error } = await supabase
-            .from('reviews')
+            .from('review_details')
             .select('*')
             .eq('game_id', gameId)
-            .order('created_at', { ascending: false });
+            .order('created_at', { ascending: false })
+            .range(parseInt(offset), parseInt(offset) + parseInt(limit) - 1);
         
         if (error) {
             console.error('Database error:', error);
@@ -730,7 +733,29 @@ app.get('/reviews/:gameId', async (req, res) => {
             });
         }
         
-        res.json(data || []);
+        // Add user authentication context if available
+        const authHeader = req.headers.authorization;
+        let currentUserId = null;
+        
+        if (authHeader) {
+            try {
+                const token = authHeader.replace('Bearer ', '');
+                const { data: { user } } = await supabase.auth.getUser(token);
+                if (user) currentUserId = user.id;
+            } catch (authError) {
+                // Continue without user context
+            }
+        }
+        
+        // Enhance reviews with user context
+        const enhancedReviews = (data || []).map(review => ({
+            ...review,
+            is_own_review: currentUserId === review.user_id,
+            can_edit: currentUserId === review.user_id,
+            display_name: review.username || 'Anonymous'
+        }));
+        
+        res.json(enhancedReviews);
     } catch (err) {
         console.error('Server error:', err);
         res.status(500).json({
@@ -739,10 +764,26 @@ app.get('/reviews/:gameId', async (req, res) => {
     }
 });
 
-// POST /reviews - Add a new review
+// POST /reviews - Add a new review (enhanced with account system)
 app.post('/reviews', async (req, res) => {
     try {
-        const { game_id, user_id, rating, review_text } = req.body;
+        const { game_id, rating, review_text } = req.body;
+        let user_id = null;
+        
+        // Check if user is authenticated (optional for reviews)
+        const authHeader = req.headers.authorization;
+        if (authHeader) {
+            try {
+                const token = authHeader.replace('Bearer ', '');
+                const { data: { user }, error } = await supabase.auth.getUser(token);
+                if (!error && user) {
+                    user_id = user.id;
+                }
+            } catch (authError) {
+                // Continue without user_id if auth fails (allows anonymous reviews)
+                console.log('Auth check failed, allowing anonymous review');
+            }
+        }
         
         // Validation
         if (!game_id) {
@@ -763,16 +804,47 @@ app.post('/reviews', async (req, res) => {
             });
         }
         
+        if (review_text.trim().length > 1000) {
+            return res.status(400).json({
+                error: 'review_text must be less than 1000 characters'
+            });
+        }
+        
+        // If user is authenticated, check if they already reviewed this game
+        if (user_id) {
+            const { data: existingReview } = await supabase
+                .from('reviews')
+                .select('id')
+                .eq('user_id', user_id)
+                .eq('game_id', game_id)
+                .single();
+                
+            if (existingReview) {
+                return res.status(400).json({
+                    error: 'You have already reviewed this game. Please update your existing review instead.'
+                });
+            }
+        }
+        
         // Insert new review
+        const reviewData = {
+            game_id,
+            rating: parseInt(rating),
+            review_text: review_text.trim()
+        };
+        
+        // Add user_id only if user is authenticated
+        if (user_id) {
+            reviewData.user_id = user_id;
+        }
+        
         const { data, error } = await supabase
             .from('reviews')
-            .insert([{
-                game_id,
-                user_id: user_id || null,
-                rating: parseInt(rating),
-                review_text: review_text.trim()
-            }])
-            .select()
+            .insert([reviewData])
+            .select(`
+                *,
+                username
+            `)
             .single();
         
         if (error) {
@@ -832,6 +904,293 @@ app.get('/reviews/:gameId/average', async (req, res) => {
         });
     }
 });
+
+// ============ ENHANCED REVIEW ROUTES WITH ACCOUNT SYSTEM ============
+
+// GET /user/reviews - Get user's own reviews
+app.get('/user/reviews', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({ error: 'No authorization header' });
+        }
+        
+        const token = authHeader.replace('Bearer ', '');
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+        
+        if (error || !user) {
+            return res.status(401).json({ error: 'Invalid token' });
+        }
+        
+        const { data, error: fetchError } = await supabase
+            .from('reviews')
+            .select('*')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false });
+        
+        if (fetchError) {
+            return res.status(400).json({
+                error: fetchError.message
+            });
+        }
+        
+        res.json(data || []);
+    } catch (err) {
+        console.error('Get user reviews error:', err);
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+    }
+});
+
+// GET /reviews/:gameId/user - Check if current user has reviewed this game
+app.get('/reviews/:gameId/user', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.json({ hasReviewed: false, review: null });
+        }
+        
+        const token = authHeader.replace('Bearer ', '');
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+        
+        if (error || !user) {
+            return res.json({ hasReviewed: false, review: null });
+        }
+        
+        const { gameId } = req.params;
+        
+        const { data, error: fetchError } = await supabase
+            .from('reviews')
+            .select('*')
+            .eq('game_id', gameId)
+            .eq('user_id', user.id)
+            .single();
+        
+        if (fetchError && fetchError.code !== 'PGRST116') { // PGRST116 = no rows returned
+            return res.status(400).json({
+                error: fetchError.message
+            });
+        }
+        
+        res.json({
+            hasReviewed: !!data,
+            review: data || null
+        });
+    } catch (err) {
+        console.error('Check user review error:', err);
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+    }
+});
+
+// PUT /reviews/:reviewId - Update user's own review
+app.put('/reviews/:reviewId', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({ error: 'No authorization header' });
+        }
+        
+        const token = authHeader.replace('Bearer ', '');
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+        
+        if (error || !user) {
+            return res.status(401).json({ error: 'Invalid token' });
+        }
+        
+        const { reviewId } = req.params;
+        const { rating, review_text } = req.body;
+        
+        // Validation
+        if (!rating || rating < 1 || rating > 5 || !Number.isInteger(rating)) {
+            return res.status(400).json({
+                error: 'rating must be an integer between 1 and 5'
+            });
+        }
+        
+        if (!review_text || review_text.trim().length === 0) {
+            return res.status(400).json({
+                error: 'review_text is required'
+            });
+        }
+        
+        // Update review (RLS will ensure user can only update their own)
+        const { data, error: updateError } = await supabase
+            .from('reviews')
+            .update({
+                rating: parseInt(rating),
+                review_text: review_text.trim(),
+                updated_at: new Date().toISOString()
+            })
+            .eq('id', reviewId)
+            .eq('user_id', user.id) // Extra safety check
+            .select()
+            .single();
+        
+        if (updateError) {
+            return res.status(400).json({
+                error: updateError.message
+            });
+        }
+        
+        if (!data) {
+            return res.status(404).json({
+                error: 'Review not found or you do not have permission to update it'
+            });
+        }
+        
+        res.json(data);
+    } catch (err) {
+        console.error('Update review error:', err);
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+    }
+});
+
+// DELETE /reviews/:reviewId - Delete user's own review
+app.delete('/reviews/:reviewId', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({ error: 'No authorization header' });
+        }
+        
+        const token = authHeader.replace('Bearer ', '');
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+        
+        if (error || !user) {
+            return res.status(401).json({ error: 'Invalid token' });
+        }
+        
+        const { reviewId } = req.params;
+        
+        // Delete review (RLS will ensure user can only delete their own)
+        const { error: deleteError } = await supabase
+            .from('reviews')
+            .delete()
+            .eq('id', reviewId)
+            .eq('user_id', user.id); // Extra safety check
+        
+        if (deleteError) {
+            return res.status(400).json({
+                error: deleteError.message
+            });
+        }
+        
+        res.json({ message: 'Review deleted successfully' });
+    } catch (err) {
+        console.error('Delete review error:', err);
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+    }
+});
+
+// GET /reviews/:gameId/stats - Get comprehensive game review statistics
+app.get('/reviews/:gameId/stats', async (req, res) => {
+    try {
+        const { gameId } = req.params;
+        
+        // Use the SQL function we created for comprehensive stats
+        const { data, error } = await supabase
+            .rpc('get_game_review_stats', { game_id_param: gameId });
+        
+        if (error) {
+            console.error('Database error:', error);
+            return res.status(500).json({
+                error: 'Failed to fetch review statistics'
+            });
+        }
+        
+        const stats = data && data.length > 0 ? data[0] : {
+            average_rating: 0,
+            total_reviews: 0,
+            rating_breakdown: {
+                '5_star': 0,
+                '4_star': 0,
+                '3_star': 0,
+                '2_star': 0,
+                '1_star': 0
+            }
+        };
+        
+        res.json({
+            game_id: gameId,
+            ...stats
+        });
+    } catch (err) {
+        console.error('Server error:', err);
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+    }
+});
+
+// POST /reviews/:reviewId/helpful - Mark a review as helpful
+app.post('/reviews/:reviewId/helpful', async (req, res) => {
+    try {
+        const { reviewId } = req.params;
+        
+        // Call the SQL function to increment helpful count
+        const { error } = await supabase
+            .rpc('mark_review_helpful', { review_id: parseInt(reviewId) });
+        
+        if (error) {
+            return res.status(400).json({
+                error: error.message
+            });
+        }
+        
+        res.json({ message: 'Review marked as helpful' });
+    } catch (err) {
+        console.error('Mark helpful error:', err);
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+    }
+});
+
+// GET /user/review-count - Get total review count for authenticated user
+app.get('/user/review-count', async (req, res) => {
+    try {
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({ error: 'No authorization header' });
+        }
+        
+        const token = authHeader.replace('Bearer ', '');
+        const { data: { user }, error } = await supabase.auth.getUser(token);
+        
+        if (error || !user) {
+            return res.status(401).json({ error: 'Invalid token' });
+        }
+        
+        // Use the SQL function to get review count
+        const { data, error: countError } = await supabase
+            .rpc('get_user_review_count', { user_uuid: user.id });
+        
+        if (countError) {
+            return res.status(400).json({
+                error: countError.message
+            });
+        }
+        
+        res.json({ 
+            user_id: user.id,
+            review_count: data || 0 
+        });
+    } catch (err) {
+        console.error('Get review count error:', err);
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+    }
+});
+
+// ============ END ENHANCED REVIEW ROUTES ============
 
 // Error handling middleware
 app.use((err, req, res, next) => {
