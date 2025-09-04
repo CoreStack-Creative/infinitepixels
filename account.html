@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Recently Played - InfinitePixels</title>
+  <title>Account - InfinitePixels</title>
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="stylesheet" href="style.css" />
   <link
@@ -238,36 +238,24 @@
    </div>
 
     <main class="main-content" id="mainContent">
-        <div class="page-header">
-            <h1 class="page-title">Recently Played</h1>
-            <p class="page-subtitle">Your gaming journey continues - pick up where you left off</p>
-        </div>
-
-        <div class="recently-played-container">
-            <div class="controls-section">
-                <button class="clear-history-btn" id="clearHistoryBtn">
-                    <i class="fas fa-trash"></i>
-                    Clear History
-                </button>
-            </div>
-        
-            <div class="games-grid" id="recentGamesGrid">
-                <!-- Recently played games will be dynamically inserted here -->
+        <div class="account-page-container">
+            <div class="account-page-header">
+                <h1>My Account</h1>
+                <p>Manage your profile, preferences, and account settings</p>
             </div>
 
-            <div class="empty-state" id="emptyState" style="display: none;">
-                <div class="empty-icon">
-                    <i class="fas fa-clock"></i>
+            <div class="account-content" id="accountContent">
+                <!-- Content will be populated by JavaScript -->
+                <div class="loading-spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Loading your account...</p>
                 </div>
-                <h3>No Recent Games</h3>
-                <p>Start playing some games and they'll appear here!</p>
-                <a href="games.html" class="browse-games-btn">Browse Games</a>
             </div>
         </div>
     </main>
 
     <script src="account-system.js"></script>
     <script src="javascript.js"></script>
-    <script src="recent-page.js"></script>
+    <script src="account-page.js"></script>
 </body>
 </html>

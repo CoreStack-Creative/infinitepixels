@@ -3233,6 +3233,1754 @@ body {
     margin-bottom: 2rem;
 }
 
+/* ==================== FAVORITES PAGE STYLES ==================== */
+
+.favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    padding: 20px 0;
+}
+
+/* ==================== RECENT GAMES PAGE STYLES ==================== */
+
+.recent-games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    padding: 20px 0;
+}
+
+.recent-game-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    border: 1px solid rgba(127, 170, 254, 0.2);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.recent-game-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(127, 170, 254, 0.4);
+    box-shadow: 0 8px 32px rgba(127, 170, 254, 0.2);
+}
+
+.recent-game-card .game-image-container {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+}
+
+.recent-game-card .game-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.recent-game-card:hover .game-image {
+    transform: scale(1.05);
+}
+
+.recent-game-card .game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+    gap: 16px;
+}
+
+.recent-game-card:hover .game-overlay {
+    opacity: 1;
+}
+
+.recent-game-card .play-btn {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.recent-game-card .play-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(127, 170, 254, 0.4);
+}
+
+.recent-game-card .favorite-btn {
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+}
+
+.recent-game-card .favorite-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1);
+}
+
+.recent-game-card .favorite-btn.favorited {
+    background: rgba(220, 53, 69, 0.2);
+    border-color: rgba(220, 53, 69, 0.4);
+    color: #dc3545;
+}
+
+.recent-game-card .favorite-btn.favorited:hover {
+    background: rgba(220, 53, 69, 0.3);
+}
+
+.last-played-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #7faafe;
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    backdrop-filter: blur(10px);
+}
+
+.recent-game-card .game-info {
+    padding: 20px;
+}
+
+.recent-game-card .game-title {
+    color: #fff;
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.recent-game-card .game-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 0.85em;
+}
+
+.recent-game-card .game-category {
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+.last-played-full {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.recent-game-card .game-description {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9em;
+    line-height: 1.4;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Loading and Error States */
+.loading-recent,
+.error-recent,
+.not-logged-in-recent {
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(255, 255, 255, 0.7);
+    grid-column: 1 / -1;
+}
+
+.loading-recent i,
+.error-recent i,
+.not-logged-in-recent i {
+    font-size: 3em;
+    margin-bottom: 20px;
+    color: #7faafe;
+}
+
+.error-recent i {
+    color: #ffc107;
+}
+
+.loading-recent h2,
+.error-recent h2,
+.not-logged-in-recent h2 {
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.retry-btn,
+.recent-games-login-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.retry-btn:hover,
+.recent-games-login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(127, 170, 254, 0.3);
+}
+
+/* No Recent Games State */
+.no-recent-games {
+    text-align: center;
+    padding: 80px 20px;
+    grid-column: 1 / -1;
+}
+
+.no-recent-content {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.no-recent-games i {
+    font-size: 4em;
+    color: #7faafe;
+    margin-bottom: 24px;
+}
+
+.no-recent-games h2 {
+    color: #fff;
+    font-size: 1.8em;
+    margin-bottom: 16px;
+}
+
+.no-recent-games p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1em;
+    line-height: 1.5;
+    margin-bottom: 32px;
+}
+
+.no-recent-games .browse-games-btn {
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 1.1em;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.no-recent-games .browse-games-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(127, 170, 254, 0.4);
+    text-decoration: none;
+    color: white;
+}
+
+/* Clear Recent Games Button (if you want to add one) */
+.clear-recent-btn {
+    margin-top: 20px;
+    padding: 8px 16px;
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    border-radius: 6px;
+    color: #dc3545;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.clear-recent-btn:hover {
+    background: rgba(220, 53, 69, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .recent-games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    
+    .recent-game-card .game-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    
+    .recent-game-card .game-overlay {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .recent-game-card .play-btn {
+        padding: 10px 16px;
+        font-size: 0.9em;
+    }
+    
+    .last-played-badge {
+        font-size: 0.75em;
+        padding: 4px 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .recent-games-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .recent-game-card .game-info {
+        padding: 16px;
+    }
+    
+    .no-recent-games {
+        padding: 60px 20px;
+    }
+    
+    .no-recent-games h2 {
+        font-size: 1.5em;
+    }
+    
+    .last-played-badge {
+        position: static;
+        margin-bottom: 8px;
+        align-self: flex-start;
+    }
+}
+
+/* Light Theme Overrides */
+body.light-theme .recent-game-card {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .recent-game-card:hover {
+    border-color: rgba(127, 170, 254, 0.4);
+    box-shadow: 0 8px 32px rgba(127, 170, 254, 0.15);
+}
+
+body.light-theme .recent-game-card .game-title {
+    color: #333;
+}
+
+body.light-theme .last-played-full {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+body.light-theme .recent-game-card .game-description {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+body.light-theme .loading-recent,
+body.light-theme .error-recent,
+body.light-theme .not-logged-in-recent {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+body.light-theme .loading-recent h2,
+body.light-theme .error-recent h2,
+body.light-theme .not-logged-in-recent h2 {
+    color: #333;
+}
+
+body.light-theme .no-recent-games h2 {
+    color: #333;
+}
+
+body.light-theme .no-recent-games p {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+body.light-theme .last-played-badge {
+    background: rgba(255, 255, 255, 0.9);
+    color: #5a67d8;
+}
+
+/* ==================== END RECENT GAMES PAGE STYLES ==================== */
+
+.favorite-game-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    border: 1px solid rgba(127, 170, 254, 0.2);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.favorite-game-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(127, 170, 254, 0.4);
+    box-shadow: 0 8px 32px rgba(127, 170, 254, 0.2);
+}
+
+.game-image-container {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+}
+
+.game-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.favorite-game-card:hover .game-image {
+    transform: scale(1.05);
+}
+
+.game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+    gap: 16px;
+}
+
+.favorite-game-card:hover .game-overlay {
+    opacity: 1;
+}
+
+.play-btn {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.play-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 16px rgba(127, 170, 254, 0.4);
+}
+
+.remove-favorite-btn {
+    width: 44px;
+    height: 44px;
+    background: rgba(220, 53, 69, 0.2);
+    border: 1px solid rgba(220, 53, 69, 0.4);
+    border-radius: 50%;
+    color: #dc3545;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1em;
+}
+
+.remove-favorite-btn:hover {
+    background: rgba(220, 53, 69, 0.3);
+    transform: scale(1.1);
+}
+
+.game-info {
+    padding: 20px;
+}
+
+.game-title {
+    color: #fff;
+    font-size: 1.2em;
+    font-weight: 600;
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.game-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 0.85em;
+}
+
+.game-category {
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+.added-date {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.game-description {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 0.9em;
+    line-height: 1.4;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Loading and Error States */
+.loading-favorites,
+.error-favorites,
+.not-logged-in-favorites {
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.loading-favorites i,
+.error-favorites i,
+.not-logged-in-favorites i {
+    font-size: 3em;
+    margin-bottom: 20px;
+    color: #7faafe;
+}
+
+.error-favorites i {
+    color: #ffc107;
+}
+
+.loading-favorites h2,
+.error-favorites h2,
+.not-logged-in-favorites h2 {
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.retry-btn,
+.login-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.retry-btn:hover,
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(127, 170, 254, 0.3);
+}
+
+/* No Favorites State */
+.no-favorites {
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.no-favorites-content {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.no-favorites i {
+    font-size: 4em;
+    color: #7faafe;
+    margin-bottom: 24px;
+}
+
+.no-favorites h2 {
+    color: #fff;
+    font-size: 1.8em;
+    margin-bottom: 16px;
+}
+
+.no-favorites p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1em;
+    line-height: 1.5;
+    margin-bottom: 32px;
+}
+
+.browse-games-btn {
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 1.1em;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.browse-games-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(127, 170, 254, 0.4);
+    text-decoration: none;
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .favorites-grid {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+    }
+    
+    .game-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+    
+    .game-overlay {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .play-btn {
+        padding: 10px 16px;
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+    .favorites-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .game-info {
+        padding: 16px;
+    }
+    
+    .no-favorites {
+        padding: 60px 20px;
+    }
+    
+    .no-favorites h2 {
+        font-size: 1.5em;
+    }
+}
+
+/* Light Theme Overrides */
+body.light-theme .favorite-game-card {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .favorite-game-card:hover {
+    border-color: rgba(127, 170, 254, 0.4);
+    box-shadow: 0 8px 32px rgba(127, 170, 254, 0.15);
+}
+
+body.light-theme .game-title {
+    color: #333;
+}
+
+body.light-theme .added-date {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+body.light-theme .game-description {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+body.light-theme .loading-favorites,
+body.light-theme .error-favorites,
+body.light-theme .not-logged-in-favorites {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+body.light-theme .loading-favorites h2,
+body.light-theme .error-favorites h2,
+body.light-theme .not-logged-in-favorites h2 {
+    color: #333;
+}
+
+body.light-theme .no-favorites h2 {
+    color: #333;
+}
+
+body.light-theme .no-favorites p {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+/* ==================== END FAVORITES PAGE STYLES ==================== */
+
+/* ==================== ACCOUNT SYSTEM STYLES ==================== */
+
+/* ==================== ACCOUNT PAGE STYLES ==================== */
+
+.account-page-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 80px 20px 40px;
+}
+
+.account-page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.account-page-header h1 {
+    font-size: 2.5em;
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+}
+
+.account-page-header p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.1em;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    text-align: center;
+    padding: 60px 20px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.loading-spinner i {
+    font-size: 2em;
+    margin-bottom: 15px;
+    color: #7faafe;
+}
+
+/* Not Logged In State */
+.not-logged-in {
+    text-align: center;
+    padding: 60px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    border: 1px solid rgba(127, 170, 254, 0.2);
+}
+
+.not-logged-in-icon {
+    font-size: 4em;
+    color: #7faafe;
+    margin-bottom: 20px;
+}
+
+.not-logged-in h2 {
+    color: #fff;
+    margin-bottom: 10px;
+}
+
+.not-logged-in p {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 30px;
+}
+
+.login-redirect-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.login-redirect-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(127, 170, 254, 0.3);
+}
+
+/* Account Sections */
+.account-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.account-section {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px;
+    border: 1px solid rgba(127, 170, 254, 0.2);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.account-section:hover {
+    border-color: rgba(127, 170, 254, 0.3);
+    box-shadow: 0 4px 20px rgba(127, 170, 254, 0.1);
+}
+
+.section-header {
+    padding: 20px 24px;
+    background: linear-gradient(135deg, rgba(127, 170, 254, 0.1), rgba(138, 43, 226, 0.1));
+    border-bottom: 1px solid rgba(127, 170, 254, 0.2);
+}
+
+.section-header h2 {
+    color: #7faafe;
+    font-size: 1.3em;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.section-content {
+    padding: 24px;
+}
+
+/* Profile Avatar Section */
+.profile-avatar-section {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(127, 170, 254, 0.2);
+}
+
+.current-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid rgba(127, 170, 254, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.current-avatar .profile-pic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.current-avatar .default-avatar {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8em;
+    font-weight: 600;
+    color: white;
+}
+
+.avatar-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.change-avatar-btn,
+.remove-avatar-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.change-avatar-btn {
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    color: white;
+}
+
+.change-avatar-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(127, 170, 254, 0.3);
+}
+
+.remove-avatar-btn {
+    background: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.remove-avatar-btn:hover {
+    background: rgba(220, 53, 69, 0.2);
+}
+
+/* Profile Info */
+.profile-info {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.info-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.info-group label {
+    color: #7faafe;
+    font-weight: 600;
+    font-size: 0.9em;
+}
+
+.info-group input {
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(127, 170, 254, 0.3);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.info-group input:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.info-group input:focus:not(:disabled) {
+    outline: none;
+    border-color: #7faafe;
+    box-shadow: 0 0 0 3px rgba(127, 170, 254, 0.1);
+}
+
+.input-with-edit {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.edit-btn,
+.cancel-btn {
+    padding: 8px;
+    background: rgba(127, 170, 254, 0.1);
+    border: 1px solid rgba(127, 170, 254, 0.3);
+    border-radius: 6px;
+    color: #7faafe;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-btn:hover,
+.cancel-btn:hover {
+    background: rgba(127, 170, 254, 0.2);
+}
+
+.cancel-btn {
+    background: rgba(220, 53, 69, 0.1);
+    border-color: rgba(220, 53, 69, 0.3);
+    color: #dc3545;
+}
+
+.cancel-btn:hover {
+    background: rgba(220, 53, 69, 0.2);
+}
+
+.help-text {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85em;
+    margin-top: 4px;
+}
+
+/* Password Form */
+.password-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 400px;
+}
+
+.change-password-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+}
+
+.change-password-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(127, 170, 254, 0.3);
+}
+
+.change-password-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(127, 170, 254, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    border-color: rgba(127, 170, 254, 0.4);
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    color: white;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-number {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #7faafe;
+}
+
+.stat-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9em;
+}
+
+/* Quick Actions */
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+}
+
+.action-btn {
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(127, 170, 254, 0.2);
+    border-radius: 12px;
+    color: #fff;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.action-btn:hover {
+    border-color: rgba(127, 170, 254, 0.4);
+    background: rgba(127, 170, 254, 0.1);
+    transform: translateY(-2px);
+    text-decoration: none;
+    color: #7faafe;
+}
+
+.action-btn i {
+    font-size: 1.5em;
+    color: #7faafe;
+}
+
+.action-btn span {
+    font-size: 0.95em;
+    font-weight: 500;
+}
+
+/* Danger Section */
+.danger-section {
+    border-color: rgba(220, 53, 69, 0.3);
+}
+
+.danger-section .section-header {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(220, 53, 69, 0.05));
+    border-bottom-color: rgba(220, 53, 69, 0.2);
+}
+
+.danger-section .section-header h2 {
+    color: #dc3545;
+}
+
+.danger-actions {
+    display: flex;
+    gap: 16px;
+}
+
+.danger-btn {
+    padding: 12px 24px;
+    background: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    border-radius: 8px;
+    color: #dc3545;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95em;
+}
+
+.danger-btn:hover {
+    background: rgba(220, 53, 69, 0.2);
+    transform: translateY(-1px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .account-page-container {
+        padding: 80px 16px 40px;
+    }
+    
+    .section-content {
+        padding: 20px;
+    }
+    
+    .profile-avatar-section {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-actions {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .danger-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .account-page-header h1 {
+        font-size: 2em;
+    }
+    
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Light Theme Overrides */
+body.light-theme .account-page-header p {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+body.light-theme .loading-spinner {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+body.light-theme .not-logged-in {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .not-logged-in h2 {
+    color: #333;
+}
+
+body.light-theme .not-logged-in p {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+body.light-theme .account-section {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .section-header {
+    background: linear-gradient(135deg, rgba(127, 170, 254, 0.1), rgba(138, 43, 226, 0.1));
+    border-bottom-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .section-header h2 {
+    color: #5a67d8;
+}
+
+body.light-theme .info-group label {
+    color: #5a67d8;
+}
+
+body.light-theme .info-group input {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.2);
+    color: #333;
+}
+
+body.light-theme .info-group input:focus:not(:disabled) {
+    border-color: #5a67d8;
+    box-shadow: 0 0 0 3px rgba(127, 170, 254, 0.1);
+}
+
+body.light-theme .edit-btn,
+body.light-theme .cancel-btn {
+    background: rgba(127, 170, 254, 0.1);
+    border-color: rgba(127, 170, 254, 0.3);
+    color: #5a67d8;
+}
+
+body.light-theme .help-text {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+body.light-theme .stat-card {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .stat-number {
+    color: #5a67d8;
+}
+
+body.light-theme .stat-label {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+body.light-theme .action-btn {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+body.light-theme .action-btn:hover {
+    border-color: rgba(127, 170, 254, 0.4);
+    background: rgba(127, 170, 254, 0.1);
+    color: #5a67d8;
+}
+
+body.light-theme .action-btn i {
+    color: #5a67d8;
+}
+
+/* ==================== END ACCOUNT PAGE STYLES ==================== */
+
+/* Account Container */
+.account-container {
+    position: relative;
+    z-index: 100;
+    margin-left: 15px;
+}
+
+.account-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Account Button */
+.account-btn {
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.account-btn:hover {
+    background: rgba(127, 170, 254, 0.1);
+    transform: scale(1.05);
+}
+
+/* Account Avatar */
+.account-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    color: white;
+    font-size: 1.1em;
+    transition: all 0.3s ease;
+}
+
+.account-avatar i {
+    font-size: 16px;
+}
+
+.account-avatar .profile-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid rgba(127, 170, 254, 0.3);
+}
+
+.account-avatar .profile-initial {
+    font-weight: 600;
+    font-size: 14px;
+    color: white;
+}
+
+/* Account Dropdown */
+.account-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    min-width: 320px;
+    background: rgba(30, 30, 63, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    color: #fff;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(127, 170, 254, 0.2);
+    overflow: hidden;
+}
+
+.account-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.account-dropdown::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 18px;
+    width: 12px;
+    height: 12px;
+    background: rgba(30, 30, 63, 0.95);
+    transform: rotate(45deg);
+    border-top: 1px solid rgba(127, 170, 254, 0.2);
+    border-left: 1px solid rgba(127, 170, 254, 0.2);
+}
+
+.account-dropdown-content {
+    padding: 0;
+}
+
+/* Account Header (when logged in) */
+.account-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(127, 170, 254, 0.2);
+    background: linear-gradient(135deg, rgba(127, 170, 254, 0.1), rgba(138, 43, 226, 0.1));
+}
+
+.account-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.account-username {
+    font-weight: 600;
+    font-size: 1.1em;
+    color: #7faafe;
+}
+
+.account-email {
+    font-size: 0.9em;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Account Menu */
+.account-menu {
+    padding: 8px 0;
+}
+
+.account-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #fff;
+    background: none;
+    border: none;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 0.95em;
+}
+
+.account-menu-item:hover {
+    background: rgba(127, 170, 254, 0.1);
+    color: #7faafe;
+}
+
+.account-menu-item i {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+.account-menu-divider {
+    height: 1px;
+    background: rgba(127, 170, 254, 0.2);
+    margin: 8px 0;
+}
+
+.logout-btn:hover {
+    background: rgba(220, 53, 69, 0.1) !important;
+    color: #dc3545 !important;
+}
+
+/* Auth Form Container (when not logged in) */
+.auth-form-container {
+    padding: 20px;
+    width: 100%;
+}
+
+/* Auth Tabs */
+.auth-tabs {
+    display: flex;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 12px 16px;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.auth-tab.active {
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    color: white;
+}
+
+.auth-tab:hover:not(.active) {
+    background: rgba(127, 170, 254, 0.1);
+    color: #7faafe;
+}
+
+/* Auth Forms */
+.auth-form {
+    transition: all 0.3s ease;
+}
+
+.auth-form.hidden {
+    display: none;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(127, 170, 254, 0.3);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.95em;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #7faafe;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(127, 170, 254, 0.1);
+}
+
+.form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Auth Buttons */
+.auth-submit-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #7faafe, #8a2be2);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 0.95em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 12px;
+}
+
+.auth-submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(127, 170, 254, 0.3);
+}
+
+.auth-submit-btn:active {
+    transform: translateY(0);
+}
+
+.forgot-password-btn,
+.back-btn {
+    width: 100%;
+    padding: 8px;
+    background: none;
+    border: none;
+    color: #7faafe;
+    font-size: 0.85em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: underline;
+}
+
+.forgot-password-btn:hover,
+.back-btn:hover {
+    color: #8a2be2;
+}
+
+/* Auth Messages */
+.auth-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    z-index: 2000;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+    max-width: 300px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.auth-message.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.auth-message.success {
+    background: linear-gradient(135deg, #28a745, #20c997);
+}
+
+.auth-message.error {
+    background: linear-gradient(135deg, #dc3545, #e83e8c);
+}
+
+.auth-message.info {
+    background: linear-gradient(135deg, #17a2b8, #6f42c1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .account-dropdown {
+        min-width: 280px;
+        right: -10px;
+    }
+    
+    .auth-form-container {
+        padding: 16px;
+    }
+    
+    .auth-message {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .account-dropdown {
+        min-width: calc(100vw - 40px);
+        right: -140px;
+    }
+    
+    .account-dropdown::before {
+        right: 158px;
+    }
+}
+
+/* Light Theme Overrides */
+body.light-theme .account-dropdown {
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .account-dropdown::before {
+    background: rgba(255, 255, 255, 0.95);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .account-header {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, rgba(127, 170, 254, 0.1), rgba(138, 43, 226, 0.1));
+}
+
+body.light-theme .account-username {
+    color: #5a67d8;
+}
+
+body.light-theme .account-email {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+body.light-theme .account-menu-item {
+    color: #333;
+}
+
+body.light-theme .account-menu-item:hover {
+    background: rgba(127, 170, 254, 0.1);
+    color: #5a67d8;
+}
+
+body.light-theme .account-menu-divider {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+body.light-theme .auth-tabs {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+body.light-theme .auth-tab {
+    color: rgba(0, 0, 0, 0.7);
+}
+
+body.light-theme .auth-tab:hover:not(.active) {
+    background: rgba(127, 170, 254, 0.1);
+    color: #5a67d8;
+}
+
+body.light-theme .form-group input {
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    color: #333;
+}
+
+body.light-theme .form-group input:focus {
+    border-color: #5a67d8;
+    background: rgba(0, 0, 0, 0.08);
+    box-shadow: 0 0 0 3px rgba(127, 170, 254, 0.1);
+}
+
+body.light-theme .form-group input::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+body.light-theme .forgot-password-btn,
+body.light-theme .back-btn {
+    color: #5a67d8;
+}
+
+body.light-theme .forgot-password-btn:hover,
+body.light-theme .back-btn:hover {
+    color: #8a2be2;
+}
+
+/* ==================== END ACCOUNT SYSTEM STYLES ==================== */
+
 .summary-header {
     text-align: center;
     margin-bottom: 2rem;
