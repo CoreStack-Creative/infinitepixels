@@ -35,13 +35,17 @@ class AccountSystem {
     }
 
     addAccountUI() {
-        // Find the search container in the top bar
-        const searchContainer = document.querySelector('.search-container');
-        if (!searchContainer) return;
+        // Find the top bar
+        const topBar = document.querySelector('.top-bar');
+        if (!topBar) return;
+
+        // Check if account container already exists
+        if (document.getElementById('accountContainer')) return;
 
         // Create account container
         const accountContainer = document.createElement('div');
         accountContainer.className = 'account-container';
+        accountContainer.id = 'accountContainer';
         accountContainer.innerHTML = `
             <div class="account-wrapper">
                 <button class="account-btn" id="accountBtn">
@@ -57,8 +61,8 @@ class AccountSystem {
             </div>
         `;
 
-        // Insert after search container
-        searchContainer.parentNode.insertBefore(accountContainer, searchContainer.nextSibling);
+        // Append to the end of the top bar (right side)
+        topBar.appendChild(accountContainer);
 
         this.updateAccountUI();
     }
@@ -223,6 +227,9 @@ class AccountSystem {
                 this.updateAccountUI();
                 this.showMessage('Logged in successfully!', 'success');
                 
+                // Sync local data to server
+                this.syncLocalDataToServer();
+                
                 // Close dropdown
                 document.getElementById('accountDropdown').classList.remove('show');
             } else {
@@ -312,6 +319,13 @@ class AccountSystem {
             
             // Close dropdown
             document.getElementById('accountDropdown').classList.remove('show');
+            
+            // Refresh recent games page if we're on it to show local data
+            if (window.location.pathname.includes('recent.html') && window.recentGamesManager) {
+                setTimeout(() => {
+                    window.recentGamesManager.loadRecentGames();
+                }, 100);
+            }
         } catch (error) {
             console.error('Logout error:', error);
         }
@@ -400,19 +414,57 @@ class AccountSystem {
     }
 
     async addToRecentGames(gameId) {
-        if (!this.session) return;
+        // Always add to local storage for immediate feedback
+        this.addToLocalRecentGames(gameId);
 
+        // If logged in, also sync to server
+        if (this.session) {
+            try {
+                await fetch(`${this.baseURL}/user/recent-games`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${this.session.access_token}`
+                    },
+                    body: JSON.stringify({ game_id: gameId })
+                });
+            } catch (error) {
+                console.error('Add recent game error:', error);
+            }
+        }
+    }
+
+    addToLocalRecentGames(gameId) {
         try {
-            await fetch(`${this.baseURL}/user/recent-games`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.session.access_token}`
-                },
-                body: JSON.stringify({ game_id: gameId })
-            });
+            const storageKey = 'infinitePixels_recentlyPlayed';
+            const maxGames = 24;
+            
+            let recentGames = [];
+            const stored = localStorage.getItem(storageKey);
+            if (stored) {
+                recentGames = JSON.parse(stored);
+            }
+            
+            // Remove the game if it already exists (to move it to the front)
+            recentGames = recentGames.filter(g => g.slug !== gameId);
+            
+            // Add the game to the beginning with current timestamp
+            const gameWithTimestamp = {
+                slug: gameId,
+                lastPlayed: Date.now()
+            };
+            
+            recentGames.unshift(gameWithTimestamp);
+            
+            // Keep only the most recent games
+            if (recentGames.length > maxGames) {
+                recentGames = recentGames.slice(0, maxGames);
+            }
+            
+            // Save to localStorage
+            localStorage.setItem(storageKey, JSON.stringify(recentGames));
         } catch (error) {
-            console.error('Add recent game error:', error);
+            console.error('Error saving to local recent games:', error);
         }
     }
 
@@ -461,6 +513,44 @@ class AccountSystem {
         return {
             'Authorization': `Bearer ${this.session.access_token}`
         };
+    }
+
+    async syncLocalDataToServer() {
+        if (!this.session) return;
+
+        try {
+            // Sync local recent games to server
+            const localRecent = localStorage.getItem('infinitePixels_recentlyPlayed');
+            if (localRecent) {
+                const recentGames = JSON.parse(localRecent);
+                
+                // Sync each game to server (most recent first)
+                for (const game of recentGames.slice(0, 10)) { // Limit to 10 most recent
+                    try {
+                        await fetch(`${this.baseURL}/user/recent-games`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${this.session.access_token}`
+                            },
+                            body: JSON.stringify({ 
+                                game_id: game.slug,
+                                last_played: new Date(game.lastPlayed).toISOString()
+                            })
+                        });
+                    } catch (error) {
+                        console.warn('Failed to sync recent game:', game.slug, error);
+                    }
+                }
+            }
+
+            // You could also sync favorites here if they're stored locally
+            // const localFavorites = localStorage.getItem('infinitepixels_favorites');
+            // ... sync favorites logic ...
+
+        } catch (error) {
+            console.error('Error syncing local data to server:', error);
+        }
     }
 }
 

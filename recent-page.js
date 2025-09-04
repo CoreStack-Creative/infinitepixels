@@ -35,23 +35,6 @@ class RecentGamesPageManager {
             return;
         }
 
-        if (!accountSystem || !accountSystem.isLoggedIn()) {
-            // User not logged in
-            recentGamesGrid.innerHTML = `
-                <div class="not-logged-in-recent">
-                    <div class="login-prompt">
-                        <i class="fas fa-user-lock"></i>
-                        <h2>Please Log In</h2>
-                        <p>You need to be logged in to view your recently played games.</p>
-                        <button class="login-btn" onclick="this.showLoginMessage()">
-                            Log In to View Recent Games
-                        </button>
-                    </div>
-                </div>
-            `;
-            return;
-        }
-
         // Show loading state
         recentGamesGrid.innerHTML = `
             <div class="loading-recent">
@@ -61,15 +44,12 @@ class RecentGamesPageManager {
         `;
 
         try {
-            const response = await fetch(`${accountSystem.baseURL}/user/recent-games`, {
-                headers: accountSystem.getAuthHeaders()
-            });
-
-            if (response.ok) {
-                this.recentGames = await response.json();
-                this.renderRecentGames();
+            if (accountSystem && accountSystem.isLoggedIn()) {
+                // User is logged in - load from server
+                await this.loadServerRecentGames();
             } else {
-                throw new Error('Failed to load recent games');
+                // User not logged in - load from localStorage
+                this.loadLocalRecentGames();
             }
         } catch (error) {
             console.error('Error loading recent games:', error);
@@ -84,6 +64,38 @@ class RecentGamesPageManager {
                     </button>
                 </div>
             `;
+        }
+    }
+
+    async loadServerRecentGames() {
+        const response = await fetch(`${accountSystem.baseURL}/user/recent-games`, {
+            headers: accountSystem.getAuthHeaders()
+        });
+
+        if (response.ok) {
+            this.recentGames = await response.json();
+            this.renderRecentGames();
+        } else {
+            throw new Error('Failed to load recent games from server');
+        }
+    }
+
+    loadLocalRecentGames() {
+        try {
+            const stored = localStorage.getItem('infinitePixels_recentlyPlayed');
+            const localRecent = stored ? JSON.parse(stored) : [];
+            
+            // Convert local format to server format for consistency
+            this.recentGames = localRecent.map(game => ({
+                game_id: game.slug,
+                last_played: new Date(game.lastPlayed).toISOString()
+            }));
+            
+            this.renderRecentGames();
+        } catch (error) {
+            console.error('Error loading local recent games:', error);
+            this.recentGames = [];
+            this.renderRecentGames();
         }
     }
 
@@ -108,8 +120,18 @@ class RecentGamesPageManager {
 
         // Create game cards for recent games
         const gameCards = this.recentGames.map(recentGame => {
-            const game = this.games.find(g => g.id === recentGame.game_id);
-            if (!game) return null;
+            // Handle both server format (game_id) and local format (slug)
+            const gameIdentifier = recentGame.game_id || recentGame.slug;
+            const game = this.games.find(g => 
+                g.id === gameIdentifier || 
+                g.slug === gameIdentifier ||
+                g.id === parseInt(gameIdentifier) // Handle numeric IDs
+            );
+            
+            if (!game) {
+                console.warn('Game not found for identifier:', gameIdentifier);
+                return null;
+            }
 
             return this.createGameCard(game, recentGame);
         }).filter(card => card !== null);
@@ -125,16 +147,16 @@ class RecentGamesPageManager {
         const timeAgo = this.getTimeAgo(lastPlayed);
         
         return `
-            <div class="recent-game-card" data-game-id="${game.id}">
+            <div class="recent-game-card" data-game-id="${game.id || game.slug}">
                 <div class="game-image-container">
                     <img src="${game.image}" alt="${game.name}" class="game-image">
                     <div class="game-overlay">
-                        <button class="play-btn" onclick="this.playGame('${game.id}')">
+                        <button class="play-btn" title="Play Again">
                             <i class="fas fa-play"></i>
                             Play Again
                         </button>
-                        <button class="favorite-btn ${this.isFavorited(game.id) ? 'favorited' : ''}" onclick="this.toggleFavorite('${game.id}', this)" title="Add to favorites">
-                            <i class="${this.isFavorited(game.id) ? 'fas' : 'far'} fa-heart"></i>
+                        <button class="favorite-btn ${this.isFavorited(game.id || game.slug) ? 'favorited' : ''}" title="Add to favorites">
+                            <i class="${this.isFavorited(game.id || game.slug) ? 'fas' : 'far'} fa-heart"></i>
                         </button>
                     </div>
                     <div class="last-played-badge">
@@ -155,8 +177,22 @@ class RecentGamesPageManager {
     }
 
     isFavorited(gameId) {
-        // This would need to be loaded from favorites - simplified for now
-        return false;
+        // Check both account-based and local favorites
+        if (accountSystem && accountSystem.isLoggedIn()) {
+            // For logged-in users, this would need to be populated from account favorites
+            // For now, return false as this would need server data
+            return false;
+        } else {
+            // Check local favorites
+            try {
+                const stored = localStorage.getItem('infinitepixels_favorites');
+                const favorites = stored ? JSON.parse(stored) : [];
+                return favorites.some(fav => fav.slug === gameId);
+            } catch (error) {
+                console.error('Error checking local favorites:', error);
+                return false;
+            }
+        }
     }
 
     getTimeAgo(date) {
@@ -183,6 +219,24 @@ class RecentGamesPageManager {
                 }
             });
         });
+
+        // Add click handlers for play buttons
+        document.querySelectorAll('.recent-game-card .play-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const gameId = btn.closest('.recent-game-card').dataset.gameId;
+                this.playGame(gameId);
+            });
+        });
+
+        // Add click handlers for favorite buttons
+        document.querySelectorAll('.recent-game-card .favorite-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const gameId = btn.closest('.recent-game-card').dataset.gameId;
+                this.toggleFavorite(gameId, btn);
+            });
+        });
     }
 
     async toggleFavorite(gameId, buttonElement) {
@@ -195,22 +249,29 @@ class RecentGamesPageManager {
         buttonElement.disabled = true;
 
         try {
-            let success;
-            if (isFavorited) {
-                success = await accountSystem.removeFromFavorites(gameId);
-                if (success) {
-                    buttonElement.classList.remove('favorited');
-                    heartIcon.className = 'far fa-heart';
+            let success = false;
+            
+            if (accountSystem && accountSystem.isLoggedIn()) {
+                // Use account system for favorites
+                if (isFavorited) {
+                    success = await accountSystem.removeFromFavorites(gameId);
+                } else {
+                    success = await accountSystem.addToFavorites(gameId);
                 }
             } else {
-                success = await accountSystem.addToFavorites(gameId);
-                if (success) {
+                // Use local storage for favorites
+                success = this.toggleLocalFavorite(gameId, !isFavorited);
+            }
+            
+            if (success) {
+                if (isFavorited) {
+                    buttonElement.classList.remove('favorited');
+                    heartIcon.className = 'far fa-heart';
+                } else {
                     buttonElement.classList.add('favorited');
                     heartIcon.className = 'fas fa-heart';
                 }
-            }
-            
-            if (!success) {
+            } else {
                 heartIcon.className = originalIcon;
             }
         } catch (error) {
@@ -221,10 +282,55 @@ class RecentGamesPageManager {
         }
     }
 
+    toggleLocalFavorite(gameId, addToFavorites) {
+        try {
+            const stored = localStorage.getItem('infinitepixels_favorites');
+            let favorites = stored ? JSON.parse(stored) : [];
+            
+            if (addToFavorites) {
+                // Add to favorites if not already there
+                if (!favorites.some(fav => fav.slug === gameId)) {
+                    favorites.push({
+                        slug: gameId,
+                        dateAdded: new Date().toISOString(),
+                        timestamp: Date.now()
+                    });
+                    localStorage.setItem('infinitepixels_favorites', JSON.stringify(favorites));
+                    
+                    if (accountSystem) {
+                        accountSystem.showMessage('Added to favorites!', 'success');
+                    }
+                }
+            } else {
+                // Remove from favorites
+                const originalLength = favorites.length;
+                favorites = favorites.filter(fav => fav.slug !== gameId);
+                if (favorites.length < originalLength) {
+                    localStorage.setItem('infinitepixels_favorites', JSON.stringify(favorites));
+                    
+                    if (accountSystem) {
+                        accountSystem.showMessage('Removed from favorites!', 'success');
+                    }
+                }
+            }
+            
+            return true;
+        } catch (error) {
+            console.error('Error with local favorites:', error);
+            if (accountSystem) {
+                accountSystem.showMessage('Error updating favorites', 'error');
+            }
+            return false;
+        }
+    }
+
     playGame(gameId) {
         // Track as recently played (will update the timestamp)
-        if (accountSystem && accountSystem.isLoggedIn()) {
+        if (accountSystem) {
             accountSystem.addToRecentGames(gameId);
+        } else if (window.recentlyPlayedManager) {
+            // Fallback to global recently played manager
+            window.recentlyPlayedManager.addGameToRecent(gameId);
         }
 
         // Navigate to game page or open game
@@ -232,7 +338,11 @@ class RecentGamesPageManager {
     }
 
     showLoginMessage() {
-        accountSystem.showMessage('Please use the account button in the top navigation to log in', 'info');
+        if (accountSystem) {
+            accountSystem.showMessage('Please use the account button in the top navigation to log in', 'info');
+        } else {
+            alert('Please refresh the page and use the account button to log in');
+        }
     }
 
     async clearRecentGames() {
@@ -241,12 +351,32 @@ class RecentGamesPageManager {
         }
 
         try {
-            // This would require a new API endpoint to clear recent games
-            // For now, we'll just show a message
-            accountSystem.showMessage('Feature coming soon!', 'info');
+            // Clear local storage
+            localStorage.removeItem('infinitePixels_recentlyPlayed');
+
+            // If logged in, also clear server data
+            if (accountSystem && accountSystem.isLoggedIn()) {
+                // For now, just clear local and reload - server endpoint would need to be created
+                console.log('Server clear endpoint would be called here');
+                // await fetch(`${accountSystem.baseURL}/user/recent-games`, { method: 'DELETE', headers: accountSystem.getAuthHeaders() });
+            }
+
+            // Reload the page to show empty state
+            this.recentGames = [];
+            this.renderRecentGames();
+            
+            if (accountSystem) {
+                accountSystem.showMessage('Recent games cleared successfully!', 'success');
+            } else {
+                alert('Recent games cleared successfully!');
+            }
         } catch (error) {
             console.error('Error clearing recent games:', error);
-            accountSystem.showMessage('Error clearing recent games', 'error');
+            if (accountSystem) {
+                accountSystem.showMessage('Error clearing recent games', 'error');
+            } else {
+                alert('Error clearing recent games');
+            }
         }
     }
 }
