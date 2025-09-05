@@ -10,10 +10,24 @@ class FavoritesPageManager {
         // Load games data
         await this.loadGamesData();
         
-        // Wait for account system to initialize
-        setTimeout(() => {
-            this.loadFavorites();
-        }, 500);
+        // Wait for account system to be ready
+        if (window.accountSystem) {
+            accountSystem.onReady(() => {
+                this.loadFavorites();
+            });
+        } else {
+            // Fallback for when account system isn't loaded yet
+            setTimeout(() => {
+                if (window.accountSystem) {
+                    accountSystem.onReady(() => {
+                        this.loadFavorites();
+                    });
+                } else {
+                    console.error('Account system not available');
+                    this.loadFavorites();
+                }
+            }, 100);
+        }
     }
 
     async loadGamesData() {

@@ -4,6 +4,8 @@ class AccountSystem {
         this.user = null;
         this.session = null;
         this.baseURL = 'http://localhost:3000';
+        this.isReady = false;
+        this.readyCallbacks = [];
         this.init();
     }
 
@@ -16,6 +18,30 @@ class AccountSystem {
         this.setupEventListeners();
         // Setup session extension on user activity
         this.setupSessionExtension();
+        // Mark as ready and notify callbacks
+        this.setReady();
+    }
+
+    // Method to register callbacks for when account system is ready
+    onReady(callback) {
+        if (this.isReady) {
+            callback();
+        } else {
+            this.readyCallbacks.push(callback);
+        }
+    }
+
+    // Mark system as ready and execute callbacks
+    setReady() {
+        this.isReady = true;
+        this.readyCallbacks.forEach(callback => {
+            try {
+                callback();
+            } catch (error) {
+                console.error('Error in account system ready callback:', error);
+            }
+        });
+        this.readyCallbacks = [];
     }
 
     checkExistingSession() {
@@ -25,7 +51,17 @@ class AccountSystem {
                 const session = JSON.parse(sessionData);
                 if (session.expires_at && new Date(session.expires_at) > new Date()) {
                     this.session = session;
-                    this.fetchUserProfile();
+                    
+                    // Load user data immediately if available in session
+                    if (session.user) {
+                        this.user = session.user;
+                        this.updateAccountUI();
+                        // Still fetch fresh profile to ensure data is up to date
+                        this.fetchUserProfile();
+                    } else {
+                        // No user data in session, fetch from server
+                        this.fetchUserProfile();
+                    }
                     
                     // If session expires within 24 hours, extend it to 72 hours
                     const expirationTime = new Date(session.expires_at);
@@ -238,13 +274,14 @@ class AccountSystem {
                 this.session = data.session;
                 this.user = data.profile;
                 
-                // Extend session to 72 hours
+                // Extend session to 72 hours and include user data
                 const extendedSession = {
                     ...data.session,
-                    expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString() // 72 hours from now
+                    expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(), // 72 hours from now
+                    user: data.profile // Store user data with session
                 };
                 
-                // Store extended session
+                // Store extended session with user data
                 localStorage.setItem('infinitepixels_session', JSON.stringify(extendedSession));
                 
                 this.updateAccountUI();
@@ -366,6 +403,23 @@ class AccountSystem {
 
             if (response.ok) {
                 this.user = await response.json();
+                
+                // Update the stored session with fresh user data
+                const sessionData = localStorage.getItem('infinitepixels_session');
+                if (sessionData) {
+                    try {
+                        const session = JSON.parse(sessionData);
+                        const updatedSession = {
+                            ...session,
+                            user: this.user
+                        };
+                        localStorage.setItem('infinitepixels_session', JSON.stringify(updatedSession));
+                        this.session = updatedSession;
+                    } catch (error) {
+                        console.error('Error updating session with user data:', error);
+                    }
+                }
+                
                 this.updateAccountUI();
             } else {
                 // Session might be invalid
@@ -416,7 +470,8 @@ class AccountSystem {
         try {
             const extendedSession = {
                 ...this.session,
-                expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString() // 72 hours from now
+                expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(), // 72 hours from now
+                user: this.user // Preserve user data
             };
             
             this.session = extendedSession;

@@ -7,11 +7,26 @@ class AccountPageManager {
     }
 
     init() {
-        // Wait for account system to initialize
-        setTimeout(() => {
-            this.currentUser = accountSystem.user;
-            this.loadAccountPage();
-        }, 100);
+        // Wait for account system to be ready
+        if (window.accountSystem) {
+            accountSystem.onReady(() => {
+                this.currentUser = accountSystem.user;
+                this.loadAccountPage();
+            });
+        } else {
+            // Fallback for when account system isn't loaded yet
+            setTimeout(() => {
+                if (window.accountSystem) {
+                    accountSystem.onReady(() => {
+                        this.currentUser = accountSystem.user;
+                        this.loadAccountPage();
+                    });
+                } else {
+                    console.error('Account system not available');
+                    this.loadAccountPage();
+                }
+            }, 100);
+        }
     }
 
     loadAccountPage() {

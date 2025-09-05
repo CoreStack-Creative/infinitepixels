@@ -12,8 +12,24 @@ class RecentGamesPageManager {
         // Load games data first
         await this.loadGamesData();
         
-        // Load recent games immediately - don't wait for anything
-        this.loadRecentGames();
+        // Wait for account system to be ready, then load recent games
+        if (window.accountSystem) {
+            accountSystem.onReady(() => {
+                this.loadRecentGames();
+            });
+        } else {
+            // Fallback for when account system isn't loaded yet
+            setTimeout(() => {
+                if (window.accountSystem) {
+                    accountSystem.onReady(() => {
+                        this.loadRecentGames();
+                    });
+                } else {
+                    console.warn('Account system not available, loading recent games anyway');
+                    this.loadRecentGames();
+                }
+            }, 100);
+        }
     }
 
     async loadGamesData() {
