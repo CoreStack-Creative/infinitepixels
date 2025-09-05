@@ -4,6 +4,7 @@ class AccountSystem {
         this.user = null;
         this.session = null;
         this.baseURL = 'http://localhost:3000';
+        this.deviceId = this.generateDeviceId();
         this.init();
     }
 
@@ -21,15 +22,34 @@ class AccountSystem {
         if (sessionData) {
             try {
                 const session = JSON.parse(sessionData);
-                if (session.expires_at && new Date(session.expires_at) > new Date()) {
+                
+                // Check if session is expired (72 hours = 72 * 60 * 60 * 1000 = 259,200,000 ms)
+                const now = new Date();
+                const sessionExpiry = new Date(session.expires_at || session.created_at);
+                const maxSessionDuration = 72 * 60 * 60 * 1000; // 72 hours in milliseconds
+                
+                // Check if session is still valid (either not expired or within 72 hours)
+                const isSessionValid = sessionExpiry > now || 
+                    (session.created_at && (now - new Date(session.created_at)) < maxSessionDuration);
+                
+                if (isSessionValid && session.access_token) {
                     this.session = session;
                     this.fetchUserProfile();
+                    
+                    // Refresh session if it's close to expiring (within 6 hours)
+                    const sixHours = 6 * 60 * 60 * 1000;
+                    if (sessionExpiry - now < sixHours) {
+                        this.refreshSession();
+                    }
                 } else {
+                    console.log('Session expired or invalid, clearing local storage');
                     localStorage.removeItem('infinitepixels_session');
+                    this.clearDeviceSession();
                 }
             } catch (error) {
                 console.error('Error parsing session:', error);
                 localStorage.removeItem('infinitepixels_session');
+                this.clearDeviceSession();
             }
         }
     }
@@ -221,8 +241,21 @@ class AccountSystem {
                 this.session = data.session;
                 this.user = data.profile;
                 
-                // Store session
-                localStorage.setItem('infinitepixels_session', JSON.stringify(data.session));
+                // Enhance session with device info and extended expiry
+                const enhancedSession = {
+                    ...data.session,
+                    device_id: this.deviceId,
+                    created_at: new Date().toISOString(),
+                    last_refresh: new Date().toISOString(),
+                    extended_expiry: new Date(Date.now() + (72 * 60 * 60 * 1000)).toISOString() // 72 hours
+                };
+                
+                // Store enhanced session
+                localStorage.setItem('infinitepixels_session', JSON.stringify(enhancedSession));
+                this.session = enhancedSession;
+                
+                // Store device session info
+                this.storeDeviceSession();
                 
                 this.updateAccountUI();
                 this.showMessage('Logged in successfully!', 'success');
@@ -550,6 +583,108 @@ class AccountSystem {
 
         } catch (error) {
             console.error('Error syncing local data to server:', error);
+        }
+    }
+
+    // Generate a unique device ID for session tracking
+    generateDeviceId() {
+        let deviceId = localStorage.getItem('infinitepixels_device_id');
+        if (!deviceId) {
+            // Generate a unique device ID based on browser fingerprint
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.textBaseline = 'top';
+            ctx.font = '14px Arial';
+            ctx.fillText('Device fingerprint', 2, 2);
+            
+            const fingerprint = [
+                navigator.userAgent,
+                navigator.language,
+                screen.width + 'x' + screen.height,
+                new Date().getTimezoneOffset(),
+                canvas.toDataURL()
+            ].join('|');
+            
+            deviceId = btoa(fingerprint).replace(/[^a-zA-Z0-9]/g, '').substring(0, 32);
+            localStorage.setItem('infinitepixels_device_id', deviceId);
+        }
+        return deviceId;
+    }
+
+    // Store device session information
+    storeDeviceSession() {
+        if (!this.session || !this.user) return;
+        
+        const deviceSession = {
+            device_id: this.deviceId,
+            user_id: this.user.id,
+            last_active: new Date().toISOString(),
+            browser: navigator.userAgent,
+            platform: navigator.platform
+        };
+        
+        localStorage.setItem('infinitepixels_device_session', JSON.stringify(deviceSession));
+    }
+
+    // Clear device session
+    clearDeviceSession() {
+        localStorage.removeItem('infinitepixels_device_session');
+    }
+
+    // Refresh session token
+    async refreshSession() {
+        if (!this.session || !this.session.refresh_token) return false;
+
+        try {
+            const response = await fetch(`${this.baseURL}/auth/refresh`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 
+                    refresh_token: this.session.refresh_token,
+                    device_id: this.deviceId
+                })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                
+                // Update session with new tokens
+                const enhancedSession = {
+                    ...data.session,
+                    device_id: this.deviceId,
+                    created_at: this.session.created_at || new Date().toISOString(),
+                    last_refresh: new Date().toISOString(),
+                    extended_expiry: new Date(Date.now() + (72 * 60 * 60 * 1000)).toISOString()
+                };
+                
+                this.session = enhancedSession;
+                localStorage.setItem('infinitepixels_session', JSON.stringify(enhancedSession));
+                
+                console.log('Session refreshed successfully');
+                return true;
+            } else {
+                console.error('Failed to refresh session');
+                this.logout();
+                return false;
+            }
+        } catch (error) {
+            console.error('Error refreshing session:', error);
+            return false;
+        }
+    }
+
+    // Check if user is on a different device
+    isNewDevice() {
+        const lastDeviceSession = localStorage.getItem('infinitepixels_device_session');
+        if (!lastDeviceSession) return true;
+        
+        try {
+            const deviceSession = JSON.parse(lastDeviceSession);
+            return deviceSession.device_id !== this.deviceId;
+        } catch (error) {
+            return true;
         }
     }
 }

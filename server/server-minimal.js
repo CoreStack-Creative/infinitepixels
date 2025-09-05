@@ -1,80 +1,56 @@
 require('dotenv').config({ path: __dirname + '/.env' });
 console.log('🔧 Starting server...');
+
 const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
 
-console.log('📦 Packages loaded successfully');
-
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Load environment variables
+// Middleware
+app.use(cors({
+    origin: ['http://localhost:3000', 'http://127.0.0.1:3000', 'https://infinitepixels.net'],
+    credentials: true
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Initialize Supabase
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
-
-console.log('🔐 Environment variables:', {
-    supabaseUrl: supabaseUrl ? '✅ Loaded' : '❌ Missing',
-    supabaseKey: supabaseKey ? '✅ Loaded' : '❌ Missing',
-    supabaseServiceKey: supabaseServiceKey ? '✅ Loaded' : '⚠️ Missing (optional)'
-});
 
 if (!supabaseUrl || !supabaseKey) {
-    console.error('❌ Error: SUPABASE_URL and SUPABASE_ANON_KEY must be provided in .env file');
+    console.error('❌ Missing Supabase configuration in .env file');
     process.exit(1);
 }
 
-// Initialize Supabase clients
-console.log('🔗 Initializing Supabase clients...');
 const supabase = createClient(supabaseUrl, supabaseKey);
-const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey || supabaseKey);
-console.log('✅ Supabase clients initialized');
+console.log('✅ Supabase client initialized');
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// Test route
-app.get('/test', (req, res) => {
-    res.json({ message: 'Server is working!' });
+// Root endpoint
+app.get('/', (req, res) => {
+    res.json({ 
+        message: 'Infinite Pixels Account System API',
+        status: 'running',
+        endpoints: ['/auth/signup', '/auth/login', '/auth/refresh', '/auth/logout']
+    });
 });
 
-// POST /auth/signup - Register new user
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json({ status: 'healthy', timestamp: new Date().toISOString() });
+});
+
+// POST /auth/signup - Create new user account
 app.post('/auth/signup', async (req, res) => {
     try {
-        console.log('📝 Signup request received:', req.body);
+        console.log('�� Signup request received for:', req.body.email);
         const { email, password, username } = req.body;
         
-        // Validation
         if (!email || !password || !username) {
             return res.status(400).json({
                 error: 'Email, password, and username are required'
-            });
-        }
-        
-        if (password.length < 6) {
-            return res.status(400).json({
-                error: 'Password must be at least 6 characters long'
-            });
-        }
-        
-        if (username.length < 3 || username.length > 30) {
-            return res.status(400).json({
-                error: 'Username must be between 3 and 30 characters'
-            });
-        }
-        
-        // Check if username is already taken (simplified check for now)
-        const { data: existingUser } = await supabase
-            .from('users')
-            .select('username')
-            .eq('username', username)
-            .single();
-            
-        if (existingUser) {
-            return res.status(400).json({
-                error: 'Username is already taken'
             });
         }
         
@@ -133,18 +109,21 @@ app.post('/auth/login', async (req, res) => {
             });
         }
         
-        // Get user profile
-        const { data: profile } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', data.user.id)
-            .single();
+        // Enhance session with extended expiry for 72-hour persistence
+        const enhancedSession = {
+            ...data.session,
+            extended_expiry: new Date(Date.now() + (72 * 60 * 60 * 1000)).toISOString(), // 72 hours
+            device_info: {
+                ip: req.ip || req.connection.remoteAddress,
+                user_agent: req.headers['user-agent'],
+                device_id: req.body.device_id
+            }
+        };
         
         console.log('✅ User logged in successfully:', data.user?.email);
         res.json({
             user: data.user,
-            profile: profile,
-            session: data.session
+            session: enhancedSession
         });
     } catch (err) {
         console.error('💥 Login error:', err);
@@ -154,8 +133,75 @@ app.post('/auth/login', async (req, res) => {
     }
 });
 
+// POST /auth/refresh - Refresh authentication token
+app.post('/auth/refresh', async (req, res) => {
+    try {
+        console.log('�� Token refresh request received');
+        const { refresh_token, device_id } = req.body;
+        
+        if (!refresh_token) {
+            return res.status(400).json({
+                error: 'Refresh token is required'
+            });
+        }
+        
+        // Refresh the session with Supabase
+        const { data, error } = await supabase.auth.refreshSession({
+            refresh_token: refresh_token
+        });
+        
+        if (error) {
+            console.error('❌ Token refresh error:', error);
+            return res.status(401).json({
+                error: 'Invalid refresh token'
+            });
+        }
+        
+        // Enhance refreshed session with extended expiry
+        const enhancedSession = {
+            ...data.session,
+            extended_expiry: new Date(Date.now() + (72 * 60 * 60 * 1000)).toISOString(), // 72 hours
+            device_info: {
+                ip: req.ip || req.connection.remoteAddress,
+                user_agent: req.headers['user-agent'],
+                device_id: device_id
+            }
+        };
+        
+        console.log('✅ Token refreshed successfully');
+        res.json({
+            session: enhancedSession,
+            user: data.user
+        });
+    } catch (err) {
+        console.error('💥 Token refresh error:', err);
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+    }
+});
+
+// POST /auth/logout - Logout user  
+app.post('/auth/logout', async (req, res) => {
+    try {
+        console.log('👋 Logout request received');
+        const { access_token } = req.body;
+        
+        if (access_token) {
+            await supabase.auth.signOut(access_token);
+        }
+        
+        res.json({ message: 'Logged out successfully' });
+    } catch (err) {
+        console.error('💥 Logout error:', err);
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+    }
+});
+
 // Start server
 app.listen(PORT, () => {
-    console.log('🚀 Server running on http://localhost:3000');
+    console.log('🚀 Server running on http://localhost:' + PORT);
     console.log('✅ Account system ready for testing');
 });
