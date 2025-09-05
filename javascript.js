@@ -586,15 +586,20 @@ window.addEventListener('orientationchange', () => {
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
+   // Check if user is typing in any input field
+   const isTyping = document.activeElement && (
+       document.activeElement.tagName === 'INPUT' ||
+       document.activeElement.tagName === 'TEXTAREA' ||
+       document.activeElement.contentEditable === 'true'
+   );
+   
    // Toggle sidebar with 'S' key
-   if (e.key.toLowerCase() === 's' && !e.ctrlKey && !e.altKey &&
-       document.activeElement !== searchInput) {
+   if (e.key.toLowerCase() === 's' && !e.ctrlKey && !e.altKey && !isTyping) {
        if (sidebarToggle) sidebarToggle.click();
    }
 
    // Toggle fullscreen with 'F' key
-   if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.altKey &&
-       document.activeElement !== searchInput) {
+   if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.altKey && !isTyping) {
        if (fullscreenBtn) fullscreenBtn.click();
    }
 
@@ -930,16 +935,21 @@ document.querySelectorAll('button').forEach(button => {
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
+   // Check if user is typing in any input field
+   const isTyping = document.activeElement && (
+       document.activeElement.tagName === 'INPUT' ||
+       document.activeElement.tagName === 'TEXTAREA' ||
+       document.activeElement.contentEditable === 'true'
+   );
+   
    // Toggle sidebar with 'S' key
-   if (e.key.toLowerCase() === 's' && !e.ctrlKey && !e.altKey &&
-       document.activeElement !== searchInput) {
+   if (e.key.toLowerCase() === 's' && !e.ctrlKey && !e.altKey && !isTyping) {
        if (sidebarToggle) sidebarToggle.click();
    }
 
 
    // Toggle fullscreen with 'F' key
-   if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.altKey &&
-       document.activeElement !== searchInput) {
+   if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.altKey && !isTyping) {
        if (fullscreenBtn) fullscreenBtn.click();
    }
 
