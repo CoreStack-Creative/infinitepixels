@@ -248,7 +248,7 @@ class AccountSystem {
                 localStorage.setItem('infinitepixels_session', JSON.stringify(extendedSession));
                 
                 this.updateAccountUI();
-                this.showMessage('Logged in successfully! You will stay logged in for 72 hours.', 'success');
+                this.showMessage('Logged in successfully!', 'success');
                 
                 // Sync local data to server
                 this.syncLocalDataToServer();
