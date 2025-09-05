@@ -1,9 +1,13 @@
-require('dotenv').config();
+require('dotenv').config({ path: __dirname + '/.env' });
+console.log('🔧 Starting server...');
+console.log('📁 Loading .env from:', __dirname + '/.env');
 const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
-const multer = require('multer');
+// const multer = require('multer'); // Temporarily disabled
 const crypto = require('crypto');
+
+console.log('📦 Packages loaded successfully');
 
 const app = express();
 const PORT = 3000;
@@ -13,30 +17,38 @@ const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_ANON_KEY;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
 
+console.log('🔐 Environment variables:', {
+    supabaseUrl: supabaseUrl ? '✅ Loaded' : '❌ Missing',
+    supabaseKey: supabaseKey ? '✅ Loaded' : '❌ Missing',
+    supabaseServiceKey: supabaseServiceKey ? '✅ Loaded' : '⚠️ Missing (optional)'
+});
+
 if (!supabaseUrl || !supabaseKey) {
     console.error('❌ Error: SUPABASE_URL and SUPABASE_ANON_KEY must be provided in .env file');
     process.exit(1);
 }
 
 // Initialize Supabase clients
+console.log('🔗 Initializing Supabase clients...');
 const supabase = createClient(supabaseUrl, supabaseKey);
 const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey || supabaseKey);
+console.log('✅ Supabase clients initialized');
 
-// Configure multer for file uploads
-const storage = multer.memoryStorage();
-const upload = multer({ 
-    storage: storage,
-    limits: {
-        fileSize: 5 * 1024 * 1024 // 5MB limit
-    },
-    fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith('image/')) {
-            cb(null, true);
-        } else {
-            cb(new Error('Only image files are allowed!'), false);
-        }
-    }
-});
+// Configure multer for file uploads - TEMPORARILY DISABLED
+// const storage = multer.memoryStorage();
+// const upload = multer({ 
+//     storage: storage,
+//     limits: {
+//         fileSize: 5 * 1024 * 1024 // 5MB limit
+//     },
+//     fileFilter: (req, file, cb) => {
+//         if (file.mimetype.startsWith('image/')) {
+//             cb(null, true);
+//         } else {
+//             cb(new Error('Only image files are allowed!'), false);
+//         }
+//     }
+// });
 
 // Middleware
 app.use(cors());
@@ -364,72 +376,77 @@ app.put('/user/profile', async (req, res) => {
     }
 });
 
-// POST /user/upload-avatar - Upload profile image
-app.post('/user/upload-avatar', upload.single('avatar'), async (req, res) => {
-    try {
-        const authHeader = req.headers.authorization;
-        if (!authHeader) {
-            return res.status(401).json({ error: 'No authorization header' });
-        }
-        
-        const token = authHeader.replace('Bearer ', '');
-        const { data: { user }, error } = await supabase.auth.getUser(token);
-        
-        if (error || !user) {
-            return res.status(401).json({ error: 'Invalid token' });
-        }
-        
-        if (!req.file) {
-            return res.status(400).json({ error: 'No file uploaded' });
-        }
-        
-        const fileExt = req.file.originalname.split('.').pop();
-        const fileName = `${user.id}/${Date.now()}.${fileExt}`;
-        
-        // Upload to Supabase Storage
-        const { data: uploadData, error: uploadError } = await supabase.storage
-            .from('profile-images')
-            .upload(fileName, req.file.buffer, {
-                contentType: req.file.mimetype,
-                upsert: true
-            });
-        
-        if (uploadError) {
-            return res.status(400).json({
-                error: uploadError.message
-            });
-        }
-        
-        // Get public URL
-        const { data: { publicUrl } } = supabase.storage
-            .from('profile-images')
-            .getPublicUrl(fileName);
-        
-        // Update user profile with new image URL
-        const { data, error: updateError } = await supabase
-            .from('users')
-            .update({ profile_image_url: publicUrl })
-            .eq('id', user.id)
-            .select()
-            .single();
-        
-        if (updateError) {
-            return res.status(400).json({
-                error: updateError.message
-            });
-        }
-        
-        res.json({
-            message: 'Profile image updated successfully',
-            profile_image_url: publicUrl
+// POST /user/upload-avatar - Upload profile image - TEMPORARILY DISABLED
+app.post('/user/upload-avatar', async (req, res) => {
+    res.status(501).json({ error: 'Avatar upload temporarily disabled' });
+});
+
+/*
+// Original upload avatar function - commented out due to multer dependency
+try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).json({ error: 'No authorization header' });
+    }
+    
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    
+    if (error || !user) {
+        return res.status(401).json({ error: 'Invalid token' });
+    }
+    
+    if (!req.file) {
+        return res.status(400).json({ error: 'No file uploaded' });
+    }
+    
+    const fileExt = req.file.originalname.split('.').pop();
+    const fileName = `${user.id}/${Date.now()}.${fileExt}`;
+    
+    // Upload to Supabase Storage
+    const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('profile-images')
+        .upload(fileName, req.file.buffer, {
+            contentType: req.file.mimetype,
+            upsert: true
         });
-    } catch (err) {
-        console.error('Upload avatar error:', err);
-        res.status(500).json({
-            error: 'Internal server error'
+    
+    if (uploadError) {
+        return res.status(400).json({
+            error: uploadError.message
         });
     }
-});
+    
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage
+        .from('profile-images')
+        .getPublicUrl(fileName);
+    
+    // Update user profile with new image URL
+    const { data, error: updateError } = await supabase
+        .from('users')
+        .update({ profile_image_url: publicUrl })
+        .eq('id', user.id)
+        .select()
+        .single();
+    
+    if (updateError) {
+        return res.status(400).json({
+            error: updateError.message
+        });
+    }
+    
+    res.json({
+        message: 'Profile image updated successfully',
+        profile_image_url: publicUrl
+    });
+} catch (err) {
+    console.error('Upload avatar error:', err);
+    res.status(500).json({
+        error: 'Internal server error'
+    });
+}
+*/
 
 // POST /user/change-password - Change password
 app.post('/user/change-password', async (req, res) => {
@@ -1203,4 +1220,5 @@ app.use((err, req, res, next) => {
 // Start server
 app.listen(PORT, () => {
     console.log('🚀 Server running on http://localhost:3000');
+    console.log('✅ Account system ready for testing');
 });
