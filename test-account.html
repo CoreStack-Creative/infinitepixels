@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Account Creation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        button { padding: 10px 20px; margin: 10px 0; }
+        input { padding: 8px; margin: 5px 0; width: 300px; display: block; }
+        .success { color: green; }
+        .error { color: red; }
+        .info { color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Test Account Creation and Favorites</h1>
+    
+    <div class="section">
+        <h2>1. Create Test Account</h2>
+        <input type="email" id="signupEmail" placeholder="Email (e.g., test@test.com)" value="test@test.com">
+        <input type="password" id="signupPassword" placeholder="Password" value="password123">
+        <input type="text" id="signupUsername" placeholder="Username" value="testuser">
+        <button onclick="createAccount()">Create Account</button>
+        <div id="signupResult"></div>
+    </div>
+    
+    <div class="section">
+        <h2>2. Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email" value="test@test.com">
+        <input type="password" id="loginPassword" placeholder="Password" value="password123">
+        <button onclick="loginAccount()">Login</button>
+        <div id="loginResult"></div>
+    </div>
+    
+    <div class="section">
+        <h2>3. Test Favorites</h2>
+        <input type="text" id="gameId" placeholder="Game ID to add to favorites" value="game123">
+        <button onclick="addToFavorites()">Add to Favorites</button>
+        <button onclick="getFavorites()">Get Favorites</button>
+        <button onclick="removeFavorite()">Remove from Favorites</button>
+        <div id="favoritesResult"></div>
+    </div>
+    
+    <script src="account-system.js"></script>
+    <script>
+        const baseURL = 'http://localhost:3000';
+        let currentSession = null;
+        
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const className = type === 'success' ? 'success' : type === 'error' ? 'error' : 'info';
+            element.innerHTML += `<p class="${className}">${message}</p>`;
+            console.log(message);
+        }
+        
+        async function createAccount() {
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const username = document.getElementById('signupUsername').value;
+            
+            try {
+                const response = await fetch(`${baseURL}/auth/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password, username })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log('signupResult', '✅ Account created successfully!', 'success');
+                    log('signupResult', JSON.stringify(data, null, 2), 'info');
+                } else {
+                    log('signupResult', '❌ Account creation failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                log('signupResult', '❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function loginAccount() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const response = await fetch(`${baseURL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    currentSession = data.session;
+                    log('loginResult', '✅ Login successful!', 'success');
+                    log('loginResult', 'Session token: ' + currentSession.access_token.substring(0, 20) + '...', 'info');
+                    
+                    // Store session in localStorage to mimic the account system
+                    const sessionData = {
+                        ...currentSession,
+                        user: data.user,
+                        expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString()
+                    };
+                    localStorage.setItem('infinitepixels_session', JSON.stringify(sessionData));
+                    
+                } else {
+                    log('loginResult', '❌ Login failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                log('loginResult', '❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function addToFavorites() {
+            if (!currentSession) {
+                log('favoritesResult', '❌ Please login first', 'error');
+                return;
+            }
+            
+            const gameId = document.getElementById('gameId').value;
+            
+            try {
+                const response = await fetch(`${baseURL}/user/favorites`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${currentSession.access_token}`
+                    },
+                    body: JSON.stringify({ game_id: gameId })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log('favoritesResult', '✅ Added to favorites!', 'success');
+                    log('favoritesResult', JSON.stringify(data, null, 2), 'info');
+                } else {
+                    log('favoritesResult', '❌ Add favorite failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                log('favoritesResult', '❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function getFavorites() {
+            if (!currentSession) {
+                log('favoritesResult', '❌ Please login first', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${baseURL}/user/favorites`, {
+                    headers: {
+                        'Authorization': `Bearer ${currentSession.access_token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    log('favoritesResult', '✅ Favorites retrieved!', 'success');
+                    log('favoritesResult', 'Count: ' + data.length, 'info');
+                    log('favoritesResult', JSON.stringify(data, null, 2), 'info');
+                } else {
+                    log('favoritesResult', '❌ Get favorites failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                log('favoritesResult', '❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function removeFavorite() {
+            if (!currentSession) {
+                log('favoritesResult', '❌ Please login first', 'error');
+                return;
+            }
+            
+            const gameId = document.getElementById('gameId').value;
+            
+            try {
+                const response = await fetch(`${baseURL}/user/favorites/${gameId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${currentSession.access_token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    log('favoritesResult', '✅ Removed from favorites!', 'success');
+                } else {
+                    const data = await response.json();
+                    log('favoritesResult', '❌ Remove favorite failed: ' + data.error, 'error');
+                }
+            } catch (error) {
+                log('favoritesResult', '❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        // Check if already logged in via account system
+        setTimeout(() => {
+            if (window.accountSystem && accountSystem.isLoggedIn()) {
+                log('loginResult', '✅ Already logged in via account system!', 'success');
+                currentSession = accountSystem.session;
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

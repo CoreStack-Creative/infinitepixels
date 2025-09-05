@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Favorites</title>
+</head>
+<body>
+    <h1>Test Favorites Functionality</h1>
+    <div id="status"></div>
+    <div id="output"></div>
+    
+    <script src="account-system.js"></script>
+    <script>
+        const baseURL = 'http://localhost:3000';
+        let session = null;
+        
+        function log(message) {
+            const output = document.getElementById('output');
+            output.innerHTML += '<p>' + message + '</p>';
+            console.log(message);
+        }
+        
+        function setStatus(status) {
+            document.getElementById('status').innerHTML = '<h2>' + status + '</h2>';
+        }
+        
+        async function testWithAccountSystem() {
+            setStatus('Testing with Account System...');
+            
+            // Wait for account system to be ready
+            if (window.accountSystem) {
+                log('✅ Account system is available');
+                log('Base URL: ' + accountSystem.baseURL);
+                log('Is logged in: ' + accountSystem.isLoggedIn());
+                
+                if (accountSystem.isLoggedIn()) {
+                    log('✅ User is logged in, testing favorites...');
+                    testFavoritesWithAccountSystem();
+                } else {
+                    log('❌ User not logged in');
+                    log('Session data: ' + JSON.stringify(accountSystem.session));
+                }
+            } else {
+                log('❌ Account system not available');
+                setTimeout(testWithAccountSystem, 500);
+            }
+        }
+        
+        async function testFavoritesWithAccountSystem() {
+            try {
+                log('🚀 Making favorites request...');
+                const response = await fetch(`${accountSystem.baseURL}/user/favorites`, {
+                    headers: accountSystem.getAuthHeaders()
+                });
+                
+                log('Response status: ' + response.status);
+                
+                if (response.ok) {
+                    const favorites = await response.json();
+                    log('✅ Favorites loaded: ' + JSON.stringify(favorites, null, 2));
+                } else {
+                    const errorText = await response.text();
+                    log('❌ Favorites request failed: ' + response.status + ' - ' + errorText);
+                }
+            } catch (error) {
+                log('❌ Favorites request error: ' + error.message);
+            }
+        }
+        
+        async function testAuth() {
+            setStatus('Testing Authentication...');
+            
+            // Try to login with test credentials
+            try {
+                const response = await fetch(`${baseURL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: 'test@example.com',
+                        password: 'password123'
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    session = data.session;
+                    log('✅ Login successful');
+                    log('Session: ' + JSON.stringify(session, null, 2));
+                    testFavorites();
+                } else {
+                    const error = await response.json();
+                    log('❌ Login failed: ' + error.error);
+                    log('This is expected if no test user exists');
+                }
+            } catch (error) {
+                log('❌ Login request failed: ' + error.message);
+            }
+        }
+        
+        async function testFavorites() {
+            setStatus('Testing Favorites...');
+            
+            if (!session) {
+                log('❌ No session available for favorites test');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${baseURL}/user/favorites`, {
+                    headers: {
+                        'Authorization': `Bearer ${session.access_token}`
+                    }
+                });
+                
+                if (response.ok) {
+                    const favorites = await response.json();
+                    log('✅ Favorites endpoint working');
+                    log('Favorites: ' + JSON.stringify(favorites, null, 2));
+                } else {
+                    const error = await response.json();
+                    log('❌ Favorites request failed: ' + error.error);
+                }
+            } catch (error) {
+                log('❌ Favorites request failed: ' + error.message);
+            }
+        }
+        
+        async function testServerConnection() {
+            setStatus('Testing Server Connection...');
+            
+            try {
+                const response = await fetch(`${baseURL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                });
+                
+                log('✅ Server is responding');
+                log('Response status: ' + response.status);
+                
+                testWithAccountSystem();
+            } catch (error) {
+                log('❌ Server connection failed: ' + error.message);
+                setStatus('Server connection failed');
+            }
+        }
+        
+        // Start tests
+        setTimeout(() => {
+            testServerConnection();
+        }, 1000);
+    </script>
+</body>
+</html>

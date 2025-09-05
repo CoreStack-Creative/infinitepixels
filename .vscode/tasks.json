@@ -6,7 +6,7 @@
 			"type": "shell",
 			"command": "/usr/local/bin/node",
 			"args": [
-				"server/server-minimal.js"
+				"server/server.js"
 			],
 			"isBackground": true,
 			"group": "build",

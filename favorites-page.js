@@ -40,10 +40,12 @@ class FavoritesPageManager {
     }
 
     async loadFavorites() {
+        console.log('🔍 Loading favorites...');
         const favoritesGrid = document.getElementById('favoritesGrid');
         const noFavorites = document.getElementById('noFavorites');
 
         if (!accountSystem || !accountSystem.isLoggedIn()) {
+            console.log('❌ User not logged in');
             // User not logged in
             favoritesGrid.innerHTML = `
                 <div class="not-logged-in-favorites">
@@ -51,7 +53,7 @@ class FavoritesPageManager {
                         <i class="fas fa-user-lock"></i>
                         <h2>Please Log In</h2>
                         <p>You need to be logged in to view your favorite games.</p>
-                        <button class="login-btn" onclick="this.showLoginMessage()">
+                        <button class="login-btn" onclick="favoritesManager.showLoginMessage()">
                             Log In to View Favorites
                         </button>
                     </div>
@@ -59,6 +61,10 @@ class FavoritesPageManager {
             `;
             return;
         }
+
+        console.log('✅ User is logged in, fetching favorites...');
+        console.log('🔗 Account system base URL:', accountSystem.baseURL);
+        console.log('🔑 Auth headers:', accountSystem.getAuthHeaders());
 
         // Show loading state
         favoritesGrid.innerHTML = `
@@ -69,18 +75,24 @@ class FavoritesPageManager {
         `;
 
         try {
+            console.log('🚀 Making request to:', `${accountSystem.baseURL}/user/favorites`);
             const response = await fetch(`${accountSystem.baseURL}/user/favorites`, {
                 headers: accountSystem.getAuthHeaders()
             });
 
+            console.log('📥 Response status:', response.status);
+            
             if (response.ok) {
                 this.favorites = await response.json();
+                console.log('✅ Favorites loaded successfully:', this.favorites);
                 this.renderFavorites();
             } else {
+                const errorText = await response.text();
+                console.error('❌ Response error:', response.status, errorText);
                 throw new Error('Failed to load favorites');
             }
         } catch (error) {
-            console.error('Error loading favorites:', error);
+            console.error('💥 Error loading favorites:', error);
             favoritesGrid.innerHTML = `
                 <div class="error-favorites">
                     <i class="fas fa-exclamation-triangle"></i>
@@ -130,7 +142,7 @@ class FavoritesPageManager {
                 <div class="game-image-container">
                     <img src="${game.image}" alt="${game.name}" class="game-image">
                     <div class="game-overlay">
-                        <button class="play-btn" onclick="this.playGame('${game.id}')">
+                        <button class="play-btn" onclick="favoritesManager.playGame('${game.id}')">
                             <i class="fas fa-play"></i>
                             Play Now
                         </button>
