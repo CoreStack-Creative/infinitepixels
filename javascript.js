@@ -139,7 +139,26 @@ if (sidebarToggle) {
        if (sidebar) sidebar.classList.toggle('collapsed');
        if (mainContent) mainContent.classList.toggle('expanded');
        
-       // ADD THESE LINES: Toggle expanded class for news page elements
+       // Only toggle expanded class for footers on pages that need it
+       const pageContainers = [
+           '.reviews-container',
+           '.guides-container', 
+           '.faq-container',
+           '.news-page-container',
+           '.about-page-container'
+       ];
+       
+       pageContainers.forEach(containerClass => {
+           const container = document.querySelector(containerClass);
+           if (container) {
+               const footer = container.querySelector('.site-footer');
+               if (footer) {
+                   footer.classList.toggle('expanded');
+               }
+           }
+       });
+       
+       // Existing news page specific code (keep this for compatibility)
        const newsMainContent = document.querySelector('.news-page-container .news-main-content');
        const newsFooter = document.querySelector('.news-page-container .site-footer');
        
@@ -567,15 +586,20 @@ window.addEventListener('orientationchange', () => {
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
+   // Check if user is typing in any input field
+   const isTyping = document.activeElement && (
+       document.activeElement.tagName === 'INPUT' ||
+       document.activeElement.tagName === 'TEXTAREA' ||
+       document.activeElement.contentEditable === 'true'
+   );
+   
    // Toggle sidebar with 'S' key
-   if (e.key.toLowerCase() === 's' && !e.ctrlKey && !e.altKey &&
-       document.activeElement !== searchInput) {
+   if (e.key.toLowerCase() === 's' && !e.ctrlKey && !e.altKey && !isTyping) {
        if (sidebarToggle) sidebarToggle.click();
    }
 
    // Toggle fullscreen with 'F' key
-   if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.altKey &&
-       document.activeElement !== searchInput) {
+   if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.altKey && !isTyping) {
        if (fullscreenBtn) fullscreenBtn.click();
    }
 
@@ -911,16 +935,21 @@ document.querySelectorAll('button').forEach(button => {
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
+   // Check if user is typing in any input field
+   const isTyping = document.activeElement && (
+       document.activeElement.tagName === 'INPUT' ||
+       document.activeElement.tagName === 'TEXTAREA' ||
+       document.activeElement.contentEditable === 'true'
+   );
+   
    // Toggle sidebar with 'S' key
-   if (e.key.toLowerCase() === 's' && !e.ctrlKey && !e.altKey &&
-       document.activeElement !== searchInput) {
+   if (e.key.toLowerCase() === 's' && !e.ctrlKey && !e.altKey && !isTyping) {
        if (sidebarToggle) sidebarToggle.click();
    }
 
 
    // Toggle fullscreen with 'F' key
-   if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.altKey &&
-       document.activeElement !== searchInput) {
+   if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.altKey && !isTyping) {
        if (fullscreenBtn) fullscreenBtn.click();
    }
 
@@ -2165,16 +2194,25 @@ function populateFeaturedGamesGrid() {
         const game = gamesDatabase.find(g => g.slug === slug);
         if (game) {
             const gameCard = document.createElement('div');
-            gameCard.className = 'featured-game-card';
+            gameCard.className = 'game-card';
             gameCard.setAttribute('data-game-slug', game.slug);
             
             gameCard.innerHTML = `
-                <img src="${game.image}" alt="${game.name}" class="featured-game-card-image">
-                <div class="featured-game-card-overlay">
-                    <div class="featured-game-card-name">${game.name}</div>
-                    <button class="featured-game-play-btn">Play Now</button>
+                <div class="game-image">
+                    <img src="${game.image}" alt="${game.name}" class="placeholder-image" loading="lazy">
+                    <div class="game-overlay">
+                        <button class="play-btn">Play Now</button>
+                    </div>
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">${game.name}</h3>
                 </div>
             `;
+            
+            // Add click event listener
+            gameCard.addEventListener('click', () => {
+                window.location.href = `game.html?game=${game.slug}`;
+            });
             
             featuredGamesGrid.appendChild(gameCard);
         }
@@ -2335,6 +2373,10 @@ if (document.readyState === 'loading') {
 class GameLoader {
  constructor() {
  this.currentGame = null;
+ 
+ // Store reference globally for debugging
+ window.currentGameLoader = this;
+ 
  this.init();
  }
 
@@ -2364,7 +2406,7 @@ class GameLoader {
  this.currentGame = game;
  this.displayGame(game);
  this.loadRelatedGames(game);
- this.setupVotingSystem(game);
+ this.setupStarRating(game);
  }
 
  displayGame(game) {
@@ -2388,14 +2430,20 @@ class GameLoader {
  const gameDescription = document.getElementById('gameDescription');
  if (gameDescription) gameDescription.textContent = game.description;
 
+ // Update controls section
+ this.displayGameControls(game);
+
  // Update tags
  const genresContainer = document.getElementById('gameGenres');
  if (genresContainer) {
  genresContainer.innerHTML = '';
- game.tags.forEach(tag => {
- const tagElement = document.createElement('span');
+ game.tags.forEach((tag, index) => {
+ const tagElement = document.createElement('a');
  tagElement.className = 'genre-tag';
  tagElement.textContent = tag.charAt(0).toUpperCase() + tag.slice(1);
+ tagElement.href = `category.html?category=${encodeURIComponent(tag)}`;
+ tagElement.title = `View all ${tag} games`;
+ tagElement.style.animationDelay = `${index * 0.1}s`;
  genresContainer.appendChild(tagElement);
  });
  }
@@ -2405,6 +2453,59 @@ class GameLoader {
  if (shareLink) {
  shareLink.value = `${window.location.origin}/game.html?game=${game.slug}`;
  }
+ }
+
+ displayGameControls(game) {
+ const controlsSection = document.getElementById('gameControlsSection');
+ const controlsList = document.getElementById('gameControlsList');
+ 
+ if (!controlsSection || !controlsList) return;
+ 
+ // Check if game has controls
+ if (!game.controls || Object.keys(game.controls).length === 0) {
+ controlsSection.style.display = 'none';
+ return;
+ }
+ 
+ // Show controls section
+ controlsSection.style.display = 'block';
+ 
+ // Clear existing controls
+ controlsList.innerHTML = '';
+ 
+ // Add each control item
+ Object.entries(game.controls).forEach(([key, action], index) => {
+ const controlItem = document.createElement('div');
+ controlItem.className = 'control-item';
+ controlItem.style.animationDelay = `${index * 0.1}s`;
+ 
+ // Format the key for better display
+ const formattedKey = this.formatControlKey(key);
+ 
+ controlItem.innerHTML = `
+ <span class="control-key">${formattedKey}</span>
+ <span class="control-action">${action}</span>
+ `;
+ controlsList.appendChild(controlItem);
+ });
+ }
+
+ formatControlKey(key) {
+ // Handle special formatting for common keys
+ const keyMappings = {
+ 'Left Click': '🖱️ Left Click',
+ 'Right Click': '🖱️ Right Click',
+ 'Mouse': '🖱️ Mouse',
+ 'WASD': 'W A S D',
+ 'Arrow Keys': '← ↑ → ↓',
+ 'Space': 'Space',
+ 'Shift': 'Shift',
+ 'Ctrl': 'Ctrl',
+ 'Enter': 'Enter',
+ 'Tab': 'Tab'
+ };
+ 
+ return keyMappings[key] || key;
  }
 
  loadRelatedGames(currentGame) {
@@ -2456,108 +2557,410 @@ class GameLoader {
  });
  }
 
- setupVotingSystem(game) {
- const thumbsUpBtn = document.getElementById('thumbsUpBtn');
- const thumbsDownBtn = document.getElementById('thumbsDownBtn');
- const floatingThumbs = document.getElementById('floatingThumbs');
- const voteLock = document.getElementById('voteLock');
+    setupStarRating(game) {
+        // Enhanced DOM ready detection with multiple fallbacks
+        const initializeStars = () => {
+            const starsInteractive = document.getElementById('starsInteractive');
+            const starButtons = document.querySelectorAll('.star-display-btn');
 
- if (!thumbsUpBtn || !thumbsDownBtn) return;
+            console.log('Stars setup - Interactive container:', !!starsInteractive);
+            console.log('Stars setup - Star buttons found:', starButtons.length);
 
- // Use game-specific storage key
- const voteKey = `${game.slug}Voted`;
- let voted = sessionStorage.getItem(voteKey) === '1';
+            if (!starsInteractive || !starButtons.length) {
+                console.log('Star rating elements not found, trying alternative selectors...');
+                
+                // Try alternative selectors
+                const altStarsContainer = document.querySelector('.rating-stars, .star-rating, [class*="star"]');
+                const altStarButtons = document.querySelectorAll('.star-btn, .rating-star, button[data-rating]');
+                
+                console.log('Alternative selectors - Container:', !!altStarsContainer, 'Buttons:', altStarButtons.length);
+                
+                if (!altStarsContainer && !altStarButtons.length) {
+                    console.log('No star rating elements found at all');
+                    return false;
+                }
+                return true;
+            }
 
- const createFloatingThumbs = (type, originBtn) => {
- if (!floatingThumbs) return;
- floatingThumbs.innerHTML = '';
- const count = 7;
- 
- for (let i = 0; i < count; i++) {
- const el = document.createElement('span');
- el.className = 'floating-thumb';
- el.innerHTML = type === 'up'
- ? '<i class="fas fa-thumbs-up"></i>'
- : '<i class="fas fa-thumbs-down"></i>';
- 
- el.style.fontSize = '1em';
- el.style.opacity = '0.85';
- el.style.color = type === 'up' ? '#4CAF50' : '#e74c3c';
- el.style.position = 'absolute';
- el.style.pointerEvents = 'none';
- 
- const angle = Math.random() * 2 * Math.PI;
- const distance = 40 + Math.random() * 30;
- const x = Math.cos(angle) * distance;
- const y = Math.sin(angle) * distance * (type === 'up' ? -1 : 1);
- const delay = Math.random() * 0.15;
- 
- let startX = 0, startY = 0;
- if (type === 'down' && originBtn && floatingThumbs) {
- const parentRect = originBtn.parentElement.getBoundingClientRect();
- const btnRect = originBtn.getBoundingClientRect();
- startX = btnRect.left - parentRect.left + btnRect.width / 2 - 14;
- startY = btnRect.top - parentRect.top + btnRect.height / 2 - 14;
- } else if (floatingThumbs) {
- startX = floatingThumbs.offsetWidth / 2;
- startY = floatingThumbs.offsetHeight / 2;
- }
- 
- el.style.left = type === 'down' ? `${startX}px` : '50%';
- el.style.top = type === 'down' ? `${startY}px` : '50%';
- el.style.transform = 'translate(-50%, -50%)';
- el.style.animation = type === 'up'
- ? `thumbsUpFloatSmall 1.1s ${delay}s cubic-bezier(.4,1.4,.7,1) forwards`
- : `thumbsDownFloatSmall 1.1s ${delay}s cubic-bezier(.4,1.4,.7,1) forwards`;
- el.style.setProperty('--x', `${x}px`);
- el.style.setProperty('--y', `${y}px`);
- 
- floatingThumbs.appendChild(el);
- }
- 
- setTimeout(() => {
- if (floatingThumbs) floatingThumbs.innerHTML = '';
- }, 1300);
- };
+            // Initialize empty rating data if not exists
+            const gameRatings = this.getGameRatings();
+            if (!gameRatings[game.slug]) {
+                gameRatings[game.slug] = {
+                    totalStars: 0,
+                    totalVotes: 0,
+                    average: 0
+                };
+                this.saveGameRatings(gameRatings);
+            }
 
- const lockVoting = () => {
- thumbsUpBtn.disabled = true;
- thumbsDownBtn.disabled = true;
- if (voteLock) {
- voteLock.style.display = 'flex';
- voteLock.style.animation = 'voteLockPop 0.5s cubic-bezier(.4,1.4,.7,1)';
- }
- };
+            // Check if user has already rated
+            const userRatingKey = `${game.slug}_userRating`;
+            const hasRated = localStorage.getItem(userRatingKey);
 
- // On load, show lock if already voted
- if (voted) {
- lockVoting();
- }
+            // Update the display with current ratings
+            this.updateRatingDisplay(game.slug);
+            
+            // Load global ratings from server
+            this.loadGlobalRating(game.slug);
 
- [thumbsUpBtn, thumbsDownBtn].forEach(btn => {
- btn.addEventListener('mousedown', () => btn.style.transform = 'scale(0.92)');
- btn.addEventListener('mouseup', () => btn.style.transform = '');
- btn.addEventListener('mouseleave', () => btn.style.transform = '');
- });
+            if (hasRated) {
+                console.log('User has already rated:', hasRated);
+                // Show user's rating
+                const userRating = parseInt(hasRated);
+                starsInteractive.classList.add('rated');
+                this.showUserRating(userRating);
+                
+                // Disable further interaction
+                starButtons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.style.pointerEvents = 'none';
+                    btn.style.cursor = 'default';
+                });
+            } else {
+                console.log('Setting up interactive rating...');
+                // Enable interactive rating
+                starsInteractive.classList.remove('rated');
+                
+                // Make sure buttons are enabled and clickable
+                starButtons.forEach(btn => {
+                    btn.disabled = false;
+                    btn.style.pointerEvents = 'auto';
+                    btn.style.cursor = 'pointer';
+                    
+                    // Remove any existing event listeners to prevent duplicates
+                    const newBtn = btn.cloneNode(true);
+                    btn.parentNode.replaceChild(newBtn, btn);
+                });
+                
+                // Re-select the cloned buttons
+                const freshStarButtons = document.querySelectorAll('.star-display-btn');
+                
+                freshStarButtons.forEach((button, index) => {
+                    const rating = parseInt(button.dataset.rating);
+                    console.log('Setting up button', index, 'with rating:', rating);
 
- thumbsUpBtn.addEventListener('click', function() {
- if (voted) return;
- lockVoting();
- createFloatingThumbs('up', thumbsUpBtn);
- sessionStorage.setItem(voteKey, '1');
- voted = true;
- });
+                    // Hover effects
+                    button.addEventListener('mouseenter', (e) => {
+                        e.stopPropagation();
+                        console.log('Mouse enter on star:', rating);
+                        this.highlightStarsUpTo(rating);
+                    });
 
- thumbsDownBtn.addEventListener('click', function() {
- if (voted) return;
- lockVoting();
- createFloatingThumbs('down', thumbsDownBtn);
- sessionStorage.setItem(voteKey, '1');
- voted = true;
- });
- }
+                    // Click to rate
+                    button.addEventListener('click', async (e) => {
+                        console.log('Star clicked:', rating, 'Rated status:', starsInteractive.classList.contains('rated'));
+                        e.preventDefault();
+                        e.stopPropagation();
+                        
+                        if (!starsInteractive.classList.contains('rated')) {
+                            console.log('Processing rating submission...');
+                            
+                            // Add immediate visual feedback
+                            starsInteractive.classList.add('rated');
+                            this.showUserRating(rating);
+                            
+                            // Disable further interaction immediately
+                            freshStarButtons.forEach(btn => {
+                                btn.disabled = true;
+                                btn.style.pointerEvents = 'none';
+                                btn.style.cursor = 'default';
+                            });
+                            
+                            // Add selection animation
+                            button.classList.add('animate');
+                            setTimeout(() => button.classList.remove('animate'), 400);
+                            
+                            // Submit rating in the background
+                            await this.submitRating(game.slug, rating);
+                            console.log('Rating submission complete');
+                        } else {
+                            console.log('Already rated, ignoring click');
+                        }
+                    });
+                });
 
- setupEventListeners() {
+                // Reset on mouse leave from container
+                starsInteractive.addEventListener('mouseleave', () => {
+                    if (!starsInteractive.classList.contains('rated')) {
+                        this.loadGlobalRating(game.slug);
+                    }
+                });
+            }
+            return true;
+        };
+
+        // Try multiple times with different delays to ensure DOM is ready
+        const attemptInitialization = (attempt = 1, maxAttempts = 5) => {
+            console.log(`Star rating initialization attempt ${attempt}/${maxAttempts}`);
+            
+            if (initializeStars()) {
+                console.log('✅ Star rating initialized successfully!');
+                return;
+            }
+            
+            if (attempt < maxAttempts) {
+                const delay = attempt * 200; // Increasing delay: 200ms, 400ms, 600ms, 800ms
+                console.log(`Retrying star rating initialization in ${delay}ms...`);
+                setTimeout(() => attemptInitialization(attempt + 1, maxAttempts), delay);
+            } else {
+                console.warn('❌ Failed to initialize star rating after', maxAttempts, 'attempts');
+            }
+        };
+
+        // Start initialization attempts
+        attemptInitialization();
+    }
+
+    highlightStarsUpTo(rating) {
+        const starButtons = document.querySelectorAll('.star-display-btn');
+        starButtons.forEach((button, index) => {
+            const buttonRating = parseInt(button.dataset.rating);
+            const underline = button.querySelector('.star-underline');
+            const icon = button.querySelector('i');
+            
+            button.classList.remove('filled');
+            
+            // Show underlines and highlights from star 1 up to the hovered rating
+            if (buttonRating <= rating) {
+                underline.style.width = '80%';
+                icon.style.color = 'rgba(255, 255, 255, 0.7)';
+                icon.style.transform = 'scale(1.05)';
+            } else {
+                underline.style.width = '0';
+                icon.style.color = 'rgba(255, 255, 255, 0.3)';
+                icon.style.transform = 'scale(1)';
+            }
+        });
+    }
+
+    showAverageRating(gameSlug) {
+        const gameRatings = this.getGameRatings();
+        const rating = gameRatings[gameSlug];
+        const starButtons = document.querySelectorAll('.star-display-btn');
+        
+        if (!rating) return;
+        
+        starButtons.forEach((button, index) => {
+            const buttonRating = parseInt(button.dataset.rating);
+            const underline = button.querySelector('.star-underline');
+            const icon = button.querySelector('i');
+            
+            // Reset hover styles
+            underline.style.width = '0';
+            icon.style.transform = 'scale(1)';
+            
+            // Show average rating
+            if (buttonRating <= Math.ceil(rating.average)) {
+                button.classList.add('filled');
+                icon.style.color = '#ffd700';
+            } else {
+                button.classList.remove('filled');
+                icon.style.color = 'rgba(255, 255, 255, 0.3)';
+            }
+        });
+    }
+
+    showUserRating(userRating) {
+        const starButtons = document.querySelectorAll('.star-display-btn');
+        starButtons.forEach((button, index) => {
+            const buttonRating = parseInt(button.dataset.rating);
+            const underline = button.querySelector('.star-underline');
+            const icon = button.querySelector('i');
+            
+            button.classList.remove('filled');
+            
+            if (buttonRating <= userRating) {
+                button.classList.add('selected');
+                underline.style.width = '100%';
+                underline.style.height = '3px';
+                underline.style.boxShadow = '0 0 4px rgba(255, 215, 0, 0.5)';
+                icon.style.color = '#ffd700';
+            } else {
+                button.classList.remove('selected');
+                underline.style.width = '0';
+                underline.style.height = '2px';
+                underline.style.boxShadow = 'none';
+                icon.style.color = 'rgba(255, 255, 255, 0.3)';
+            }
+        });
+    }
+
+    getGameRatings() {
+        const saved = localStorage.getItem('gameRatings');
+        return saved ? JSON.parse(saved) : {};
+    }
+
+    saveGameRatings(ratings) {
+        localStorage.setItem('gameRatings', JSON.stringify(ratings));
+    }
+
+    updateRatingDisplay(gameSlug) {
+        const gameRatings = this.getGameRatings();
+        const rating = gameRatings[gameSlug];
+        
+        if (!rating) return;
+
+        const averageRating = document.getElementById('averageRating');
+        const ratingCount = document.getElementById('ratingCount');
+
+        if (averageRating) {
+            averageRating.textContent = rating.average.toFixed(1);
+        }
+
+        if (ratingCount) {
+            ratingCount.textContent = `(${rating.totalVotes} vote${rating.totalVotes !== 1 ? 's' : ''})`;
+        }
+
+        // Show average rating as filled stars
+        this.showAverageRating(gameSlug);
+    }
+
+    async submitRating(gameSlug, rating) {
+        try {
+            console.log('Submitting rating:', rating, 'for game:', gameSlug);
+            
+            // Send rating to server for global storage
+            const response = await fetch('http://localhost:3000/reviews', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    game_id: gameSlug,
+                    rating: rating,
+                    review_text: `${rating} star rating`,
+                    user_id: this.generateUserId()
+                })
+            });
+
+            if (response.ok) {
+                console.log('✅ Rating submitted to server successfully');
+                
+                // Save user's rating locally to prevent re-rating
+                localStorage.setItem(`${gameSlug}_userRating`, rating.toString());
+                
+                // Wait a moment for server to process, then load updated global ratings
+                setTimeout(async () => {
+                    console.log('Fetching updated global rating...');
+                    await this.loadGlobalRating(gameSlug);
+                }, 1000); // 1 second delay to ensure server processing
+                
+                // Also update local storage immediately for instant feedback
+                this.submitRatingLocally(gameSlug, rating);
+                
+            } else {
+                console.error('Failed to submit rating to server, status:', response.status);
+                // Fallback to local storage if server fails
+                this.submitRatingLocally(gameSlug, rating);
+            }
+        } catch (error) {
+            console.error('Error submitting rating:', error);
+            // Fallback to local storage if server fails
+            this.submitRatingLocally(gameSlug, rating);
+        }
+    }
+
+    // Fallback method for local storage
+    submitRatingLocally(gameSlug, rating) {
+        localStorage.setItem(`${gameSlug}_userRating`, rating.toString());
+
+        const gameRatings = this.getGameRatings();
+        if (!gameRatings[gameSlug]) {
+            gameRatings[gameSlug] = { totalStars: 0, totalVotes: 0, average: 0 };
+        }
+
+        gameRatings[gameSlug].totalStars += rating;
+        gameRatings[gameSlug].totalVotes += 1;
+        gameRatings[gameSlug].average = Math.min(5, gameRatings[gameSlug].totalStars / gameRatings[gameSlug].totalVotes);
+
+        this.saveGameRatings(gameRatings);
+        this.updateRatingDisplay(gameSlug);
+    }
+
+    // Generate a simple user ID for tracking (you can make this more sophisticated)
+    generateUserId() {
+        let userId = localStorage.getItem('userId');
+        if (!userId) {
+            userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 5);
+            localStorage.setItem('userId', userId);
+        }
+        return userId;
+    }
+
+    // Load global rating from server or local storage
+    async loadGlobalRating(gameSlug) {
+        try {
+            // Try multiple API endpoints for different server configurations
+            const endpoints = [
+                `http://localhost:3000/reviews/game/${gameSlug}`,
+                `http://localhost:3000/reviews/${gameSlug}/average`,
+                `http://localhost:3000/api/reviews/${gameSlug}`,
+                `/api/reviews/${gameSlug}/average`
+            ];
+            
+            for (const endpoint of endpoints) {
+                try {
+                    console.log(`Trying to fetch rating from: ${endpoint}`);
+                    const response = await fetch(endpoint);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        console.log('Server response data:', data);
+                        
+                        // Handle different response formats
+                        let averageRating = data.average_rating || data.average || data.avg_rating;
+                        let reviewCount = data.review_count || data.total_reviews || data.count || data.votes;
+                        
+                        if (averageRating !== undefined && reviewCount !== undefined) {
+                            console.log(`Found rating data: ${averageRating} average, ${reviewCount} reviews`);
+                            
+                            // Update the display elements directly for immediate feedback
+                            const averageRatingElement = document.getElementById('averageRating');
+                            const ratingCountElement = document.getElementById('ratingCount');
+                            
+                            if (averageRatingElement) {
+                                averageRatingElement.textContent = parseFloat(averageRating).toFixed(1);
+                                console.log('Updated averageRating display');
+                            }
+                            
+                            if (ratingCountElement) {
+                                ratingCountElement.textContent = `(${reviewCount} vote${reviewCount !== 1 ? 's' : ''})`;
+                                console.log('Updated ratingCount display');
+                            }
+                            
+                            // Update local storage with server data
+                            const gameRatings = this.getGameRatings();
+                            gameRatings[gameSlug] = {
+                                totalStars: averageRating * reviewCount,
+                                totalVotes: reviewCount,
+                                average: parseFloat(averageRating)
+                            };
+                            this.saveGameRatings(gameRatings);
+                            
+                            // Update visual star display
+                            this.showAverageRating(gameSlug);
+                            
+                            console.log('✅ Global rating loaded and displayed successfully');
+                            return;
+                        }
+                    }
+                } catch (endpointError) {
+                    console.log(`Endpoint ${endpoint} failed:`, endpointError.message);
+                    continue;
+                }
+            }
+            
+            console.log('No working endpoint found, using local data');
+        } catch (error) {
+            console.log('Could not fetch rating from server, using local data:', error.message);
+        }
+        
+        // Fallback to local storage display
+        console.log('Falling back to local storage data');
+        this.updateRatingDisplay(gameSlug);
+    }
+
+    setupEventListeners() {
  // Share functionality
  const shareBtn = document.getElementById('shareBtn');
  const shareModal = document.getElementById('shareModal');
@@ -5725,7 +6128,7 @@ class FavoritesManager {
         }
     }
 
-    addToFavorites(gameSlug) {
+    async addToFavorites(gameSlug) {
         const game = gamesDatabase.find(g => g.slug === gameSlug);
         if (!game) return false;
 
@@ -5738,17 +6141,61 @@ class FavoritesManager {
             timestamp: Date.now()
         };
 
+        // Add to local storage first
         this.favorites.push(favoriteData);
         this.saveFavorites();
+
+        // Also add to server if logged in
+        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+            try {
+                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites`, {
+                    method: 'POST',
+                    headers: {
+                        ...window.accountSystem.getAuthHeaders(),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ game_id: gameSlug })
+                });
+                
+                if (response.ok) {
+                    console.log('Favorite synced to server:', gameSlug);
+                } else {
+                    console.warn('Failed to sync favorite to server:', gameSlug);
+                }
+            } catch (error) {
+                console.error('Error syncing favorite to server:', error);
+            }
+        }
+
         return true;
     }
 
-    removeFromFavorites(gameSlug) {
+    async removeFromFavorites(gameSlug) {
         const index = this.favorites.findIndex(fav => fav.slug === gameSlug);
         if (index === -1) return false;
 
+        // Remove from local storage first
         this.favorites.splice(index, 1);
         this.saveFavorites();
+
+        // Also remove from server if logged in
+        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+            try {
+                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites/${gameSlug}`, {
+                    method: 'DELETE',
+                    headers: window.accountSystem.getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    console.log('Favorite removed from server:', gameSlug);
+                } else {
+                    console.warn('Failed to remove favorite from server:', gameSlug);
+                }
+            } catch (error) {
+                console.error('Error removing favorite from server:', error);
+            }
+        }
+
         return true;
     }
 
@@ -5756,25 +6203,79 @@ class FavoritesManager {
         return this.favorites.some(fav => fav.slug === gameSlug);
     }
 
-    toggleFavorite(gameSlug) {
+    async toggleFavorite(gameSlug) {
         if (this.isFavorited(gameSlug)) {
-            return this.removeFromFavorites(gameSlug);
+            return await this.removeFromFavorites(gameSlug);
         } else {
-            return this.addToFavorites(gameSlug);
+            return await this.addToFavorites(gameSlug);
         }
     }
 
-    getFavoriteGames(sortOrder = 'newest') {
-        const favoriteGames = this.favorites.map(fav => {
-            const game = gamesDatabase.find(g => g.slug === fav.slug);
-            return game ? { ...game, dateAdded: fav.dateAdded, timestamp: fav.timestamp } : null;
-        }).filter(Boolean);
+    async getFavoriteGames(sortOrder = 'newest') {
+        let allFavorites = [];
+        
+        // If user is logged in, try to get server favorites first
+        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+            try {
+                console.log('Getting favorites from server for logged-in user...');
+                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites`, {
+                    headers: window.accountSystem.getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    const serverFavorites = await response.json();
+                    console.log('Server favorites loaded:', serverFavorites);
+                    
+                    // Convert server favorites to the expected format
+                    const serverFavoriteGames = serverFavorites.map(fav => {
+                        const game = gamesDatabase.find(g => g.slug === fav.game_id);
+                        return game ? { 
+                            ...game, 
+                            dateAdded: fav.created_at, 
+                            timestamp: new Date(fav.created_at).getTime(),
+                            source: 'server'
+                        } : null;
+                    }).filter(Boolean);
+                    
+                    allFavorites = [...serverFavoriteGames];
+                }
+            } catch (error) {
+                console.error('Error loading server favorites:', error);
+            }
+        }
+        
+        // Always check local favorites and merge
+        try {
+            const stored = localStorage.getItem('infinitepixels_favorites');
+            const localFavorites = stored ? JSON.parse(stored) : [];
+            
+            const localFavoriteGames = localFavorites.map(fav => {
+                const game = gamesDatabase.find(g => g.slug === fav.slug);
+                return game ? { 
+                    ...game, 
+                    dateAdded: fav.dateAdded, 
+                    timestamp: fav.timestamp,
+                    source: 'local'
+                } : null;
+            }).filter(Boolean);
+            
+            // Merge server and local favorites (avoid duplicates)
+            const serverSlugs = new Set(allFavorites.map(f => f.slug));
+            const uniqueLocalFavorites = localFavoriteGames.filter(f => !serverSlugs.has(f.slug));
+            
+            allFavorites = [...allFavorites, ...uniqueLocalFavorites];
+            
+        } catch (error) {
+            console.error('Error loading local favorites:', error);
+        }
+
+        console.log('Final merged favorites:', allFavorites.length, 'games');
 
         // Sort by date added
         if (sortOrder === 'oldest') {
-            return favoriteGames.sort((a, b) => a.timestamp - b.timestamp);
+            return allFavorites.sort((a, b) => a.timestamp - b.timestamp);
         } else {
-            return favoriteGames.sort((a, b) => b.timestamp - a.timestamp);
+            return allFavorites.sort((a, b) => b.timestamp - a.timestamp);
         }
     }
 
@@ -5805,16 +6306,30 @@ class FavoritesManager {
             `;
         };
 
-        favoriteBtn.addEventListener('click', () => {
-            this.toggleFavorite(currentGame);
-            updateFavoriteBtn();
+        favoriteBtn.addEventListener('click', async () => {
+            // Disable button to prevent multiple clicks
+            favoriteBtn.disabled = true;
             
-            // Show a brief feedback
-            const originalText = favoriteBtn.querySelector('span').textContent;
-            favoriteBtn.querySelector('span').textContent = this.isFavorited(currentGame) ? 'Added!' : 'Removed!';
-            setTimeout(() => {
+            try {
+                await this.toggleFavorite(currentGame);
                 updateFavoriteBtn();
-            }, 1000);
+                
+                // Show a brief feedback
+                const originalText = favoriteBtn.querySelector('span').textContent;
+                favoriteBtn.querySelector('span').textContent = this.isFavorited(currentGame) ? 'Added!' : 'Removed!';
+                setTimeout(() => {
+                    updateFavoriteBtn();
+                }, 1000);
+            } catch (error) {
+                console.error('Error toggling favorite:', error);
+                favoriteBtn.querySelector('span').textContent = 'Error!';
+                setTimeout(() => {
+                    updateFavoriteBtn();
+                }, 1000);
+            } finally {
+                // Re-enable button
+                favoriteBtn.disabled = false;
+            }
         });
 
         // Insert favorite button before share button
@@ -5838,47 +6353,65 @@ class FavoritesManager {
 
         console.log('Found favorites page elements, proceeding with initialization');
 
-        const renderFavorites = () => {
+        const renderFavorites = async () => {
             const sortOrder = favoritesFilter?.value || 'newest';
-            const favoriteGames = this.getFavoriteGames(sortOrder);
+            
+            // Show loading state
+            favoritesGrid.innerHTML = `
+                <div class="loading-favorites" style="text-align: center; padding: 50px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px; color: var(--accent-color);"></i>
+                    <p>Loading your favorite games...</p>
+                </div>
+            `;
+            
+            try {
+                const favoriteGames = await this.getFavoriteGames(sortOrder);
+                console.log('Rendering favorites:', favoriteGames.length, 'games');
 
-            console.log('Rendering favorites:', favoriteGames.length, 'games');
+                if (favoriteGames.length === 0) {
+                    favoritesGrid.style.display = 'none';
+                    noFavorites.style.display = 'block';
+                    return;
+                }
 
-            if (favoriteGames.length === 0) {
-                favoritesGrid.style.display = 'none';
-                noFavorites.style.display = 'block';
-                return;
-            }
+                favoritesGrid.style.display = 'grid';
+                noFavorites.style.display = 'none';
 
-            favoritesGrid.style.display = 'grid';
-            noFavorites.style.display = 'none';
+                favoritesGrid.innerHTML = favoriteGames.map(game => {
+                    const gameUrl = `game.html?game=${game.slug}`;
+                    const dateAdded = new Date(game.dateAdded).toLocaleDateString();
 
-            favoritesGrid.innerHTML = favoriteGames.map(game => {
-                const gameUrl = `game.html?game=${game.slug}`;
-                const dateAdded = new Date(game.dateAdded).toLocaleDateString();
-
-                return `
-                    <div class="favorite-game-card" onclick="window.location.href='${gameUrl}'">
-                        <button class="remove-favorite-btn" onclick="event.stopPropagation(); window.favoritesManager.removeFavoriteAndRefresh('${game.slug}')" title="Remove from favorites">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <div class="favorite-date">Added: ${dateAdded}</div>
-                        <img src="${game.image}" alt="${game.name}" class="favorite-game-image">
-                        <div class="favorite-game-info">
-                            <h3>${game.name}</h3>
-                            <div class="game-tags">
-                                ${game.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    return `
+                        <div class="favorite-game-card" onclick="window.location.href='${gameUrl}'">
+                            <button class="remove-favorite-btn" onclick="event.stopPropagation(); window.favoritesManager.removeFavoriteAndRefresh('${game.slug}')" title="Remove from favorites">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="favorite-date">Added: ${dateAdded}</div>
+                            <img src="${game.image}" alt="${game.name}" class="favorite-game-image">
+                            <div class="favorite-game-info">
+                                <h3>${game.name}</h3>
+                                <div class="game-tags">
+                                    ${game.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                                </div>
                             </div>
                         </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error rendering favorites:', error);
+                favoritesGrid.innerHTML = `
+                    <div style="text-align: center; padding: 50px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 15px; color: #ff6b6b;"></i>
+                        <p>Error loading favorites. Please try again.</p>
                     </div>
                 `;
-            }).join('');
+            }
         };
 
         // Method to remove favorite and refresh the display
-        this.removeFavoriteAndRefresh = (gameSlug) => {
-            this.removeFromFavorites(gameSlug);
-            renderFavorites();
+        this.removeFavoriteAndRefresh = async (gameSlug) => {
+            await this.removeFromFavorites(gameSlug);
+            await renderFavorites();
         };
 
         // Initial render
@@ -5893,17 +6426,10 @@ class FavoritesManager {
     }
 
     initHomepageFavorites() {
-
-
-
-
-
-
-
-
-
-
-
+        console.log('Initializing homepage favorites...');
+        
+        // Initialize the favorites popup
+        this.initFavoritesPopup();
     }
 
 
@@ -6160,6 +6686,7 @@ class HomepageGamesManager {
                 this.renderCategoryGames();
                 this.renderMultiplayerGames();
                 this.renderNewGames();
+                this.renderTopReviewedGames();
                 this.initFavoritesPopup();
                 
                 // Add resize handler for responsive grid
@@ -6184,22 +6711,75 @@ class HomepageGamesManager {
         // Try to create a new one if it doesn't exist
         if (typeof FavoritesManager !== 'undefined') {
             console.log('Creating new favorites manager instance');
-            return new FavoritesManager();
+            const manager = new FavoritesManager();
+            window.favoritesManager = manager;
+            return manager;
         }
         
-        // If all else fails, create a minimal fallback
+        // If all else fails, create a minimal fallback with account system integration
         return {
-            getFavoriteGames: () => {
+            getFavoriteGames: async (sortOrder = 'newest') => {
+                let allFavorites = [];
+                
+                // If user is logged in, try to get server favorites first
+                if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+                    try {
+                        const response = await fetch(`${window.accountSystem.baseURL}/user/favorites`, {
+                            headers: window.accountSystem.getAuthHeaders()
+                        });
+                        
+                        if (response.ok) {
+                            const serverFavorites = await response.json();
+                            console.log('Loaded server favorites (fallback):', serverFavorites);
+                            
+                            // Convert server favorites to the expected format
+                            const serverFavoriteGames = serverFavorites.map(fav => {
+                                const game = gamesDatabase.find(g => g.slug === fav.game_id);
+                                return game ? { 
+                                    ...game, 
+                                    dateAdded: fav.created_at, 
+                                    timestamp: new Date(fav.created_at).getTime(),
+                                    source: 'server'
+                                } : null;
+                            }).filter(Boolean);
+                            
+                            allFavorites = [...serverFavoriteGames];
+                        }
+                    } catch (error) {
+                        console.error('Error loading server favorites (fallback):', error);
+                    }
+                }
+                
+                // Always check local favorites and merge
                 try {
                     const stored = localStorage.getItem('infinitepixels_favorites');
-                    const favorites = stored ? JSON.parse(stored) : [];
-                    return favorites.map(fav => {
+                    const localFavorites = stored ? JSON.parse(stored) : [];
+                    
+                    const localFavoriteGames = localFavorites.map(fav => {
                         const game = gamesDatabase.find(g => g.slug === fav.slug);
-                        return game ? { ...game, dateAdded: fav.dateAdded, timestamp: fav.timestamp } : null;
-                    }).filter(Boolean).sort((a, b) => b.timestamp - a.timestamp);
+                        return game ? { 
+                            ...game, 
+                            dateAdded: fav.dateAdded, 
+                            timestamp: fav.timestamp,
+                            source: 'local'
+                        } : null;
+                    }).filter(Boolean);
+                    
+                    // Merge server and local favorites (avoid duplicates)
+                    const serverSlugs = new Set(allFavorites.map(f => f.slug));
+                    const uniqueLocalFavorites = localFavoriteGames.filter(f => !serverSlugs.has(f.slug));
+                    
+                    allFavorites = [...allFavorites, ...uniqueLocalFavorites];
+                    
                 } catch (error) {
-                    console.error('Error loading favorites:', error);
-                    return [];
+                    console.error('Error loading local favorites (fallback):', error);
+                }
+
+                // Sort by date added
+                if (sortOrder === 'oldest') {
+                    return allFavorites.sort((a, b) => a.timestamp - b.timestamp);
+                } else {
+                    return allFavorites.sort((a, b) => b.timestamp - a.timestamp);
                 }
             }
         };
@@ -6400,7 +6980,6 @@ class HomepageGamesManager {
         
         // Set grid CSS properties
         grid.style.gridTemplateColumns = `repeat(${columns}, 1fr)`;
-        grid.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
         
         let html = '';
 
@@ -6531,7 +7110,7 @@ class HomepageGamesManager {
 
         const categoryGames = gamesDatabase
             .filter(game => game.tags && game.tags.includes('action'))
-            .slice(0, 6);
+            .slice(0, 20);
 
         let html = '';
         categoryGames.forEach(game => {
@@ -6553,7 +7132,7 @@ class HomepageGamesManager {
                 game.tags.includes('2 player') ||
                 game.tags.includes('online')
             ))
-            .slice(0, 6);
+            .slice(0, 20);
 
         let html = '';
         multiplayerGames.forEach(game => {
@@ -6569,7 +7148,7 @@ class HomepageGamesManager {
         if (!grid || typeof gamesDatabase === 'undefined') return;
 
         const newGames = gamesDatabase
-            .slice(-8)
+            .slice(-22)
             .reverse();
 
         let html = '';
@@ -6705,14 +7284,14 @@ class HomepageGamesManager {
             return;
         }
 
-        floatBtn.addEventListener('click', (e) => {
+        floatBtn.addEventListener('click', async (e) => {
             console.log('Favorites button clicked!');
             e.stopPropagation();
             const isActive = popup.classList.contains('active');
             if (isActive) {
                 this.closeFavoritesPopup();
             } else {
-                this.openFavoritesPopup();
+                await this.openFavoritesPopup();
             }
         });
 
@@ -6730,7 +7309,7 @@ class HomepageGamesManager {
         console.log('Favorites popup initialized successfully');
     }
 
-    openFavoritesPopup() {
+    async openFavoritesPopup() {
         console.log('Opening favorites popup...');
         const popup = document.getElementById('homepageFavoritesPopup');
         
@@ -6739,10 +7318,12 @@ class HomepageGamesManager {
             return;
         }
 
-        // Render favorites immediately
-        this.renderFavoritesPopup();
+        // Show popup first
         popup.classList.add('active');
         console.log('Popup should be visible now');
+        
+        // Then render favorites (async)
+        await this.renderFavoritesPopup();
     }
 
     closeFavoritesPopup() {
@@ -6752,14 +7333,24 @@ class HomepageGamesManager {
         }
     }
 
-    renderFavoritesPopup() {
+    async renderFavoritesPopup() {
         const content = document.getElementById('homepageFavoritesContent');
         if (!content) {
             console.error('Favorites content element not found');
             return;
         }
 
-        console.log('Rendering favorites popup...');
+        console.log('🔍 DEBUG: Rendering favorites popup...');
+        console.log('🔍 DEBUG: Account system logged in?', window.accountSystem?.isLoggedIn());
+        console.log('🔍 DEBUG: Local storage favorites:', localStorage.getItem('infinitepixels_favorites'));
+
+        // Show loading state
+        content.innerHTML = `
+            <div class="homepage-favorites-loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading favorites...</p>
+            </div>
+        `;
 
         // Use the improved favorites manager getter
         const favManager = this.getFavoritesManager();
@@ -6775,8 +7366,20 @@ class HomepageGamesManager {
         }
 
         try {
-            const favorites = favManager.getFavoriteGames('newest').slice(0, 8);
-            console.log('Loaded favorites:', favorites);
+            // Get favorites (this may be async now due to account integration)
+            let favorites;
+            if (typeof favManager.getFavoriteGames === 'function') {
+                const result = favManager.getFavoriteGames('newest');
+                favorites = result instanceof Promise ? await result : result;
+            } else {
+                favorites = [];
+            }
+            
+            console.log('🔍 DEBUG: Final favorites result:', favorites);
+            console.log('🔍 DEBUG: Favorites count:', favorites.length);
+            
+            // Limit to 8 favorites for the popup
+            favorites = favorites.slice(0, 8);
 
             if (favorites.length === 0) {
                 content.innerHTML = `
@@ -6808,7 +7411,7 @@ class HomepageGamesManager {
             console.log('Favorites rendered successfully');
 
         } catch (error) {
-            console.error('Error rendering favorites:', error);
+            console.error('🔍 DEBUG: Error in renderFavoritesPopup:', error);
             content.innerHTML = `
                 <div class="homepage-favorites-empty">
                     <p>Error loading favorites.</p>
@@ -6823,11 +7426,197 @@ class HomepageGamesManager {
         return text.substring(0, maxLength) + '...';
     }
 
-    refreshFavoritesPopup() {
+    async refreshFavoritesPopup() {
         const popup = document.getElementById('homepageFavoritesPopup');
         if (popup && popup.classList.contains('active')) {
-            this.renderFavoritesPopup();
+            await this.renderFavoritesPopup();
         }
+    }
+
+    // Top Reviewed Games Section
+    async renderTopReviewedGames() {
+        const grid = document.getElementById('homepageReviewsGrid');
+        if (!grid || !gamesDatabase) {
+            console.log('Skipping top reviewed games - missing grid or gamesDatabase');
+            return;
+        }
+
+        console.log('Rendering top reviewed games...');
+
+        // Define games with high ratings to feature (same as reviews page)
+        const topReviewedGames = [
+            'maskedspecialforces',
+            'cookieclicker', 
+            'fruitmerge',
+            '1v1lol',
+            'helixjump',
+            'drawclimber'
+        ];
+
+        let html = '';
+
+        for (const gameSlug of topReviewedGames) {
+            const game = gamesDatabase.find(g => g.slug === gameSlug);
+            if (!game) continue;
+
+            // Fetch actual review data using the same methods as reviews page
+            const reviews = await this.fetchGameReviews(gameSlug);
+            const rating = await this.fetchGameRating(gameSlug);
+            
+            const gameUrl = `game.html?game=${gameSlug}`;
+            
+            // Get review content using same logic as reviews page
+            let reviewContent;
+            let reviewType;
+            let displayRating;
+            
+            if (reviews.length > 0) {
+                const latestReview = reviews[0];
+                let playerQuote = latestReview.review_text;
+                
+                // Check if it's a generic rating text and replace with custom quote
+                if (!playerQuote || 
+                    playerQuote.match(/^\d+ star rating$/) || 
+                    playerQuote === 'Great game with exciting gameplay!' ||
+                    playerQuote.length < 10) {
+                    playerQuote = this.getCustomPlayerQuote(gameSlug);
+                }
+                
+                reviewContent = this.truncateText(playerQuote, 80);
+                reviewType = "Player Review";
+                displayRating = latestReview.rating || rating.average || 4.2;
+            } else {
+                // Use custom editorial quote
+                const customQuote = this.getCustomQuote(gameSlug);
+                reviewContent = this.truncateText(customQuote.replace(/"/g, ''), 80);
+                reviewType = "Editorial Review";
+                displayRating = rating.average > 0 ? rating.average : (game.review ? game.review.rating : 4.2);
+            }
+            
+            // Generate star display
+            const starsHTML = this.generateStars(displayRating);
+
+            html += `
+                <article class="homepage-review-card-compact" onclick="window.location.href='${gameUrl}'" style="cursor: pointer;">
+                    <div class="homepage-review-card-compact-image">
+                        <img src="${game.image}" alt="${game.name}" loading="lazy">
+                        <div class="homepage-review-card-compact-rating">
+                            ${displayRating.toFixed(1)}
+                        </div>
+                    </div>
+                    <div class="homepage-review-card-compact-content">
+                        <h4 class="homepage-review-card-compact-title">${game.name}</h4>
+                        <div class="homepage-review-card-compact-stars">
+                            ${starsHTML}
+                        </div>
+                        <p class="homepage-review-card-compact-review">"${reviewContent}"</p>
+                        <div class="homepage-review-card-compact-meta">
+                            <span class="review-type-compact">${reviewType}</span>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }
+
+        grid.innerHTML = html;
+        console.log('Top reviewed games rendered successfully');
+    }
+
+    // Helper method to fetch game reviews (same as reviews page)
+    async fetchGameReviews(gameSlug) {
+        const endpoints = [
+            `http://localhost:3000/reviews/${gameSlug}`,
+            `http://localhost:3000/api/reviews/${gameSlug}`,
+            `/api/reviews/${gameSlug}`
+        ];
+        
+        for (const endpoint of endpoints) {
+            try {
+                const response = await fetch(endpoint);
+                if (response.ok) {
+                    const reviews = await response.json();
+                    return Array.isArray(reviews) ? reviews : [reviews];
+                }
+            } catch (error) {
+                console.log(`Endpoint ${endpoint} failed:`, error.message);
+            }
+        }
+        return [];
+    }
+
+    // Helper method to fetch game rating (same as reviews page)
+    async fetchGameRating(gameSlug) {
+        const endpoints = [
+            `http://localhost:3000/reviews/game/${gameSlug}`,
+            `http://localhost:3000/reviews/${gameSlug}/average`,
+            `http://localhost:3000/api/reviews/${gameSlug}/average`
+        ];
+        
+        for (const endpoint of endpoints) {
+            try {
+                const response = await fetch(endpoint);
+                if (response.ok) {
+                    const data = await response.json();
+                    return {
+                        average: data.average_rating || data.average || data.avg_rating || 0,
+                        count: data.review_count || data.total_reviews || data.count || data.votes || 0
+                    };
+                }
+            } catch (error) {
+                console.log(`Rating endpoint ${endpoint} failed:`, error.message);
+            }
+        }
+        return { average: 0, count: 0 };
+    }
+
+    // Helper method to generate stars (same as reviews page)
+    generateStars(rating) {
+        const fullStars = Math.floor(rating);
+        const hasHalfStar = rating % 1 >= 0.5;
+        let starsHTML = '';
+        
+        for (let i = 0; i < fullStars; i++) {
+            starsHTML += '<i class="fas fa-star"></i>';
+        }
+        
+        if (hasHalfStar) {
+            starsHTML += '<i class="fas fa-star-half-alt"></i>';
+        }
+        
+        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+        for (let i = 0; i < emptyStars; i++) {
+            starsHTML += '<i class="far fa-star"></i>';
+        }
+        
+        return starsHTML;
+    }
+
+    // Helper method to get custom quotes (same as reviews page)
+    getCustomQuote(gameSlug) {
+        const quotes = {
+            'maskedspecialforces': '"This tactical shooter raises the bar with its realistic combat mechanics and strategic depth. Every match feels like a genuine military operation that rewards teamwork and precision."',
+            'cookieclicker': '"The deceptively simple concept of clicking cookies evolves into an incredibly addictive progression system. What starts as mindless clicking becomes a masterclass in incremental game design."',
+            'fruitmerge': '"The satisfying physics and colorful visuals create a zen-like puzzle experience that\'s impossible to put down. Each successful merge delivers a dopamine hit that keeps you coming back for more."',
+            '1v1lol': '"Building mechanics meet fast-paced shooting in this innovative blend that creates endless strategic possibilities. The game successfully bridges two popular genres into something uniquely entertaining."',
+            'helixjump': '"Simple controls mask a brilliantly designed challenge that tests your reflexes and timing perfectly. The addictive one-more-try gameplay loop is executed with precision."',
+            'drawclimber': '"Creative problem-solving meets physics-based gameplay in this charming and innovative runner. Each obstacle becomes a mini puzzle that encourages experimentation and ingenuity."'
+        };
+        
+        return quotes[gameSlug] || '"A fantastic gaming experience that delivers entertainment and engagement. This game showcases excellent design and compelling gameplay mechanics."';
+    }
+
+    // Helper method to get custom player quotes (same as reviews page)
+    getCustomPlayerQuote(gameSlug) {
+        const playerQuotes = {
+            'maskedspecialforces': 'Absolutely incredible tactical gameplay! The teamwork mechanics make every match feel like a real military operation.',
+            'cookieclicker': 'Started playing this as a joke, now I can\'t stop! The progression system is surprisingly deep and addictive.',
+            'fruitmerge': 'So satisfying and relaxing! Perfect game to unwind with after a long day. The merge animations are amazing.',
+            '1v1lol': 'Love how this combines building and shooting! Every match feels different and the strategy depth is incredible.',
+            'helixjump': 'Deceptively simple but so challenging! One more try turns into hours of gameplay. Perfectly executed concept.',
+            'drawclimber': 'Such a creative and fun concept! Drawing different legs for obstacles never gets old. Brilliant game design.'
+        };
+        
+        return playerQuotes[gameSlug] || 'Amazing game with fantastic gameplay! Really enjoyed the experience and would definitely recommend it.';
     }
 }
 
@@ -6873,7 +7662,7 @@ window.addEventListener('load', function() {
 document.addEventListener('DOMContentLoaded', function() {
     // Add click event listeners to featured game cards
     function initializeFeaturedGamesCards() {
-        const featuredGameCards = document.querySelectorAll('.featured-game-card[data-game-slug]');
+        const featuredGameCards = document.querySelectorAll('#featuredGamesGrid .game-card[data-game-slug]');
         
         featuredGameCards.forEach(card => {
             const gameSlug = card.getAttribute('data-game-slug');
@@ -6884,7 +7673,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             // Add click event to the play button
-            const playBtn = card.querySelector('.featured-game-play-btn');
+            const playBtn = card.querySelector('.play-btn');
             if (playBtn) {
                 playBtn.addEventListener('click', function(e) {
                     e.stopPropagation(); // Prevent card click
@@ -6942,6 +7731,55 @@ function initializeTipFiltering() {
     // Placeholder for tip filtering functionality
     console.log('Tip filtering initialized');
 }
+
+// Debug function to test API endpoints (call from browser console)
+window.debugRatingAPI = async function(gameSlug = 'cookieclicker') {
+    console.log('🔍 Testing rating API endpoints for game:', gameSlug);
+    
+    const endpoints = [
+        `http://localhost:3000/reviews/game/${gameSlug}`,
+        `http://localhost:3000/reviews/${gameSlug}/average`,
+        `http://localhost:3000/api/reviews/${gameSlug}`,
+        `/api/reviews/${gameSlug}/average`,
+        `http://localhost:3000/reviews/${gameSlug}`,
+        `http://localhost:3000/api/games/${gameSlug}/rating`
+    ];
+    
+    for (const endpoint of endpoints) {
+        try {
+            console.log(`Testing: ${endpoint}`);
+            const response = await fetch(endpoint);
+            console.log(`Status: ${response.status}`);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('✅ SUCCESS! Data:', data);
+                
+                // Check what fields are available
+                const fields = Object.keys(data);
+                console.log('Available fields:', fields);
+                
+                return { endpoint, data, fields };
+            } else {
+                console.log('❌ Failed with status:', response.status);
+            }
+        } catch (error) {
+            console.log('❌ Error:', error.message);
+        }
+    }
+    
+    console.log('No working endpoints found');
+    return null;
+};
+
+// Also add a function to manually trigger rating refresh
+window.refreshRating = async function(gameSlug = 'cookieclicker') {
+    console.log('🔄 Manually refreshing rating for:', gameSlug);
+    
+    // Get the current GameLoader instance
+    const gameLoader = window.currentGameLoader || new GameLoader();
+    await gameLoader.loadGlobalRating(gameSlug);
+};
 
 function initializeFAQVoting() {
     // Placeholder for FAQ voting functionality

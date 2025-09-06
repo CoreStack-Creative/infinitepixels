@@ -174,7 +174,23 @@
                     <a href="news.html">
                         <span>News</span>
                     </a>
-                </li>               
+                </li>
+                <li>
+                    <a href="faq.html">
+                        <span>FAQ</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="game-reviews.html">
+                        <span>Reviews</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="game-guides.html">
+                        <span>Guides</span>
+                    </a>
+                </li>
+                <li>
                     <a href="about.html">
                         <span>About</span>
                     </a>
@@ -333,12 +349,189 @@
        <!-- New Games Section -->
        <section class="homepage-new-section">
            <div class="homepage-new-container">
-               <h2 class="homepage-new-title">New Games</h2>
+               <div class="homepage-new-header">
+                   <h2 class="homepage-new-title">New Games</h2>
+                   <a href="newgames.html" class="homepage-category-btn">
+                       View All <i class="fas fa-arrow-right"></i>
+                   </a>
+               </div>
                <div class="homepage-new-grid" id="homepageNewGrid">
                    <!-- New games will be populated by JavaScript -->
                </div>
-               <div class="homepage-new-more">
-                   <a href="newgames.html" class="homepage-new-btn">View All New Games</a>
+           </div>
+       </section>
+
+       <!-- Top Reviewed Games Section -->
+       <section class="homepage-reviews-section">
+           <div class="homepage-reviews-container">
+               <div class="homepage-reviews-header">
+                   <div class="reviews-header-content">
+                       <div class="reviews-badge">
+                           <i class="fas fa-star"></i>
+                           <span>Player Favorites</span>
+                       </div>
+                       <h2 class="homepage-reviews-title">Top Reviewed Games</h2>
+                       <p class="homepage-reviews-subtitle">Discover the highest-rated games loved by our community of players</p>
+                   </div>
+                   <a href="game-reviews.html" class="homepage-reviews-btn">
+                       View All Reviews <i class="fas fa-arrow-right"></i>
+                   </a>
+               </div>
+               <div class="homepage-reviews-grid" id="homepageReviewsGrid">
+                   <!-- Top reviewed games will be populated by JavaScript -->
+               </div>
+           </div>
+       </section>
+
+       <!-- Gaming Guides Section -->
+       <section class="homepage-guides-section">
+           <div class="homepage-guides-container">
+               <div class="homepage-guides-header">
+                   <div class="guides-header-content">
+                       <div class="guides-badge">
+                           <i class="fas fa-book-open"></i>
+                           <span>Level Up Your Skills</span>
+                       </div>
+                       <h2 class="homepage-guides-title">Gaming Guides & Expert Tips</h2>
+                       <p class="homepage-guides-subtitle">Master your favorite games with our comprehensive collection of strategies, tips, and expert techniques</p>
+                   </div>
+                   <a href="game-guides.html" class="homepage-guides-btn">
+                       View All Guides <i class="fas fa-arrow-right"></i>
+                   </a>
+               </div>
+
+               <div class="homepage-guides-content">
+                   <!-- Featured Guide Card -->
+                   <a href="game-guides.html#guide-1v1lol" class="featured-guide-card clickable-card">
+                       <div class="featured-guide-image">
+                           <img src="images/1v1lolimage.jpg" alt="1v1.LOL Complete Guide" loading="lazy">
+                           <div class="featured-guide-overlay">
+                               <div class="guide-category-badge">Most Popular</div>
+                           </div>
+                       </div>
+                       <div class="featured-guide-content">
+                           <h3>Complete 1v1.LOL Guide</h3>
+                           <p>Master building and combat with our comprehensive guide covering all game modes and advanced techniques.</p>
+                           <div class="featured-guide-stats">
+                               <span><i class="fas fa-eye"></i> 15.2K views</span>
+                               <span><i class="fas fa-clock"></i> 8 min read</span>
+                               <span><i class="fas fa-star"></i> Advanced</span>
+                           </div>
+                           <div class="featured-guide-link-container">
+                               <span class="featured-guide-link">Read Guide <i class="fas fa-external-link-alt"></i></span>
+                           </div>
+                       </div>
+                   </a>
+
+                   <!-- Guide Categories Grid -->
+                   <div class="guides-categories-grid">
+                       <a href="game-guides.html#shooter-guides" class="guide-category-card clickable-card">
+                           <div class="category-icon">
+                               <i class="fas fa-crosshairs"></i>
+                           </div>
+                           <h4>Shooter Games</h4>
+                           <p>Aim training, positioning, and weapon mastery techniques</p>
+                           <ul class="category-highlights">
+                               <li>Accuracy improvement</li>
+                               <li>Map control strategies</li>
+                               <li>Advanced movement</li>
+                           </ul>
+                           <div class="category-card-arrow">
+                               <i class="fas fa-arrow-right"></i>
+                           </div>
+                       </a>
+
+                       <a href="game-guides.html#puzzle-guides" class="guide-category-card clickable-card">
+                           <div class="category-icon">
+                               <i class="fas fa-puzzle-piece"></i>
+                           </div>
+                           <h4>Puzzle Games</h4>
+                           <p>Pattern recognition and logical problem-solving methods</p>
+                           <ul class="category-highlights">
+                               <li>Pattern recognition</li>
+                               <li>Time management</li>
+                               <li>Advanced techniques</li>
+                           </ul>
+                           <div class="category-card-arrow">
+                               <i class="fas fa-arrow-right"></i>
+                           </div>
+                       </a>
+
+                       <a href="game-guides.html#racing-guides" class="guide-category-card clickable-card">
+                           <div class="category-icon">
+                               <i class="fas fa-car"></i>
+                           </div>
+                           <h4>Racing Games</h4>
+                           <p>Racing lines, braking techniques, and overtaking strategies</p>
+                           <ul class="category-highlights">
+                               <li>Optimal racing lines</li>
+                               <li>Braking techniques</li>
+                               <li>Vehicle setup</li>
+                           </ul>
+                           <div class="category-card-arrow">
+                               <i class="fas fa-arrow-right"></i>
+                           </div>
+                       </a>
+
+                       <a href="game-guides.html#io-guides" class="guide-category-card clickable-card">
+                           <div class="category-icon">
+                               <i class="fas fa-globe"></i>
+                           </div>
+                           <h4>IO Games</h4>
+                           <p>Survival tactics, resource management, and domination strategies</p>
+                           <ul class="category-highlights">
+                               <li>Early game survival</li>
+                               <li>Territory control</li>
+                               <li>End game tactics</li>
+                           </ul>
+                           <div class="category-card-arrow">
+                               <i class="fas fa-arrow-right"></i>
+                           </div>
+                       </a>
+                   </div>
+
+                   <!-- Quick Tips Section -->
+                   <div class="quick-tips-section">
+                       <h3><i class="fas fa-lightbulb"></i> Quick Gaming Tips</h3>
+                       <div class="quick-tips-grid">
+                           <div class="tip-item">
+                               <div class="tip-icon">
+                                   <i class="fas fa-brain"></i>
+                               </div>
+                               <div class="tip-content">
+                                   <h5>Mental Focus</h5>
+                                   <p>Take regular breaks to maintain peak performance</p>
+                               </div>
+                           </div>
+                           <div class="tip-item">
+                               <div class="tip-icon">
+                                   <i class="fas fa-cog"></i>
+                               </div>
+                               <div class="tip-content">
+                                   <h5>Optimize Setup</h5>
+                                   <p>Ensure stable connection and updated browser</p>
+                               </div>
+                           </div>
+                           <div class="tip-item">
+                               <div class="tip-icon">
+                                   <i class="fas fa-chart-line"></i>
+                               </div>
+                               <div class="tip-content">
+                                   <h5>Track Progress</h5>
+                                   <p>Record scores and identify improvement areas</p>
+                               </div>
+                           </div>
+                           <div class="tip-item">
+                               <div class="tip-icon">
+                                   <i class="fas fa-users"></i>
+                               </div>
+                               <div class="tip-content">
+                                   <h5>Learn Together</h5>
+                                   <p>Connect with community for shared strategies</p>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
                </div>
            </div>
        </section>
@@ -406,6 +599,7 @@
                                <li><a href="games.html" class="footer-link">All Games</a></li>
                                <li><a href="newgames.html" class="footer-link">New Releases</a></li>
                                <li><a href="category.html" class="footer-link">Categories</a></li>
+                               <li><a href="game-reviews.html" class="footer-link">Reviews</a></li>
                            </ul>
                        </div>
 
@@ -416,6 +610,7 @@
                                <li><a href="contact.html" class="footer-link">Contact Us</a></li>
                                <li><a href="settings.html" class="footer-link">Settings</a></li>
                                <li><a href="news.html" class="footer-link">News</a></li>
+                               <li><a href="game-guides.html" class="footer-link">Guides</a></li>
                            </ul>
                        </div>
 
@@ -426,6 +621,7 @@
                                <li><a href="about.html" class="footer-link">About Us</a></li>
                                <li><a href="privacypolicy.html" class="footer-link">Privacy Policy</a></li>
                                <li><a href="termsandconditions.html" class="footer-link">Terms of Service</a></li>
+                               <li><a href="faq.html" class="footer-link">FAQ</a></li>
                            </ul>
                        </div>
                    </div>
@@ -482,6 +678,7 @@
    </div>
 
    <!-- Load scripts in correct order -->
+   <script src="account-system.js"></script> <!-- Account system -->
    <script src="javascript.js"></script> <!-- Then main javascript -->
    
    <script>

@@ -282,28 +282,86 @@
                 <div class="game-description" style="position:relative;">
                     <div class="description-header" style="display:flex; align-items:center; justify-content:space-between;">
                         <h3 style="margin-bottom:0;">About This Game</h3>
-                        <!-- Feedback Buttons -->
-                        <div class="feedback-inline" style="display: flex; align-items: center; background: rgba(138,43,226,0.13); border-radius: 16px; box-shadow: 0 2px 8px rgba(138,43,226,0.08); position: relative;">
-                            <button id="thumbsUpBtn" style="background: linear-gradient(135deg, #4CAF50 60%, #8a2be2 100%); border: none; cursor: pointer; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(76,175,80,0.12); transition: transform 0.15s;">
-                                <i class="fas fa-thumbs-up"></i>
-                            </button>
-                            <button id="thumbsDownBtn" style="background: linear-gradient(135deg, #e74c3c 60%, #8a2be2 100%); border: none; cursor: pointer; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(231,76,60,0.12); transition: transform 0.15s;">
-                                <i class="fas fa-thumbs-down"></i>
-                            </button>
-                            <!-- Floating thumbs container -->
-                            <div id="floatingThumbs" style="pointer-events:none; position:absolute; left:0; top:0; width:100%; height:100%; z-index:10;"></div>
-                            <div id="voteLock" style="display:none; position:absolute; left:0; top:0; width:100%; height:100%; align-items:center; justify-content:center; pointer-events:auto;">
-                                <span style="font-size:1.2em; color:#8a2be2; display:flex; align-items:center; gap:6px;">
-                                    <i class="fas fa-lock"></i>
-                                    <span style="font-weight:600;">Voted!</span>
-                                </span>
+                        <!-- Star Rating System -->
+                        <div class="star-rating-container">
+                            <div class="star-rating-display">
+                                <div class="average-rating">
+                                    <span class="rating-number" id="averageRating">0.0</span>
+                                    <div class="stars-interactive" id="starsInteractive">
+                                        <button class="star-display-btn" data-rating="1">
+                                            <i class="fas fa-star"></i>
+                                            <div class="star-underline"></div>
+                                        </button>
+                                        <button class="star-display-btn" data-rating="2">
+                                            <i class="fas fa-star"></i>
+                                            <div class="star-underline"></div>
+                                        </button>
+                                        <button class="star-display-btn" data-rating="3">
+                                            <i class="fas fa-star"></i>
+                                            <div class="star-underline"></div>
+                                        </button>
+                                        <button class="star-display-btn" data-rating="4">
+                                            <i class="fas fa-star"></i>
+                                            <div class="star-underline"></div>
+                                        </button>
+                                        <button class="star-display-btn" data-rating="5">
+                                            <i class="fas fa-star"></i>
+                                            <div class="star-underline"></div>
+                                        </button>
+                                    </div>
+                                    <span class="rating-count" id="ratingCount">(0 votes)</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <p id="gameDescription">Loading game description...</p>
                     
+                    <!-- Game Tags/Categories -->
                     <div class="game-genres" id="gameGenres">
                         <!-- Tags will be populated here -->
+                    </div>
+                    
+                    <p id="gameDescription">Loading game description...</p>
+                    
+                    <!-- Game Controls Section -->
+                    <div class="game-controls-section" id="gameControlsSection" style="display: none;">
+                        <div class="controls-header">
+                            <i class="fas fa-gamepad controls-icon"></i>
+                            <h4>Controls</h4>
+                        </div>
+                        <div class="controls-list" id="gameControlsList">
+                            <!-- Controls will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reviews Section -->
+                <div class="reviews-section" id="reviewsSection">
+                    <div class="reviews-header">
+                        <h3>Player Reviews</h3>
+                        <button class="write-review-btn" onclick="reviewSystem.showReviewForm()" style="display: none;">
+                            <i class="fas fa-star"></i>
+                            Write a Review
+                        </button>
+                    </div>
+                    
+                    <!-- Review Statistics -->
+                    <div class="review-stats" id="reviewStats">
+                        <!-- Stats will be populated here -->
+                    </div>
+                    
+                    <!-- Reviews Container -->
+                    <div class="reviews-container">
+                        <!-- Review form will be inserted here when needed -->
+                        
+                        <!-- Reviews List -->
+                        <div class="reviews-list">
+                            <div class="reviews-loading">Loading reviews...</div>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div class="review-pagination">
+                            <!-- Pagination will be populated here -->
+                        </div>
                     </div>
                 </div>
 
@@ -372,92 +430,265 @@
     </div>
 
     <script src="javascript.js"></script>
+    <script src="account-system.js"></script>
+    <script src="review-system.js"></script>
 
     <style>
-    /* Floating thumbs up animation */
-    @keyframes thumbsUpFloat {
-        0% {
-            opacity: 0.85;
-            transform: translate(-50%, -50%) scale(1) rotate(var(--angle, 0deg));
-        }
-        70% {
-            opacity: 1;
-            transform: translate(calc(-50% + var(--x, 0px)), calc(-50% - var(--y, 60px))) scale(1.2) rotate(var(--angle, 0deg));
-        }
-        100% {
-            opacity: 0;
-            transform: translate(calc(-50% + var(--x, 0px)), calc(-50% - var(--y, 90px))) scale(1.1) rotate(var(--angle, 0deg));
-        }
+    /* Star Rating System Styles */
+    .star-rating-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 8px;
+        min-width: 200px;
     }
-    /* Floating thumbs down animation */
-    @keyframes thumbsDownFloat {
-        0% {
-            opacity: 0.85;
-            transform: translate(-50%, -50%) scale(1) rotate(var(--angle, 0deg));
-        }
-        70% {
-            opacity: 1;
-            transform: translate(calc(-50% + var(--x, 0px)), calc(-50% + var(--y, 60px))) scale(1.2) rotate(var(--angle, 0deg));
-        }
-        100% {
-            opacity: 0;
-            transform: translate(calc(-50% + var(--x, 0px)), calc(-50% + var(--y, 90px))) scale(1.1) rotate(var(--angle, 0deg));
-        }
+
+    .star-rating-display {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 4px;
     }
-    /* Smaller, random floating thumbs up */
-    @keyframes thumbsUpFloatSmall {
-        0% {
-            opacity: 0.85;
-            transform: translate(-50%, -50%) scale(1);
-        }
-        60% {
-            opacity: 1;
-            transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.2);
-        }
-        100% {
-            opacity: 0;
-            transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y, -60px))) scale(0.9);
-        }
-    }
-    /* Smaller, random floating thumbs down */
-    @keyframes thumbsDownFloatSmall {
-        0% {
-            opacity: 0.85;
-            transform: translate(-50%, -50%) scale(1);
-        }
-        60% {
-            opacity: 1;
-            transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1.2);
-        }
-        100% {
-            opacity: 0;
-            transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y, 60px))) scale(0.9);
-        }
-    }
-    .floating-thumb {
-        z-index: 10;
-        pointer-events: none;
-        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.10));
-    }
-    #voteLock {
-        background: rgba(138,43,226,0.13);
-        border-radius: 16px;
-        justify-content: center;
+
+    .average-rating {
+        display: flex;
         align-items: center;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        left: 0; top: 0;
-        z-index: 20;
-        font-size: 1.1em;
-        pointer-events: auto;
-        user-select: none;
-        transition: background 0.3s;
+        gap: 8px;
+        font-size: 14px;
+        color: #b8b8d4;
     }
-    @keyframes voteLockPop {
-        0% { transform: scale(0.7); opacity: 0; }
-        60% { transform: scale(1.1); opacity: 1; }
-        100% { transform: scale(1); opacity: 1; }
+
+    .rating-number {
+        font-size: 18px;
+        font-weight: 600;
+        color: #fff;
+        min-width: 32px;
+        text-align: right;
+    }
+
+    .stars-interactive {
+        display: flex;
+        gap: 2px;
+    }
+
+    .star-display-btn {
+        background: none;
+        border: none;
+        padding: 2px;
+        cursor: pointer;
+        position: relative;
+        transition: all 0.2s ease;
+    }
+
+    .star-display-btn:disabled {
+        cursor: default;
+    }
+
+    .star-display-btn i {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.3);
+        transition: all 0.2s ease;
+        display: block;
+    }
+
+    /* Show average rating by default */
+    .star-display-btn.filled i {
+        color: #ffd700;
+    }
+
+    .star-underline {
+        position: absolute;
+        bottom: -2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 2px;
+        background: #ffd700;
+        transition: width 0.2s ease;
+        border-radius: 1px;
+    }
+
+    /* Reset stars to show hover preview */
+    .stars-interactive:not(.rated):hover .star-display-btn i {
+        color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Selected state - bold underline that persists */
+    .star-display-btn.selected .star-underline {
+        width: 100%;
+        height: 3px;
+        background: #ffd700;
+        box-shadow: 0 0 4px rgba(255, 215, 0, 0.5);
+    }
+
+    .rating-count {
+        font-size: 12px;
+        color: #b8b8d4;
+        white-space: nowrap;
+    }
+
+    /* Animation for star selection */
+    @keyframes starSelect {
+        0% { 
+            transform: scale(1);
+        }
+        50% { 
+            transform: scale(1.3);
+            filter: brightness(1.5) drop-shadow(0 0 8px #ffd700);
+        }
+        100% { 
+            transform: scale(1);
+        }
+    }
+
+    .star-display-btn.animate i {
+        animation: starSelect 0.4s ease-in-out;
+    }
+
+    /* Rated state styling */
+    .stars-interactive.rated .star-display-btn {
+        cursor: default;
+    }
+
+    .stars-interactive.rated .star-display-btn:hover i {
+        transform: none;
+    }
+
+    /* Game Controls Section Styles */
+    .game-controls-section {
+        background: rgba(27, 27, 46, 0.7);
+        border: 1px solid rgba(138, 43, 226, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+        backdrop-filter: blur(10px);
+        animation: fadeInUp 0.6s ease-out;
+        transition: all 0.3s ease;
+    }
+
+    .game-controls-section:hover {
+        border-color: rgba(138, 43, 226, 0.5);
+        box-shadow: 0 4px 20px rgba(138, 43, 226, 0.1);
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .controls-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(138, 43, 226, 0.2);
+    }
+
+    .controls-icon {
+        color: #8A2BE2;
+        font-size: 20px;
+    }
+
+    .controls-header h4 {
+        margin: 0;
+        color: #fff;
+        font-size: 18px;
+        font-weight: 600;
+    }
+
+    .controls-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 12px;
+    }
+
+    .control-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(34, 34, 74, 0.6);
+        border: 1px solid rgba(138, 43, 226, 0.2);
+        border-radius: 8px;
+        padding: 12px 16px;
+        transition: all 0.3s ease;
+        animation: slideInLeft 0.5s ease-out both;
+    }
+
+    @keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .control-item:hover {
+        background: rgba(138, 43, 226, 0.1);
+        border-color: rgba(138, 43, 226, 0.4);
+        transform: translateY(-2px);
+    }
+
+    .control-key {
+        font-weight: 600;
+        color: #8A2BE2;
+        background: linear-gradient(145deg, rgba(138, 43, 226, 0.15), rgba(138, 43, 226, 0.05));
+        border: 1px solid rgba(138, 43, 226, 0.3);
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 13px;
+        min-width: 80px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .control-action {
+        color: #b8b8d4;
+        font-size: 14px;
+        margin-left: 12px;
+        flex: 1;
+        text-align: right;
+    }
+
+    /* Responsive design */
+    @media (max-width: 768px) {
+        .star-rating-container {
+            min-width: 160px;
+        }
+
+        .controls-list {
+            grid-template-columns: 1fr;
+        }
+
+        .control-item {
+            flex-direction: column;
+            gap: 8px;
+            text-align: center;
+        }
+
+        .control-action {
+            text-align: center;
+            margin-left: 0;
+        }
+        
+        .rating-number {
+            font-size: 16px;
+        }
+        
+        .star-display-btn i {
+            font-size: 14px;
+        }
     }
     </style>
 </body>

@@ -1,46 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frequently Asked Questions - InfinitePixels</title>
-    <link rel="icon" type="image/png" href="/favicon.png">
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="Find answers to frequently asked questions about InfinitePixels gaming platform, technical support, account management, and game features.">
-    <meta name="keywords" content="FAQ, help, support, gaming platform, technical support, account help, game issues">
-    <link rel="canonical" href="https://infinite-pixels.com/faq.html">
-    
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-            {
-                "@type": "Question",
-                "name": "How do I create an account on InfinitePixels?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "InfinitePixels doesn't require account creation to play games. Simply visit our website and start playing immediately. However, we recommend bookmarking our site for easy access to your favorite games."
-                }
-            },
-            {
-                "@type": "Question",
-                "name": "Are all games free to play?",
-                "acceptedAnswer": {
-                    "@type": "Answer",
-                    "text": "Yes, all games on InfinitePixels are completely free to play. We believe gaming should be accessible to everyone, regardless of budget constraints."
-                }
-            }
-        ]
-    }
-    </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Frequently Asked Questions - InfinitePixels</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- ✅ Logo structured data for Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Infinite Pixels",
+    "url": "https://infinite-pixels.com/",
+    "logo": "https://www.infinite-pixels.com/images/infinitepixelslogo.png",
+    "sameAs": [
+      "https://www.youtube.com/@InfinitePixels-Games",
+      "https://www.tiktok.com/@infinitepixelsgames"
+    ]
+  }
+  </script>
+
+  <!-- ✅ Cookiebot CMP (must come first, only include once) -->
+  <script 
+    id="Cookiebot"
+    src="https://consent.cookiebot.com/uc.js"
+    data-cbid="82d2063c-123d-4595-9051-0b523b38f58f"
+    data-blockingmode="auto"
+    type="text/javascript">
+  </script>
+
+  <!-- ✅ Google Consent Mode v2 defaults: deny until consent given -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("consent", "default", {
+      ad_storage: "denied",
+      analytics_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied"
+    });
+  </script>
+
+  <!-- ✅ Google Tag Manager (blocked until 'marketing' consent) -->
+  <script type="text/plain" data-cookieconsent="marketing">
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+      var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s),
+        dl = l != "dataLayer" ? "&l=" + l : "";
+      j.async = true;
+      j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, "script", "dataLayer", "GTM-NPJXGVHN");
+  </script>
+
+  <!-- ✅ Google Analytics 4 (fires only if Statistics accepted) -->
+  <script type="text/plain" data-cookieconsent="statistics">
+    gtag("js", new Date());
+    gtag("config", "G-0YQ8BM0QCT");
+  </script>
+
+  <!-- ❌ DO NOT put AdSense in <head> with data-cookieconsent -->
+  <!-- ✅ Place AdSense inside <body>, controlled by Cookiebot -->
 </head>
 <body>
-    <!-- Navigation (same structure as other pages) -->
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NPJXGVHN"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <!-- ✅ AdSense script (Cookiebot auto-blocks until Marketing consent) -->
+    <script async 
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+      data-ad-client="ca-pub-8164325902033897">
+    </script>
+
+    <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <a href="index.html" class="logo-link">
@@ -126,7 +173,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="faq.html" class="active">
+                    <a href="faq.html">
                         <span>FAQ</span>
                     </a>
                 </li>
@@ -168,23 +215,27 @@
 
     </nav>
 
-    <div class="top-bar">
-        <button class="sidebar-toggle" id="sidebarToggle">
-            <i class="fas fa-bars"></i>
-        </button>
-        
-        <div class="search-container">
-            <div class="search-wrapper">
-                <button class="search-icon-btn" id="searchIconBtn">
-                    <i class="fas fa-search"></i>
-                </button>
-                <div class="search-box" id="searchBox">
-                    <input type="text" id="searchInput" placeholder="Search FAQ...">
-                </div>
-            </div>
-            <div class="search-results" id="searchResults"></div>
-        </div>
-    </div>
+
+   <div class="top-bar">
+       <button class="sidebar-toggle" id="sidebarToggle">
+           <i class="fas fa-bars"></i>
+       </button>
+
+
+       <div class="search-container">
+           <div class="search-wrapper">
+               <button class="search-icon-btn" id="searchIconBtn">
+                   <i class="fas fa-search"></i>
+               </button>
+               <div class="search-box" id="searchBox">
+                   <input type="text" id="searchInput" placeholder="Search games...">
+               </div>
+           </div>
+           <div class="search-results" id="searchResults">
+               <!-- Search results will be displayed here -->
+           </div>
+       </div>
+   </div>
 
     <main class="main-content" id="mainContent">
         <div class="faq-container">
@@ -650,13 +701,7 @@
                     </a>
                 </div>
             </section>
-
-
-
-
         </div>
-    </main>
-
        <!-- Footer Section -->
        <footer class="site-footer">
            <div class="footer-container">
@@ -702,6 +747,7 @@
                                <li><a href="games.html" class="footer-link">All Games</a></li>
                                <li><a href="newgames.html" class="footer-link">New Releases</a></li>
                                <li><a href="category.html" class="footer-link">Categories</a></li>
+                               <li><a href="game-reviews.html" class="footer-link">Reviews</a></li>
                            </ul>
                        </div>
 
@@ -712,6 +758,7 @@
                                <li><a href="contact.html" class="footer-link">Contact Us</a></li>
                                <li><a href="settings.html" class="footer-link">Settings</a></li>
                                <li><a href="news.html" class="footer-link">News</a></li>
+                               <li><a href="game-guides.html" class="footer-link">Guides</a></li>
                            </ul>
                        </div>
 
@@ -722,6 +769,7 @@
                                <li><a href="about.html" class="footer-link">About Us</a></li>
                                <li><a href="privacypolicy.html" class="footer-link">Privacy Policy</a></li>
                                <li><a href="termsandconditions.html" class="footer-link">Terms of Service</a></li>
+                               <li><a href="faq.html" class="footer-link">FAQ</a></li>
                            </ul>
                        </div>
                    </div>
@@ -745,7 +793,27 @@
                </div>
            </div>
        </footer>
+    </main>
 
+    <script src="account-system.js"></script>
     <script src="javascript.js"></script>
+    
+    <!-- Load theme from settings -->
+    <script>
+        // Apply theme from main settings
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedSettings = localStorage.getItem('infinitePixelsSettings');
+            if (savedSettings) {
+                try {
+                    const settings = JSON.parse(savedSettings);
+                    if (settings.theme === 'light') {
+                        document.body.classList.add('light-theme');
+                    }
+                } catch (e) {
+                    console.log('Error loading theme settings:', e);
+                }
+            }
+        });
+    </script>
 </body>
 </html>

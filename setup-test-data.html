@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Setup Test Data</title>
+</head>
+<body>
+    <h1>Setting up test data...</h1>
+    <div id="status">Loading...</div>
+
+    <script>
+        // Add test recent games data
+        const testRecentGames = [
+            {
+                slug: "1v1lol",
+                lastPlayed: Date.now() - 60000, // 1 minute ago
+                name: "1v1 Lol"
+            },
+            {
+                slug: "basketrandom",
+                lastPlayed: Date.now() - 3600000, // 1 hour ago  
+                name: "Basket Random"
+            },
+            {
+                slug: "happywheels",
+                lastPlayed: Date.now() - 86400000, // 1 day ago
+                name: "Happy Wheels"
+            }
+        ];
+
+        try {
+            localStorage.setItem('infinitePixels_recentlyPlayed', JSON.stringify(testRecentGames));
+            document.getElementById('status').innerHTML = 'Test data added successfully! Redirecting to recent page...';
+            console.log('Test data added:', testRecentGames);
+            
+            // Redirect to recent page after 2 seconds
+            setTimeout(() => {
+                window.location.href = 'recent.html';
+            }, 2000);
+        } catch (error) {
+            document.getElementById('status').innerHTML = 'Error adding test data: ' + error.message;
+            console.error('Error:', error);
+        }
+    </script>
+</body>
+</html>

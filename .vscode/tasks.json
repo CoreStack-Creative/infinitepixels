@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Start Account Server",
+			"type": "shell",
+			"command": "/usr/local/bin/node",
+			"args": [
+				"server/server.js"
+			],
+			"isBackground": true,
+			"group": "build",
+			"problemMatcher": []
+		}
+	]
+}
