@@ -6128,13 +6128,39 @@ class FavoritesManager {
         }
     }
 
-    addToFavorites(gameSlug) {
+    async addToFavorites(gameSlug) {
         const game = gamesDatabase.find(g => g.slug === gameSlug);
         if (!game) return false;
 
         // Check if already favorited
-        if (this.isFavorited(gameSlug)) return false;
+        if (await this.isFavorited(gameSlug)) return false;
 
+        // If user is logged in, add to server first
+        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+            try {
+                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites`, {
+                    method: 'POST',
+                    headers: {
+                        ...window.accountSystem.getAuthHeaders(),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        game_id: gameSlug
+                    })
+                });
+                
+                if (response.ok) {
+                    console.log('Favorite added to server successfully');
+                    return true;
+                } else {
+                    console.error('Failed to add favorite to server');
+                }
+            } catch (error) {
+                console.error('Error adding favorite to server:', error);
+            }
+        }
+
+        // Fallback to local storage
         const favoriteData = {
             slug: gameSlug,
             dateAdded: new Date().toISOString(),
@@ -6146,7 +6172,27 @@ class FavoritesManager {
         return true;
     }
 
-    removeFromFavorites(gameSlug) {
+    async removeFromFavorites(gameSlug) {
+        // If user is logged in, remove from server first
+        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+            try {
+                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites/${gameSlug}`, {
+                    method: 'DELETE',
+                    headers: window.accountSystem.getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    console.log('Favorite removed from server successfully');
+                    return true;
+                } else {
+                    console.error('Failed to remove favorite from server');
+                }
+            } catch (error) {
+                console.error('Error removing favorite from server:', error);
+            }
+        }
+
+        // Fallback to local storage
         const index = this.favorites.findIndex(fav => fav.slug === gameSlug);
         if (index === -1) return false;
 
@@ -6155,15 +6201,32 @@ class FavoritesManager {
         return true;
     }
 
-    isFavorited(gameSlug) {
+    async isFavorited(gameSlug) {
+        // If user is logged in, check server favorites
+        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+            try {
+                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites`, {
+                    headers: window.accountSystem.getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    const serverFavorites = await response.json();
+                    return serverFavorites.some(fav => fav.game_id === gameSlug);
+                }
+            } catch (error) {
+                console.error('Error checking server favorites:', error);
+            }
+        }
+        
+        // Fallback to local storage
         return this.favorites.some(fav => fav.slug === gameSlug);
     }
 
-    toggleFavorite(gameSlug) {
-        if (this.isFavorited(gameSlug)) {
-            return this.removeFromFavorites(gameSlug);
+    async toggleFavorite(gameSlug) {
+        if (await this.isFavorited(gameSlug)) {
+            return await this.removeFromFavorites(gameSlug);
         } else {
-            return this.addToFavorites(gameSlug);
+            return await this.addToFavorites(gameSlug);
         }
     }
 
@@ -6357,11 +6420,145 @@ class FavoritesManager {
         this.initFavoritesPopup();
     }
 
+    initFavoritesPopup() {
+        const floatBtn = document.getElementById('homepageFavoritesBtn');
+        const popup = document.getElementById('homepageFavoritesPopup');
+        const closeBtn = document.getElementById('homepageFavoritesClose');
+        
+        console.log('Initializing favorites popup...', { floatBtn, popup, closeBtn });
+        
+        if (!floatBtn || !popup || !closeBtn) {
+            console.error('Favorites popup elements not found');
+            return;
+        }
 
+        floatBtn.addEventListener('click', async (e) => {
+            console.log('Favorites button clicked!');
+            e.stopPropagation();
+            const isActive = popup.classList.contains('active');
+            if (isActive) {
+                this.closeFavoritesPopup();
+            } else {
+                await this.openFavoritesPopup();
+            }
+        });
+
+        closeBtn.addEventListener('click', () => {
+            console.log('Close button clicked');
+            this.closeFavoritesPopup();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!popup.contains(e.target) && !floatBtn.contains(e.target)) {
+                this.closeFavoritesPopup();
+            }
+        });
+        
+        console.log('Favorites popup initialized successfully');
+    }
+
+    async openFavoritesPopup() {
+        console.log('Opening favorites popup...');
+        const popup = document.getElementById('homepageFavoritesPopup');
+        
+        if (!popup) {
+            console.error('Popup element not found');
+            return;
+        }
+
+        // Show popup first
+        popup.classList.add('active');
+        console.log('Popup should be visible now');
+        
+        // Then render favorites (async)
+        await this.renderFavoritesPopup();
+    }
+
+    closeFavoritesPopup() {
+        const popup = document.getElementById('homepageFavoritesPopup');
+        if (popup) {
+            popup.classList.remove('active');
+        }
+    }
+
+    async renderFavoritesPopup() {
+        const content = document.getElementById('homepageFavoritesContent');
+        if (!content) {
+            console.error('Favorites content element not found');
+            return;
+        }
+
+        console.log('Rendering favorites popup...');
+
+        // Show loading state
+        content.innerHTML = `
+            <div class="homepage-favorites-loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading favorites...</p>
+            </div>
+        `;
+
+        try {
+            // Get favorites (now async due to account integration)
+            const favorites = await this.getFavoriteGames('newest');
+            
+            // Limit to 8 favorites for the popup
+            const limitedFavorites = favorites.slice(0, 8);
+            
+            console.log('Loaded favorites for popup:', limitedFavorites);
+
+            if (limitedFavorites.length === 0) {
+                content.innerHTML = `
+                    <div class="homepage-favorites-empty">
+                        <p>No favorite games yet!</p>
+                        <p>Click the heart icon on any game to add it to your favorites.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            limitedFavorites.forEach(game => {
+                const gameUrl = `game.html?game=${game.slug}`;
+                const truncatedDesc = this.truncateText(game.description, 50);
+                
+                html += `
+                    <div class="homepage-favorites-item" onclick="window.location.href='${gameUrl}'">
+                        <img src="${game.image}" alt="${game.name}" class="homepage-favorites-item-image" loading="lazy">
+                        <div class="homepage-favorites-item-info">
+                            <h4>${game.name}</h4>
+                            <p>${truncatedDesc}</p>
+                        </div>
+                    </div>
+                `;
+            });
+
+            content.innerHTML = html;
+            console.log('Favorites rendered successfully');
+
+        } catch (error) {
+            console.error('Error rendering favorites:', error);
+            content.innerHTML = `
+                <div class="homepage-favorites-empty">
+                    <p>Error loading favorites.</p>
+                    <p>Please try again later.</p>
+                </div>
+            `;
+        }
+    }
+
+    truncateText(text, maxLength) {
+        if (!text || text.length <= maxLength) return text || '';
+        return text.substring(0, maxLength) + '...';
+    }
+
+    async refreshFavoritesPopup() {
+        const popup = document.getElementById('homepageFavoritesPopup');
+        if (popup && popup.classList.contains('active')) {
+            await this.renderFavoritesPopup();
+        }
+    }
 }
-
-// Initialize Favorites Manager
-let favoritesManager;
 
 // Initialize favorites manager when games data is loaded
 function initializeFavoritesManager() {
@@ -6972,1223 +7169,418 @@ class HomepageGamesManager {
         };
 
         window.addEventListener('resize', debounce(() => {
-            // Only recalculate if screen size changes significantly
-            const currentWidth = window.innerWidth;
-            if (Math.abs(currentWidth - (window.lastGridWidth || 0)) > 100) {
-                window.lastGridWidth = currentWidth;
-                this.renderFeaturedGames();
-            }
-        }, 250));
+            this.renderFeaturedGames();
+        }, 300));
+    }
+}
+
+// Favorites Manager
+class FavoritesManager {
+    constructor() {
+        this.storageKey = 'infinitePixels_favorites';
+        this.favorites = [];
+        this.loadFavorites();
+        console.log('FavoritesManager initialized with', this.favorites.length, 'favorites');
     }
 
-    // Add the remaining methods that would be in your complete class
-    attachGameCardEvents(context) {
-        const cards = document.querySelectorAll(`[data-context="${context}"] .homepage-game-card`);
-        
-        cards.forEach(card => {
-            const video = card.querySelector('.homepage-card-video');
-            
-            card.addEventListener('mouseenter', () => {
-                if (video && card.dataset.hasVideo === 'true') {
-                    video.style.opacity = '1';
-                    video.play().catch(e => console.log('Video autoplay failed:', e));
-                }
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                if (video && card.dataset.hasVideo === 'true') {
-                    video.style.opacity = '0';
-                    video.pause();
-                    video.currentTime = 0;
-                }
-            });
-            
-            card.addEventListener('click', (e) => {
-                const gameSlug = card.dataset.gameSlug;
-                if (gameSlug) {
-                    window.location.href = `/game/${gameSlug}`;
-                }
-            });
-        });
-    }
-
-    renderCategoryGames() {
-        const grid = document.getElementById('homepageCategoryGrid');
-        if (!grid || typeof gamesDatabase === 'undefined') return;
-
-        const categoryGames = gamesDatabase
-            .filter(game => game.tags && game.tags.includes('action'))
-            .slice(0, 20);
-
-        let html = '';
-        categoryGames.forEach(game => {
-            html += this.createGameCard(game, {}, 'category');
-        });
-
-        grid.innerHTML = html;
-        this.attachGameCardEvents('category');
-    }
-
-    renderMultiplayerGames() {
-        const grid = document.getElementById('homepageMultiplayerGrid');
-        if (!grid || typeof gamesDatabase === 'undefined') return;
-
-        const multiplayerGames = gamesDatabase
-            .filter(game => game.tags && (
-                game.tags.includes('multiplayer') || 
-                game.tags.includes('io') || 
-                game.tags.includes('2 player') ||
-                game.tags.includes('online')
-            ))
-            .slice(0, 20);
-
-        let html = '';
-        multiplayerGames.forEach(game => {
-            html += this.createGameCard(game, {}, 'multiplayer');
-        });
-
-        grid.innerHTML = html;
-        this.attachGameCardEvents('multiplayer');
-    }
-
-    renderNewGames() {
-        const grid = document.getElementById('homepageNewGrid');
-        if (!grid || typeof gamesDatabase === 'undefined') return;
-
-        const newGames = gamesDatabase
-            .slice(-22)
-            .reverse();
-
-        let html = '';
-        newGames.forEach(game => {
-            html += this.createGameCard(game, { isNew: true }, 'new');
-        });
-
-        grid.innerHTML = html;
-        this.attachGameCardEvents('new');
-    }
-
-    createGameCard(game, config = {}, section = 'featured') {
-        const gameUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
-        const specialClass = config.isSpecial ? ' special' : '';
-        const videoData = config.videoUrl ? `data-video="${config.videoUrl}"` : '';
-        
-        let tagsHtml = '';
-        if (config.isNew) {
-            tagsHtml += '<div class="homepage-game-tag new">NEW</div>';
-        }
-        if (config.isHot) {
-            tagsHtml += '<div class="homepage-game-tag hot">HOT</div>';
-        }
-
-        return `
-            <div class="homepage-game-card${specialClass}" data-game-slug="${game.slug}" data-game-url="${gameUrl}" ${videoData}>
-                ${tagsHtml}
-                <img src="${game.image}" alt="${game.name}" class="homepage-game-card-image" loading="lazy">
-                <div class="homepage-game-card-overlay">
-                    <h3 class="homepage-game-card-name">${game.name}</h3>
-                    <button class="homepage-game-card-play">Play Now</button>
-                </div>
-            </div>
-        `;
-    }
-
-    attachGameCardEvents(section) {
-        const selector = section === 'featured' ? '#homepageGamesGrid' : 
-                        section === 'category' ? '#homepageCategoryGrid' : 
-                        section === 'multiplayer' ? '#homepageMultiplayerGrid' :
-                        '#homepageNewGrid';
-        
-        const container = document.querySelector(selector);
-        if (!container) return;
-
-        const cards = container.querySelectorAll('.homepage-game-card');
-        
-        cards.forEach(card => {
-            const gameUrl = card.getAttribute('data-game-url');
-            const videoUrl = card.getAttribute('data-video');
-            
-            card.addEventListener('click', (e) => {
-                e.preventDefault();
-                window.location.href = gameUrl;
-            });
-
-            if (videoUrl && card.classList.contains('special')) {
-                this.setupVideoHover(card, videoUrl);
-            }
-        });
-    }
-
-    // FIXED: New video hover method that embeds video in each card
-    setupVideoHover(card, videoUrl) {
-        // Remove any existing video in this card
-        const existingVideo = card.querySelector('.homepage-card-video');
-        if (existingVideo) {
-            existingVideo.remove();
-        }
-
-        // Create video element inside the card
-        const video = document.createElement('video');
-        video.className = 'homepage-card-video';
-        video.src = videoUrl;
-        video.muted = true;
-        video.loop = true;
-        video.style.cssText = `
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-            z-index: 1;
-            pointer-events: none;
-        `;
-        
-        // Insert video before the overlay
-        const overlay = card.querySelector('.homepage-game-card-overlay');
-        if (overlay) {
-            card.insertBefore(video, overlay);
-        } else {
-            card.appendChild(video);
-        }
-
-        // Handle hover events
-        card.addEventListener('mouseenter', () => {
-            video.currentTime = 0;
-            video.play().catch(console.error);
-            video.style.opacity = '1';
-            
-            // Hide the static image
-            const image = card.querySelector('.homepage-game-card-image');
-            if (image) {
-                image.style.opacity = '0';
-            }
-        });
-
-        card.addEventListener('mouseleave', () => {
-            video.style.opacity = '0';
-            video.pause();
-            video.currentTime = 0;
-            
-            // Show the static image again
-            const image = card.querySelector('.homepage-game-card-image');
-            if (image) {
-                image.style.opacity = '1';
-            }
-        });
-    }
-
-    initFavoritesPopup() {
-        const floatBtn = document.getElementById('homepageFavoritesBtn');
-        const popup = document.getElementById('homepageFavoritesPopup');
-        const closeBtn = document.getElementById('homepageFavoritesClose');
-        
-        console.log('Initializing favorites popup...', { floatBtn, popup, closeBtn });
-        
-        if (!floatBtn || !popup || !closeBtn) {
-            console.error('Favorites popup elements not found');
-            return;
-        }
-
-        floatBtn.addEventListener('click', async (e) => {
-            console.log('Favorites button clicked!');
-            e.stopPropagation();
-            const isActive = popup.classList.contains('active');
-            if (isActive) {
-                this.closeFavoritesPopup();
-            } else {
-                await this.openFavoritesPopup();
-            }
-        });
-
-        closeBtn.addEventListener('click', () => {
-            console.log('Close button clicked');
-            this.closeFavoritesPopup();
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!popup.contains(e.target) && !floatBtn.contains(e.target)) {
-                this.closeFavoritesPopup();
-            }
-        });
-        
-        console.log('Favorites popup initialized successfully');
-    }
-
-    async openFavoritesPopup() {
-        console.log('Opening favorites popup...');
-        const popup = document.getElementById('homepageFavoritesPopup');
-        
-        if (!popup) {
-            console.error('Popup element not found');
-            return;
-        }
-
-        // Show popup first
-        popup.classList.add('active');
-        console.log('Popup should be visible now');
-        
-        // Then render favorites (async)
-        await this.renderFavoritesPopup();
-    }
-
-    closeFavoritesPopup() {
-        const popup = document.getElementById('homepageFavoritesPopup');
-        if (popup) {
-            popup.classList.remove('active');
-        }
-    }
-
-    async renderFavoritesPopup() {
-        const content = document.getElementById('homepageFavoritesContent');
-        if (!content) {
-            console.error('Favorites content element not found');
-            return;
-        }
-
-        console.log('Rendering favorites popup...');
-
-        // Show loading state
-        content.innerHTML = `
-            <div class="homepage-favorites-loading">
-                <i class="fas fa-spinner fa-spin"></i>
-                <p>Loading favorites...</p>
-            </div>
-        `;
-
-        // Use the improved favorites manager getter
-        const favManager = this.getFavoritesManager();
-        if (!favManager) {
-            console.error('No favorites manager available');
-            content.innerHTML = `
-                <div class="homepage-favorites-empty">
-                    <p>Unable to load favorites.</p>
-                    <p>Please refresh the page and try again.</p>
-                </div>
-            `;
-            return;
-        }
-
+    loadFavorites() {
         try {
-            // Get favorites (this may be async now due to account integration)
-            let favorites;
-            if (typeof favManager.getFavoriteGames === 'function') {
-                const result = favManager.getFavoriteGames('newest');
-                favorites = result instanceof Promise ? await result : result;
-            } else {
-                favorites = [];
-            }
-            
-            // Limit to 8 favorites for the popup
-            favorites = favorites.slice(0, 8);
-            
-            console.log('Loaded favorites for popup:', favorites);
+            const stored = localStorage.getItem(this.storageKey);
+            this.favorites = stored ? JSON.parse(stored) : [];
+        } catch (error) {
+            console.error('Error loading favorites:', error);
+            this.favorites = [];
+        }
+    }
 
-            if (favorites.length === 0) {
-                content.innerHTML = `
-                    <div class="homepage-favorites-empty">
-                        <p>No favorite games yet!</p>
-                        <p>Click the heart icon on any game to add it to your favorites.</p>
-                    </div>
-                `;
+    saveFavorites() {
+        try {
+            localStorage.setItem(this.storageKey, JSON.stringify(this.favorites));
+        } catch (error) {
+            console.error('Error saving favorites:', error);
+        }
+    }
+
+    async getFavoriteGames(sortOrder = 'newest') {
+        if (typeof gamesDatabase === 'undefined') {
+            console.warn('gamesDatabase not available');
+            return [];
+        }
+
+        let favoriteList = [];
+
+        // If user is logged in, get favorites from server
+        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+            try {
+                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites`, {
+                    headers: window.accountSystem.getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    const serverFavorites = await response.json();
+                    favoriteList = serverFavorites.map(fav => ({
+                        slug: fav.game_id,
+                        dateAdded: fav.created_at || new Date().toISOString(),
+                        timestamp: new Date(fav.created_at || Date.now()).getTime()
+                    }));
+                    console.log('Loaded server favorites:', favoriteList.length);
+                } else {
+                    console.error('Failed to load server favorites, falling back to local');
+                    favoriteList = this.favorites;
+                }
+            } catch (error) {
+                console.error('Error loading server favorites:', error);
+                favoriteList = this.favorites;
+            }
+        } else {
+            favoriteList = this.favorites;
+        }
+
+        const favoriteGames = favoriteList
+            .map(fav => {
+                const game = gamesDatabase.find(g => g.slug === fav.slug);
+                if (game) {
+                    return {
+                        ...game,
+                        dateAdded: fav.dateAdded,
+                        timestamp: fav.timestamp
+                    };
+                }
+                return null;
+            })
+            .filter(game => game !== null);
+
+        // Sort based on the selected order
+        switch (sortOrder) {
+            case 'oldest':
+                return favoriteGames.sort((a, b) => a.timestamp - b.timestamp);
+            case 'alphabetical':
+                return favoriteGames.sort((a, b) => a.name.localeCompare(b.name));
+            case 'newest':
+            default:
+                return favoriteGames.sort((a, b) => b.timestamp - a.timestamp);
+        }
+    }
+
+    async addToFavorites(gameSlug) {
+        const game = gamesDatabase.find(g => g.slug === gameSlug);
+        if (!game) return false;
+
+        // Check if already favorited
+        if (await this.isFavorited(gameSlug)) return false;
+
+        // If user is logged in, add to server first
+        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+            try {
+                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites`, {
+                    method: 'POST',
+                    headers: {
+                        ...window.accountSystem.getAuthHeaders(),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        game_id: gameSlug
+                    })
+                });
+                
+                if (response.ok) {
+                    console.log('Favorite added to server successfully');
+                    return true;
+                } else {
+                    console.error('Failed to add favorite to server');
+                }
+            } catch (error) {
+                console.error('Error adding favorite to server:', error);
+            }
+        }
+
+        // Fallback to local storage
+        const favoriteData = {
+            slug: gameSlug,
+            dateAdded: new Date().toISOString(),
+            timestamp: Date.now()
+        };
+
+        this.favorites.push(favoriteData);
+        this.saveFavorites();
+        return true;
+    }
+
+    async removeFromFavorites(gameSlug) {
+        // If user is logged in, remove from server first
+        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+            try {
+                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites/${gameSlug}`, {
+                    method: 'DELETE',
+                    headers: window.accountSystem.getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    console.log('Favorite removed from server successfully');
+                    return true;
+                } else {
+                    console.error('Failed to remove favorite from server');
+                }
+            } catch (error) {
+                console.error('Error removing favorite from server:', error);
+            }
+        }
+
+        // Fallback to local storage
+        const index = this.favorites.findIndex(fav => fav.slug === gameSlug);
+        if (index === -1) return false;
+
+        this.favorites.splice(index, 1);
+        this.saveFavorites();
+        return true;
+    }
+
+    async isFavorited(gameSlug) {
+        // If user is logged in, check server favorites
+        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+            try {
+                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites`, {
+                    headers: window.accountSystem.getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    const serverFavorites = await response.json();
+                    return serverFavorites.some(fav => fav.game_id === gameSlug);
+                }
+            } catch (error) {
+                console.error('Error checking server favorites:', error);
+            }
+        }
+        
+        // Fallback to local storage
+        return this.favorites.some(fav => fav.slug === gameSlug);
+    }
+
+    async toggleFavorite(gameSlug) {
+        if (await this.isFavorited(gameSlug)) {
+            return await this.removeFromFavorites(gameSlug);
+        } else {
+            return await this.addToFavorites(gameSlug);
+        }
+    }
+
+    async initGameControlBar() {
+        // Get current game from URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentGame = urlParams.get('game');
+        
+        if (!currentGame) return;
+
+        const gameControlBar = document.getElementById('gameControlBar');
+        if (!gameControlBar) return;
+
+        const gameControls = gameControlBar.querySelector('.game-controls');
+        if (!gameControls) return;
+
+        // Create favorite button
+        const favoriteBtn = document.createElement('button');
+        favoriteBtn.className = 'control-btn favorite-btn';
+        favoriteBtn.id = 'favoriteBtn';
+        
+        const updateFavoriteBtn = async () => {
+            const isFav = await this.isFavorited(currentGame);
+            favoriteBtn.classList.toggle('favorited', isFav);
+            favoriteBtn.innerHTML = `
+                <i class="${isFav ? 'fas' : 'far'} fa-heart"></i>
+                <span>${isFav ? 'Favorited' : 'Favorite'}</span>
+            `;
+        };
+
+        favoriteBtn.addEventListener('click', async () => {
+            await this.toggleFavorite(currentGame);
+            await updateFavoriteBtn();
+            
+            // Show a brief feedback
+            const originalText = favoriteBtn.querySelector('span').textContent;
+            favoriteBtn.querySelector('span').textContent = (await this.isFavorited(currentGame)) ? 'Added!' : 'Removed!';
+            setTimeout(async () => {
+                await updateFavoriteBtn();
+            }, 1000);
+        });
+
+        // Insert favorite button before share button
+        const shareBtn = document.getElementById('shareBtn');
+        gameControls.insertBefore(favoriteBtn, shareBtn);
+        
+        // Initialize button state
+        updateFavoriteBtn();
+    }
+
+    async initFavoritesPage() {
+        console.log('Initializing favorites page...');
+        const favoritesGrid = document.getElementById('favoritesGrid');
+        const noFavorites = document.getElementById('noFavorites');
+        const favoritesFilter = document.getElementById('favoritesFilter');
+
+        if (!favoritesGrid || !noFavorites) {
+            console.log('Favorites page elements not found');
+            return;
+        }
+
+        console.log('Found favorites page elements, proceeding with initialization');
+
+        const renderFavorites = async () => {
+            const sortOrder = favoritesFilter?.value || 'newest';
+            const favoriteGames = await this.getFavoriteGames(sortOrder);
+
+            console.log('Rendering favorites:', favoriteGames.length, 'games');
+
+            if (favoriteGames.length === 0) {
+                favoritesGrid.style.display = 'none';
+                noFavorites.style.display = 'block';
                 return;
             }
 
-            let html = '';
-            favorites.forEach(game => {
-                const gameUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
-                const truncatedDesc = this.truncateText(game.description, 50);
-                
-                html += `
-                    <div class="homepage-favorites-item" onclick="window.location.href='${gameUrl}'">
-                        <img src="${game.image}" alt="${game.name}" class="homepage-favorites-item-image" loading="lazy">
-                        <div class="homepage-favorites-item-info">
-                            <h4>${game.name}</h4>
-                            <p>${truncatedDesc}</p>
+            favoritesGrid.style.display = 'grid';
+            noFavorites.style.display = 'none';
+
+            favoritesGrid.innerHTML = favoriteGames.map(game => {
+                const gameUrl = `game.html?game=${game.slug}`;
+                const dateAdded = new Date(game.dateAdded).toLocaleDateString();
+
+                return `
+                    <div class="favorite-game-card" onclick="window.location.href='${gameUrl}'">
+                        <button class="remove-favorite-btn" onclick="event.stopPropagation(); window.favoritesManager.removeFavoriteAndRefresh('${game.slug}')" title="Remove from favorites">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="favorite-date">Added: ${dateAdded}</div>
+                        <img src="${game.image}" alt="${game.name}" class="favorite-game-image">
+                        <div class="favorite-game-info">
+                            <h3>${game.name}</h3>
+                            <div class="game-tags">
+                                ${game.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                            </div>
                         </div>
                     </div>
                 `;
-            });
-
-            content.innerHTML = html;
-            console.log('Favorites rendered successfully');
-
-        } catch (error) {
-            console.error('Error rendering favorites:', error);
-            content.innerHTML = `
-                <div class="homepage-favorites-empty">
-                    <p>Error loading favorites.</p>
-                    <p>Please try again later.</p>
-                </div>
-            `;
-        }
-    }
-
-    truncateText(text, maxLength) {
-        if (!text || text.length <= maxLength) return text || '';
-        return text.substring(0, maxLength) + '...';
-    }
-
-    async refreshFavoritesPopup() {
-        const popup = document.getElementById('homepageFavoritesPopup');
-        if (popup && popup.classList.contains('active')) {
-            await this.renderFavoritesPopup();
-        }
-    }
-
-    // Top Reviewed Games Section
-    async renderTopReviewedGames() {
-        const grid = document.getElementById('homepageReviewsGrid');
-        if (!grid || !gamesDatabase) {
-            console.log('Skipping top reviewed games - missing grid or gamesDatabase');
-            return;
-        }
-
-        console.log('Rendering top reviewed games...');
-
-        // Define games with high ratings to feature (same as reviews page)
-        const topReviewedGames = [
-            'maskedspecialforces',
-            'cookieclicker', 
-            'fruitmerge',
-            '1v1lol',
-            'helixjump',
-            'drawclimber'
-        ];
-
-        let html = '';
-
-        for (const gameSlug of topReviewedGames) {
-            const game = gamesDatabase.find(g => g.slug === gameSlug);
-            if (!game) continue;
-
-            // Fetch actual review data using the same methods as reviews page
-            const reviews = await this.fetchGameReviews(gameSlug);
-            const rating = await this.fetchGameRating(gameSlug);
-            
-            const gameUrl = `game.html?game=${gameSlug}`;
-            
-            // Get review content using same logic as reviews page
-            let reviewContent;
-            let reviewType;
-            let displayRating;
-            
-            if (reviews.length > 0) {
-                const latestReview = reviews[0];
-                let playerQuote = latestReview.review_text;
-                
-                // Check if it's a generic rating text and replace with custom quote
-                if (!playerQuote || 
-                    playerQuote.match(/^\d+ star rating$/) || 
-                    playerQuote === 'Great game with exciting gameplay!' ||
-                    playerQuote.length < 10) {
-                    playerQuote = this.getCustomPlayerQuote(gameSlug);
-                }
-                
-                reviewContent = this.truncateText(playerQuote, 80);
-                reviewType = "Player Review";
-                displayRating = latestReview.rating || rating.average || 4.2;
-            } else {
-                // Use custom editorial quote
-                const customQuote = this.getCustomQuote(gameSlug);
-                reviewContent = this.truncateText(customQuote.replace(/"/g, ''), 80);
-                reviewType = "Editorial Review";
-                displayRating = rating.average > 0 ? rating.average : (game.review ? game.review.rating : 4.2);
-            }
-            
-            // Generate star display
-            const starsHTML = this.generateStars(displayRating);
-
-            html += `
-                <article class="homepage-review-card-compact" onclick="window.location.href='${gameUrl}'" style="cursor: pointer;">
-                    <div class="homepage-review-card-compact-image">
-                        <img src="${game.image}" alt="${game.name}" loading="lazy">
-                        <div class="homepage-review-card-compact-rating">
-                            ${displayRating.toFixed(1)}
-                        </div>
-                    </div>
-                    <div class="homepage-review-card-compact-content">
-                        <h4 class="homepage-review-card-compact-title">${game.name}</h4>
-                        <div class="homepage-review-card-compact-stars">
-                            ${starsHTML}
-                        </div>
-                        <p class="homepage-review-card-compact-review">"${reviewContent}"</p>
-                        <div class="homepage-review-card-compact-meta">
-                            <span class="review-type-compact">${reviewType}</span>
-                        </div>
-                    </div>
-                </article>
-            `;
-        }
-
-        grid.innerHTML = html;
-        console.log('Top reviewed games rendered successfully');
-    }
-
-    // Helper method to fetch game reviews (same as reviews page)
-    async fetchGameReviews(gameSlug) {
-        const endpoints = [
-            `http://localhost:3000/reviews/${gameSlug}`,
-            `http://localhost:3000/api/reviews/${gameSlug}`,
-            `/api/reviews/${gameSlug}`
-        ];
-        
-        for (const endpoint of endpoints) {
-            try {
-                const response = await fetch(endpoint);
-                if (response.ok) {
-                    const reviews = await response.json();
-                    return Array.isArray(reviews) ? reviews : [reviews];
-                }
-            } catch (error) {
-                console.log(`Endpoint ${endpoint} failed:`, error.message);
-            }
-        }
-        return [];
-    }
-
-    // Helper method to fetch game rating (same as reviews page)
-    async fetchGameRating(gameSlug) {
-        const endpoints = [
-            `http://localhost:3000/reviews/game/${gameSlug}`,
-            `http://localhost:3000/reviews/${gameSlug}/average`,
-            `http://localhost:3000/api/reviews/${gameSlug}/average`
-        ];
-        
-        for (const endpoint of endpoints) {
-            try {
-                const response = await fetch(endpoint);
-                if (response.ok) {
-                    const data = await response.json();
-                    return {
-                        average: data.average_rating || data.average || data.avg_rating || 0,
-                        count: data.review_count || data.total_reviews || data.count || data.votes || 0
-                    };
-                }
-            } catch (error) {
-                console.log(`Rating endpoint ${endpoint} failed:`, error.message);
-            }
-        }
-        return { average: 0, count: 0 };
-    }
-
-    // Helper method to generate stars (same as reviews page)
-    generateStars(rating) {
-        const fullStars = Math.floor(rating);
-        const hasHalfStar = rating % 1 >= 0.5;
-        let starsHTML = '';
-        
-        for (let i = 0; i < fullStars; i++) {
-            starsHTML += '<i class="fas fa-star"></i>';
-        }
-        
-        if (hasHalfStar) {
-            starsHTML += '<i class="fas fa-star-half-alt"></i>';
-        }
-        
-        const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
-        for (let i = 0; i < emptyStars; i++) {
-            starsHTML += '<i class="far fa-star"></i>';
-        }
-        
-        return starsHTML;
-    }
-
-    // Helper method to get custom quotes (same as reviews page)
-    getCustomQuote(gameSlug) {
-        const quotes = {
-            'maskedspecialforces': '"This tactical shooter raises the bar with its realistic combat mechanics and strategic depth. Every match feels like a genuine military operation that rewards teamwork and precision."',
-            'cookieclicker': '"The deceptively simple concept of clicking cookies evolves into an incredibly addictive progression system. What starts as mindless clicking becomes a masterclass in incremental game design."',
-            'fruitmerge': '"The satisfying physics and colorful visuals create a zen-like puzzle experience that\'s impossible to put down. Each successful merge delivers a dopamine hit that keeps you coming back for more."',
-            '1v1lol': '"Building mechanics meet fast-paced shooting in this innovative blend that creates endless strategic possibilities. The game successfully bridges two popular genres into something uniquely entertaining."',
-            'helixjump': '"Simple controls mask a brilliantly designed challenge that tests your reflexes and timing perfectly. The addictive one-more-try gameplay loop is executed with precision."',
-            'drawclimber': '"Creative problem-solving meets physics-based gameplay in this charming and innovative runner. Each obstacle becomes a mini puzzle that encourages experimentation and ingenuity."'
+            }).join('');
         };
-        
-        return quotes[gameSlug] || '"A fantastic gaming experience that delivers entertainment and engagement. This game showcases excellent design and compelling gameplay mechanics."';
+
+        // Method to remove favorite and refresh the display
+        this.removeFavoriteAndRefresh = async (gameSlug) => {
+            await this.removeFromFavorites(gameSlug);
+            await renderFavorites();
+        };
+
+        // Initial render
+        await renderFavorites();
+
+        // Filter change handler
+        if (favoritesFilter) {
+            favoritesFilter.addEventListener('change', renderFavorites);
+        }
+
+        console.log('Favorites page initialization complete');
     }
 
-    // Helper method to get custom player quotes (same as reviews page)
-    getCustomPlayerQuote(gameSlug) {
-        const playerQuotes = {
-            'maskedspecialforces': 'Absolutely incredible tactical gameplay! The teamwork mechanics make every match feel like a real military operation.',
-            'cookieclicker': 'Started playing this as a joke, now I can\'t stop! The progression system is surprisingly deep and addictive.',
-            'fruitmerge': 'So satisfying and relaxing! Perfect game to unwind with after a long day. The merge animations are amazing.',
-            '1v1lol': 'Love how this combines building and shooting! Every match feels different and the strategy depth is incredible.',
-            'helixjump': 'Deceptively simple but so challenging! One more try turns into hours of gameplay. Perfectly executed concept.',
-            'drawclimber': 'Such a creative and fun concept! Drawing different legs for obstacles never gets old. Brilliant game design.'
-        };
+    initHomepageFavorites() {
+        console.log('Initializing homepage favorites...');
         
-        return playerQuotes[gameSlug] || 'Amazing game with fantastic gameplay! Really enjoyed the experience and would definitely recommend it.';
+        // Initialize the favorites popup
+        this.initFavoritesPopup();
     }
+
+
 }
 
-// IMPROVED INITIALIZATION
-let homepageGamesManager;
+// Initialize Favorites Manager
+let favoritesManager;
 
-// Function to initialize homepage games manager
-function initializeHomepageGamesManager() {
-    const gridElement = document.getElementById('homepageGamesGrid');
-    
-    console.log('initializeHomepageGamesManager called:');
-    console.log('- homepageGamesGrid element found:', !!gridElement);
-    console.log('- homepageGamesManager exists:', !!homepageGamesManager);
-    console.log('- gamesDatabase length:', gamesDatabase ? gamesDatabase.length : 'undefined');
-    
-    if (gridElement && !homepageGamesManager && gamesDatabase && gamesDatabase.length > 0) {
-        console.log('Initializing Homepage Games Manager...');
-        homepageGamesManager = new HomepageGamesManager();
-        window.homepageGamesManager = homepageGamesManager;
-        return true;
+// Initialize favorites manager when games data is loaded
+function initializeFavoritesManager() {
+    if (!favoritesManager) {
+        favoritesManager = new FavoritesManager();
+        window.favoritesManager = favoritesManager;
     } else {
-        console.log('Skipping Homepage Games Manager initialization - conditions not met');
-        return false;
+        // If already initialized, just call the games data loaded handler
+        favoritesManager.onGamesDataLoaded();
     }
 }
 
-// Multiple initialization attempts
-document.addEventListener('DOMContentLoaded', function() {
-    initializeHomepageGamesManager();
+// Listen for games data loaded event
+window.addEventListener('gamesDataLoaded', () => {
+    initializeFavoritesManager();
 });
 
-// Also try after a delay in case other scripts are still loading
-setTimeout(() => {
-    initializeHomepageGamesManager();
-}, 500);
-
-// And try again after window load
-window.addEventListener('load', function() {
-    initializeHomepageGamesManager();
-});
-
-// Featured Games Click Functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Add click event listeners to featured game cards
-    function initializeFeaturedGamesCards() {
-        const featuredGameCards = document.querySelectorAll('#featuredGamesGrid .game-card[data-game-slug]');
-        
-        featuredGameCards.forEach(card => {
-            const gameSlug = card.getAttribute('data-game-slug');
-            
-            // Add click event to the entire card
-            card.addEventListener('click', function() {
-                window.location.href = `game.html?game=${gameSlug}`;
-            });
-            
-            // Add click event to the play button
-            const playBtn = card.querySelector('.play-btn');
-            if (playBtn) {
-                playBtn.addEventListener('click', function(e) {
-                    e.stopPropagation(); // Prevent card click
-                    window.location.href = `game.html?game=${gameSlug}`;
-                });
-            }
-        });
+// Also initialize on DOM load if games are already loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Check if games are already loaded
+    if (typeof gamesDatabase !== 'undefined' && gamesDatabase.length > 0) {
+        initializeFavoritesManager();
     }
-    
-    // Initialize immediately if DOM is ready
-    initializeFeaturedGamesCards();
-    
-    // Also initialize when games data is loaded (in case cards are dynamic)
-    window.addEventListener('gamesDataLoaded', initializeFeaturedGamesCards);
 });
 
-// Export for global access
+// Export for use in other scripts
 if (typeof window !== 'undefined') {
-    window.HomepageGamesManager = HomepageGamesManager;
+    window.FavoritesManager = FavoritesManager;
 }
 
-// Missing helper functions that may be referenced elsewhere
-function showNotification(message) {
-    console.log('Notification:', message);
-    // Could implement a toast notification system here
-}
+// Recently Played Manager
+class RecentlyPlayedManager {
+    constructor() {
+        this.storageKey = 'infinitePixels_recentlyPlayed';
+        this.maxGames = 24;
+        this.init();
+    }
+    init() {
+        console.log('RecentlyPlayedManager initialized');
+    }
 
-function highlightStars(starElements, index) {
-    starElements.forEach((star, i) => {
-        if (i <= index) {
-            star.style.color = '#ffd700';
-        } else {
-            star.style.color = '#ccc';
+    addGame(gameSlug) {
+        if (!gameSlug) return;
+        
+        let recentGames = this.getRecentGames();
+        
+        // Remove game if it already exists
+        recentGames = recentGames.filter(game => game.slug !== gameSlug);
+        
+        // Add game to the beginning
+        recentGames.unshift({
+            slug: gameSlug,
+            timestamp: Date.now()
+        });
+        
+        // Keep only the most recent games
+        if (recentGames.length > this.maxGames) {
+            recentGames = recentGames.slice(0, this.maxGames);
         }
-    });
-}
+        
+        // Save to localStorage
+        localStorage.setItem(this.storageKey, JSON.stringify(recentGames));
+        
+        console.log('Added game to recently played:', gameSlug);
+    }
 
-function resetStars(starElements) {
-    starElements.forEach(star => {
-        star.style.color = ''; // Reset to default
-    });
-}
-
-function initializeGuideProgress() {
-    // Placeholder for guide progress functionality
-    console.log('Guide progress tracking initialized');
-}
-
-function initializeTipFavorites() {
-    // Placeholder for tip favorites functionality
-    console.log('Tip favorites initialized');
-}
-
-function initializeTipFiltering() {
-    // Placeholder for tip filtering functionality
-    console.log('Tip filtering initialized');
-}
-
-// Debug function to test API endpoints (call from browser console)
-window.debugRatingAPI = async function(gameSlug = 'cookieclicker') {
-    console.log('🔍 Testing rating API endpoints for game:', gameSlug);
-    
-    const endpoints = [
-        `http://localhost:3000/reviews/game/${gameSlug}`,
-        `http://localhost:3000/reviews/${gameSlug}/average`,
-        `http://localhost:3000/api/reviews/${gameSlug}`,
-        `/api/reviews/${gameSlug}/average`,
-        `http://localhost:3000/reviews/${gameSlug}`,
-        `http://localhost:3000/api/games/${gameSlug}/rating`
-    ];
-    
-    for (const endpoint of endpoints) {
+    getRecentGames() {
         try {
-            console.log(`Testing: ${endpoint}`);
-            const response = await fetch(endpoint);
-            console.log(`Status: ${response.status}`);
-            
-            if (response.ok) {
-                const data = await response.json();
-                console.log('✅ SUCCESS! Data:', data);
-                
-                // Check what fields are available
-                const fields = Object.keys(data);
-                console.log('Available fields:', fields);
-                
-                return { endpoint, data, fields };
-            } else {
-                console.log('❌ Failed with status:', response.status);
-            }
+            const stored = localStorage.getItem(this.storageKey);
+            return stored ? JSON.parse(stored) : [];
         } catch (error) {
-            console.log('❌ Error:', error.message);
+            console.error('Error loading recently played games:', error);
+            return [];
         }
     }
-    
-    console.log('No working endpoints found');
-    return null;
-};
 
-// Also add a function to manually trigger rating refresh
-window.refreshRating = async function(gameSlug = 'cookieclicker') {
-    console.log('🔄 Manually refreshing rating for:', gameSlug);
-    
-    // Get the current GameLoader instance
-    const gameLoader = window.currentGameLoader || new GameLoader();
-    await gameLoader.loadGlobalRating(gameSlug);
-};
-
-function initializeFAQVoting() {
-    // Placeholder for FAQ voting functionality
-    console.log('FAQ voting initialized');
-}
-
-function initializeFAQSearchHighlighting() {
-    // Placeholder for FAQ search highlighting functionality
-    console.log('FAQ search highlighting initialized');
-}
-
-// FAQ Page Functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Only initialize FAQ functionality if we're on the FAQ page
-    if (window.location.pathname.includes('faq.html') || document.querySelector('.faq-container')) {
-        initializeFAQAccordion();
-        initializeFAQQuickLinks();
-        initializeFAQSearch();
-        console.log('🔍 FAQ page functionality initialized');
+    removeGame(gameSlug) {
+        if (!gameSlug) return;
+        
+        let recentGames = this.getRecentGames();
+        recentGames = recentGames.filter(game => game.slug !== gameSlug);
+        
+        localStorage.setItem(this.storageKey, JSON.stringify(recentGames));
+        console.log('Removed game from recently played:', gameSlug);
     }
-});
 
-function initializeFAQAccordion() {
-    const faqItems = document.querySelectorAll('.faq-item');
-    
-    faqItems.forEach((item, index) => {
-        const question = item.querySelector('.faq-question');
-        const answer = item.querySelector('.faq-answer');
-        const chevron = question.querySelector('i');
-        
-        // Initially hide all answers
-        if (answer) {
-            answer.style.maxHeight = '0';
-            answer.style.overflow = 'hidden';
-            answer.style.transition = 'max-height 0.3s ease-out, padding 0.3s ease-out';
-            answer.style.paddingTop = '0';
-            answer.style.paddingBottom = '0';
-        }
-        
-        // Set initial chevron state
-        if (chevron) {
-            chevron.style.transition = 'transform 0.3s ease';
-        }
-        
-        // Add click handler
-        if (question) {
-            question.style.cursor = 'pointer';
-            question.addEventListener('click', function() {
-                toggleFAQItem(item, answer, chevron);
-            });
-            
-            // Add hover effects
-            question.addEventListener('mouseenter', function() {
-                question.style.backgroundColor = 'rgba(138, 43, 226, 0.1)';
-            });
-            
-            question.addEventListener('mouseleave', function() {
-                question.style.backgroundColor = '';
-            });
-        }
-    });
-    
-    // Add resize handler to recalculate heights of open FAQ items
-    let resizeTimeout;
-    window.addEventListener('resize', function() {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            adjustOpenFAQHeights();
-        }, 150);
-    });
-}
-
-// Function to adjust heights of currently open FAQ items
-function adjustOpenFAQHeights() {
-    const activeFAQItems = document.querySelectorAll('.faq-item.active');
-    
-    activeFAQItems.forEach(item => {
-        const answer = item.querySelector('.faq-answer');
-        if (answer) {
-            // Temporarily disable transitions for resize
-            const originalTransition = answer.style.transition;
-            answer.style.transition = 'none';
-            
-            // Set max-height to none to allow natural height calculation
-            answer.style.maxHeight = 'none';
-            
-            // Force a reflow to ensure the height is calculated
-            answer.offsetHeight;
-            
-            // Re-enable transitions
-            setTimeout(() => {
-                answer.style.transition = originalTransition;
-            }, 10);
-        }
-    });
-}
-
-function toggleFAQItem(item, answer, chevron) {
-    const isOpen = item.classList.contains('active');
-    
-    if (isOpen) {
-        // Close the item
-        // First get the current height to animate from
-        const currentHeight = answer.scrollHeight;
-        answer.style.maxHeight = currentHeight + 'px';
-        
-        // Force a reflow then animate to 0
-        answer.offsetHeight;
-        answer.style.maxHeight = '0';
-        answer.style.paddingTop = '0';
-        answer.style.paddingBottom = '0';
-        
-        if (chevron) {
-            chevron.style.transform = 'rotate(0deg)';
-        }
-        item.classList.remove('active');
-    } else {
-        // Close other open items first (optional accordion behavior)
-        const allItems = document.querySelectorAll('.faq-item');
-        allItems.forEach(otherItem => {
-            if (otherItem !== item && otherItem.classList.contains('active')) {
-                const otherAnswer = otherItem.querySelector('.faq-answer');
-                const otherChevron = otherItem.querySelector('.faq-question i');
-                if (otherAnswer) {
-                    const otherCurrentHeight = otherAnswer.scrollHeight;
-                    otherAnswer.style.maxHeight = otherCurrentHeight + 'px';
-                    otherAnswer.offsetHeight;
-                    otherAnswer.style.maxHeight = '0';
-                    otherAnswer.style.paddingTop = '0';
-                    otherAnswer.style.paddingBottom = '0';
-                }
-                if (otherChevron) {
-                    otherChevron.style.transform = 'rotate(0deg)';
-                }
-                otherItem.classList.remove('active');
-            }
-        });
-        
-        // Open the clicked item
-        item.classList.add('active');
-        
-        // Get the full height the content needs
-        answer.style.maxHeight = 'none';
-        const fullHeight = answer.scrollHeight;
-        answer.style.maxHeight = '0';
-        
-        // Animate to the full height
-        requestAnimationFrame(() => {
-            answer.style.maxHeight = fullHeight + 'px';
-            answer.style.paddingTop = '1.5rem';
-            answer.style.paddingBottom = '1.5rem';
-        });
-        
-        if (chevron) {
-            chevron.style.transform = 'rotate(180deg)';
-        }
-        
-        // After animation completes, set to 'none' for dynamic content
-        setTimeout(() => {
-            if (item.classList.contains('active')) {
-                answer.style.maxHeight = 'none';
-            }
-        }, 400); // Match the CSS transition duration
-        
-        // Smooth scroll to the question
-        setTimeout(() => {
-            item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 150);
+    clearAll() {
+        localStorage.removeItem(this.storageKey);
+        console.log('Cleared all recently played games');
     }
 }
 
-function initializeFAQQuickLinks() {
-    const quickLinks = document.querySelectorAll('.quick-link');
-    
-    quickLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href').substring(1);
-            const targetSection = document.getElementById(targetId);
-            
-            if (targetSection) {
-                // Smooth scroll to section
-                targetSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
-                });
-                
-                // Add highlight effect to the section
-                targetSection.style.backgroundColor = 'rgba(138, 43, 226, 0.05)';
-                targetSection.style.transition = 'background-color 0.3s ease';
-                
-                setTimeout(() => {
-                    targetSection.style.backgroundColor = '';
-                }, 2000);
-                
-                // Add click animation to the link
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 150);
-            }
-        });
-    });
-}
-
-function initializeFAQSearch() {
-    // Create search functionality if search input exists
-    const searchInput = document.getElementById('faqSearchInput');
-    
-    if (!searchInput) {
-        // Create a search input if it doesn't exist
-        createFAQSearchInput();
-    } else {
-        attachFAQSearchListeners(searchInput);
-    }
-}
-
-function createFAQSearchInput() {
-    const faqContainer = document.querySelector('.faq-container');
-    const quickLinksSection = document.querySelector('.faq-quick-links');
-    
-    if (faqContainer && quickLinksSection) {
-        const searchSection = document.createElement('section');
-        searchSection.className = 'faq-search-section';
-        searchSection.innerHTML = `
-            <div class="faq-search-wrapper">
-                <div class="faq-search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="faqSearchInput" placeholder="Search frequently asked questions...">
-                    <button id="faqSearchClear" class="search-clear-btn" style="display: none;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div id="faqSearchResults" class="faq-search-results"></div>
-            </div>
-        `;
-        
-        // Insert after quick links
-        quickLinksSection.parentNode.insertBefore(searchSection, quickLinksSection.nextSibling);
-        
-        // Attach listeners to the new search input
-        const searchInput = document.getElementById('faqSearchInput');
-        attachFAQSearchListeners(searchInput);
-    }
-}
-
-function attachFAQSearchListeners(searchInput) {
-    const searchClear = document.getElementById('faqSearchClear');
-    const searchResults = document.getElementById('faqSearchResults');
-    
-    searchInput.addEventListener('input', function() {
-        const query = this.value.trim();
-        
-        if (query.length > 0) {
-            if (searchClear) searchClear.style.display = 'block';
-            performFAQSearch(query);
-        } else {
-            if (searchClear) searchClear.style.display = 'none';
-            clearFAQSearch();
-        }
-    });
-    
-    if (searchClear) {
-        searchClear.addEventListener('click', function() {
-            searchInput.value = '';
-            this.style.display = 'none';
-            clearFAQSearch();
-            searchInput.focus();
-        });
-    }
-    
-    // Handle enter key
-    searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            const query = this.value.trim();
-            if (query.length > 0) {
-                performFAQSearch(query);
-            }
-        }
-    });
-}
-
-function performFAQSearch(query) {
-    const faqItems = document.querySelectorAll('.faq-item');
-    const searchResults = document.getElementById('faqSearchResults');
-    const faqSections = document.querySelectorAll('.faq-section');
-    
-    let hasResults = false;
-    const results = [];
-    
-    // Hide all sections initially
-    faqSections.forEach(section => {
-        section.style.display = 'none';
-    });
-    
-    // Search through FAQ items
-    faqItems.forEach((item, index) => {
-        const question = item.querySelector('.faq-question h3');
-        const answer = item.querySelector('.faq-answer');
-        
-        if (question && answer) {
-            const questionText = question.textContent.toLowerCase();
-            const answerText = answer.textContent.toLowerCase();
-            const searchTerm = query.toLowerCase();
-            
-            if (questionText.includes(searchTerm) || answerText.includes(searchTerm)) {
-                hasResults = true;
-                results.push({
-                    element: item,
-                    question: question.textContent,
-                    excerpt: getAnswerExcerpt(answer.textContent, searchTerm)
-                });
-                
-                // Show the parent section
-                const parentSection = item.closest('.faq-section');
-                if (parentSection) {
-                    parentSection.style.display = 'block';
-                }
-                
-                // Highlight the item
-                item.style.display = 'block';
-                highlightSearchTerms(item, searchTerm);
-            } else {
-                item.style.display = 'none';
-            }
-        }
-    });
-    
-    // Display search results summary
-    if (searchResults) {
-        if (hasResults) {
-            searchResults.innerHTML = `
-                <div class="search-results-summary">
-                    <i class="fas fa-search"></i>
-                    Found ${results.length} result${results.length !== 1 ? 's' : ''} for "${query}"
-                </div>
-            `;
-            searchResults.style.display = 'block';
-        } else {
-            searchResults.innerHTML = `
-                <div class="search-results-summary no-results">
-                    <i class="fas fa-exclamation-circle"></i>
-                    No results found for "${query}". Try different keywords.
-                </div>
-            `;
-            searchResults.style.display = 'block';
-        }
-    }
-}
-
-function clearFAQSearch() {
-    const faqItems = document.querySelectorAll('.faq-item');
-    const faqSections = document.querySelectorAll('.faq-section');
-    const searchResults = document.getElementById('faqSearchResults');
-    
-    // Show all sections and items
-    faqSections.forEach(section => {
-        section.style.display = 'block';
-    });
-    
-    faqItems.forEach(item => {
-        item.style.display = 'block';
-        removeHighlights(item);
-    });
-    
-    // Hide search results
-    if (searchResults) {
-        searchResults.style.display = 'none';
-    }
-}
-
-function highlightSearchTerms(item, searchTerm) {
-    const question = item.querySelector('.faq-question h3');
-    const answer = item.querySelector('.faq-answer');
-    
-    if (question) {
-        highlightText(question, searchTerm);
-    }
-    
-    if (answer) {
-        const textNodes = getTextNodes(answer);
-        textNodes.forEach(node => {
-            highlightTextNode(node, searchTerm);
-        });
-    }
-}
-
-function highlightText(element, searchTerm) {
-    const text = element.textContent;
-    const regex = new RegExp(`(${escapeRegExp(searchTerm)})`, 'gi');
-    const highlightedText = text.replace(regex, '<mark class="faq-highlight">$1</mark>');
-    element.innerHTML = highlightedText;
-}
-
-function highlightTextNode(textNode, searchTerm) {
-    const text = textNode.textContent;
-    const regex = new RegExp(`(${escapeRegExp(searchTerm)})`, 'gi');
-    
-    if (regex.test(text)) {
-        const span = document.createElement('span');
-        span.innerHTML = text.replace(regex, '<mark class="faq-highlight">$1</mark>');
-        textNode.parentNode.replaceChild(span, textNode);
-    }
-}
-
-function removeHighlights(item) {
-    const highlights = item.querySelectorAll('.faq-highlight');
-    highlights.forEach(highlight => {
-        const parent = highlight.parentNode;
-        parent.replaceChild(document.createTextNode(highlight.textContent), highlight);
-        parent.normalize();
-    });
-    
-    // Reset question text
-    const question = item.querySelector('.faq-question h3');
-    if (question && question.innerHTML.includes('<mark')) {
-        question.textContent = question.textContent;
-    }
-}
-
-function getTextNodes(element) {
-    const textNodes = [];
-    const walker = document.createTreeWalker(
-        element,
-        NodeFilter.SHOW_TEXT,
-        null,
-        false
-    );
-    
-    let node;
-    while (node = walker.nextNode()) {
-        if (node.textContent.trim()) {
-            textNodes.push(node);
-        }
-    }
-    
-    return textNodes;
-}
-
-function getAnswerExcerpt(text, searchTerm) {
-    const index = text.toLowerCase().indexOf(searchTerm.toLowerCase());
-    if (index === -1) return text.substring(0, 150) + '...';
-    
-    const start = Math.max(0, index - 50);
-    const end = Math.min(text.length, index + searchTerm.length + 50);
-    
-    let excerpt = text.substring(start, end);
-    if (start > 0) excerpt = '...' + excerpt;
-    if (end < text.length) excerpt = excerpt + '...';
-    
-    return excerpt;
-}
-
-function escapeRegExp(string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function closeVideoModal() {
-    const videoModal = document.getElementById('videoModal');
-    if (videoModal) {
-        videoModal.classList.remove('active');
-        // Stop any playing videos
-        const videos = videoModal.querySelectorAll('video');
-        videos.forEach(video => {
-            video.pause();
-            video.currentTime = 0;
-        });
-    }
-}
-
-// Missing helper functions that may be referenced elsewhere
-function showNotification(message) {
-    console.log('Notification:', message);
-    // Could implement a toast notification system here if needed
-}
-
-function highlightStars(starElements, index) {
-    starElements.forEach((star, i) => {
-        if (i <= index) {
-            star.style.color = '#ffd700';
-        } else {
-            star.style.color = '#ccc';
-        }
-    });
-}
-
-function resetStars(starElements) {
-    starElements.forEach(star => {
-        star.style.color = ''; // Reset to default
-    });
-}
-
-function initializeGuideProgress() {
-    // Placeholder for guide progress functionality
-    console.log('Guide progress tracking initialized');
-}
-
-function initializeTipFavorites() {
-    // Placeholder for tip favorites functionality
-    console.log('Tip favorites initialized');
-}
-
-function initializeTipFiltering() {
-    // Placeholder for tip filtering functionality
-    console.log('Tip filtering initialized');
-}
+// Initialize RecentlyPlayedManager
+window.recentlyPlayedManager = new RecentlyPlayedManager();
