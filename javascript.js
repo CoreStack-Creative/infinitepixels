@@ -6167,7 +6167,44 @@ class FavoritesManager {
         }
     }
 
-    getFavoriteGames(sortOrder = 'newest') {
+    async getFavoriteGames(sortOrder = 'newest') {
+        // If user is logged in, try to get server favorites first
+        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+            try {
+                console.log('Getting favorites from server for logged-in user...');
+                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites`, {
+                    headers: window.accountSystem.getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    const serverFavorites = await response.json();
+                    console.log('Server favorites loaded:', serverFavorites);
+                    
+                    // Convert server favorites to the expected format
+                    const favoriteGames = serverFavorites.map(fav => {
+                        const game = gamesDatabase.find(g => g.slug === fav.game_id);
+                        return game ? { 
+                            ...game, 
+                            dateAdded: fav.created_at, 
+                            timestamp: new Date(fav.created_at).getTime() 
+                        } : null;
+                    }).filter(Boolean);
+                    
+                    // Sort by date added
+                    if (sortOrder === 'oldest') {
+                        return favoriteGames.sort((a, b) => a.timestamp - b.timestamp);
+                    } else {
+                        return favoriteGames.sort((a, b) => b.timestamp - a.timestamp);
+                    }
+                }
+                console.log('Server favorites request failed, falling back to local');
+            } catch (error) {
+                console.error('Error loading server favorites, falling back to local:', error);
+            }
+        }
+        
+        // Fallback to local favorites
+        console.log('Getting favorites from localStorage...');
         const favoriteGames = this.favorites.map(fav => {
             const game = gamesDatabase.find(g => g.slug === fav.slug);
             return game ? { ...game, dateAdded: fav.dateAdded, timestamp: fav.timestamp } : null;
@@ -6241,47 +6278,65 @@ class FavoritesManager {
 
         console.log('Found favorites page elements, proceeding with initialization');
 
-        const renderFavorites = () => {
+        const renderFavorites = async () => {
             const sortOrder = favoritesFilter?.value || 'newest';
-            const favoriteGames = this.getFavoriteGames(sortOrder);
+            
+            // Show loading state
+            favoritesGrid.innerHTML = `
+                <div class="loading-favorites" style="text-align: center; padding: 50px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; margin-bottom: 15px; color: var(--accent-color);"></i>
+                    <p>Loading your favorite games...</p>
+                </div>
+            `;
+            
+            try {
+                const favoriteGames = await this.getFavoriteGames(sortOrder);
+                console.log('Rendering favorites:', favoriteGames.length, 'games');
 
-            console.log('Rendering favorites:', favoriteGames.length, 'games');
+                if (favoriteGames.length === 0) {
+                    favoritesGrid.style.display = 'none';
+                    noFavorites.style.display = 'block';
+                    return;
+                }
 
-            if (favoriteGames.length === 0) {
-                favoritesGrid.style.display = 'none';
-                noFavorites.style.display = 'block';
-                return;
-            }
+                favoritesGrid.style.display = 'grid';
+                noFavorites.style.display = 'none';
 
-            favoritesGrid.style.display = 'grid';
-            noFavorites.style.display = 'none';
+                favoritesGrid.innerHTML = favoriteGames.map(game => {
+                    const gameUrl = `game.html?game=${game.slug}`;
+                    const dateAdded = new Date(game.dateAdded).toLocaleDateString();
 
-            favoritesGrid.innerHTML = favoriteGames.map(game => {
-                const gameUrl = `game.html?game=${game.slug}`;
-                const dateAdded = new Date(game.dateAdded).toLocaleDateString();
-
-                return `
-                    <div class="favorite-game-card" onclick="window.location.href='${gameUrl}'">
-                        <button class="remove-favorite-btn" onclick="event.stopPropagation(); window.favoritesManager.removeFavoriteAndRefresh('${game.slug}')" title="Remove from favorites">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <div class="favorite-date">Added: ${dateAdded}</div>
-                        <img src="${game.image}" alt="${game.name}" class="favorite-game-image">
-                        <div class="favorite-game-info">
-                            <h3>${game.name}</h3>
-                            <div class="game-tags">
-                                ${game.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                    return `
+                        <div class="favorite-game-card" onclick="window.location.href='${gameUrl}'">
+                            <button class="remove-favorite-btn" onclick="event.stopPropagation(); window.favoritesManager.removeFavoriteAndRefresh('${game.slug}')" title="Remove from favorites">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="favorite-date">Added: ${dateAdded}</div>
+                            <img src="${game.image}" alt="${game.name}" class="favorite-game-image">
+                            <div class="favorite-game-info">
+                                <h3>${game.name}</h3>
+                                <div class="game-tags">
+                                    ${game.tags.slice(0, 3).map(tag => `<span class="tag">${tag}</span>`).join('')}
+                                </div>
                             </div>
                         </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('Error rendering favorites:', error);
+                favoritesGrid.innerHTML = `
+                    <div style="text-align: center; padding: 50px;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 15px; color: #ff6b6b;"></i>
+                        <p>Error loading favorites. Please try again.</p>
                     </div>
                 `;
-            }).join('');
+            }
         };
 
         // Method to remove favorite and refresh the display
-        this.removeFavoriteAndRefresh = (gameSlug) => {
+        this.removeFavoriteAndRefresh = async (gameSlug) => {
             this.removeFromFavorites(gameSlug);
-            renderFavorites();
+            await renderFavorites();
         };
 
         // Initial render
@@ -6296,17 +6351,10 @@ class FavoritesManager {
     }
 
     initHomepageFavorites() {
-
-
-
-
-
-
-
-
-
-
-
+        console.log('Initializing homepage favorites...');
+        
+        // Initialize the favorites popup
+        this.initFavoritesPopup();
     }
 
 
@@ -6588,12 +6636,48 @@ class HomepageGamesManager {
         // Try to create a new one if it doesn't exist
         if (typeof FavoritesManager !== 'undefined') {
             console.log('Creating new favorites manager instance');
-            return new FavoritesManager();
+            const manager = new FavoritesManager();
+            window.favoritesManager = manager;
+            return manager;
         }
         
-        // If all else fails, create a minimal fallback
+        // If all else fails, create a minimal fallback with account system integration
         return {
-            getFavoriteGames: () => {
+            getFavoriteGames: async (sortOrder = 'newest') => {
+                // If user is logged in, try to get server favorites first
+                if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+                    try {
+                        const response = await fetch(`${window.accountSystem.baseURL}/user/favorites`, {
+                            headers: window.accountSystem.getAuthHeaders()
+                        });
+                        
+                        if (response.ok) {
+                            const serverFavorites = await response.json();
+                            console.log('Loaded server favorites (fallback):', serverFavorites);
+                            
+                            // Convert server favorites to the expected format
+                            const favoriteGames = serverFavorites.map(fav => {
+                                const game = gamesDatabase.find(g => g.slug === fav.game_id);
+                                return game ? { 
+                                    ...game, 
+                                    dateAdded: fav.created_at, 
+                                    timestamp: new Date(fav.created_at).getTime() 
+                                } : null;
+                            }).filter(Boolean);
+                            
+                            // Sort by date added
+                            if (sortOrder === 'oldest') {
+                                return favoriteGames.sort((a, b) => a.timestamp - b.timestamp);
+                            } else {
+                                return favoriteGames.sort((a, b) => b.timestamp - a.timestamp);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error loading server favorites (fallback):', error);
+                    }
+                }
+                
+                // Fallback to local favorites
                 try {
                     const stored = localStorage.getItem('infinitepixels_favorites');
                     const favorites = stored ? JSON.parse(stored) : [];
@@ -7108,14 +7192,14 @@ class HomepageGamesManager {
             return;
         }
 
-        floatBtn.addEventListener('click', (e) => {
+        floatBtn.addEventListener('click', async (e) => {
             console.log('Favorites button clicked!');
             e.stopPropagation();
             const isActive = popup.classList.contains('active');
             if (isActive) {
                 this.closeFavoritesPopup();
             } else {
-                this.openFavoritesPopup();
+                await this.openFavoritesPopup();
             }
         });
 
@@ -7133,7 +7217,7 @@ class HomepageGamesManager {
         console.log('Favorites popup initialized successfully');
     }
 
-    openFavoritesPopup() {
+    async openFavoritesPopup() {
         console.log('Opening favorites popup...');
         const popup = document.getElementById('homepageFavoritesPopup');
         
@@ -7142,10 +7226,12 @@ class HomepageGamesManager {
             return;
         }
 
-        // Render favorites immediately
-        this.renderFavoritesPopup();
+        // Show popup first
         popup.classList.add('active');
         console.log('Popup should be visible now');
+        
+        // Then render favorites (async)
+        await this.renderFavoritesPopup();
     }
 
     closeFavoritesPopup() {
@@ -7155,7 +7241,7 @@ class HomepageGamesManager {
         }
     }
 
-    renderFavoritesPopup() {
+    async renderFavoritesPopup() {
         const content = document.getElementById('homepageFavoritesContent');
         if (!content) {
             console.error('Favorites content element not found');
@@ -7163,6 +7249,14 @@ class HomepageGamesManager {
         }
 
         console.log('Rendering favorites popup...');
+
+        // Show loading state
+        content.innerHTML = `
+            <div class="homepage-favorites-loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading favorites...</p>
+            </div>
+        `;
 
         // Use the improved favorites manager getter
         const favManager = this.getFavoritesManager();
@@ -7178,8 +7272,19 @@ class HomepageGamesManager {
         }
 
         try {
-            const favorites = favManager.getFavoriteGames('newest').slice(0, 8);
-            console.log('Loaded favorites:', favorites);
+            // Get favorites (this may be async now due to account integration)
+            let favorites;
+            if (typeof favManager.getFavoriteGames === 'function') {
+                const result = favManager.getFavoriteGames('newest');
+                favorites = result instanceof Promise ? await result : result;
+            } else {
+                favorites = [];
+            }
+            
+            // Limit to 8 favorites for the popup
+            favorites = favorites.slice(0, 8);
+            
+            console.log('Loaded favorites for popup:', favorites);
 
             if (favorites.length === 0) {
                 content.innerHTML = `
@@ -7226,10 +7331,10 @@ class HomepageGamesManager {
         return text.substring(0, maxLength) + '...';
     }
 
-    refreshFavoritesPopup() {
+    async refreshFavoritesPopup() {
         const popup = document.getElementById('homepageFavoritesPopup');
         if (popup && popup.classList.contains('active')) {
-            this.renderFavoritesPopup();
+            await this.renderFavoritesPopup();
         }
     }
 
