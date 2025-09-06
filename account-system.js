@@ -339,7 +339,15 @@ class AccountSystem {
         // Basic email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            this.showMessage('Please enter a valid email address', 'error');
+            this.showMessage('Please enter a valid email address (e.g., yourname@gmail.com)', 'error');
+            return;
+        }
+        
+        // Additional check for common test domains that might be rejected
+        const testDomains = ['test.com', 'example.com', 'test.org'];
+        const emailDomain = email.split('@')[1]?.toLowerCase();
+        if (testDomains.includes(emailDomain)) {
+            this.showMessage('Please use a real email address (Gmail, Yahoo, etc.) as test domains may be rejected.', 'error');
             return;
         }
         

@@ -56,6 +56,16 @@ console.log('✅ Supabase clients initialized');
 app.use(cors());
 app.use(express.json());
 
+// Health check endpoint
+app.get('/', (req, res) => {
+    res.json({ 
+        message: 'InfinitePixels Account Server',
+        status: 'running',
+        environment: isDevelopment ? 'development' : 'production',
+        version: '1.0.0'
+    });
+});
+
 // Routes
 
 // ============ AUTHENTICATION ROUTES ============
@@ -107,16 +117,24 @@ app.post('/auth/signup', async (req, res) => {
             });
         }
         
-        // Sign up user - in development, we'll try to auto-confirm
+        // Sign up user - in development, disable email confirmation
+        const signupOptions = {
+            data: {
+                username: username
+            }
+        };
+        
+        // In development, don't require email confirmation
+        if (isDevelopment) {
+            signupOptions.emailRedirectTo = undefined;
+        } else {
+            signupOptions.emailRedirectTo = `${req.headers.origin || 'http://localhost:3000'}/auth/callback`;
+        }
+        
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
-            options: {
-                data: {
-                    username: username
-                },
-                emailRedirectTo: `${req.headers.origin || 'http://localhost:3000'}/auth/callback`
-            }
+            options: signupOptions
         });
         
         if (error) {
@@ -137,6 +155,8 @@ app.post('/auth/signup', async (req, res) => {
                 
                 if (!confirmError) {
                     console.log('✅ User email auto-confirmed for development');
+                    // Update the returned user object
+                    data.user.email_confirmed_at = new Date().toISOString();
                 } else {
                     console.warn('⚠️ Could not auto-confirm email:', confirmError.message);
                 }
@@ -146,11 +166,9 @@ app.post('/auth/signup', async (req, res) => {
         }
         
         res.status(201).json({
-            message: isDevelopment ? 
-                'Account created successfully! You can now log in.' : 
-                'Account created! Please check your email for verification.',
+            message: 'Account created successfully! You can now log in.',
             user: data.user,
-            requiresVerification: !data.user?.email_confirmed_at && !isDevelopment
+            requiresVerification: false // Always false in development
         });
     } catch (err) {
         console.error('Signup error:', err);
@@ -177,6 +195,52 @@ app.post('/auth/login', async (req, res) => {
         });
         
         if (error) {
+            // In development, if email not confirmed, try to auto-confirm and retry
+            if (isDevelopment && error.message === 'Email not confirmed' && supabaseServiceKey) {
+                try {
+                    console.log('🔧 Development mode: Auto-confirming email for login...');
+                    
+                    // Find user by email
+                    const { data: users, error: getUserError } = await supabaseAdmin.auth.admin.listUsers();
+                    if (!getUserError) {
+                        const user = users.users.find(u => u.email === email);
+                        if (user) {
+                            // Confirm the user
+                            const { error: confirmError } = await supabaseAdmin.auth.admin.updateUserById(
+                                user.id,
+                                { email_confirm: true }
+                            );
+                            
+                            if (!confirmError) {
+                                console.log('✅ Email auto-confirmed, retrying login...');
+                                // Retry login
+                                const { data: retryData, error: retryError } = await supabase.auth.signInWithPassword({
+                                    email,
+                                    password
+                                });
+                                
+                                if (!retryError) {
+                                    // Success! Use the retry data
+                                    const { data: profile } = await supabase
+                                        .from('users')
+                                        .select('*')
+                                        .eq('id', retryData.user.id)
+                                        .single();
+                                    
+                                    return res.json({
+                                        user: retryData.user,
+                                        profile: profile,
+                                        session: retryData.session
+                                    });
+                                }
+                            }
+                        }
+                    }
+                } catch (autoConfirmErr) {
+                    console.warn('⚠️ Auto-confirm failed:', autoConfirmErr.message);
+                }
+            }
+            
             return res.status(400).json({
                 error: error.message
             });
