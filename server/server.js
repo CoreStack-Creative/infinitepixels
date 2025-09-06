@@ -11,6 +11,7 @@ console.log('📦 Packages loaded successfully');
 
 const app = express();
 const PORT = 3000;
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // Load environment variables
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -20,7 +21,8 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
 console.log('🔐 Environment variables:', {
     supabaseUrl: supabaseUrl ? '✅ Loaded' : '❌ Missing',
     supabaseKey: supabaseKey ? '✅ Loaded' : '❌ Missing',
-    supabaseServiceKey: supabaseServiceKey ? '✅ Loaded' : '⚠️ Missing (optional)'
+    supabaseServiceKey: supabaseServiceKey ? '✅ Loaded' : '⚠️ Missing (optional)',
+    environment: isDevelopment ? '🔧 Development' : '🚀 Production'
 });
 
 if (!supabaseUrl || !supabaseKey) {
@@ -105,26 +107,50 @@ app.post('/auth/signup', async (req, res) => {
             });
         }
         
-        // Sign up user
+        // Sign up user - in development, we'll try to auto-confirm
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
             options: {
                 data: {
                     username: username
-                }
+                },
+                emailRedirectTo: `${req.headers.origin || 'http://localhost:3000'}/auth/callback`
             }
         });
         
         if (error) {
+            console.error('Supabase signup error:', error);
             return res.status(400).json({
                 error: error.message
             });
         }
         
+        // In development, try to auto-confirm user if service key is available
+        if (isDevelopment && data.user && !data.user.email_confirmed_at && supabaseServiceKey) {
+            try {
+                console.log('🔧 Development mode: Auto-confirming user email...');
+                const { error: confirmError } = await supabaseAdmin.auth.admin.updateUserById(
+                    data.user.id,
+                    { email_confirm: true }
+                );
+                
+                if (!confirmError) {
+                    console.log('✅ User email auto-confirmed for development');
+                } else {
+                    console.warn('⚠️ Could not auto-confirm email:', confirmError.message);
+                }
+            } catch (confirmErr) {
+                console.warn('⚠️ Auto-confirm failed:', confirmErr.message);
+            }
+        }
+        
         res.status(201).json({
-            message: 'User created successfully. Please check your email for verification.',
-            user: data.user
+            message: isDevelopment ? 
+                'Account created successfully! You can now log in.' : 
+                'Account created! Please check your email for verification.',
+            user: data.user,
+            requiresVerification: !data.user?.email_confirmed_at && !isDevelopment
         });
     } catch (err) {
         console.error('Signup error:', err);
@@ -190,6 +216,61 @@ app.post('/auth/logout', async (req, res) => {
         res.json({ message: 'Logged out successfully' });
     } catch (err) {
         console.error('Logout error:', err);
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+    }
+});
+
+// POST /auth/dev-confirm - Development only: manually confirm user email
+app.post('/auth/dev-confirm', async (req, res) => {
+    if (!isDevelopment) {
+        return res.status(404).json({ error: 'Not found' });
+    }
+    
+    try {
+        const { email } = req.body;
+        
+        if (!email) {
+            return res.status(400).json({
+                error: 'Email is required'
+            });
+        }
+        
+        // Use admin client to confirm user
+        const { data: users, error: getUserError } = await supabaseAdmin.auth.admin.listUsers();
+        
+        if (getUserError) {
+            return res.status(400).json({
+                error: 'Error finding user: ' + getUserError.message
+            });
+        }
+        
+        const user = users.users.find(u => u.email === email);
+        
+        if (!user) {
+            return res.status(404).json({
+                error: 'User not found'
+            });
+        }
+        
+        const { error: confirmError } = await supabaseAdmin.auth.admin.updateUserById(
+            user.id,
+            { email_confirm: true }
+        );
+        
+        if (confirmError) {
+            return res.status(400).json({
+                error: 'Error confirming user: ' + confirmError.message
+            });
+        }
+        
+        res.json({
+            message: 'User email confirmed successfully',
+            user_id: user.id
+        });
+    } catch (err) {
+        console.error('Dev confirm error:', err);
         res.status(500).json({
             error: 'Internal server error'
         });

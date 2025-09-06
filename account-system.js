@@ -197,7 +197,8 @@ class AccountSystem {
                                 <input type="text" id="signupUsername" placeholder="Username" required minlength="3" maxlength="30">
                             </div>
                             <div class="form-group">
-                                <input type="email" id="signupEmail" placeholder="Email" required>
+                                <input type="email" id="signupEmail" placeholder="Email (use a real email format)" required>
+                                <small class="form-hint">Use a valid email format (e.g., user@domain.com)</small>
                             </div>
                             <div class="form-group">
                                 <input type="password" id="signupPassword" placeholder="Password" required minlength="6">
@@ -259,6 +260,19 @@ class AccountSystem {
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
         
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            this.showMessage('Please enter a valid email address', 'error');
+            return;
+        }
+        
+        // Show loading state
+        const submitBtn = event.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Signing In...';
+        submitBtn.disabled = true;
+        
         try {
             const response = await fetch(`${this.baseURL}/auth/login`, {
                 method: 'POST',
@@ -285,19 +299,33 @@ class AccountSystem {
                 localStorage.setItem('infinitepixels_session', JSON.stringify(extendedSession));
                 
                 this.updateAccountUI();
-                this.showMessage('Logged in successfully!', 'success');
+                this.showMessage('Welcome back!', 'success');
                 
                 // Sync local data to server
                 this.syncLocalDataToServer();
                 
                 // Close dropdown
                 document.getElementById('accountDropdown').classList.remove('show');
+                
+                // Clear form
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
             } else {
-                this.showMessage(data.error, 'error');
+                if (data.error === 'Email not confirmed') {
+                    this.showMessage('Please check your email and click the verification link before logging in.', 'error');
+                } else if (data.error === 'Invalid login credentials') {
+                    this.showMessage('Invalid email or password. Please try again.', 'error');
+                } else {
+                    this.showMessage(data.error || 'Login failed', 'error');
+                }
             }
         } catch (error) {
             console.error('Login error:', error);
-            this.showMessage('An error occurred during login', 'error');
+            this.showMessage('Network error. Please check your connection and try again.', 'error');
+        } finally {
+            // Reset button state
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
         }
     }
 
@@ -307,6 +335,19 @@ class AccountSystem {
         const username = document.getElementById('signupUsername').value;
         const email = document.getElementById('signupEmail').value;
         const password = document.getElementById('signupPassword').value;
+        
+        // Basic email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            this.showMessage('Please enter a valid email address', 'error');
+            return;
+        }
+        
+        // Show loading state
+        const submitBtn = event.target.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'Creating Account...';
+        submitBtn.disabled = true;
         
         try {
             const response = await fetch(`${this.baseURL}/auth/signup`, {
@@ -320,14 +361,37 @@ class AccountSystem {
             const data = await response.json();
 
             if (response.ok) {
-                this.showMessage('Account created! Please check your email for verification.', 'success');
+                if (data.requiresVerification) {
+                    this.showMessage('Account created! Please check your email for verification before logging in.', 'success');
+                } else {
+                    this.showMessage('Account created successfully! You can now log in.', 'success');
+                }
                 this.showLogin();
+                // Clear form
+                document.getElementById('signupUsername').value = '';
+                document.getElementById('signupEmail').value = '';
+                document.getElementById('signupPassword').value = '';
             } else {
-                this.showMessage(data.error, 'error');
+                let errorMessage = data.error || 'Signup failed';
+                
+                // Provide helpful hints for common errors
+                if (errorMessage.includes('invalid')) {
+                    errorMessage += '. Please use a real email format (e.g., yourname@gmail.com)';
+                } else if (errorMessage.includes('taken')) {
+                    errorMessage += '. Please try a different username.';
+                } else if (errorMessage.includes('weak')) {
+                    errorMessage += '. Use at least 6 characters with letters and numbers.';
+                }
+                
+                this.showMessage(errorMessage, 'error');
             }
         } catch (error) {
             console.error('Signup error:', error);
-            this.showMessage('An error occurred during signup', 'error');
+            this.showMessage('Network error. Please check your connection and try again.', 'error');
+        } finally {
+            // Reset button state
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
         }
     }
 
