@@ -3,13 +3,68 @@ class AccountSystem {
     constructor() {
         this.user = null;
         this.session = null;
-        this.baseURL = 'http://localhost:3000';
+        this.baseURL = this.getServerURL();
         this.isReady = false;
         this.readyCallbacks = [];
         this.init();
     }
 
+    // Determine the correct server URL based on environment
+    getServerURL() {
+        // Check if we're on localhost
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            return 'http://localhost:3000';
+        }
+        
+        // For local network access (when opening HTML files directly or via local server)
+        // Try to detect if we're on a local network IP
+        const hostname = window.location.hostname;
+        const isLocalNetwork = /^(192\.168\.|10\.|172\.1[6-9]\.|172\.2[0-9]\.|172\.3[0-1]\.)/.test(hostname);
+        
+        if (isLocalNetwork || window.location.protocol === 'file:') {
+            // If we're on a local network or opening files directly,
+            // Use the server IP address
+            return 'http://192.168.11.26:3000';
+        }
+        
+        // For production
+        return 'https://your-production-server.com'; // Update with your production server
+    }
+
+    // Auto-detect the best server URL by testing multiple options
+    async findWorkingServerURL() {
+        const possibleURLs = [
+            'http://localhost:3000',
+            'http://127.0.0.1:3000',
+            'http://192.168.11.26:3000'
+        ];
+
+        for (const url of possibleURLs) {
+            try {
+                console.log(`Testing server URL: ${url}`);
+                const response = await fetch(`${url}/`, {
+                    method: 'GET',
+                    signal: AbortSignal.timeout(3000) // 3 second timeout
+                });
+                
+                if (response.ok) {
+                    console.log(`✅ Found working server at: ${url}`);
+                    this.baseURL = url;
+                    return url;
+                }
+            } catch (error) {
+                console.log(`❌ ${url} failed:`, error.message);
+            }
+        }
+        
+        console.error('❌ No working server URL found');
+        return null;
+    }
+
     init() {
+        // Log configuration info for debugging
+        this.logConfiguration();
+        
         // Check for existing session
         this.checkExistingSession();
         // Add account UI to pages
@@ -20,6 +75,62 @@ class AccountSystem {
         this.setupSessionExtension();
         // Mark as ready and notify callbacks
         this.setReady();
+    }
+
+    // Log configuration information for debugging
+    logConfiguration() {
+        console.log('🔧 Account System Configuration:');
+        console.log('  Current URL:', window.location.href);
+        console.log('  Hostname:', window.location.hostname);
+        console.log('  Protocol:', window.location.protocol);
+        console.log('  Server URL:', this.baseURL);
+        console.log('  User Agent:', navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop');
+        
+        // Test server connectivity
+        this.testServerConnection();
+    }
+
+    // Test if the server is reachable
+    async testServerConnection() {
+        try {
+            console.log('🔍 Testing server connection...');
+            
+            // First try the configured URL
+            let response;
+            try {
+                response = await fetch(`${this.baseURL}/`, {
+                    method: 'GET',
+                    signal: AbortSignal.timeout(5000) // 5 second timeout
+                });
+            } catch (error) {
+                console.warn(`Initial URL ${this.baseURL} failed, trying auto-detection...`);
+                const workingURL = await this.findWorkingServerURL();
+                if (!workingURL) {
+                    throw new Error('No working server URL found');
+                }
+                response = await fetch(`${workingURL}/`, {
+                    method: 'GET',
+                    signal: AbortSignal.timeout(5000)
+                });
+            }
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('✅ Server connection successful:', data);
+                console.log('📡 Using server URL:', this.baseURL);
+            } else {
+                console.warn('⚠️ Server responded but with error status:', response.status);
+            }
+        } catch (error) {
+            console.error('❌ Server connection failed:', error.message);
+            console.log('💡 Possible solutions:');
+            console.log('   1. Make sure the server is running (npm start in server folder)');
+            console.log('   2. Check if the server IP address is correct');
+            console.log('   3. Ensure firewall allows connections on port 3000');
+            console.log('   4. Try accessing these URLs directly in your browser:');
+            console.log('      - http://localhost:3000');
+            console.log('      - http://192.168.11.26:3000');
+        }
     }
 
     // Method to register callbacks for when account system is ready

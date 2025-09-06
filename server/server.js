@@ -53,7 +53,36 @@ console.log('✅ Supabase clients initialized');
 // });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        
+        // Allow localhost on any port
+        if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+            return callback(null, true);
+        }
+        
+        // Allow local network IPs (192.168.x.x, 10.x.x.x, etc.)
+        const localNetworkRegex = /^https?:\/\/(192\.168\.|10\.|172\.1[6-9]\.|172\.2[0-9]\.|172\.3[0-1]\.)/;
+        if (localNetworkRegex.test(origin)) {
+            return callback(null, true);
+        }
+        
+        // Allow your production domain
+        if (origin === 'https://infinite-pixels.com' || origin === 'https://www.infinite-pixels.com') {
+            return callback(null, true);
+        }
+        
+        // For development, be more permissive
+        if (isDevelopment) {
+            return callback(null, true);
+        }
+        
+        callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true
+}));
 app.use(express.json());
 
 // Health check endpoint
@@ -1363,7 +1392,25 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log('🚀 Server running on http://localhost:3000');
+    console.log('🌐 Server accessible on all network interfaces');
     console.log('✅ Account system ready for testing');
+    
+    // Show local network IP for other devices
+    const os = require('os');
+    const networkInterfaces = os.networkInterfaces();
+    const ips = [];
+    
+    Object.keys(networkInterfaces).forEach(interfaceName => {
+        networkInterfaces[interfaceName].forEach(interface => {
+            if (interface.family === 'IPv4' && !interface.internal) {
+                ips.push(interface.address);
+            }
+        });
+    });
+    
+    if (ips.length > 0) {
+        console.log('📱 For other devices, use: http://' + ips[0] + ':3000');
+    }
 });
