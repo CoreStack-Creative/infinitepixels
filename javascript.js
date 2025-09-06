@@ -6128,7 +6128,7 @@ class FavoritesManager {
         }
     }
 
-    addToFavorites(gameSlug) {
+    async addToFavorites(gameSlug) {
         const game = gamesDatabase.find(g => g.slug === gameSlug);
         if (!game) return false;
 
@@ -6141,17 +6141,61 @@ class FavoritesManager {
             timestamp: Date.now()
         };
 
+        // Add to local storage first
         this.favorites.push(favoriteData);
         this.saveFavorites();
+
+        // Also add to server if logged in
+        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+            try {
+                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites`, {
+                    method: 'POST',
+                    headers: {
+                        ...window.accountSystem.getAuthHeaders(),
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ game_id: gameSlug })
+                });
+                
+                if (response.ok) {
+                    console.log('Favorite synced to server:', gameSlug);
+                } else {
+                    console.warn('Failed to sync favorite to server:', gameSlug);
+                }
+            } catch (error) {
+                console.error('Error syncing favorite to server:', error);
+            }
+        }
+
         return true;
     }
 
-    removeFromFavorites(gameSlug) {
+    async removeFromFavorites(gameSlug) {
         const index = this.favorites.findIndex(fav => fav.slug === gameSlug);
         if (index === -1) return false;
 
+        // Remove from local storage first
         this.favorites.splice(index, 1);
         this.saveFavorites();
+
+        // Also remove from server if logged in
+        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+            try {
+                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites/${gameSlug}`, {
+                    method: 'DELETE',
+                    headers: window.accountSystem.getAuthHeaders()
+                });
+                
+                if (response.ok) {
+                    console.log('Favorite removed from server:', gameSlug);
+                } else {
+                    console.warn('Failed to remove favorite from server:', gameSlug);
+                }
+            } catch (error) {
+                console.error('Error removing favorite from server:', error);
+            }
+        }
+
         return true;
     }
 
@@ -6159,15 +6203,17 @@ class FavoritesManager {
         return this.favorites.some(fav => fav.slug === gameSlug);
     }
 
-    toggleFavorite(gameSlug) {
+    async toggleFavorite(gameSlug) {
         if (this.isFavorited(gameSlug)) {
-            return this.removeFromFavorites(gameSlug);
+            return await this.removeFromFavorites(gameSlug);
         } else {
-            return this.addToFavorites(gameSlug);
+            return await this.addToFavorites(gameSlug);
         }
     }
 
     async getFavoriteGames(sortOrder = 'newest') {
+        let allFavorites = [];
+        
         // If user is logged in, try to get server favorites first
         if (window.accountSystem && window.accountSystem.isLoggedIn()) {
             try {
@@ -6181,40 +6227,55 @@ class FavoritesManager {
                     console.log('Server favorites loaded:', serverFavorites);
                     
                     // Convert server favorites to the expected format
-                    const favoriteGames = serverFavorites.map(fav => {
+                    const serverFavoriteGames = serverFavorites.map(fav => {
                         const game = gamesDatabase.find(g => g.slug === fav.game_id);
                         return game ? { 
                             ...game, 
                             dateAdded: fav.created_at, 
-                            timestamp: new Date(fav.created_at).getTime() 
+                            timestamp: new Date(fav.created_at).getTime(),
+                            source: 'server'
                         } : null;
                     }).filter(Boolean);
                     
-                    // Sort by date added
-                    if (sortOrder === 'oldest') {
-                        return favoriteGames.sort((a, b) => a.timestamp - b.timestamp);
-                    } else {
-                        return favoriteGames.sort((a, b) => b.timestamp - a.timestamp);
-                    }
+                    allFavorites = [...serverFavoriteGames];
                 }
-                console.log('Server favorites request failed, falling back to local');
             } catch (error) {
-                console.error('Error loading server favorites, falling back to local:', error);
+                console.error('Error loading server favorites:', error);
             }
         }
         
-        // Fallback to local favorites
-        console.log('Getting favorites from localStorage...');
-        const favoriteGames = this.favorites.map(fav => {
-            const game = gamesDatabase.find(g => g.slug === fav.slug);
-            return game ? { ...game, dateAdded: fav.dateAdded, timestamp: fav.timestamp } : null;
-        }).filter(Boolean);
+        // Always check local favorites and merge
+        try {
+            const stored = localStorage.getItem('infinitepixels_favorites');
+            const localFavorites = stored ? JSON.parse(stored) : [];
+            
+            const localFavoriteGames = localFavorites.map(fav => {
+                const game = gamesDatabase.find(g => g.slug === fav.slug);
+                return game ? { 
+                    ...game, 
+                    dateAdded: fav.dateAdded, 
+                    timestamp: fav.timestamp,
+                    source: 'local'
+                } : null;
+            }).filter(Boolean);
+            
+            // Merge server and local favorites (avoid duplicates)
+            const serverSlugs = new Set(allFavorites.map(f => f.slug));
+            const uniqueLocalFavorites = localFavoriteGames.filter(f => !serverSlugs.has(f.slug));
+            
+            allFavorites = [...allFavorites, ...uniqueLocalFavorites];
+            
+        } catch (error) {
+            console.error('Error loading local favorites:', error);
+        }
+
+        console.log('Final merged favorites:', allFavorites.length, 'games');
 
         // Sort by date added
         if (sortOrder === 'oldest') {
-            return favoriteGames.sort((a, b) => a.timestamp - b.timestamp);
+            return allFavorites.sort((a, b) => a.timestamp - b.timestamp);
         } else {
-            return favoriteGames.sort((a, b) => b.timestamp - a.timestamp);
+            return allFavorites.sort((a, b) => b.timestamp - a.timestamp);
         }
     }
 
@@ -6245,16 +6306,30 @@ class FavoritesManager {
             `;
         };
 
-        favoriteBtn.addEventListener('click', () => {
-            this.toggleFavorite(currentGame);
-            updateFavoriteBtn();
+        favoriteBtn.addEventListener('click', async () => {
+            // Disable button to prevent multiple clicks
+            favoriteBtn.disabled = true;
             
-            // Show a brief feedback
-            const originalText = favoriteBtn.querySelector('span').textContent;
-            favoriteBtn.querySelector('span').textContent = this.isFavorited(currentGame) ? 'Added!' : 'Removed!';
-            setTimeout(() => {
+            try {
+                await this.toggleFavorite(currentGame);
                 updateFavoriteBtn();
-            }, 1000);
+                
+                // Show a brief feedback
+                const originalText = favoriteBtn.querySelector('span').textContent;
+                favoriteBtn.querySelector('span').textContent = this.isFavorited(currentGame) ? 'Added!' : 'Removed!';
+                setTimeout(() => {
+                    updateFavoriteBtn();
+                }, 1000);
+            } catch (error) {
+                console.error('Error toggling favorite:', error);
+                favoriteBtn.querySelector('span').textContent = 'Error!';
+                setTimeout(() => {
+                    updateFavoriteBtn();
+                }, 1000);
+            } finally {
+                // Re-enable button
+                favoriteBtn.disabled = false;
+            }
         });
 
         // Insert favorite button before share button
@@ -6335,7 +6410,7 @@ class FavoritesManager {
 
         // Method to remove favorite and refresh the display
         this.removeFavoriteAndRefresh = async (gameSlug) => {
-            this.removeFromFavorites(gameSlug);
+            await this.removeFromFavorites(gameSlug);
             await renderFavorites();
         };
 
@@ -6644,6 +6719,8 @@ class HomepageGamesManager {
         // If all else fails, create a minimal fallback with account system integration
         return {
             getFavoriteGames: async (sortOrder = 'newest') => {
+                let allFavorites = [];
+                
                 // If user is logged in, try to get server favorites first
                 if (window.accountSystem && window.accountSystem.isLoggedIn()) {
                     try {
@@ -6656,38 +6733,53 @@ class HomepageGamesManager {
                             console.log('Loaded server favorites (fallback):', serverFavorites);
                             
                             // Convert server favorites to the expected format
-                            const favoriteGames = serverFavorites.map(fav => {
+                            const serverFavoriteGames = serverFavorites.map(fav => {
                                 const game = gamesDatabase.find(g => g.slug === fav.game_id);
                                 return game ? { 
                                     ...game, 
                                     dateAdded: fav.created_at, 
-                                    timestamp: new Date(fav.created_at).getTime() 
+                                    timestamp: new Date(fav.created_at).getTime(),
+                                    source: 'server'
                                 } : null;
                             }).filter(Boolean);
                             
-                            // Sort by date added
-                            if (sortOrder === 'oldest') {
-                                return favoriteGames.sort((a, b) => a.timestamp - b.timestamp);
-                            } else {
-                                return favoriteGames.sort((a, b) => b.timestamp - a.timestamp);
-                            }
+                            allFavorites = [...serverFavoriteGames];
                         }
                     } catch (error) {
                         console.error('Error loading server favorites (fallback):', error);
                     }
                 }
                 
-                // Fallback to local favorites
+                // Always check local favorites and merge
                 try {
                     const stored = localStorage.getItem('infinitepixels_favorites');
-                    const favorites = stored ? JSON.parse(stored) : [];
-                    return favorites.map(fav => {
+                    const localFavorites = stored ? JSON.parse(stored) : [];
+                    
+                    const localFavoriteGames = localFavorites.map(fav => {
                         const game = gamesDatabase.find(g => g.slug === fav.slug);
-                        return game ? { ...game, dateAdded: fav.dateAdded, timestamp: fav.timestamp } : null;
-                    }).filter(Boolean).sort((a, b) => b.timestamp - a.timestamp);
+                        return game ? { 
+                            ...game, 
+                            dateAdded: fav.dateAdded, 
+                            timestamp: fav.timestamp,
+                            source: 'local'
+                        } : null;
+                    }).filter(Boolean);
+                    
+                    // Merge server and local favorites (avoid duplicates)
+                    const serverSlugs = new Set(allFavorites.map(f => f.slug));
+                    const uniqueLocalFavorites = localFavoriteGames.filter(f => !serverSlugs.has(f.slug));
+                    
+                    allFavorites = [...allFavorites, ...uniqueLocalFavorites];
+                    
                 } catch (error) {
-                    console.error('Error loading favorites:', error);
-                    return [];
+                    console.error('Error loading local favorites (fallback):', error);
+                }
+
+                // Sort by date added
+                if (sortOrder === 'oldest') {
+                    return allFavorites.sort((a, b) => a.timestamp - b.timestamp);
+                } else {
+                    return allFavorites.sort((a, b) => b.timestamp - a.timestamp);
                 }
             }
         };
@@ -7248,7 +7340,9 @@ class HomepageGamesManager {
             return;
         }
 
-        console.log('Rendering favorites popup...');
+        console.log('🔍 DEBUG: Rendering favorites popup...');
+        console.log('🔍 DEBUG: Account system logged in?', window.accountSystem?.isLoggedIn());
+        console.log('🔍 DEBUG: Local storage favorites:', localStorage.getItem('infinitepixels_favorites'));
 
         // Show loading state
         content.innerHTML = `
@@ -7281,10 +7375,11 @@ class HomepageGamesManager {
                 favorites = [];
             }
             
+            console.log('🔍 DEBUG: Final favorites result:', favorites);
+            console.log('🔍 DEBUG: Favorites count:', favorites.length);
+            
             // Limit to 8 favorites for the popup
             favorites = favorites.slice(0, 8);
-            
-            console.log('Loaded favorites for popup:', favorites);
 
             if (favorites.length === 0) {
                 content.innerHTML = `
@@ -7316,7 +7411,7 @@ class HomepageGamesManager {
             console.log('Favorites rendered successfully');
 
         } catch (error) {
-            console.error('Error rendering favorites:', error);
+            console.error('🔍 DEBUG: Error in renderFavoritesPopup:', error);
             content.innerHTML = `
                 <div class="homepage-favorites-empty">
                     <p>Error loading favorites.</p>
