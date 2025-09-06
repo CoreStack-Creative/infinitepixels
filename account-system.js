@@ -11,40 +11,46 @@ class AccountSystem {
 
     // Determine the correct server URL based on environment
     getServerURL() {
-        // Check if we're on localhost
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            return 'http://localhost:3000';
-        }
-        
-        // For local network access (when opening HTML files directly or via local server)
-        // Try to detect if we're on a local network IP
-        const hostname = window.location.hostname;
-        const isLocalNetwork = /^(192\.168\.|10\.|172\.1[6-9]\.|172\.2[0-9]\.|172\.3[0-1]\.)/.test(hostname);
-        
-        if (isLocalNetwork || window.location.protocol === 'file:') {
-            // If we're on a local network or opening files directly,
-            // Use the server IP address
-            return 'http://192.168.11.26:3000';
-        }
-        
-        // For production
-        return 'https://your-production-server.com'; // Update with your production server
+        // Always start with localhost for same-machine access
+        return 'http://localhost:3000';
     }
 
     // Auto-detect the best server URL by testing multiple options
     async findWorkingServerURL() {
+        // Get current page's hostname to determine local IP
+        const currentHostname = window.location.hostname;
+        
         const possibleURLs = [
             'http://localhost:3000',
-            'http://127.0.0.1:3000',
-            'http://192.168.11.26:3000'
+            'http://127.0.0.1:3000'
         ];
+
+        // If we're not on localhost, try the current hostname with port 3000
+        if (currentHostname !== 'localhost' && currentHostname !== '127.0.0.1' && currentHostname !== '') {
+            possibleURLs.push(`http://${currentHostname}:3000`);
+        }
+        
+        // Add common local network IPs
+        possibleURLs.push('http://192.168.11.26:3000');
+        
+        // If opening from file:// protocol, try to guess local IP
+        if (window.location.protocol === 'file:') {
+            // Add more potential local IPs
+            for (let i = 1; i < 255; i++) {
+                if (i === 26) continue; // Skip, already added
+                possibleURLs.push(`http://192.168.11.${i}:3000`);
+                if (possibleURLs.length > 10) break; // Limit to avoid too many requests
+            }
+        }
+
+        console.log('🔍 Testing server URLs:', possibleURLs.slice(0, 5), '...');
 
         for (const url of possibleURLs) {
             try {
-                console.log(`Testing server URL: ${url}`);
+                console.log(`Testing: ${url}`);
                 const response = await fetch(`${url}/`, {
                     method: 'GET',
-                    signal: AbortSignal.timeout(3000) // 3 second timeout
+                    signal: AbortSignal.timeout(2000) // 2 second timeout
                 });
                 
                 if (response.ok) {
@@ -97,39 +103,47 @@ class AccountSystem {
             
             // First try the configured URL
             let response;
+            let serverFound = false;
+            
             try {
                 response = await fetch(`${this.baseURL}/`, {
                     method: 'GET',
                     signal: AbortSignal.timeout(5000) // 5 second timeout
                 });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Server connection successful:', data);
+                    console.log('📡 Using server URL:', this.baseURL);
+                    serverFound = true;
+                }
             } catch (error) {
                 console.warn(`Initial URL ${this.baseURL} failed, trying auto-detection...`);
                 const workingURL = await this.findWorkingServerURL();
-                if (!workingURL) {
-                    throw new Error('No working server URL found');
+                if (workingURL) {
+                    console.log('✅ Server connection successful via auto-detection');
+                    console.log('📡 Using server URL:', this.baseURL);
+                    serverFound = true;
                 }
-                response = await fetch(`${workingURL}/`, {
-                    method: 'GET',
-                    signal: AbortSignal.timeout(5000)
-                });
             }
             
-            if (response.ok) {
-                const data = await response.json();
-                console.log('✅ Server connection successful:', data);
-                console.log('📡 Using server URL:', this.baseURL);
-            } else {
-                console.warn('⚠️ Server responded but with error status:', response.status);
+            if (!serverFound) {
+                console.warn('⚠️ No server connection available');
+                console.log('🔄 Account system will work in offline mode');
+                console.log('� Data will be stored locally only');
+                this.showMessage('Account system running in offline mode - data stored locally only', 'info');
             }
+            
         } catch (error) {
             console.error('❌ Server connection failed:', error.message);
             console.log('💡 Possible solutions:');
-            console.log('   1. Make sure the server is running (npm start in server folder)');
-            console.log('   2. Check if the server IP address is correct');
-            console.log('   3. Ensure firewall allows connections on port 3000');
-            console.log('   4. Try accessing these URLs directly in your browser:');
+            console.log('   1. Make sure the server is running (cd server && node server.js)');
+            console.log('   2. Check if firewall allows connections on port 3000');
+            console.log('   3. Try these URLs in your browser:');
             console.log('      - http://localhost:3000');
             console.log('      - http://192.168.11.26:3000');
+            console.log('🔄 Account system will work in offline mode');
+            this.showMessage('Account system running in offline mode - data stored locally only', 'info');
         }
     }
 
@@ -432,7 +446,20 @@ class AccountSystem {
             }
         } catch (error) {
             console.error('Login error:', error);
-            this.showMessage('Network error. Please check your connection and try again.', 'error');
+            
+            // Try offline mode for development/testing
+            if (email === 'test@offline.com' && password === 'offline123') {
+                console.log('🔄 Using offline test account');
+                this.createOfflineUser(email, 'Test User');
+                this.showMessage('Logged in with offline test account', 'success');
+                
+                // Close dropdown and clear form
+                document.getElementById('accountDropdown').classList.remove('show');
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+            } else {
+                this.showMessage('Network error. Server may be offline. Try test@offline.com / offline123 for offline mode.', 'error');
+            }
         } finally {
             // Reset button state
             submitBtn.textContent = originalText;
@@ -506,12 +533,48 @@ class AccountSystem {
             }
         } catch (error) {
             console.error('Signup error:', error);
-            this.showMessage('Network error. Please check your connection and try again.', 'error');
+            
+            // Create offline account for testing
+            console.log('🔄 Creating offline account');
+            this.createOfflineUser(email, username);
+            this.showMessage('Account created in offline mode. Data will be stored locally only.', 'success');
+            
+            // Switch to login tab and clear form
+            this.showLogin();
+            document.getElementById('signupUsername').value = '';
+            document.getElementById('signupEmail').value = '';
+            document.getElementById('signupPassword').value = '';
         } finally {
             // Reset button state
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
         }
+    }
+
+    // Create offline user for when server is not available
+    createOfflineUser(email, username) {
+        const offlineUser = {
+            id: 'offline_' + Date.now(),
+            email: email,
+            username: username,
+            created_at: new Date().toISOString(),
+            offline_mode: true
+        };
+        
+        const offlineSession = {
+            access_token: 'offline_token_' + Date.now(),
+            expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
+            user: offlineUser
+        };
+        
+        this.user = offlineUser;
+        this.session = offlineSession;
+        
+        // Store in localStorage
+        localStorage.setItem('infinitepixels_session', JSON.stringify(offlineSession));
+        localStorage.setItem('infinitepixels_offline_user', JSON.stringify(offlineUser));
+        
+        this.updateAccountUI();
     }
 
     async forgotPassword(event) {

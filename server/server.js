@@ -4,6 +4,7 @@ console.log('📁 Loading .env from:', __dirname + '/.env');
 const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
+const os = require('os');
 // const multer = require('multer'); // Temporarily disabled
 const crypto = require('crypto');
 
@@ -54,35 +55,25 @@ console.log('✅ Supabase clients initialized');
 
 // Middleware
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-        
-        // Allow localhost on any port
-        if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
-            return callback(null, true);
-        }
-        
-        // Allow local network IPs (192.168.x.x, 10.x.x.x, etc.)
-        const localNetworkRegex = /^https?:\/\/(192\.168\.|10\.|172\.1[6-9]\.|172\.2[0-9]\.|172\.3[0-1]\.)/;
-        if (localNetworkRegex.test(origin)) {
-            return callback(null, true);
-        }
-        
-        // Allow your production domain
-        if (origin === 'https://infinite-pixels.com' || origin === 'https://www.infinite-pixels.com') {
-            return callback(null, true);
-        }
-        
-        // For development, be more permissive
-        if (isDevelopment) {
-            return callback(null, true);
-        }
-        
-        callback(new Error('Not allowed by CORS'));
-    },
-    credentials: true
+    origin: '*', // Allow all origins for development
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
+
+// Add explicit OPTIONS handling for preflight requests
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    
+    if (req.method === 'OPTIONS') {
+        res.sendStatus(200);
+    } else {
+        next();
+    }
+});
+
 app.use(express.json());
 
 // Health check endpoint
