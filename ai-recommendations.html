@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Recommendations - InfinitePixels</title>
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="ai-styles.css" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- ✅ Logo structured data for Google -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Infinite Pixels",
+    "url": "https://infinite-pixels.com/",
+    "logo": "https://www.infinite-pixels.com/images/infinitepixelslogo.png",
+    "sameAs": [
+      "https://www.youtube.com/@InfinitePixels-Games",
+      "https://www.tiktok.com/@infinitepixelsgames"
+    ]
+  }
+  </script>
+
+  <!-- ✅ Cookiebot CMP (must come first, only include once) -->
+  <script 
+    id="Cookiebot"
+    src="https://consent.cookiebot.com/uc.js"
+    data-cbid="82d2063c-123d-4595-9051-0b523b38f58f"
+    data-blockingmode="auto"
+    type="text/javascript">
+  </script>
+
+  <!-- ✅ Google Consent Mode v2 defaults: deny until consent given -->
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("consent", "default", {
+      ad_storage: "denied",
+      analytics_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied"
+    });
+  </script>
+
+  <!-- ✅ Google Tag Manager (blocked until 'marketing' consent) -->
+  <script type="text/plain" data-cookieconsent="marketing">
+    (function (w, d, s, l, i) {
+      w[l] = w[l] || [];
+      w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+      var f = d.getElementsByTagName(s)[0],
+        j = d.createElement(s),
+        dl = l != "dataLayer" ? "&l=" + l : "";
+      j.async = true;
+      j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+      f.parentNode.insertBefore(j, f);
+    })(window, document, "script", "dataLayer", "GTM-NPJXGVHN");
+  </script>
+
+  <!-- ✅ Google Analytics 4 (fires only if Statistics accepted) -->
+  <script type="text/plain" data-cookieconsent="statistics">
+    gtag("js", new Date());
+    gtag("config", "G-0YQ8BM0QCT");
+  </script>
+</head>
+<body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NPJXGVHN"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <!-- ✅ AdSense script (Cookiebot auto-blocks until Marketing consent) -->
+    <script async 
+      src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
+      data-ad-client="ca-pub-8164325902033897">
+    </script>
+     
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="logo-link">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <img src="images/infinitepixleslogo.webp" alt="InfinitePixels Logo" width="85" height="85">
+                    </div>
+                    <h2>InfinitePixels</h2>
+                </div>
+            </a>
+        </div>
+
+        <!-- ✅ Scrollable content -->
+        <div class="sidebar-content">
+            <!-- Primary links -->
+            <ul class="nav-links">
+                <li>
+                    <a href="index.html">
+                        <i class="icon">
+                            <img src="images/home.png" alt="Homepage" width="20" height="20">
+                        </i>
+                        <span>Homepage</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="recent.html">
+                        <i class="icon">
+                            <img src="images/recent.png" alt="Recent" width="20" height="20">
+                        </i>
+                        <span>Recently Played</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="games.html">
+                        <i class="icon">
+                            <img src="images/games.png" alt="Games" width="20" height="20">
+                        </i>
+                        <span>Games</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="favorites.html">
+                        <i class="icon">
+                            <img src="images/heart.png" alt="Favorites" width="20" height="20">
+                        </i>
+                        <span>Favorites</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="ai-recommendations.html" class="active">
+                        <i class="icon">
+                            <img src="images/brain.png" alt="AI Recommendations" width="20" height="20">
+                        </i>
+                        <span>AI Picks</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="random.html">
+                        <i class="icon">
+                            <img src="images/random.png" alt="Random" width="20" height="20">
+                        </i>
+                        <span>Random</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="newgames.html">
+                        <i class="icon">
+                            <img src="images/star.png" alt="New Games" width="20" height="20">
+                        </i>
+                        <span>New</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="category.html">
+                        <i class="icon">
+                            <img src="images/grid.png" alt="Categories" width="20" height="20">
+                        </i>
+                        <span>Categories</span>
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Secondary links -->
+            <ul class="nav-links secondary-links">
+                <li>
+                    <a href="news.html">
+                        <span>News</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="faq.html">
+                        <span>FAQ</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="game-reviews.html">
+                        <span>Reviews</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="game-guides.html">
+                        <span>Guides</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="about.html">
+                        <span>About</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="privacypolicy.html">
+                        <span>Privacy Policy</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="termsandconditions.html">
+                        <span>Terms and Conditions</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="settings.html">
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="contact-btn-wrapper">
+                <a href="contact.html" class="contact-btn">Contact</a>
+            </div>
+        </div>
+
+    </nav>
+
+   <div class="top-bar">
+       <button class="sidebar-toggle" id="sidebarToggle">
+           <i class="fas fa-bars"></i>
+       </button>
+
+       <div class="search-container">
+           <div class="search-wrapper">
+               <button class="search-icon-btn" id="searchIconBtn">
+                   <i class="fas fa-search"></i>
+               </button>
+               <div class="search-box" id="searchBox">
+                   <input type="text" id="searchInput" placeholder="Search games...">
+               </div>
+           </div>
+           <div class="search-results" id="searchResults">
+               <!-- Search results will be displayed here -->
+           </div>
+       </div>
+   </div>
+
+    <main class="main-content" id="mainContent">
+        <div class="ai-recommendations-container">
+            <!-- AI Page Header -->
+            <div class="ai-page-header">
+                <div class="ai-header-content">
+                    <div class="ai-header-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="ai-header-text">
+                        <h1>AI Game Recommendations</h1>
+                        <p>Powered by machine learning, tailored to your unique gaming preferences</p>
+                    </div>
+                </div>
+                <div class="ai-header-stats" id="aiHeaderStats">
+                    <!-- Stats will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- AI Insights Dashboard -->
+            <div class="ai-insights-section" id="aiInsightsSection">
+                <h2><i class="fas fa-chart-line"></i> Your Gaming Insights</h2>
+                <div class="insights-grid">
+                    <div class="insight-card" id="playTimeInsight">
+                        <div class="insight-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h3>Average Play Time</h3>
+                            <div class="insight-value">-</div>
+                            <div class="insight-description">Per gaming session</div>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card" id="categoryInsight">
+                        <div class="insight-icon">
+                            <i class="fas fa-gamepad"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h3>Favorite Genre</h3>
+                            <div class="insight-value">-</div>
+                            <div class="insight-description">Most played category</div>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card" id="accuracyInsight">
+                        <div class="insight-icon">
+                            <i class="fas fa-target"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h3>AI Accuracy</h3>
+                            <div class="insight-value">-</div>
+                            <div class="insight-description">Recommendation success rate</div>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card" id="discoveryInsight">
+                        <div class="insight-icon">
+                            <i class="fas fa-compass"></i>
+                        </div>
+                        <div class="insight-content">
+                            <h3>New Discoveries</h3>
+                            <div class="insight-value">-</div>
+                            <div class="insight-description">Games found via AI</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main AI Recommendations -->
+            <div class="main-ai-recommendations" id="mainAIRecommendations" data-ai-recommendations="true">
+                <!-- AI recommendations will be rendered here -->
+            </div>
+
+            <!-- Category-Specific Recommendations -->
+            <div class="category-recommendations-section" id="categoryRecommendations">
+                <h2><i class="fas fa-layer-group"></i> Explore by Category</h2>
+                <div class="category-tabs">
+                    <button class="category-tab active" data-category="all">All Recommendations</button>
+                    <button class="category-tab" data-category="action">Action</button>
+                    <button class="category-tab" data-category="puzzle">Puzzle</button>
+                    <button class="category-tab" data-category="arcade">Arcade</button>
+                    <button class="category-tab" data-category="strategy">Strategy</button>
+                    <button class="category-tab" data-category="adventure">Adventure</button>
+                </div>
+                <div class="category-content" id="categoryContent">
+                    <!-- Category-specific recommendations will be rendered here -->
+                </div>
+            </div>
+
+            <!-- AI Model Information -->
+            <div class="ai-model-info-section">
+                <div class="ai-model-card">
+                    <div class="model-header">
+                        <i class="fas fa-robot"></i>
+                        <h3>How Our AI Works</h3>
+                    </div>
+                    <div class="model-content">
+                        <div class="model-features">
+                            <div class="feature">
+                                <i class="fas fa-eye"></i>
+                                <div class="feature-text">
+                                    <h4>Behavioral Analysis</h4>
+                                    <p>Tracks your gaming patterns, play duration, and interaction frequency</p>
+                                </div>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-network-wired"></i>
+                                <div class="feature-text">
+                                    <h4>Machine Learning</h4>
+                                    <p>Uses collaborative filtering and content-based algorithms</p>
+                                </div>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-sync-alt"></i>
+                                <div class="feature-text">
+                                    <h4>Continuous Learning</h4>
+                                    <p>Improves recommendations based on your feedback and new gaming data</p>
+                                </div>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-shield-alt"></i>
+                                <div class="feature-text">
+                                    <h4>Privacy-First</h4>
+                                    <p>All data processing happens securely and respects your privacy</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback Section -->
+            <div class="ai-feedback-section">
+                <div class="feedback-card">
+                    <h3><i class="fas fa-comment-dots"></i> Help Improve Our AI</h3>
+                    <p>Your feedback makes our recommendations better for everyone!</p>
+                    <div class="feedback-actions">
+                        <button class="feedback-action-btn" onclick="aiRecommendationsPage.showFeedbackModal()">
+                            <i class="fas fa-star"></i>
+                            Rate AI Performance
+                        </button>
+                        <button class="feedback-action-btn" onclick="aiRecommendationsPage.exportPreferences()">
+                            <i class="fas fa-download"></i>
+                            Export My Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Modal -->
+        <div class="modal-overlay" id="feedbackModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Rate AI Recommendations</h3>
+                    <button class="modal-close" onclick="aiRecommendationsPage.closeFeedbackModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="rating-section">
+                        <label>How accurate are our recommendations?</label>
+                        <div class="star-rating" id="accuracyRating">
+                            <button class="star" data-rating="1"><i class="fas fa-star"></i></button>
+                            <button class="star" data-rating="2"><i class="fas fa-star"></i></button>
+                            <button class="star" data-rating="3"><i class="fas fa-star"></i></button>
+                            <button class="star" data-rating="4"><i class="fas fa-star"></i></button>
+                            <button class="star" data-rating="5"><i class="fas fa-star"></i></button>
+                        </div>
+                    </div>
+                    <div class="feedback-text-section">
+                        <label>Additional feedback (optional)</label>
+                        <textarea id="feedbackText" placeholder="Tell us how we can improve..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" onclick="aiRecommendationsPage.closeFeedbackModal()">Cancel</button>
+                    <button class="btn-primary" onclick="aiRecommendationsPage.submitFeedback()">Submit Feedback</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- AI Tracking Indicator -->
+    <div class="ai-tracking-indicator" id="aiTrackingIndicator">
+        <i class="fas fa-brain"></i>
+        <span>AI Learning...</span>
+    </div>
+
+    <script src="account-system.js"></script>
+    <script src="ai-tracking.js"></script>
+    <script src="ai-recommendations.js"></script>
+    <script src="ai-recommendations-page.js"></script>
+    <script src="javascript.js"></script>
+</body>
+</html>
