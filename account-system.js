@@ -11,8 +11,8 @@ class AccountSystem {
 
     // Determine the correct server URL based on environment
     getServerURL() {
-        // Always start with localhost for same-machine access
-        return 'http://localhost:3000';
+        // Try port 3001 first (new simple server), then 3000 (original server)
+        return 'http://localhost:3001';
     }
 
     // Auto-detect the best server URL by testing multiple options
@@ -21,16 +21,20 @@ class AccountSystem {
         const currentHostname = window.location.hostname;
         
         const possibleURLs = [
+            'http://localhost:3001',
             'http://localhost:3000',
+            'http://127.0.0.1:3001',
             'http://127.0.0.1:3000'
         ];
 
-        // If we're not on localhost, try the current hostname with port 3000
+        // If we're not on localhost, try the current hostname with port 3001 and 3000
         if (currentHostname !== 'localhost' && currentHostname !== '127.0.0.1' && currentHostname !== '') {
+            possibleURLs.push(`http://${currentHostname}:3001`);
             possibleURLs.push(`http://${currentHostname}:3000`);
         }
         
         // Add common local network IPs
+        possibleURLs.push('http://192.168.11.26:3001');
         possibleURLs.push('http://192.168.11.26:3000');
         
         // If opening from file:// protocol, try to guess local IP

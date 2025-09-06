@@ -34,10 +34,20 @@ def open_browser():
     webbrowser.open(f'http://localhost:{PORT}')
 
 if __name__ == "__main__":
-    # Get local IP
+    # Get local IP more reliably
     import socket
-    hostname = socket.gethostname()
-    local_ip = socket.gethostbyname(hostname)
+    
+    # Connect to a remote server to determine local IP
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # Connect to Google DNS to get local IP
+        s.connect(('8.8.8.8', 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+    except Exception:
+        # Fallback method
+        hostname = socket.gethostname()
+        local_ip = socket.gethostbyname(hostname)
     
     print(f"🌐 Starting file server...")
     print(f"📁 Serving files from: {os.getcwd()}")
@@ -46,6 +56,12 @@ if __name__ == "__main__":
     print(f"🎯 Test page: http://{local_ip}:{PORT}/test-account-system.html")
     print(f"🏠 Main site: http://{local_ip}:{PORT}/index.html")
     print(f"⚠️  Make sure your account server is running on port 3000!")
+    print("")
+    print(f"📋 FOR OTHER DEVICES:")
+    print(f"   1. Connect to the same WiFi network")
+    print(f"   2. Open browser and go to: http://{local_ip}:{PORT}")
+    print(f"   3. The account system will auto-detect the server")
+    print("")
     print(f"📊 Server logs will appear below...")
     print("-" * 60)
     
