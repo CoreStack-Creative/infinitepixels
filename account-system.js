@@ -1016,7 +1016,7 @@ class AccountSystem {
             const localRecent = localStorage.getItem('infinitePixels_recentlyPlayed');
             if (localRecent) {
                 const recentGames = JSON.parse(localRecent);
-                console.log('Syncing recent games to server:', recentGames.length);
+                console.log('📤 Syncing recent games to server:', recentGames.length);
                 
                 for (const game of recentGames) {
                     await this.supabase
@@ -1031,11 +1031,24 @@ class AccountSystem {
                 }
             }
 
+            // Debug: Check all localStorage keys for favorites
+            console.log('🔍 DEBUG: Checking localStorage for favorites...');
+            console.log('  infinitePixels_favorites:', localStorage.getItem('infinitePixels_favorites'));
+            console.log('  infinitepixels_offline_favorites:', localStorage.getItem('infinitepixels_offline_favorites'));
+            console.log('  userFavorites:', localStorage.getItem('userFavorites'));
+            console.log('  favorites:', localStorage.getItem('favorites'));
+            
+            // Check what keys exist in localStorage
+            const allKeys = Object.keys(localStorage).filter(key => key.toLowerCase().includes('favorite'));
+            console.log('  All favorite-related keys:', allKeys);
+
             // Sync local favorites
             const localFavorites = localStorage.getItem('infinitePixels_favorites');
+            console.log('📤 Syncing favorites to server:', localFavorites ? JSON.parse(localFavorites).length : 0);
+            console.log('  Favorites to sync:', localFavorites ? JSON.parse(localFavorites) : []);
+            
             if (localFavorites) {
                 const favorites = JSON.parse(localFavorites);
-                console.log('Syncing favorites to server:', favorites.length);
                 
                 for (const gameId of favorites) {
                     await this.supabase
@@ -1049,7 +1062,7 @@ class AccountSystem {
                 }
             }
 
-            console.log('✅ Local data synced to server successfully');
+            console.log('✅ Favorites synced successfully');
         } catch (error) {
             console.error('Error syncing local data to server:', error);
         }
@@ -1089,13 +1102,17 @@ class AccountSystem {
 
             if (!favError && favorites) {
                 const serverFavorites = favorites.map(fav => fav.game_id);
+                console.log('✅ Favorites loaded from server:', serverFavorites.length);
+                console.log('  Server favorites:', serverFavorites);
                 
                 // Merge with local favorites
                 const localFavorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
+                console.log('  Local favorites before merge:', localFavorites);
+                
                 const mergedFavorites = [...new Set([...localFavorites, ...serverFavorites])];
+                console.log('  Merged favorites:', mergedFavorites);
                 
                 localStorage.setItem('infinitePixels_favorites', JSON.stringify(mergedFavorites));
-                console.log('✅ Favorites loaded from server:', favorites.length);
             }
 
         } catch (error) {
