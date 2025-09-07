@@ -6090,6 +6090,7 @@ class FavoritesManager {
     constructor() {
         this.favorites = this.loadFavorites();
         this.init();
+        this.setupEventListeners();
     }
 
     init() {
@@ -6101,6 +6102,26 @@ class FavoritesManager {
             typeof gamesDatabase !== 'undefined' && gamesDatabase.length > 0) {
             this.initFavoritesPage();
         }
+    }
+
+    setupEventListeners() {
+        // Listen for favorites updates from account system
+        window.addEventListener('favoritesUpdated', (event) => {
+            console.log('🔄 FavoritesManager received favoritesUpdated event:', event.detail);
+            // Refresh our local favorites data
+            this.favorites = this.loadFavorites();
+            
+            // Update heart icons on all pages
+            this.updateHeartIcons();
+            
+            // If we're on the favorites page, refresh the display
+            if (window.location.pathname.includes('favorites.html')) {
+                console.log('📄 Refreshing favorites page display...');
+                setTimeout(() => {
+                    this.renderFavoritesPage();
+                }, 100); // Small delay to ensure localStorage has been updated
+            }
+        });
     }
 
     // Method to be called when games data is loaded
@@ -6180,8 +6201,19 @@ class FavoritesManager {
             const success = await window.accountSystem.removeFromFavorites(gameSlug);
             console.log('  Account system returned:', success);
             if (success) {
-                // Reload local favorites from account system
+                // Force reload of local favorites from storage
                 this.favorites = this.loadFavorites();
+                console.log('  🔄 Favorites reloaded, new count:', this.favorites.length);
+                
+                // Trigger immediate UI refresh if we're on favorites page
+                if (window.location.pathname.includes('favorites.html')) {
+                    console.log('  📄 Triggering immediate favorites page refresh...');
+                    setTimeout(() => {
+                        if (typeof this.initFavoritesPage === 'function') {
+                            this.initFavoritesPage();
+                        }
+                    }, 50);
+                }
             }
             return success;
         } else {
@@ -6346,8 +6378,21 @@ class FavoritesManager {
 
         console.log('Found favorites page elements, proceeding with initialization');
 
+        // Store references for later use
+        this.favoritesGrid = favoritesGrid;
+        this.noFavorites = noFavorites;
+        this.favoritesFilter = favoritesFilter;
+
         const renderFavorites = async () => {
             const sortOrder = favoritesFilter?.value || 'newest';
+            
+            console.log('🎨 renderFavorites called with sortOrder:', sortOrder);
+            console.log('  this.favorites.length:', this.favorites.length);
+            console.log('  localStorage favorites:', localStorage.getItem('infinitepixels_favorites'));
+            
+            // Refresh favorites data before rendering
+            this.favorites = this.loadFavorites();
+            console.log('  Refreshed favorites count:', this.favorites.length);
             
             // Show loading state
             favoritesGrid.innerHTML = `
@@ -6405,11 +6450,26 @@ class FavoritesManager {
         this.removeFavoriteAndRefresh = async (gameSlug) => {
             console.log('🔄 removeFavoriteAndRefresh called for:', gameSlug);
             console.log('  About to call this.removeFromFavorites...');
+            
             const success = await this.removeFromFavorites(gameSlug);
             console.log('  removeFromFavorites result:', success);
-            console.log('  About to refresh display...');
-            await renderFavorites();
-            console.log('  Display refreshed');
+            
+            if (success) {
+                console.log('  ✅ Removal successful, completely refreshing favorites page...');
+                
+                // Force refresh of local favorites data
+                this.favorites = this.loadFavorites();
+                console.log('  🔄 Updated favorites count:', this.favorites.length);
+                
+                // Use the dedicated rendering method
+                setTimeout(() => {
+                    console.log('  📄 Calling renderFavoritesPage...');
+                    this.renderFavoritesPage();
+                    console.log('  ✅ Page rendered');
+                }, 50);
+            } else {
+                console.log('  ❌ Removal failed');
+            }
         };
 
         // Initial render
@@ -6428,6 +6488,42 @@ class FavoritesManager {
         
         // Initialize the favorites popup
         this.initFavoritesPopup();
+    }
+
+    updateHeartIcons() {
+        // Update all heart icons across the site to reflect current favorite status
+        console.log('💖 Updating heart icons across the site...');
+        
+        const heartButtons = document.querySelectorAll('.favorite-btn, .heart-icon, [data-favorite-btn]');
+        heartButtons.forEach(button => {
+            const gameSlug = button.getAttribute('data-slug') || 
+                           button.getAttribute('data-game-slug') ||
+                           button.closest('[data-slug]')?.getAttribute('data-slug');
+            
+            if (gameSlug) {
+                const isFavorited = this.isFavorited(gameSlug);
+                
+                // Update button appearance
+                if (isFavorited) {
+                    button.classList.add('favorited');
+                    button.classList.remove('not-favorited');
+                } else {
+                    button.classList.remove('favorited');
+                    button.classList.add('not-favorited');
+                }
+                
+                // Update icon
+                const icon = button.querySelector('i') || button;
+                if (icon.classList.contains('fas') || icon.classList.contains('far')) {
+                    icon.className = isFavorited ? 'fas fa-heart' : 'far fa-heart';
+                }
+                
+                // Update title
+                button.title = isFavorited ? 'Remove from favorites' : 'Add to favorites';
+                
+                console.log(`💖 Updated heart icon for ${gameSlug}: ${isFavorited ? 'favorited' : 'not favorited'}`);
+            }
+        });
     }
 
 

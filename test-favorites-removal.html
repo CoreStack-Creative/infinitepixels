@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Favorites Removal</title>
+    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        .test-game { padding: 10px; margin: 5px 0; background: #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .remove-btn { background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; }
+        .debug-output { background: #000; color: #0f0; padding: 10px; font-family: monospace; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Test Favorites Removal</h1>
+    
+    <div class="test-section">
+        <h2>Current Favorites</h2>
+        <div id="currentFavorites"></div>
+        <button onclick="refreshDisplay()">Refresh Display</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Games</h2>
+        <div class="test-game">
+            <span>Test Game 1</span>
+            <button class="remove-btn" onclick="testRemoval('test-game-1')">Remove</button>
+        </div>
+        <div class="test-game">
+            <span>Test Game 2</span>
+            <button class="remove-btn" onclick="testRemoval('test-game-2')">Remove</button>
+        </div>
+        <div class="test-game">
+            <span>1v1lol</span>
+            <button class="remove-btn" onclick="testRemoval('1v1lol')">Remove</button>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Add Test Favorites</h2>
+        <button onclick="addTestFavorites()">Add Test Games to Favorites</button>
+        <button onclick="clearAllFavorites()">Clear All Favorites</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Debug Output</h2>
+        <div id="debugOutput" class="debug-output"></div>
+    </div>
+
+    <!-- Include necessary scripts -->
+    <script src="supabase-config.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="account-system.js"></script>
+    
+    <script>
+        // Wait for account system to be ready
+        function waitForAccountSystem() {
+            if (window.accountSystem && window.accountSystem.isReady) {
+                console.log('✅ Account system ready');
+                refreshDisplay();
+            } else {
+                console.log('⏳ Waiting for account system...');
+                setTimeout(waitForAccountSystem, 100);
+            }
+        }
+        
+        function log(message) {
+            const debugOutput = document.getElementById('debugOutput');
+            debugOutput.textContent += new Date().toLocaleTimeString() + ': ' + message + '\n';
+            debugOutput.scrollTop = debugOutput.scrollHeight;
+            console.log(message);
+        }
+        
+        function refreshDisplay() {
+            const favorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+            const favoritesDiv = document.getElementById('currentFavorites');
+            
+            if (favorites.length === 0) {
+                favoritesDiv.innerHTML = '<p>No favorites found</p>';
+            } else {
+                favoritesDiv.innerHTML = favorites.map((fav, index) => 
+                    `<div class="test-game">
+                        <span>${typeof fav === 'string' ? fav : JSON.stringify(fav)}</span>
+                        <button class="remove-btn" onclick="testRemoval('${typeof fav === 'string' ? fav : fav.slug || fav}')">Remove</button>
+                    </div>`
+                ).join('');
+            }
+            
+            log('Refreshed display. Current favorites: ' + favorites.length);
+            
+            // Also run debug
+            if (window.accountSystem && window.accountSystem.debugFavorites) {
+                window.accountSystem.debugFavorites();
+            }
+        }
+        
+        async function testRemoval(gameId) {
+            log('🗑️ Testing removal of: ' + gameId);
+            
+            const beforeFavorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+            log('Before removal - Favorites count: ' + beforeFavorites.length);
+            log('Before removal - Contains game: ' + beforeFavorites.includes(gameId));
+            
+            if (window.accountSystem && window.accountSystem.removeFromFavorites) {
+                try {
+                    const result = await window.accountSystem.removeFromFavorites(gameId);
+                    log('Account system removeFromFavorites result: ' + result);
+                } catch (error) {
+                    log('Error during removal: ' + error.message);
+                }
+            } else {
+                log('❌ Account system or removeFromFavorites not available');
+                // Fallback manual removal for testing
+                let favorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+                favorites = favorites.filter(fav => {
+                    if (typeof fav === 'string') return fav !== gameId;
+                    if (fav && fav.slug) return fav.slug !== gameId;
+                    return true;
+                });
+                localStorage.setItem('infinitepixels_favorites', JSON.stringify(favorites));
+                log('Manual removal completed');
+            }
+            
+            const afterFavorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+            log('After removal - Favorites count: ' + afterFavorites.length);
+            log('After removal - Contains game: ' + afterFavorites.includes(gameId));
+            
+            setTimeout(refreshDisplay, 100);
+        }
+        
+        function addTestFavorites() {
+            const testGames = ['test-game-1', 'test-game-2', '1v1lol', 'cookieclicker', 'basket-random'];
+            let favorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+            
+            testGames.forEach(game => {
+                if (!favorites.includes(game)) {
+                    favorites.push(game);
+                }
+            });
+            
+            localStorage.setItem('infinitepixels_favorites', JSON.stringify(favorites));
+            log('Added test favorites: ' + testGames.join(', '));
+            refreshDisplay();
+        }
+        
+        function clearAllFavorites() {
+            localStorage.setItem('infinitepixels_favorites', '[]');
+            // Also clear other potential keys
+            localStorage.removeItem('userFavorites');
+            localStorage.removeItem('favorites');
+            localStorage.removeItem('infinitepixels_offline_favorites');
+            log('Cleared all favorites');
+            refreshDisplay();
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            log('🚀 Test page loaded');
+            waitForAccountSystem();
+        });
+    </script>
+</body>
+</html>

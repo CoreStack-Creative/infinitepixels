@@ -882,6 +882,15 @@ class AccountSystem {
                 console.log('✅ Favorite saved locally:', gameId);
             }
 
+            // Trigger a custom event to notify other components
+            window.dispatchEvent(new CustomEvent('favoritesUpdated', { 
+                detail: { 
+                    action: 'added', 
+                    gameId: gameId,
+                    favorites: favorites 
+                } 
+            }));
+
             this.showMessage('Added to favorites!', 'success');
             return true;
 
@@ -949,12 +958,62 @@ class AccountSystem {
                 console.log('⚠️ Game not found in local favorites:', gameId);
             }
 
+            // Clean up any legacy favorite storage keys that might cause conflicts
+            this.cleanupLegacyFavoriteStorage(gameId);
+
+            // Trigger a custom event to notify other components
+            window.dispatchEvent(new CustomEvent('favoritesUpdated', { 
+                detail: { 
+                    action: 'removed', 
+                    gameId: gameId,
+                    favorites: favorites 
+                } 
+            }));
+
             this.showMessage('Removed from favorites!', 'success');
             return true;
 
         } catch (error) {
             console.error('Remove favorite error:', error);
             return false;
+        }
+    }
+
+    // Helper method to clean up legacy favorite storage
+    cleanupLegacyFavoriteStorage(gameId) {
+        try {
+            // Check and clean up other potential favorite storage keys
+            const legacyKeys = ['userFavorites', 'favorites', 'infinitepixels_offline_favorites'];
+            
+            legacyKeys.forEach(key => {
+                const stored = localStorage.getItem(key);
+                if (stored) {
+                    try {
+                        let legacyFavorites = JSON.parse(stored);
+                        if (Array.isArray(legacyFavorites)) {
+                            // Remove the game from legacy storage too
+                            const originalLength = legacyFavorites.length;
+                            legacyFavorites = legacyFavorites.filter(item => {
+                                if (typeof item === 'string') {
+                                    return item !== gameId;
+                                } else if (item && item.slug) {
+                                    return item.slug !== gameId;
+                                }
+                                return true;
+                            });
+                            
+                            if (legacyFavorites.length !== originalLength) {
+                                localStorage.setItem(key, JSON.stringify(legacyFavorites));
+                                console.log(`🧹 Cleaned up legacy favorite from ${key}:`, gameId);
+                            }
+                        }
+                    } catch (e) {
+                        console.log(`⚠️ Could not parse legacy favorites in ${key}:`, e);
+                    }
+                }
+            });
+        } catch (error) {
+            console.error('Error cleaning up legacy favorite storage:', error);
         }
     }
 
@@ -1303,6 +1362,28 @@ class AccountSystem {
         });
         
         return [...new Set(favorites)]; // Remove duplicates
+    }
+
+    // Debug method to check current state of favorites
+    debugFavorites() {
+        console.log('🔍 DEBUG: Current favorites state:');
+        console.log('  localStorage infinitepixels_favorites:', localStorage.getItem('infinitepixels_favorites'));
+        console.log('  Account system user:', this.user?.username);
+        console.log('  Account system logged in:', this.isLoggedIn());
+        console.log('  Supabase available:', !!this.supabase);
+        
+        // Check other storage keys
+        const allKeys = Object.keys(localStorage).filter(key => key.toLowerCase().includes('favorite'));
+        console.log('  All favorite-related keys:', allKeys);
+        allKeys.forEach(key => {
+            console.log(`    ${key}:`, localStorage.getItem(key));
+        });
+        
+        // Check if favoritesManager is available
+        console.log('  window.favoritesManager:', !!window.favoritesManager);
+        if (window.favoritesManager) {
+            console.log('  favoritesManager.favorites:', window.favoritesManager.favorites);
+        }
     }
 }
 
