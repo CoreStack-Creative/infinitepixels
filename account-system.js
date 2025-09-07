@@ -812,13 +812,14 @@ class AccountSystem {
     }
 
     async addToFavorites(gameId) {
-        if (!this.session) {
+        // Allow favorites for both logged-in users and offline mode
+        if (!this.user && !this.session) {
             this.showMessage('Please login to add favorites', 'error');
             return false;
         }
 
         try {
-            if (this.supabase) {
+            if (this.supabase && this.session) {
                 // Online mode - save to server
                 const { error } = await this.supabase
                     .from('user_favorites')
@@ -830,26 +831,20 @@ class AccountSystem {
                     });
 
                 if (error) throw error;
-
-                // Also save to local storage for immediate feedback
-                const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
-                if (!favorites.includes(gameId)) {
-                    favorites.push(gameId);
-                    localStorage.setItem('infinitePixels_favorites', JSON.stringify(favorites));
-                }
-
-                this.showMessage('Added to favorites!', 'success');
-                return true;
-            } else {
-                // Offline mode
-                const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
-                if (!favorites.includes(gameId)) {
-                    favorites.push(gameId);
-                    localStorage.setItem('infinitePixels_favorites', JSON.stringify(favorites));
-                    this.showMessage('Added to favorites!', 'success');
-                    return true;
-                }
+                console.log('✅ Favorite saved to server:', gameId);
             }
+
+            // Always save to local storage (both online and offline mode)
+            const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
+            if (!favorites.includes(gameId)) {
+                favorites.push(gameId);
+                localStorage.setItem('infinitePixels_favorites', JSON.stringify(favorites));
+                console.log('✅ Favorite saved locally:', gameId);
+            }
+
+            this.showMessage('Added to favorites!', 'success');
+            return true;
+
         } catch (error) {
             console.error('Add favorite error:', error);
             this.showMessage('Error adding to favorites', 'error');
@@ -858,10 +853,13 @@ class AccountSystem {
     }
 
     async removeFromFavorites(gameId) {
-        if (!this.session) return false;
+        // Allow favorites removal for both logged-in users and offline mode
+        if (!this.user && !this.session) {
+            return false;
+        }
 
         try {
-            if (this.supabase) {
+            if (this.supabase && this.session) {
                 // Online mode - remove from server
                 const { error } = await this.supabase
                     .from('user_favorites')
@@ -870,28 +868,21 @@ class AccountSystem {
                     .eq('game_id', gameId);
 
                 if (error) throw error;
-
-                // Also remove from local storage
-                const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
-                const index = favorites.indexOf(gameId);
-                if (index > -1) {
-                    favorites.splice(index, 1);
-                    localStorage.setItem('infinitePixels_favorites', JSON.stringify(favorites));
-                }
-
-                this.showMessage('Removed from favorites!', 'success');
-                return true;
-            } else {
-                // Offline mode
-                const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
-                const index = favorites.indexOf(gameId);
-                if (index > -1) {
-                    favorites.splice(index, 1);
-                    localStorage.setItem('infinitePixels_favorites', JSON.stringify(favorites));
-                    this.showMessage('Removed from favorites!', 'success');
-                    return true;
-                }
+                console.log('✅ Favorite removed from server:', gameId);
             }
+
+            // Always remove from local storage (both online and offline mode)
+            const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
+            const index = favorites.indexOf(gameId);
+            if (index > -1) {
+                favorites.splice(index, 1);
+                localStorage.setItem('infinitePixels_favorites', JSON.stringify(favorites));
+                console.log('✅ Favorite removed locally:', gameId);
+            }
+
+            this.showMessage('Removed from favorites!', 'success');
+            return true;
+
         } catch (error) {
             console.error('Remove favorite error:', error);
             return false;
@@ -1115,6 +1106,17 @@ class AccountSystem {
         return Array.from(gameMap.values())
             .sort((a, b) => b.lastPlayed - a.lastPlayed)
             .slice(0, 24); // Keep only the most recent 24 games
+    }
+
+    // Add this new method to check if a game is favorited
+    isFavorited(gameId) {
+        const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
+        return favorites.includes(gameId);
+    }
+
+    // Add this method to get all local favorites
+    getLocalFavorites() {
+        return JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
     }
 }
 
