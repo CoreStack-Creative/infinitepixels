@@ -6383,8 +6383,13 @@ class FavoritesManager {
 
         // Method to remove favorite and refresh the display
         this.removeFavoriteAndRefresh = async (gameSlug) => {
-            await this.removeFromFavorites(gameSlug);
+            console.log('🔄 removeFavoriteAndRefresh called for:', gameSlug);
+            console.log('  About to call this.removeFromFavorites...');
+            const success = await this.removeFromFavorites(gameSlug);
+            console.log('  removeFromFavorites result:', success);
+            console.log('  About to refresh display...');
             await renderFavorites();
+            console.log('  Display refreshed');
         };
 
         // Initial render
