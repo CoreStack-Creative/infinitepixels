@@ -3,9 +3,16 @@ class AccountSystem {
     constructor() {
         this.user = null;
         this.session = null;
-        this.supabase = null;
-        this.isReady = false;
-        this.readyCallbacks = [];
+        
+        // Initialize Supabase client
+        if (typeof window !== 'undefined' && window.supabase && SUPABASE_CONFIG.enabled) {
+            this.supabase = window.supabase;
+            console.log('✅ Supabase client initialized for accounts');
+        } else {
+            this.supabase = null;
+            console.log('📱 Account system running in offline mode');
+        }
+        
         this.init();
     }
 
