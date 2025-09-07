@@ -341,14 +341,22 @@ class AccountSystem {
         try {
             if (this.supabase) {
                 // Online mode - use Supabase
-                await this.loginWithSupabase(email, password);
+                const success = await this.loginWithSupabase(email, password);
+                if (!success) {
+                    // Login failed - error message already shown in loginWithSupabase
+                    return;
+                }
             } else {
                 // Offline mode
-                await this.loginOffline(email, password);
+                const success = await this.loginOffline(email, password);
+                if (!success) {
+                    // Login failed - error message already shown in loginOffline
+                    return;
+                }
             }
         } catch (error) {
-            console.error('Login error:', error);
-            this.showMessage('Login failed. Please try again.', 'error');
+            console.error('Unexpected login error:', error);
+            this.showMessage('An unexpected error occurred. Please try again.', 'error');
         } finally {
             // Reset button state
             submitBtn.textContent = originalText;
@@ -370,12 +378,37 @@ class AccountSystem {
             } else {
                 this.showMessage(error.message, 'error');
             }
-            return;
+            return false;
         }
 
         if (data.user) {
-            await this.handleSuccessfulLogin(data.user, data.session);
+            try {
+                await this.handleSuccessfulLogin(data.user, data.session);
+                return true;
+            } catch (error) {
+                console.error('Error in handleSuccessfulLogin:', error);
+                // Login was successful, but profile setup failed
+                // Still consider this a successful login
+                this.user = data.user;
+                this.session = data.session;
+                localStorage.setItem('infinitepixels_session', JSON.stringify({
+                    ...data.session,
+                    expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
+                    user: data.user
+                }));
+                this.updateAccountUI();
+                this.showMessage('Welcome back! (Profile sync may be incomplete)', 'success');
+                
+                // Close dropdown and clear form
+                document.getElementById('accountDropdown').classList.remove('show');
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+                
+                return true;
+            }
         }
+        
+        return false;
     }
 
     async loginOffline(email, password) {
@@ -394,9 +427,29 @@ class AccountSystem {
                 user: userWithoutPassword
             };
             
-            await this.handleSuccessfulLogin(userWithoutPassword, offlineSession);
+            try {
+                await this.handleSuccessfulLogin(userWithoutPassword, offlineSession);
+                return true;
+            } catch (error) {
+                console.error('Error in handleSuccessfulLogin:', error);
+                // Login was successful, but something went wrong in post-login processing
+                // Still consider this a successful login
+                this.user = userWithoutPassword;
+                this.session = offlineSession;
+                localStorage.setItem('infinitepixels_session', JSON.stringify(offlineSession));
+                this.updateAccountUI();
+                this.showMessage('Welcome back!', 'success');
+                
+                // Close dropdown and clear form
+                document.getElementById('accountDropdown').classList.remove('show');
+                document.getElementById('loginEmail').value = '';
+                document.getElementById('loginPassword').value = '';
+                
+                return true;
+            }
         } else {
             this.showMessage('Invalid email or password. Create an account first.', 'error');
+            return false;
         }
     }
 
@@ -414,10 +467,17 @@ class AccountSystem {
                     this.user = profile;
                 } else {
                     // Create user profile if it doesn't exist
-                    await this.createUserProfile(user);
+                    try {
+                        await this.createUserProfile(user);
+                    } catch (profileError) {
+                        console.error('Error creating user profile:', profileError);
+                        // Fall back to using basic user data
+                        this.user = user;
+                    }
                 }
             } catch (error) {
                 console.error('Error fetching user profile:', error);
+                // Fall back to using basic user data
                 this.user = user;
             }
         } else {
@@ -445,7 +505,12 @@ class AccountSystem {
         
         // Sync local data to server if online
         if (this.supabase) {
-            this.syncLocalDataToServer();
+            try {
+                this.syncLocalDataToServer();
+            } catch (syncError) {
+                console.error('Error syncing local data:', syncError);
+                // Don't let sync errors affect the login process
+            }
         }
     }
 
