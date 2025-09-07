@@ -5167,6 +5167,12 @@ body.light-theme .action-btn i {
     display: block;
 }
 
+.sync-indicator {
+    color: #28a745;
+    font-size: 12px;
+    display: block;
+}
+
 .mode-indicator {
     background: #f0f0f0;
     padding: 8px;
