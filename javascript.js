@@ -2251,7 +2251,17 @@ function updateFeaturedGames(newSlugs) {
 function loadGamesData() {
     console.log('Starting to fetch games.json...');
 
-    fetch("games.json")
+    // Configure fetch with explicit cache and credentials settings for cookie-free operation
+    const fetchOptions = {
+        method: 'GET',
+        cache: 'default',
+        credentials: 'omit', // Don't send cookies with this request
+        headers: {
+            'Accept': 'application/json',
+        }
+    };
+
+    fetch("games.json", fetchOptions)
       .then(response => {
         console.log('Fetch response received:', response.status, response.statusText);
         console.log('Response headers:', response.headers);
