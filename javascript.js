@@ -6168,6 +6168,10 @@ class FavoritesManager {
         if (window.accountSystem) {
             console.log('  window.accountSystem properties:', Object.getOwnPropertyNames(window.accountSystem));
             console.log('  window.accountSystem.isLoggedIn:', window.accountSystem.isLoggedIn?.());
+            console.log('  window.accountSystem.user:', window.accountSystem.user);
+            console.log('  window.accountSystem.session:', !!window.accountSystem.session);
+        } else {
+            console.log('  ❌ window.accountSystem is null/undefined');
         }
         
         // Use account system if available, otherwise remove locally
@@ -6182,6 +6186,7 @@ class FavoritesManager {
             return success;
         } else {
             console.log('  ❌ No account system or removeFromFavorites method, using fallback...');
+            console.log('    Reason: accountSystem exists =', !!window.accountSystem, ', removeFromFavorites exists =', !!(window.accountSystem?.removeFromFavorites));
             // Fallback for when account system is not available
             const index = this.favorites.findIndex(fav => {
                 // Handle both string and object formats
