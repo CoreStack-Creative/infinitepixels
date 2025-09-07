@@ -1041,6 +1041,21 @@ class AccountSystem {
             // Check what keys exist in localStorage
             const allKeys = Object.keys(localStorage).filter(key => key.toLowerCase().includes('favorite'));
             console.log('  All favorite-related keys:', allKeys);
+            
+            // Check each key's value
+            console.log('🔍 DETAILED CHECK: All favorite storage keys and values:');
+            allKeys.forEach(key => {
+                const value = localStorage.getItem(key);
+                console.log(`  ${key}:`, value);
+                if (value && value !== 'null' && value !== '[]') {
+                    try {
+                        const parsed = JSON.parse(value);
+                        console.log(`    -> Parsed ${key}:`, parsed, `(${Array.isArray(parsed) ? parsed.length : 'not array'} items)`);
+                    } catch (e) {
+                        console.log(`    -> Raw ${key}:`, value);
+                    }
+                }
+            });
 
             // Sync local favorites
             const localFavorites = localStorage.getItem('infinitepixels_favorites');
