@@ -1308,3 +1308,6 @@ class AccountSystem {
 
 // Initialize account system
 const accountSystem = new AccountSystem();
+
+// Make account system available globally
+window.accountSystem = accountSystem;
