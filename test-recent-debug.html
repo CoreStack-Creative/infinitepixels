@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recent Games Debug</title>
+</head>
+<body>
+    <h1>Recent Games Debug</h1>
+    <div id="debug-info"></div>
+    <button onclick="addTestGame()">Add Test Game</button>
+    <button onclick="clearRecent()">Clear Recent</button>
+    <button onclick="testRecentGames()">Test Recent Games Page</button>
+
+    <script>
+        function displayDebugInfo() {
+            const debugDiv = document.getElementById('debug-info');
+            const stored = localStorage.getItem('infinitePixels_recentlyPlayed');
+            debugDiv.innerHTML = `
+                <h2>Local Storage Debug</h2>
+                <p><strong>infinitePixels_recentlyPlayed:</strong> ${stored || 'null'}</p>
+                <pre>${stored ? JSON.stringify(JSON.parse(stored), null, 2) : 'No data'}</pre>
+            `;
+        }
+
+        function addTestGame() {
+            const testGame = {
+                slug: '1v1lol',
+                lastPlayed: Date.now()
+            };
+            
+            let recentGames = [];
+            const stored = localStorage.getItem('infinitePixels_recentlyPlayed');
+            if (stored) {
+                recentGames = JSON.parse(stored);
+            }
+            
+            // Remove if exists
+            recentGames = recentGames.filter(g => g.slug !== testGame.slug);
+            // Add to beginning
+            recentGames.unshift(testGame);
+            
+            localStorage.setItem('infinitePixels_recentlyPlayed', JSON.stringify(recentGames));
+            displayDebugInfo();
+            alert('Test game added!');
+        }
+
+        function clearRecent() {
+            localStorage.removeItem('infinitePixels_recentlyPlayed');
+            displayDebugInfo();
+            alert('Recent games cleared!');
+        }
+
+        function testRecentGames() {
+            window.location.href = 'recent.html';
+        }
+
+        // Load on page load
+        document.addEventListener('DOMContentLoaded', displayDebugInfo);
+    </script>
+</body>
+</html>

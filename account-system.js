@@ -1039,6 +1039,19 @@ class AccountSystem {
                 console.error('Add recent game error:', error);
             }
         }
+
+        // Notify recent games page if it exists
+        if (window.recentGamesManager) {
+            window.recentGamesManager.refresh();
+        }
+
+        // Dispatch custom event for other components
+        window.dispatchEvent(new CustomEvent('recentGamesUpdated', { 
+            detail: { 
+                action: 'added', 
+                gameId: gameId 
+            } 
+        }));
     }
 
     addToLocalRecentGames(gameId) {

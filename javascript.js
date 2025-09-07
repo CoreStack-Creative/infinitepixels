@@ -6701,6 +6701,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Function to track game visits (add this to your game pages)
 function trackGameVisit(gameSlug) {
+    // Track with the old recently played manager
     if (window.recentlyPlayedManager) {
         window.recentlyPlayedManager.addGameToRecent(gameSlug);
     } else {
@@ -6708,6 +6709,18 @@ function trackGameVisit(gameSlug) {
         setTimeout(() => {
             if (window.recentlyPlayedManager) {
                 window.recentlyPlayedManager.addGameToRecent(gameSlug);
+            }
+        }, 100);
+    }
+
+    // Track with the new account system
+    if (window.accountSystem) {
+        window.accountSystem.addToRecentGames(gameSlug);
+    } else {
+        // If account system isn't loaded yet, try again after a short delay
+        setTimeout(() => {
+            if (window.accountSystem) {
+                window.accountSystem.addToRecentGames(gameSlug);
             }
         }, 100);
     }
