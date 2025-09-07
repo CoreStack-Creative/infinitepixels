@@ -857,10 +857,10 @@ class AccountSystem {
             }
 
             // Always save to local storage (works for both logged-in and offline users)
-            const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
+            const favorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
             if (!favorites.includes(gameId)) {
                 favorites.push(gameId);
-                localStorage.setItem('infinitePixels_favorites', JSON.stringify(favorites));
+                localStorage.setItem('infinitepixels_favorites', JSON.stringify(favorites));
                 console.log('✅ Favorite saved locally:', gameId);
             }
 
@@ -889,11 +889,11 @@ class AccountSystem {
             }
 
             // Always remove from local storage (works for both logged-in and offline users)
-            const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
+            const favorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
             const index = favorites.indexOf(gameId);
             if (index > -1) {
                 favorites.splice(index, 1);
-                localStorage.setItem('infinitePixels_favorites', JSON.stringify(favorites));
+                localStorage.setItem('infinitepixels_favorites', JSON.stringify(favorites));
                 console.log('✅ Favorite removed locally:', gameId);
             }
 
@@ -1033,7 +1033,7 @@ class AccountSystem {
 
             // Debug: Check all localStorage keys for favorites
             console.log('🔍 DEBUG: Checking localStorage for favorites...');
-            console.log('  infinitePixels_favorites:', localStorage.getItem('infinitePixels_favorites'));
+            console.log('  infinitepixels_favorites:', localStorage.getItem('infinitepixels_favorites'));
             console.log('  infinitepixels_offline_favorites:', localStorage.getItem('infinitepixels_offline_favorites'));
             console.log('  userFavorites:', localStorage.getItem('userFavorites'));
             console.log('  favorites:', localStorage.getItem('favorites'));
@@ -1043,7 +1043,7 @@ class AccountSystem {
             console.log('  All favorite-related keys:', allKeys);
 
             // Sync local favorites
-            const localFavorites = localStorage.getItem('infinitePixels_favorites');
+            const localFavorites = localStorage.getItem('infinitepixels_favorites');
             console.log('📤 Syncing favorites to server:', localFavorites ? JSON.parse(localFavorites).length : 0);
             console.log('  Favorites to sync:', localFavorites ? JSON.parse(localFavorites) : []);
             
@@ -1106,13 +1106,13 @@ class AccountSystem {
                 console.log('  Server favorites:', serverFavorites);
                 
                 // Merge with local favorites
-                const localFavorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
+                const localFavorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
                 console.log('  Local favorites before merge:', localFavorites);
                 
                 const mergedFavorites = [...new Set([...localFavorites, ...serverFavorites])];
                 console.log('  Merged favorites:', mergedFavorites);
                 
-                localStorage.setItem('infinitePixels_favorites', JSON.stringify(mergedFavorites));
+                localStorage.setItem('infinitepixels_favorites', JSON.stringify(mergedFavorites));
             }
 
         } catch (error) {
@@ -1144,13 +1144,13 @@ class AccountSystem {
 
     // Add this new method to check if a game is favorited
     isFavorited(gameId) {
-        const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
+        const favorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
         return favorites.includes(gameId);
     }
 
     // Add this method to get all local favorites
     getLocalFavorites() {
-        return JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
+        return JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
     }
 }
 
