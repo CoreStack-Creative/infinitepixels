@@ -1190,13 +1190,31 @@ class AccountSystem {
                 console.log('✅ Favorites loaded from server:', serverFavorites.length);
                 console.log('  Server favorites:', serverFavorites);
                 
-                // Merge with local favorites
-                const localFavorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+                // Get and normalize local favorites
+                let localFavorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+                
+                // Normalize local favorites to simple strings
+                localFavorites = localFavorites.map(item => {
+                    if (typeof item === 'string') {
+                        try {
+                            const parsed = JSON.parse(item);
+                            return parsed.slug || item;
+                        } catch (e) {
+                            return item;
+                        }
+                    } else if (item && item.slug) {
+                        return item.slug;
+                    }
+                    return item;
+                });
+                
                 console.log('  Local favorites before merge:', localFavorites);
                 
+                // Merge and remove duplicates - keep only simple game ID strings
                 const mergedFavorites = [...new Set([...localFavorites, ...serverFavorites])];
-                console.log('  Merged favorites:', mergedFavorites);
+                console.log('  Merged favorites (cleaned):', mergedFavorites);
                 
+                // Store clean format
                 localStorage.setItem('infinitepixels_favorites', JSON.stringify(mergedFavorites));
             }
 
