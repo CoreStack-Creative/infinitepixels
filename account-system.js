@@ -3,6 +3,8 @@ class AccountSystem {
     constructor() {
         this.user = null;
         this.session = null;
+        this.isReady = false;
+        this.readyCallbacks = [];
         
         // Initialize Supabase client
         if (typeof window !== 'undefined' && window.supabase && SUPABASE_CONFIG.enabled) {
@@ -653,12 +655,15 @@ class AccountSystem {
         if (!this.supabase) return;
         
         try {
+            // Get username from user metadata or default to email prefix
+            const username = user.user_metadata?.username || user.email.split('@')[0];
+            
             const { data, error } = await this.supabase
                 .from('users')
                 .insert([
                     {
                         id: user.id,
-                        username: user.email.split('@')[0], // Default username from email
+                        username: username,
                         email: user.email,
                         email_verified: user.email_confirmed_at ? true : false
                     }
@@ -669,6 +674,29 @@ class AccountSystem {
             if (!error && data) {
                 this.user = data;
                 console.log('✅ User profile created:', data);
+            } else if (error) {
+                console.error('Error creating user profile:', error);
+                // If it's a username conflict, try with a random suffix
+                if (error.code === '23505') {
+                    const randomUsername = username + '_' + Math.floor(Math.random() * 1000);
+                    const { data: retryData, error: retryError } = await this.supabase
+                        .from('users')
+                        .insert([
+                            {
+                                id: user.id,
+                                username: randomUsername,
+                                email: user.email,
+                                email_verified: user.email_confirmed_at ? true : false
+                            }
+                        ])
+                        .select()
+                        .single();
+                    
+                    if (!retryError && retryData) {
+                        this.user = retryData;
+                        console.log('✅ User profile created with modified username:', retryData);
+                    }
+                }
             }
         } catch (error) {
             console.error('Error creating user profile:', error);
@@ -981,22 +1009,14 @@ class AccountSystem {
     }
 
     async syncLocalDataToServer() {
-        if (!this.supabase || !this.session) {
-            console.log('❌ Cannot sync to server: Supabase or session not available');
-            console.log('  Supabase:', !!this.supabase);
-            console.log('  Session:', !!this.session);
-            console.log('  User:', !!this.user);
-            return;
-        }
-
-        console.log('🔄 Syncing local data to server...');
+        if (!this.supabase || !this.session) return;
 
         try {
             // Sync local recent games
             const localRecent = localStorage.getItem('infinitePixels_recentlyPlayed');
             if (localRecent) {
                 const recentGames = JSON.parse(localRecent);
-                console.log('📤 Syncing recent games to server:', recentGames.length);
+                console.log('Syncing recent games to server:', recentGames.length);
                 
                 for (const game of recentGames) {
                     await this.supabase
@@ -1009,20 +1029,16 @@ class AccountSystem {
                             onConflict: 'user_id,game_id'
                         });
                 }
-                console.log('✅ Recent games synced successfully');
-            } else {
-                console.log('📭 No local recent games to sync');
             }
 
             // Sync local favorites
             const localFavorites = localStorage.getItem('infinitePixels_favorites');
             if (localFavorites) {
                 const favorites = JSON.parse(localFavorites);
-                console.log('📤 Syncing favorites to server:', favorites.length);
-                console.log('  Favorites to sync:', favorites);
+                console.log('Syncing favorites to server:', favorites.length);
                 
                 for (const gameId of favorites) {
-                    const result = await this.supabase
+                    await this.supabase
                         .from('user_favorites')
                         .upsert({
                             user_id: this.user.id,
@@ -1030,32 +1046,17 @@ class AccountSystem {
                         }, {
                             onConflict: 'user_id,game_id'
                         });
-                    
-                    if (result.error) {
-                        console.error('❌ Error syncing favorite:', gameId, result.error);
-                    }
                 }
-                console.log('✅ Favorites synced successfully');
-            } else {
-                console.log('📭 No local favorites to sync');
             }
 
             console.log('✅ Local data synced to server successfully');
         } catch (error) {
-            console.error('❌ Error syncing local data to server:', error);
+            console.error('Error syncing local data to server:', error);
         }
     }
 
     async loadServerDataToDevice() {
-        if (!this.supabase || !this.session) {
-            console.log('❌ Cannot load server data: Supabase or session not available');
-            console.log('  Supabase:', !!this.supabase);
-            console.log('  Session:', !!this.session);
-            console.log('  User:', !!this.user);
-            return;
-        }
-
-        console.log('🔄 Loading server data to device...');
+        if (!this.supabase || !this.session) return;
 
         try {
             // Load recent games from server
@@ -1078,9 +1079,6 @@ class AccountSystem {
                 
                 localStorage.setItem('infinitePixels_recentlyPlayed', JSON.stringify(mergedRecent));
                 console.log('✅ Recent games loaded from server:', recentGames.length);
-                console.log('  Merged recent games:', mergedRecent.length);
-            } else if (recentError) {
-                console.error('❌ Error loading recent games from server:', recentError);
             }
 
             // Load favorites from server
@@ -1098,15 +1096,10 @@ class AccountSystem {
                 
                 localStorage.setItem('infinitePixels_favorites', JSON.stringify(mergedFavorites));
                 console.log('✅ Favorites loaded from server:', favorites.length);
-                console.log('  Server favorites:', serverFavorites);
-                console.log('  Local favorites before merge:', localFavorites);
-                console.log('  Merged favorites:', mergedFavorites);
-            } else if (favError) {
-                console.error('❌ Error loading favorites from server:', favError);
             }
 
         } catch (error) {
-            console.error('❌ Error loading server data to device:', error);
+            console.error('Error loading server data to device:', error);
         }
     }
 
@@ -1141,29 +1134,6 @@ class AccountSystem {
     // Add this method to get all local favorites
     getLocalFavorites() {
         return JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
-    }
-
-    // Debug function to test sync manually
-    async testSync() {
-        console.log('🧪 Testing sync functionality...');
-        console.log('Current state:');
-        console.log('  User:', this.user);
-        console.log('  Session:', !!this.session);
-        console.log('  Supabase:', !!this.supabase);
-        
-        // Check local storage
-        const localFavorites = localStorage.getItem('infinitePixels_favorites');
-        const localRecent = localStorage.getItem('infinitePixels_recentlyPlayed');
-        console.log('  Local favorites:', localFavorites);
-        console.log('  Local recent:', localRecent);
-        
-        if (this.supabase && this.session) {
-            console.log('🔄 Testing server sync...');
-            await this.syncLocalDataToServer();
-            await this.loadServerDataToDevice();
-        } else {
-            console.log('❌ Cannot test server sync - not logged in');
-        }
     }
 }
 
