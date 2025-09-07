@@ -894,20 +894,31 @@ class AccountSystem {
 
     async removeFromFavorites(gameId) {
         try {
+            console.log('🗑️ Removing favorite:', gameId);
+            console.log('  User logged in:', !!(this.supabase && this.user && this.session));
+            console.log('  User ID:', this.user?.id);
+            
             // If user is logged in with Supabase, remove from server
             if (this.supabase && this.user && this.session) {
+                console.log('  Attempting to remove from server...');
                 const { error } = await this.supabase
                     .from('user_favorites')
                     .delete()
                     .eq('user_id', this.user.id)
                     .eq('game_id', gameId);
 
-                if (error) throw error;
+                if (error) {
+                    console.error('❌ Server removal failed:', error);
+                    throw error;
+                }
                 console.log('✅ Favorite removed from server:', gameId);
+            } else {
+                console.log('  Skipping server removal (not logged in)');
             }
 
             // Always remove from local storage (works for both logged-in and offline users)
             let favorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+            console.log('  Local favorites before removal:', favorites);
             
             // Normalize favorites to simple strings
             favorites = favorites.map(item => {
@@ -927,10 +938,15 @@ class AccountSystem {
             // Remove duplicates and remove target favorite
             favorites = [...new Set(favorites)];
             const index = favorites.indexOf(gameId);
+            console.log('  Index of game to remove:', index);
+            
             if (index > -1) {
                 favorites.splice(index, 1);
                 localStorage.setItem('infinitepixels_favorites', JSON.stringify(favorites));
                 console.log('✅ Favorite removed locally:', gameId);
+                console.log('  Local favorites after removal:', favorites);
+            } else {
+                console.log('⚠️ Game not found in local favorites:', gameId);
             }
 
             this.showMessage('Removed from favorites!', 'success');
