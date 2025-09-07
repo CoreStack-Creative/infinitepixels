@@ -6158,15 +6158,22 @@ class FavoritesManager {
     }
 
     async removeFromFavorites(gameSlug) {
+        console.log('🔍 FavoritesManager.removeFromFavorites called for:', gameSlug);
+        console.log('  window.accountSystem exists:', !!window.accountSystem);
+        console.log('  window.accountSystem:', window.accountSystem);
+        
         // Use account system if available, otherwise remove locally
         if (window.accountSystem) {
+            console.log('  Calling window.accountSystem.removeFromFavorites...');
             const success = await window.accountSystem.removeFromFavorites(gameSlug);
+            console.log('  Account system returned:', success);
             if (success) {
                 // Reload local favorites from account system
                 this.favorites = this.loadFavorites();
             }
             return success;
         } else {
+            console.log('  No account system, using fallback...');
             // Fallback for when account system is not available
             const index = this.favorites.findIndex(fav => {
                 // Handle both string and object formats
