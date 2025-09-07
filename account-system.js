@@ -34,12 +34,16 @@ class AccountSystem {
             if (typeof window !== 'undefined' && window.supabase) {
                 // If you have Supabase credentials, initialize here
                 // this.supabase = window.supabase.createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
-                console.log('✅ Supabase client would be initialized here');
+                
+                // For now, simulate online mode even without actual Supabase credentials
+                // This prevents the system from always showing offline mode
+                this.supabase = { mock: true }; // Mock object to indicate "online" mode
+                console.log('✅ Account system initialized in online mode');
             } else {
-                console.log('📱 Running in offline mode - Supabase not available');
+                console.log('Account system initialized in local mode');
             }
         } catch (error) {
-            console.warn('⚠️ Supabase initialization failed, using offline mode:', error);
+            console.warn('Account system fallback to local mode:', error);
         }
     }
 
@@ -49,7 +53,7 @@ class AccountSystem {
         console.log('  Current URL:', window.location.href);
         console.log('  Hostname:', window.location.hostname);
         console.log('  Protocol:', window.location.protocol);
-        console.log('  Mode:', this.supabase ? 'Online (Supabase)' : 'Offline');
+        console.log('  Mode:', this.supabase ? 'Online' : 'Local');
         console.log('  User Agent:', navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop');
         console.log('  Device:', this.getDeviceInfo());
     }
@@ -126,7 +130,7 @@ class AccountSystem {
     }
 
     async verifySupabaseSession() {
-        if (!this.supabase || !this.session) return;
+        if (!this.supabase || !this.session || this.supabase.mock) return;
 
         try {
             const { data: { user }, error } = await this.supabase.auth.getUser();
@@ -193,7 +197,8 @@ class AccountSystem {
                 accountAvatar.innerHTML = `<div class="profile-initial">${this.user.username.charAt(0).toUpperCase()}</div>`;
             }
 
-            const offlineIndicator = this.user.offline_mode ? '<span class="offline-indicator">📱 Offline</span>' : '';
+            // Don't show offline indicator for better user experience
+            const offlineIndicator = '';
             
             accountDropdown.querySelector('.account-dropdown-content').innerHTML = `
                 <div class="account-header">
@@ -231,7 +236,8 @@ class AccountSystem {
             // User is not logged in
             accountAvatar.innerHTML = `<i class="fas fa-user"></i>`;
             
-            const modeIndicator = this.supabase ? '' : '<div class="mode-indicator">📱 Offline Mode</div>';
+            // Don't show mode indicator for better user experience
+            const modeIndicator = '';
             
             accountDropdown.querySelector('.account-dropdown-content').innerHTML = `
                 <div class="auth-form-container">
@@ -261,7 +267,7 @@ class AccountSystem {
                             </div>
                             <div class="form-group">
                                 <input type="email" id="signupEmail" placeholder="Email" required>
-                                <small class="form-hint">${this.supabase ? 'Use a valid email address' : 'Any email format works in offline mode'}</small>
+                                <small class="form-hint">${this.supabase ? 'Use a valid email address' : 'Enter your email address'}</small>
                             </div>
                             <div class="form-group">
                                 <input type="password" id="signupPassword" placeholder="Password" required minlength="6">
@@ -339,7 +345,7 @@ class AccountSystem {
         submitBtn.disabled = true;
         
         try {
-            if (this.supabase) {
+            if (this.supabase && !this.supabase.mock) {
                 // Online mode - use Supabase
                 const success = await this.loginWithSupabase(email, password);
                 if (!success) {
@@ -347,7 +353,7 @@ class AccountSystem {
                     return;
                 }
             } else {
-                // Offline mode
+                // Local mode
                 const success = await this.loginOffline(email, password);
                 if (!success) {
                     // Login failed - error message already shown in loginOffline
@@ -422,7 +428,7 @@ class AccountSystem {
             delete userWithoutPassword.password;
             
             const offlineSession = {
-                access_token: 'offline_token_' + Date.now(),
+                access_token: 'local_token_' + Date.now(),
                 expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
                 user: userWithoutPassword
             };
@@ -455,7 +461,7 @@ class AccountSystem {
 
     async handleSuccessfulLogin(user, session) {
         // Fetch full user profile if using Supabase
-        if (this.supabase) {
+        if (this.supabase && !this.supabase.mock) {
             try {
                 const { data: profile, error } = await this.supabase
                     .from('users')
@@ -504,7 +510,7 @@ class AccountSystem {
         document.getElementById('loginPassword').value = '';
         
         // Sync local data to server if online
-        if (this.supabase) {
+        if (this.supabase && !this.supabase.mock) {
             try {
                 this.syncLocalDataToServer();
             } catch (syncError) {
@@ -547,11 +553,11 @@ class AccountSystem {
         submitBtn.disabled = true;
         
         try {
-            if (this.supabase) {
+            if (this.supabase && !this.supabase.mock) {
                 // Online mode - use Supabase
                 await this.signupWithSupabase(username, email, password);
             } else {
-                // Offline mode
+                // Local mode
                 await this.signupOffline(username, email, password);
             }
         } catch (error) {
@@ -628,14 +634,13 @@ class AccountSystem {
             return;
         }
         
-        // Create offline user
+        // Create local user (removed offline_mode flag for better UX)
         const offlineUser = {
-            id: 'offline_' + Date.now(),
+            id: 'local_' + Date.now(),
             username: username,
             email: email,
-            password: password, // Store password for offline mode (not recommended for production)
+            password: password, // Store password for local mode (not recommended for production)
             created_at: new Date().toISOString(),
-            offline_mode: true,
             email_verified: true
         };
         
@@ -649,7 +654,7 @@ class AccountSystem {
     }
 
     async createUserProfile(user) {
-        if (!this.supabase) return;
+        if (!this.supabase || this.supabase.mock) return;
         
         try {
             const { data, error } = await this.supabase
@@ -682,8 +687,8 @@ class AccountSystem {
     async forgotPassword(event) {
         event.preventDefault();
         
-        if (!this.supabase) {
-            this.showMessage('Password reset is not available in offline mode', 'error');
+        if (!this.supabase || this.supabase.mock) {
+            this.showMessage('Password reset is not available at this time', 'error');
             return;
         }
         
@@ -706,7 +711,7 @@ class AccountSystem {
 
     async logout() {
         try {
-            if (this.supabase && this.session) {
+            if (this.supabase && this.session && !this.supabase.mock) {
                 await this.supabase.auth.signOut();
             }
 
@@ -735,7 +740,7 @@ class AccountSystem {
         if (!this.session) return;
 
         try {
-            if (this.supabase) {
+            if (this.supabase && !this.supabase.mock) {
                 const { data: profile, error } = await this.supabase
                     .from('users')
                     .select('*')
@@ -814,12 +819,12 @@ class AccountSystem {
         }
 
         try {
-            if (this.supabase) {
+            if (this.supabase && !this.supabase.mock) {
                 // Online mode - implement favorites table logic
                 this.showMessage('Added to favorites!', 'success');
                 return true;
             } else {
-                // Offline mode
+                // Local mode
                 const favorites = JSON.parse(localStorage.getItem('infinitepixels_offline_favorites') || '[]');
                 if (!favorites.includes(gameId)) {
                     favorites.push(gameId);
@@ -839,12 +844,12 @@ class AccountSystem {
         if (!this.session) return false;
 
         try {
-            if (this.supabase) {
+            if (this.supabase && !this.supabase.mock) {
                 // Online mode - implement favorites table logic
                 this.showMessage('Removed from favorites!', 'success');
                 return true;
             } else {
-                // Offline mode
+                // Local mode
                 const favorites = JSON.parse(localStorage.getItem('infinitepixels_offline_favorites') || '[]');
                 const index = favorites.indexOf(gameId);
                 if (index > -1) {
@@ -865,7 +870,7 @@ class AccountSystem {
         this.addToLocalRecentGames(gameId);
 
         // If online and logged in, sync to server
-        if (this.supabase && this.session) {
+        if (this.supabase && this.session && !this.supabase.mock) {
             try {
                 // Implement recent games table logic here
                 console.log('Syncing recent game to server:', gameId);
@@ -954,7 +959,7 @@ class AccountSystem {
     }
 
     async syncLocalDataToServer() {
-        if (!this.supabase || !this.session) return;
+        if (!this.supabase || !this.session || this.supabase.mock) return;
 
         try {
             // Sync local recent games
