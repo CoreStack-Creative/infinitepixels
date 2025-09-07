@@ -812,15 +812,9 @@ class AccountSystem {
     }
 
     async addToFavorites(gameId) {
-        // Allow favorites for both logged-in users and offline mode
-        if (!this.user && !this.session) {
-            this.showMessage('Please login to add favorites', 'error');
-            return false;
-        }
-
         try {
-            if (this.supabase && this.session) {
-                // Online mode - save to server
+            // If user is logged in with Supabase, sync to server
+            if (this.supabase && this.user && this.session) {
                 const { error } = await this.supabase
                     .from('user_favorites')
                     .upsert({
@@ -834,7 +828,7 @@ class AccountSystem {
                 console.log('✅ Favorite saved to server:', gameId);
             }
 
-            // Always save to local storage (both online and offline mode)
+            // Always save to local storage (works for both logged-in and offline users)
             const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
             if (!favorites.includes(gameId)) {
                 favorites.push(gameId);
@@ -853,14 +847,9 @@ class AccountSystem {
     }
 
     async removeFromFavorites(gameId) {
-        // Allow favorites removal for both logged-in users and offline mode
-        if (!this.user && !this.session) {
-            return false;
-        }
-
         try {
-            if (this.supabase && this.session) {
-                // Online mode - remove from server
+            // If user is logged in with Supabase, remove from server
+            if (this.supabase && this.user && this.session) {
                 const { error } = await this.supabase
                     .from('user_favorites')
                     .delete()
@@ -871,7 +860,7 @@ class AccountSystem {
                 console.log('✅ Favorite removed from server:', gameId);
             }
 
-            // Always remove from local storage (both online and offline mode)
+            // Always remove from local storage (works for both logged-in and offline users)
             const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
             const index = favorites.indexOf(gameId);
             if (index > -1) {
