@@ -6160,11 +6160,19 @@ class FavoritesManager {
     async removeFromFavorites(gameSlug) {
         console.log('🔍 FavoritesManager.removeFromFavorites called for:', gameSlug);
         console.log('  window.accountSystem exists:', !!window.accountSystem);
-        console.log('  window.accountSystem:', window.accountSystem);
+        console.log('  typeof window.accountSystem:', typeof window.accountSystem);
+        console.log('  window.accountSystem?.removeFromFavorites exists:', !!window.accountSystem?.removeFromFavorites);
+        console.log('  typeof window.accountSystem?.removeFromFavorites:', typeof window.accountSystem?.removeFromFavorites);
+        
+        // Debug: Check what's actually on window.accountSystem
+        if (window.accountSystem) {
+            console.log('  window.accountSystem properties:', Object.getOwnPropertyNames(window.accountSystem));
+            console.log('  window.accountSystem.isLoggedIn:', window.accountSystem.isLoggedIn?.());
+        }
         
         // Use account system if available, otherwise remove locally
-        if (window.accountSystem) {
-            console.log('  Calling window.accountSystem.removeFromFavorites...');
+        if (window.accountSystem && window.accountSystem.removeFromFavorites) {
+            console.log('  ✅ Calling window.accountSystem.removeFromFavorites...');
             const success = await window.accountSystem.removeFromFavorites(gameSlug);
             console.log('  Account system returned:', success);
             if (success) {
@@ -6173,7 +6181,7 @@ class FavoritesManager {
             }
             return success;
         } else {
-            console.log('  No account system, using fallback...');
+            console.log('  ❌ No account system or removeFromFavorites method, using fallback...');
             // Fallback for when account system is not available
             const index = this.favorites.findIndex(fav => {
                 // Handle both string and object formats
