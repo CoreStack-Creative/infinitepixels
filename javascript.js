@@ -7882,6 +7882,204 @@ function initializeTipFiltering() {
     console.log('Tip filtering initialized');
 }
 
+// ============== ENHANCED INITIALIZATION SYSTEM ===============
+// This system ensures that games load properly even when cookies are denied
+
+// Robust initialization system for homepage
+function robustHomepageInit() {
+    console.log('🔄 Robust homepage initialization starting...');
+    
+    // Check if we're on the homepage
+    const isHomepage = window.location.pathname === '/' || 
+                      window.location.pathname === '/index.html' || 
+                      window.location.pathname.endsWith('index.html');
+    
+    if (!isHomepage) {
+        console.log('Not on homepage, skipping homepage init');
+        return;
+    }
+    
+    // Check for required elements
+    const grids = {
+        main: document.getElementById('homepageGamesGrid'),
+        featured: document.getElementById('featuredGamesGrid'),
+        category: document.getElementById('homepageCategoryGrid'),
+        multiplayer: document.getElementById('homepageMultiplayerGrid'),
+        new: document.getElementById('homepageNewGrid'),
+        reviews: document.getElementById('homepageReviewsGrid')
+    };
+    
+    console.log('📊 Grid elements found:', Object.keys(grids).filter(key => grids[key]).length, 'of', Object.keys(grids).length);
+    
+    // Check games database
+    if (!gamesDatabase || gamesDatabase.length === 0) {
+        console.log('❌ Games database not ready, retrying in 1 second...');
+        setTimeout(robustHomepageInit, 1000);
+        return;
+    }
+    
+    console.log('✅ Games database ready with', gamesDatabase.length, 'games');
+    
+    // Try standard initialization first
+    if (typeof initializeHomepageGamesManager === 'function') {
+        const standardResult = initializeHomepageGamesManager();
+        if (standardResult) {
+            console.log('✅ Standard homepage manager initialization successful');
+            return;
+        }
+    }
+    
+    // Fallback: Manual grid population
+    console.log('🔧 Standard init failed, using fallback manual population...');
+    
+    // Populate main games grid
+    if (grids.main && grids.main.children.length === 0) {
+        const popularGames = gamesDatabase.slice(0, 12);
+        grids.main.innerHTML = popularGames.map(game => `
+            <div class="game-card">
+                <div class="game-image">
+                    <img src="${game.image}" alt="${game.name}" loading="lazy">
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">${game.name}</h3>
+                    <div class="game-tags">
+                        ${game.tags ? game.tags.slice(0, 2).map(tag => `<span class="game-tag">${tag}</span>`).join('') : ''}
+                    </div>
+                </div>
+                <div class="game-actions">
+                    <a href="game.html?game=${game.slug}" class="play-btn">Play Now</a>
+                </div>
+            </div>
+        `).join('');
+        console.log('✅ Main games grid populated');
+    }
+    
+    // Populate featured games grid
+    if (grids.featured && grids.featured.children.length === 0) {
+        const featuredGames = gamesDatabase.filter(game => 
+            game.tags && (game.tags.includes('featured') || game.tags.includes('action') || game.tags.includes('popular'))
+        ).slice(0, 8);
+        grids.featured.innerHTML = featuredGames.map(game => `
+            <div class="game-card featured-game">
+                <div class="game-image">
+                    <img src="${game.image}" alt="${game.name}" loading="lazy">
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">${game.name}</h3>
+                </div>
+                <div class="game-actions">
+                    <a href="game.html?game=${game.slug}" class="play-btn">Play</a>
+                </div>
+            </div>
+        `).join('');
+        console.log('✅ Featured games grid populated');
+    }
+    
+    // Populate category grids
+    const categories = {
+        action: grids.category,
+        multiplayer: grids.multiplayer
+    };
+    
+    Object.entries(categories).forEach(([category, grid]) => {
+        if (grid && grid.children.length === 0) {
+            const categoryGames = gamesDatabase.filter(game => 
+                game.tags && game.tags.includes(category)
+            ).slice(0, 6);
+            
+            if (categoryGames.length > 0) {
+                grid.innerHTML = categoryGames.map(game => `
+                    <div class="game-card category-game">
+                        <div class="game-image">
+                            <img src="${game.image}" alt="${game.name}" loading="lazy">
+                        </div>
+                        <div class="game-info">
+                            <h3 class="game-title">${game.name}</h3>
+                        </div>
+                        <div class="game-actions">
+                            <a href="game.html?game=${game.slug}" class="play-btn">Play</a>
+                        </div>
+                    </div>
+                `).join('');
+                console.log(`✅ ${category} games grid populated`);
+            }
+        }
+    });
+    
+    // Populate new games grid
+    if (grids.new && grids.new.children.length === 0) {
+        const newGames = gamesDatabase.slice(-6).reverse(); // Last 6 games, newest first
+        grids.new.innerHTML = newGames.map(game => `
+            <div class="game-card new-game">
+                <div class="game-image">
+                    <img src="${game.image}" alt="${game.name}" loading="lazy">
+                    <span class="new-badge">NEW</span>
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">${game.name}</h3>
+                </div>
+                <div class="game-actions">
+                    <a href="game.html?game=${game.slug}" class="play-btn">Play</a>
+                </div>
+            </div>
+        `).join('');
+        console.log('✅ New games grid populated');
+    }
+    
+    console.log('🎉 Robust homepage initialization complete!');
+}
+
+// Enhanced initialization system
+function enhancedInitialization() {
+    console.log('🚀 Enhanced initialization system starting...');
+    
+    // Multiple initialization attempts with different triggers
+    const initAttempts = [
+        // Immediate attempt
+        () => setTimeout(robustHomepageInit, 100),
+        // After DOM content loaded
+        () => {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', robustHomepageInit);
+            } else {
+                robustHomepageInit();
+            }
+        },
+        // After window load
+        () => {
+            if (document.readyState !== 'complete') {
+                window.addEventListener('load', robustHomepageInit);
+            } else {
+                setTimeout(robustHomepageInit, 100);
+            }
+        },
+        // Delayed attempts in case of cookie blocking
+        () => setTimeout(robustHomepageInit, 1000),
+        () => setTimeout(robustHomepageInit, 2000),
+        () => setTimeout(robustHomepageInit, 5000)
+    ];
+    
+    initAttempts.forEach((attempt, index) => {
+        try {
+            attempt();
+        } catch (error) {
+            console.warn(`Init attempt ${index + 1} failed:`, error);
+        }
+    });
+    
+    // Listen for custom games data loaded event
+    window.addEventListener('gamesDataLoaded', () => {
+        console.log('📢 Games data loaded event received, triggering robust init');
+        setTimeout(robustHomepageInit, 100);
+    });
+}
+
+// Start enhanced initialization
+enhancedInitialization();
+
+// Global flag for debugging
+window.debugHomepage = robustHomepageInit;
+
 // Debug function to test API endpoints (call from browser console)
 window.debugRatingAPI = async function(gameSlug = 'cookieclicker') {
     console.log('🔍 Testing rating API endpoints for game:', gameSlug);
