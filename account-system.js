@@ -832,20 +832,20 @@ class AccountSystem {
                 if (error) throw error;
 
                 // Also save to local storage for immediate feedback
-                const favorites = JSON.parse(localStorage.getItem('infinitepixels_offline_favorites') || '[]');
+                const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
                 if (!favorites.includes(gameId)) {
                     favorites.push(gameId);
-                    localStorage.setItem('infinitepixels_offline_favorites', JSON.stringify(favorites));
+                    localStorage.setItem('infinitePixels_favorites', JSON.stringify(favorites));
                 }
 
                 this.showMessage('Added to favorites!', 'success');
                 return true;
             } else {
                 // Offline mode
-                const favorites = JSON.parse(localStorage.getItem('infinitepixels_offline_favorites') || '[]');
+                const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
                 if (!favorites.includes(gameId)) {
                     favorites.push(gameId);
-                    localStorage.setItem('infinitepixels_offline_favorites', JSON.stringify(favorites));
+                    localStorage.setItem('infinitePixels_favorites', JSON.stringify(favorites));
                     this.showMessage('Added to favorites!', 'success');
                     return true;
                 }
@@ -872,22 +872,22 @@ class AccountSystem {
                 if (error) throw error;
 
                 // Also remove from local storage
-                const favorites = JSON.parse(localStorage.getItem('infinitepixels_offline_favorites') || '[]');
+                const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
                 const index = favorites.indexOf(gameId);
                 if (index > -1) {
                     favorites.splice(index, 1);
-                    localStorage.setItem('infinitepixels_offline_favorites', JSON.stringify(favorites));
+                    localStorage.setItem('infinitePixels_favorites', JSON.stringify(favorites));
                 }
 
                 this.showMessage('Removed from favorites!', 'success');
                 return true;
             } else {
                 // Offline mode
-                const favorites = JSON.parse(localStorage.getItem('infinitepixels_offline_favorites') || '[]');
+                const favorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
                 const index = favorites.indexOf(gameId);
                 if (index > -1) {
                     favorites.splice(index, 1);
-                    localStorage.setItem('infinitepixels_offline_favorites', JSON.stringify(favorites));
+                    localStorage.setItem('infinitePixels_favorites', JSON.stringify(favorites));
                     this.showMessage('Removed from favorites!', 'success');
                     return true;
                 }
@@ -1024,7 +1024,7 @@ class AccountSystem {
             }
 
             // Sync local favorites
-            const localFavorites = localStorage.getItem('infinitepixels_offline_favorites');
+            const localFavorites = localStorage.getItem('infinitePixels_favorites');
             if (localFavorites) {
                 const favorites = JSON.parse(localFavorites);
                 console.log('Syncing favorites to server:', favorites.length);
@@ -1083,10 +1083,10 @@ class AccountSystem {
                 const serverFavorites = favorites.map(fav => fav.game_id);
                 
                 // Merge with local favorites
-                const localFavorites = JSON.parse(localStorage.getItem('infinitepixels_offline_favorites') || '[]');
+                const localFavorites = JSON.parse(localStorage.getItem('infinitePixels_favorites') || '[]');
                 const mergedFavorites = [...new Set([...localFavorites, ...serverFavorites])];
                 
-                localStorage.setItem('infinitepixels_offline_favorites', JSON.stringify(mergedFavorites));
+                localStorage.setItem('infinitePixels_favorites', JSON.stringify(mergedFavorites));
                 console.log('✅ Favorites loaded from server:', favorites.length);
             }
 
