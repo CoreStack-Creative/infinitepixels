@@ -37,17 +37,74 @@ class AccountSystem {
 
     async initSupabase() {
         try {
-            // Check if Supabase is available (you need to include the Supabase JS library)
-            if (typeof window !== 'undefined' && window.supabase) {
-                // If you have Supabase credentials, initialize here
-                // this.supabase = window.supabase.createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
-                console.log('✅ Supabase client would be initialized here');
+            // Check if Supabase is available
+            if (typeof window !== 'undefined' && window.supabase && SUPABASE_CONFIG.enabled) {
+                this.supabase = window.supabase;
+                console.log('✅ Supabase client initialized for accounts');
+                
+                // Listen for auth state changes
+                this.supabase.auth.onAuthStateChange((event, session) => {
+                    console.log('Auth state changed:', event, session);
+                    
+                    if (event === 'SIGNED_IN' && session) {
+                        this.handleAuthStateChange(session);
+                    } else if (event === 'SIGNED_OUT') {
+                        this.handleSignOut();
+                    }
+                });
+                
             } else {
-                console.log('📱 Running in offline mode - Supabase not available');
+                console.log('📱 Account system running in offline mode');
             }
         } catch (error) {
             console.warn('⚠️ Supabase initialization failed, using offline mode:', error);
         }
+    }
+
+    async handleAuthStateChange(session) {
+        if (session && session.user) {
+            // User signed in (including from email verification)
+            this.session = session;
+            
+            // Fetch or create user profile
+            try {
+                const { data: profile, error } = await this.supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', session.user.id)
+                    .single();
+                
+                if (error && error.code === 'PGRST116') {
+                    // User profile doesn't exist, create it
+                    await this.createUserProfile(session.user);
+                } else if (profile) {
+                    this.user = profile;
+                }
+            } catch (error) {
+                console.error('Error handling auth state change:', error);
+            }
+            
+            // Update session storage and UI
+            const extendedSession = {
+                ...session,
+                expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
+                user: this.user
+            };
+            
+            localStorage.setItem('infinitepixels_session', JSON.stringify(extendedSession));
+            this.updateAccountUI();
+            
+            // Sync data if this is a new login
+            await this.syncLocalDataToServer();
+            await this.loadServerDataToDevice();
+        }
+    }
+
+    handleSignOut() {
+        this.user = null;
+        this.session = null;
+        localStorage.removeItem('infinitepixels_session');
+        this.updateAccountUI();
     }
 
     // Log configuration information for debugging
@@ -533,10 +590,15 @@ class AccountSystem {
             return;
         }
 
-        // Create auth user
+        // Create auth user with proper redirect URL
         const { data, error } = await this.supabase.auth.signUp({
             email: email,
             password: password,
+            options: {
+                data: {
+                    username: username
+                }
+            }
         });
 
         if (error) {
@@ -545,25 +607,8 @@ class AccountSystem {
         }
 
         if (data.user) {
-            // Create user profile
-            const { error: profileError } = await this.supabase
-                .from('users')
-                .insert([
-                    {
-                        id: data.user.id,
-                        username: username,
-                        email: email,
-                        email_verified: false
-                    }
-                ]);
-
-            if (profileError) {
-                console.error('Error creating user profile:', profileError);
-                this.showMessage('Account created but profile setup failed. Please contact support.', 'error');
-                return;
-            }
-
-            this.showMessage('Account created! Please check your email for verification.', 'success');
+            // Don't create profile here - it will be created when user verifies email
+            this.showMessage('Account created! Please check your email for verification link.', 'success');
             this.showLogin();
             this.clearSignupForm();
         }
@@ -623,6 +668,7 @@ class AccountSystem {
 
             if (!error && data) {
                 this.user = data;
+                console.log('✅ User profile created:', data);
             }
         } catch (error) {
             console.error('Error creating user profile:', error);
@@ -646,12 +692,14 @@ class AccountSystem {
         const email = document.getElementById('forgotEmail').value;
         
         try {
-            const { error } = await this.supabase.auth.resetPasswordForEmail(email);
+            const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
+                redirectTo: `${window.location.origin}/reset-password.html`
+            });
             
             if (error) {
                 this.showMessage(error.message, 'error');
             } else {
-                this.showMessage('Password reset email sent!', 'success');
+                this.showMessage('Password reset email sent! Check your inbox.', 'success');
                 this.showLogin();
             }
         } catch (error) {
