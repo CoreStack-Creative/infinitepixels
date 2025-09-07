@@ -107,16 +107,9 @@ class RecentGamesPageManager {
     }
 
     async loadServerRecentGames() {
-        const response = await fetch(`${accountSystem.baseURL}/user/recent-games`, {
-            headers: accountSystem.getAuthHeaders()
-        });
-
-        if (response.ok) {
-            this.recentGames = await response.json();
-            this.renderRecentGames();
-        } else {
-            throw new Error('Failed to load recent games from server');
-        }
+        // Since we're using account system directly, get recent games from local storage
+        // which should already be synced by the account system
+        this.loadLocalRecentGames();
     }
 
     loadLocalRecentGames() {
@@ -203,21 +196,19 @@ class RecentGamesPageManager {
                 </div>
             `;
         }    isFavorited(gameId) {
-        // Check both account-based and local favorites
-        if (accountSystem && accountSystem.isLoggedIn()) {
-            // For logged-in users, this would need to be populated from account favorites
-            // For now, return false as this would need server data
+        // Use the account system's method if available
+        if (window.accountSystem && typeof window.accountSystem.isFavorited === 'function') {
+            return window.accountSystem.isFavorited(gameId);
+        }
+        
+        // Fallback to direct localStorage check with correct key
+        try {
+            const stored = localStorage.getItem('infinitePixels_favorites');
+            const favorites = stored ? JSON.parse(stored) : [];
+            return favorites.includes(gameId);
+        } catch (error) {
+            console.error('Error checking favorites:', error);
             return false;
-        } else {
-            // Check local favorites
-            try {
-                const stored = localStorage.getItem('infinitepixels_favorites');
-                const favorites = stored ? JSON.parse(stored) : [];
-                return favorites.some(fav => fav.slug === gameId);
-            } catch (error) {
-                console.error('Error checking local favorites:', error);
-                return false;
-            }
         }
     }
 
@@ -315,18 +306,14 @@ class RecentGamesPageManager {
 
     toggleLocalFavorite(gameId, addToFavorites) {
         try {
-            const stored = localStorage.getItem('infinitepixels_favorites');
+            const stored = localStorage.getItem('infinitePixels_favorites');
             let favorites = stored ? JSON.parse(stored) : [];
             
             if (addToFavorites) {
                 // Add to favorites if not already there
-                if (!favorites.some(fav => fav.slug === gameId)) {
-                    favorites.push({
-                        slug: gameId,
-                        dateAdded: new Date().toISOString(),
-                        timestamp: Date.now()
-                    });
-                    localStorage.setItem('infinitepixels_favorites', JSON.stringify(favorites));
+                if (!favorites.includes(gameId)) {
+                    favorites.push(gameId);
+                    localStorage.setItem('infinitePixels_favorites', JSON.stringify(favorites));
                     
                     if (accountSystem) {
                         accountSystem.showMessage('Added to favorites!', 'success');
@@ -335,9 +322,9 @@ class RecentGamesPageManager {
             } else {
                 // Remove from favorites
                 const originalLength = favorites.length;
-                favorites = favorites.filter(fav => fav.slug !== gameId);
+                favorites = favorites.filter(fav => fav !== gameId);
                 if (favorites.length < originalLength) {
-                    localStorage.setItem('infinitepixels_favorites', JSON.stringify(favorites));
+                    localStorage.setItem('infinitePixels_favorites', JSON.stringify(favorites));
                     
                     if (accountSystem) {
                         accountSystem.showMessage('Removed from favorites!', 'success');
