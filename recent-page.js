@@ -17,21 +17,38 @@ class RecentGamesPageManager {
         
         // Wait for account system to be ready, then load recent games
         if (window.accountSystem) {
-            accountSystem.onReady(() => {
+            if (window.accountSystem.isReady) {
+                // Account system is already ready
                 this.loadRecentGames();
-            });
+            } else {
+                // Wait for account system to be ready
+                accountSystem.onReady(() => {
+                    this.loadRecentGames();
+                });
+            }
         } else {
-            // Fallback for when account system isn't loaded yet
-            setTimeout(() => {
+            // Account system not loaded yet, wait for it
+            let attempts = 0;
+            const waitForAccountSystem = () => {
+                attempts++;
                 if (window.accountSystem) {
-                    accountSystem.onReady(() => {
+                    if (window.accountSystem.isReady) {
                         this.loadRecentGames();
-                    });
+                    } else {
+                        window.accountSystem.onReady(() => {
+                            this.loadRecentGames();
+                        });
+                    }
+                } else if (attempts < 10) {
+                    // Try again after 100ms, up to 10 times (1 second total)
+                    setTimeout(waitForAccountSystem, 100);
                 } else {
-                    console.warn('Account system not available, loading recent games anyway');
+                    // Give up waiting for account system, load anyway
+                    console.warn('Account system not available after 1 second, loading recent games anyway');
                     this.loadRecentGames();
                 }
-            }, 100);
+            };
+            waitForAccountSystem();
         }
     }
 
@@ -59,6 +76,21 @@ class RecentGamesPageManager {
         window.addEventListener('recentGamesUpdated', (event) => {
             // Only refresh if we're not currently loading
             if (!this.isLoading) {
+                this.loadRecentGames();
+            }
+        });
+
+        // Listen for page visibility changes to refresh when user comes back
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && this.hasLoaded) {
+                // Page became visible again, refresh recent games
+                this.loadRecentGames();
+            }
+        });
+
+        // Listen for focus events to refresh when window gets focus
+        window.addEventListener('focus', () => {
+            if (this.hasLoaded) {
                 this.loadRecentGames();
             }
         });
@@ -417,7 +449,7 @@ class RecentGamesPageManager {
         }
 
         // Navigate to game page or open game
-        window.location.href = `game.html?id=${gameId}`;
+        window.location.href = `game.html?game=${gameId}`;
     }
 
     showLoginMessage() {

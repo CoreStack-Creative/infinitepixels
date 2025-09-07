@@ -6701,26 +6701,47 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Function to track game visits (add this to your game pages)
 function trackGameVisit(gameSlug) {
+    console.log('🎯 Tracking game visit:', gameSlug);
+    
     // Track with the old recently played manager
     if (window.recentlyPlayedManager) {
         window.recentlyPlayedManager.addGameToRecent(gameSlug);
+        console.log('✅ Tracked with recently played manager');
     } else {
         // If manager isn't loaded yet, try again after a short delay
         setTimeout(() => {
             if (window.recentlyPlayedManager) {
                 window.recentlyPlayedManager.addGameToRecent(gameSlug);
+                console.log('✅ Tracked with recently played manager (delayed)');
             }
         }, 100);
     }
 
     // Track with the new account system
     if (window.accountSystem) {
-        window.accountSystem.addToRecentGames(gameSlug);
+        if (window.accountSystem.isReady) {
+            window.accountSystem.addToRecentGames(gameSlug);
+            console.log('✅ Tracked with account system');
+        } else {
+            // Wait for account system to be ready
+            window.accountSystem.onReady(() => {
+                window.accountSystem.addToRecentGames(gameSlug);
+                console.log('✅ Tracked with account system (after ready)');
+            });
+        }
     } else {
         // If account system isn't loaded yet, try again after a short delay
         setTimeout(() => {
             if (window.accountSystem) {
-                window.accountSystem.addToRecentGames(gameSlug);
+                if (window.accountSystem.isReady) {
+                    window.accountSystem.addToRecentGames(gameSlug);
+                    console.log('✅ Tracked with account system (delayed)');
+                } else {
+                    window.accountSystem.onReady(() => {
+                        window.accountSystem.addToRecentGames(gameSlug);
+                        console.log('✅ Tracked with account system (delayed + ready)');
+                    });
+                }
             }
         }, 100);
     }
@@ -6731,9 +6752,31 @@ if (window.location.pathname.includes('game.html')) {
     const urlParams = new URLSearchParams(window.location.search);
     const gameSlug = urlParams.get('game');
     if (gameSlug) {
+        // Try to track immediately if systems are ready
+        const attemptTracking = () => {
+            if (window.accountSystem) {
+                window.accountSystem.addToRecentGames(gameSlug);
+                console.log('✅ Game tracked via account system:', gameSlug);
+            }
+            
+            if (window.recentlyPlayedManager) {
+                window.recentlyPlayedManager.addGameToRecent(gameSlug);
+                console.log('✅ Game tracked via recently played manager:', gameSlug);
+            }
+        };
+
+        // Try immediately
+        attemptTracking();
+
+        // Also try on DOM content loaded
         document.addEventListener('DOMContentLoaded', () => {
             trackGameVisit(gameSlug);
         });
+
+        // And try after a short delay to ensure all systems are loaded
+        setTimeout(() => {
+            trackGameVisit(gameSlug);
+        }, 500);
     }
 }
 
