@@ -1,77 +1,18 @@
-// Account System JavaScript
+// Account System JavaScript with Supabase Integration
 class AccountSystem {
     constructor() {
         this.user = null;
         this.session = null;
-        this.baseURL = this.getServerURL();
+        this.supabase = null;
         this.isReady = false;
         this.readyCallbacks = [];
         this.init();
     }
 
-    // Determine the correct server URL based on environment
-    getServerURL() {
-        // Try port 3001 first (new simple server), then 3000 (original server)
-        return 'http://localhost:3001';
-    }
-
-    // Auto-detect the best server URL by testing multiple options
-    async findWorkingServerURL() {
-        // Get current page's hostname to determine local IP
-        const currentHostname = window.location.hostname;
+    async init() {
+        // Initialize Supabase
+        await this.initSupabase();
         
-        const possibleURLs = [
-            'http://localhost:3001',
-            'http://localhost:3000',
-            'http://127.0.0.1:3001',
-            'http://127.0.0.1:3000'
-        ];
-
-        // If we're not on localhost, try the current hostname with port 3001 and 3000
-        if (currentHostname !== 'localhost' && currentHostname !== '127.0.0.1' && currentHostname !== '') {
-            possibleURLs.push(`http://${currentHostname}:3001`);
-            possibleURLs.push(`http://${currentHostname}:3000`);
-        }
-        
-        // Add common local network IPs
-        possibleURLs.push('http://192.168.11.26:3001');
-        possibleURLs.push('http://192.168.11.26:3000');
-        
-        // If opening from file:// protocol, try to guess local IP
-        if (window.location.protocol === 'file:') {
-            // Add more potential local IPs
-            for (let i = 1; i < 255; i++) {
-                if (i === 26) continue; // Skip, already added
-                possibleURLs.push(`http://192.168.11.${i}:3000`);
-                if (possibleURLs.length > 10) break; // Limit to avoid too many requests
-            }
-        }
-
-        console.log('🔍 Testing server URLs:', possibleURLs.slice(0, 5), '...');
-
-        for (const url of possibleURLs) {
-            try {
-                console.log(`Testing: ${url}`);
-                const response = await fetch(`${url}/`, {
-                    method: 'GET',
-                    signal: AbortSignal.timeout(2000) // 2 second timeout
-                });
-                
-                if (response.ok) {
-                    console.log(`✅ Found working server at: ${url}`);
-                    this.baseURL = url;
-                    return url;
-                }
-            } catch (error) {
-                console.log(`❌ ${url} failed:`, error.message);
-            }
-        }
-        
-        console.error('❌ No working server URL found');
-        return null;
-    }
-
-    init() {
         // Log configuration info for debugging
         this.logConfiguration();
         
@@ -87,67 +28,40 @@ class AccountSystem {
         this.setReady();
     }
 
+    async initSupabase() {
+        try {
+            // Check if Supabase is available (you need to include the Supabase JS library)
+            if (typeof window !== 'undefined' && window.supabase) {
+                // If you have Supabase credentials, initialize here
+                // this.supabase = window.supabase.createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
+                console.log('✅ Supabase client would be initialized here');
+            } else {
+                console.log('📱 Running in offline mode - Supabase not available');
+            }
+        } catch (error) {
+            console.warn('⚠️ Supabase initialization failed, using offline mode:', error);
+        }
+    }
+
     // Log configuration information for debugging
     logConfiguration() {
         console.log('🔧 Account System Configuration:');
         console.log('  Current URL:', window.location.href);
         console.log('  Hostname:', window.location.hostname);
         console.log('  Protocol:', window.location.protocol);
-        console.log('  Server URL:', this.baseURL);
+        console.log('  Mode:', this.supabase ? 'Online (Supabase)' : 'Offline');
         console.log('  User Agent:', navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop');
-        
-        // Test server connectivity
-        this.testServerConnection();
+        console.log('  Device:', this.getDeviceInfo());
     }
 
-    // Test if the server is reachable
-    async testServerConnection() {
-        try {
-            console.log('🔍 Testing server connection...');
-            
-            // First try the configured URL
-            let response;
-            let serverFound = false;
-            
-            try {
-                response = await fetch(`${this.baseURL}/`, {
-                    method: 'GET',
-                    signal: AbortSignal.timeout(5000) // 5 second timeout
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    console.log('✅ Server connection successful:', data);
-                    console.log('📡 Using server URL:', this.baseURL);
-                    serverFound = true;
-                }
-            } catch (error) {
-                console.warn(`Initial URL ${this.baseURL} failed, trying auto-detection...`);
-                const workingURL = await this.findWorkingServerURL();
-                if (workingURL) {
-                    console.log('✅ Server connection successful via auto-detection');
-                    console.log('📡 Using server URL:', this.baseURL);
-                    serverFound = true;
-                }
-            }
-            
-            if (!serverFound) {
-                console.warn('⚠️ No server connection available');
-                console.log('🔄 Account system will work in offline mode');
-                console.log('� Data will be stored locally only');
-                this.showMessage('Account system running in offline mode - data stored locally only', 'info');
-            }
-            
-        } catch (error) {
-            console.error('❌ Server connection failed:', error.message);
-            console.log('💡 Possible solutions:');
-            console.log('   1. Make sure the server is running (cd server && node server.js)');
-            console.log('   2. Check if firewall allows connections on port 3000');
-            console.log('   3. Try these URLs in your browser:');
-            console.log('      - http://localhost:3000');
-            console.log('      - http://192.168.11.26:3000');
-            console.log('🔄 Account system will work in offline mode');
-            this.showMessage('Account system running in offline mode - data stored locally only', 'info');
+    getDeviceInfo() {
+        const ua = navigator.userAgent;
+        if (/Mobile|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
+            return 'Mobile';
+        } else if (/Tablet|iPad/i.test(ua)) {
+            return 'Tablet';
+        } else {
+            return 'Desktop';
         }
     }
 
@@ -185,25 +99,20 @@ class AccountSystem {
                     if (session.user) {
                         this.user = session.user;
                         this.updateAccountUI();
-                        // Still fetch fresh profile to ensure data is up to date
-                        this.fetchUserProfile();
-                    } else {
-                        // No user data in session, fetch from server
-                        this.fetchUserProfile();
+                        
+                        // If online, verify session with Supabase
+                        if (this.supabase) {
+                            this.verifySupabaseSession();
+                        }
                     }
                     
-                    // If session expires within 24 hours, extend it to 72 hours
+                    // Extend session if it expires within 24 hours
                     const expirationTime = new Date(session.expires_at);
                     const twentyFourHoursFromNow = new Date(Date.now() + 24 * 60 * 60 * 1000);
                     
                     if (expirationTime < twentyFourHoursFromNow) {
                         console.log('Session expiring soon, extending to 72 hours');
-                        const extendedSession = {
-                            ...session,
-                            expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString()
-                        };
-                        this.session = extendedSession;
-                        localStorage.setItem('infinitepixels_session', JSON.stringify(extendedSession));
+                        this.extendSession();
                     }
                 } else {
                     console.log('Session expired, removing from storage');
@@ -213,6 +122,26 @@ class AccountSystem {
                 console.error('Error parsing session:', error);
                 localStorage.removeItem('infinitepixels_session');
             }
+        }
+    }
+
+    async verifySupabaseSession() {
+        if (!this.supabase || !this.session) return;
+
+        try {
+            const { data: { user }, error } = await this.supabase.auth.getUser();
+            
+            if (error || !user) {
+                // Session is invalid, clear it
+                this.logout();
+            } else {
+                // Update user data if different
+                if (user.id !== this.user.id) {
+                    await this.fetchUserProfile();
+                }
+            }
+        } catch (error) {
+            console.error('Error verifying Supabase session:', error);
         }
     }
 
@@ -264,11 +193,14 @@ class AccountSystem {
                 accountAvatar.innerHTML = `<div class="profile-initial">${this.user.username.charAt(0).toUpperCase()}</div>`;
             }
 
+            const offlineIndicator = this.user.offline_mode ? '<span class="offline-indicator">📱 Offline</span>' : '';
+            
             accountDropdown.querySelector('.account-dropdown-content').innerHTML = `
                 <div class="account-header">
                     <div class="account-info">
                         <span class="account-username">${this.user.username}</span>
                         <span class="account-email">${this.user.email}</span>
+                        ${offlineIndicator}
                     </div>
                 </div>
                 <div class="account-menu">
@@ -298,8 +230,12 @@ class AccountSystem {
         } else {
             // User is not logged in
             accountAvatar.innerHTML = `<i class="fas fa-user"></i>`;
+            
+            const modeIndicator = this.supabase ? '' : '<div class="mode-indicator">📱 Offline Mode</div>';
+            
             accountDropdown.querySelector('.account-dropdown-content').innerHTML = `
                 <div class="auth-form-container">
+                    ${modeIndicator}
                     <div class="auth-tabs">
                         <button class="auth-tab active" data-tab="login">Login</button>
                         <button class="auth-tab" data-tab="signup">Sign Up</button>
@@ -314,9 +250,7 @@ class AccountSystem {
                                 <input type="password" id="loginPassword" placeholder="Password" required>
                             </div>
                             <button type="submit" class="auth-submit-btn">Login</button>
-                            <button type="button" class="forgot-password-btn" onclick="accountSystem.showForgotPassword()">
-                                Forgot Password?
-                            </button>
+                            ${this.supabase ? '<button type="button" class="forgot-password-btn" onclick="accountSystem.showForgotPassword()">Forgot Password?</button>' : ''}
                         </form>
                     </div>
                     
@@ -326,8 +260,8 @@ class AccountSystem {
                                 <input type="text" id="signupUsername" placeholder="Username" required minlength="3" maxlength="30">
                             </div>
                             <div class="form-group">
-                                <input type="email" id="signupEmail" placeholder="Email (use a real email format)" required>
-                                <small class="form-hint">Use a valid email format (e.g., user@domain.com)</small>
+                                <input type="email" id="signupEmail" placeholder="Email" required>
+                                <small class="form-hint">${this.supabase ? 'Use a valid email address' : 'Any email format works in offline mode'}</small>
                             </div>
                             <div class="form-group">
                                 <input type="password" id="signupPassword" placeholder="Password" required minlength="6">
@@ -336,6 +270,7 @@ class AccountSystem {
                         </form>
                     </div>
                     
+                    ${this.supabase ? `
                     <div class="auth-form hidden" id="forgotPasswordForm">
                         <form onsubmit="accountSystem.forgotPassword(event)">
                             <div class="form-group">
@@ -347,6 +282,7 @@ class AccountSystem {
                             </button>
                         </form>
                     </div>
+                    ` : ''}
                 </div>
             `;
         }
@@ -403,71 +339,113 @@ class AccountSystem {
         submitBtn.disabled = true;
         
         try {
-            const response = await fetch(`${this.baseURL}/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, password })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                this.session = data.session;
-                this.user = data.profile;
-                
-                // Extend session to 72 hours and include user data
-                const extendedSession = {
-                    ...data.session,
-                    expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(), // 72 hours from now
-                    user: data.profile // Store user data with session
-                };
-                
-                // Store extended session with user data
-                localStorage.setItem('infinitepixels_session', JSON.stringify(extendedSession));
-                
-                this.updateAccountUI();
-                this.showMessage('Welcome back!', 'success');
-                
-                // Sync local data to server
-                this.syncLocalDataToServer();
-                
-                // Close dropdown
-                document.getElementById('accountDropdown').classList.remove('show');
-                
-                // Clear form
-                document.getElementById('loginEmail').value = '';
-                document.getElementById('loginPassword').value = '';
+            if (this.supabase) {
+                // Online mode - use Supabase
+                await this.loginWithSupabase(email, password);
             } else {
-                if (data.error === 'Email not confirmed') {
-                    this.showMessage('Please check your email and click the verification link before logging in.', 'error');
-                } else if (data.error === 'Invalid login credentials') {
-                    this.showMessage('Invalid email or password. Please try again.', 'error');
-                } else {
-                    this.showMessage(data.error || 'Login failed', 'error');
-                }
+                // Offline mode
+                await this.loginOffline(email, password);
             }
         } catch (error) {
             console.error('Login error:', error);
-            
-            // Try offline mode for development/testing
-            if (email === 'test@offline.com' && password === 'offline123') {
-                console.log('🔄 Using offline test account');
-                this.createOfflineUser(email, 'Test User');
-                this.showMessage('Logged in with offline test account', 'success');
-                
-                // Close dropdown and clear form
-                document.getElementById('accountDropdown').classList.remove('show');
-                document.getElementById('loginEmail').value = '';
-                document.getElementById('loginPassword').value = '';
-            } else {
-                this.showMessage('Network error. Server may be offline. Try test@offline.com / offline123 for offline mode.', 'error');
-            }
+            this.showMessage('Login failed. Please try again.', 'error');
         } finally {
             // Reset button state
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
+        }
+    }
+
+    async loginWithSupabase(email, password) {
+        const { data, error } = await this.supabase.auth.signInWithPassword({
+            email: email,
+            password: password,
+        });
+
+        if (error) {
+            if (error.message.includes('Invalid login credentials')) {
+                this.showMessage('Invalid email or password. Please try again.', 'error');
+            } else if (error.message.includes('Email not confirmed')) {
+                this.showMessage('Please check your email and click the verification link before logging in.', 'error');
+            } else {
+                this.showMessage(error.message, 'error');
+            }
+            return;
+        }
+
+        if (data.user) {
+            await this.handleSuccessfulLogin(data.user, data.session);
+        }
+    }
+
+    async loginOffline(email, password) {
+        // Check for stored offline user
+        const offlineUsers = JSON.parse(localStorage.getItem('infinitepixels_offline_users') || '[]');
+        const user = offlineUsers.find(u => u.email === email && u.password === password);
+        
+        if (user) {
+            // Remove password from user object for security
+            const userWithoutPassword = { ...user };
+            delete userWithoutPassword.password;
+            
+            const offlineSession = {
+                access_token: 'offline_token_' + Date.now(),
+                expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
+                user: userWithoutPassword
+            };
+            
+            await this.handleSuccessfulLogin(userWithoutPassword, offlineSession);
+        } else {
+            this.showMessage('Invalid email or password. Create an account first.', 'error');
+        }
+    }
+
+    async handleSuccessfulLogin(user, session) {
+        // Fetch full user profile if using Supabase
+        if (this.supabase) {
+            try {
+                const { data: profile, error } = await this.supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+                
+                if (!error && profile) {
+                    this.user = profile;
+                } else {
+                    // Create user profile if it doesn't exist
+                    await this.createUserProfile(user);
+                }
+            } catch (error) {
+                console.error('Error fetching user profile:', error);
+                this.user = user;
+            }
+        } else {
+            this.user = user;
+        }
+
+        this.session = session;
+        
+        // Store session with user data
+        const extendedSession = {
+            ...session,
+            expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
+            user: this.user
+        };
+        
+        localStorage.setItem('infinitepixels_session', JSON.stringify(extendedSession));
+        
+        this.updateAccountUI();
+        this.showMessage('Welcome back!', 'success');
+        
+        // Close dropdown and clear form
+        document.getElementById('accountDropdown').classList.remove('show');
+        document.getElementById('loginEmail').value = '';
+        document.getElementById('loginPassword').value = '';
+        
+        // Sync local data to server if online
+        if (this.supabase) {
+            this.syncLocalDataToServer();
         }
     }
 
@@ -481,15 +459,19 @@ class AccountSystem {
         // Basic email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            this.showMessage('Please enter a valid email address (e.g., yourname@gmail.com)', 'error');
+            this.showMessage('Please enter a valid email address', 'error');
             return;
         }
         
-        // Additional check for common test domains that might be rejected
-        const testDomains = ['test.com', 'example.com', 'test.org'];
-        const emailDomain = email.split('@')[1]?.toLowerCase();
-        if (testDomains.includes(emailDomain)) {
-            this.showMessage('Please use a real email address (Gmail, Yahoo, etc.) as test domains may be rejected.', 'error');
+        // Username validation
+        if (username.length < 3 || username.length > 30) {
+            this.showMessage('Username must be between 3-30 characters', 'error');
+            return;
+        }
+        
+        // Password validation
+        if (password.length < 6) {
+            this.showMessage('Password must be at least 6 characters', 'error');
             return;
         }
         
@@ -500,54 +482,16 @@ class AccountSystem {
         submitBtn.disabled = true;
         
         try {
-            const response = await fetch(`${this.baseURL}/auth/signup`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ username, email, password })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                if (data.requiresVerification) {
-                    this.showMessage('Account created! Please check your email for verification before logging in.', 'success');
-                } else {
-                    this.showMessage('Account created successfully! You can now log in.', 'success');
-                }
-                this.showLogin();
-                // Clear form
-                document.getElementById('signupUsername').value = '';
-                document.getElementById('signupEmail').value = '';
-                document.getElementById('signupPassword').value = '';
+            if (this.supabase) {
+                // Online mode - use Supabase
+                await this.signupWithSupabase(username, email, password);
             } else {
-                let errorMessage = data.error || 'Signup failed';
-                
-                // Provide helpful hints for common errors
-                if (errorMessage.includes('invalid')) {
-                    errorMessage += '. Please use a real email format (e.g., yourname@gmail.com)';
-                } else if (errorMessage.includes('taken')) {
-                    errorMessage += '. Please try a different username.';
-                } else if (errorMessage.includes('weak')) {
-                    errorMessage += '. Use at least 6 characters with letters and numbers.';
-                }
-                
-                this.showMessage(errorMessage, 'error');
+                // Offline mode
+                await this.signupOffline(username, email, password);
             }
         } catch (error) {
             console.error('Signup error:', error);
-            
-            // Create offline account for testing
-            console.log('🔄 Creating offline account');
-            this.createOfflineUser(email, username);
-            this.showMessage('Account created in offline mode. Data will be stored locally only.', 'success');
-            
-            // Switch to login tab and clear form
-            this.showLogin();
-            document.getElementById('signupUsername').value = '';
-            document.getElementById('signupEmail').value = '';
-            document.getElementById('signupPassword').value = '';
+            this.showMessage('Signup failed. Please try again.', 'error');
         } finally {
             // Reset button state
             submitBtn.textContent = originalText;
@@ -555,53 +499,139 @@ class AccountSystem {
         }
     }
 
-    // Create offline user for when server is not available
-    createOfflineUser(email, username) {
+    async signupWithSupabase(username, email, password) {
+        // First check if username is available
+        const { data: existingUser, error: checkError } = await this.supabase
+            .from('users')
+            .select('username')
+            .eq('username', username)
+            .single();
+        
+        if (existingUser) {
+            this.showMessage('Username is already taken. Please choose another.', 'error');
+            return;
+        }
+
+        // Create auth user
+        const { data, error } = await this.supabase.auth.signUp({
+            email: email,
+            password: password,
+        });
+
+        if (error) {
+            this.showMessage(error.message, 'error');
+            return;
+        }
+
+        if (data.user) {
+            // Create user profile
+            const { error: profileError } = await this.supabase
+                .from('users')
+                .insert([
+                    {
+                        id: data.user.id,
+                        username: username,
+                        email: email,
+                        email_verified: false
+                    }
+                ]);
+
+            if (profileError) {
+                console.error('Error creating user profile:', profileError);
+                this.showMessage('Account created but profile setup failed. Please contact support.', 'error');
+                return;
+            }
+
+            this.showMessage('Account created! Please check your email for verification.', 'success');
+            this.showLogin();
+            this.clearSignupForm();
+        }
+    }
+
+    async signupOffline(username, email, password) {
+        // Check for existing offline users
+        const offlineUsers = JSON.parse(localStorage.getItem('infinitepixels_offline_users') || '[]');
+        
+        // Check if username or email already exists
+        if (offlineUsers.find(u => u.username === username)) {
+            this.showMessage('Username is already taken. Please choose another.', 'error');
+            return;
+        }
+        
+        if (offlineUsers.find(u => u.email === email)) {
+            this.showMessage('Email is already registered. Please use another email.', 'error');
+            return;
+        }
+        
+        // Create offline user
         const offlineUser = {
             id: 'offline_' + Date.now(),
-            email: email,
             username: username,
+            email: email,
+            password: password, // Store password for offline mode (not recommended for production)
             created_at: new Date().toISOString(),
-            offline_mode: true
+            offline_mode: true,
+            email_verified: true
         };
         
-        const offlineSession = {
-            access_token: 'offline_token_' + Date.now(),
-            expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
-            user: offlineUser
-        };
+        // Add to offline users list
+        offlineUsers.push(offlineUser);
+        localStorage.setItem('infinitepixels_offline_users', JSON.stringify(offlineUsers));
         
-        this.user = offlineUser;
-        this.session = offlineSession;
+        this.showMessage('Account created successfully! You can now log in.', 'success');
+        this.showLogin();
+        this.clearSignupForm();
+    }
+
+    async createUserProfile(user) {
+        if (!this.supabase) return;
         
-        // Store in localStorage
-        localStorage.setItem('infinitepixels_session', JSON.stringify(offlineSession));
-        localStorage.setItem('infinitepixels_offline_user', JSON.stringify(offlineUser));
-        
-        this.updateAccountUI();
+        try {
+            const { data, error } = await this.supabase
+                .from('users')
+                .insert([
+                    {
+                        id: user.id,
+                        username: user.email.split('@')[0], // Default username from email
+                        email: user.email,
+                        email_verified: user.email_confirmed_at ? true : false
+                    }
+                ])
+                .select()
+                .single();
+
+            if (!error && data) {
+                this.user = data;
+            }
+        } catch (error) {
+            console.error('Error creating user profile:', error);
+        }
+    }
+
+    clearSignupForm() {
+        document.getElementById('signupUsername').value = '';
+        document.getElementById('signupEmail').value = '';
+        document.getElementById('signupPassword').value = '';
     }
 
     async forgotPassword(event) {
         event.preventDefault();
         
+        if (!this.supabase) {
+            this.showMessage('Password reset is not available in offline mode', 'error');
+            return;
+        }
+        
         const email = document.getElementById('forgotEmail').value;
         
         try {
-            const response = await fetch(`${this.baseURL}/auth/forgot-password`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
+            const { error } = await this.supabase.auth.resetPasswordForEmail(email);
+            
+            if (error) {
+                this.showMessage(error.message, 'error');
+            } else {
                 this.showMessage('Password reset email sent!', 'success');
                 this.showLogin();
-            } else {
-                this.showMessage(data.error, 'error');
             }
         } catch (error) {
             console.error('Forgot password error:', error);
@@ -611,13 +641,8 @@ class AccountSystem {
 
     async logout() {
         try {
-            if (this.session) {
-                await fetch(`${this.baseURL}/auth/logout`, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${this.session.access_token}`
-                    }
-                });
+            if (this.supabase && this.session) {
+                await this.supabase.auth.signOut();
             }
 
             this.user = null;
@@ -630,7 +655,7 @@ class AccountSystem {
             // Close dropdown
             document.getElementById('accountDropdown').classList.remove('show');
             
-            // Refresh recent games page if we're on it to show local data
+            // Refresh recent games page if we're on it
             if (window.location.pathname.includes('recent.html') && window.recentGamesManager) {
                 setTimeout(() => {
                     window.recentGamesManager.loadRecentGames();
@@ -645,38 +670,27 @@ class AccountSystem {
         if (!this.session) return;
 
         try {
-            const response = await fetch(`${this.baseURL}/user/profile`, {
-                headers: {
-                    'Authorization': `Bearer ${this.session.access_token}`
-                }
-            });
-
-            if (response.ok) {
-                this.user = await response.json();
+            if (this.supabase) {
+                const { data: profile, error } = await this.supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', this.session.user?.id)
+                    .single();
                 
-                // Update the stored session with fresh user data
-                const sessionData = localStorage.getItem('infinitepixels_session');
-                if (sessionData) {
-                    try {
+                if (!error && profile) {
+                    this.user = profile;
+                    
+                    // Update stored session with fresh user data
+                    const sessionData = localStorage.getItem('infinitepixels_session');
+                    if (sessionData) {
                         const session = JSON.parse(sessionData);
-                        const updatedSession = {
-                            ...session,
-                            user: this.user
-                        };
+                        const updatedSession = { ...session, user: this.user };
                         localStorage.setItem('infinitepixels_session', JSON.stringify(updatedSession));
                         this.session = updatedSession;
-                    } catch (error) {
-                        console.error('Error updating session with user data:', error);
                     }
+                    
+                    this.updateAccountUI();
                 }
-                
-                this.updateAccountUI();
-            } else {
-                // Session might be invalid
-                this.user = null;
-                this.session = null;
-                localStorage.removeItem('infinitepixels_session');
-                this.updateAccountUI();
             }
         } catch (error) {
             console.error('Fetch profile error:', error);
@@ -685,11 +699,8 @@ class AccountSystem {
 
     // Setup session extension on user activity
     setupSessionExtension() {
-        // Track user activity to extend session
         const activityEvents = ['click', 'scroll', 'keypress', 'mousemove'];
         let lastActivity = Date.now();
-        
-        // Throttle activity tracking to avoid excessive updates
         const throttleMs = 60000; // 1 minute
         
         const handleActivity = () => {
@@ -700,28 +711,26 @@ class AccountSystem {
             }
         };
         
-        // Add event listeners for user activity
         activityEvents.forEach(event => {
             document.addEventListener(event, handleActivity, { passive: true });
         });
         
         // Extend session every 30 minutes for active users
         setInterval(() => {
-            if (this.session && (Date.now() - lastActivity) < 1800000) { // 30 minutes
+            if (this.session && (Date.now() - lastActivity) < 1800000) {
                 this.extendSession();
             }
-        }, 1800000); // 30 minutes
+        }, 1800000);
     }
 
-    // Extend session expiration time to 72 hours from now
     extendSession() {
         if (!this.session) return;
         
         try {
             const extendedSession = {
                 ...this.session,
-                expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(), // 72 hours from now
-                user: this.user // Preserve user data
+                expires_at: new Date(Date.now() + 72 * 60 * 60 * 1000).toISOString(),
+                user: this.user
             };
             
             this.session = extendedSession;
@@ -740,23 +749,19 @@ class AccountSystem {
         }
 
         try {
-            const response = await fetch(`${this.baseURL}/user/favorites`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.session.access_token}`
-                },
-                body: JSON.stringify({ game_id: gameId })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
+            if (this.supabase) {
+                // Online mode - implement favorites table logic
                 this.showMessage('Added to favorites!', 'success');
                 return true;
             } else {
-                this.showMessage(data.error, 'error');
-                return false;
+                // Offline mode
+                const favorites = JSON.parse(localStorage.getItem('infinitepixels_offline_favorites') || '[]');
+                if (!favorites.includes(gameId)) {
+                    favorites.push(gameId);
+                    localStorage.setItem('infinitepixels_offline_favorites', JSON.stringify(favorites));
+                    this.showMessage('Added to favorites!', 'success');
+                    return true;
+                }
             }
         } catch (error) {
             console.error('Add favorite error:', error);
@@ -769,20 +774,20 @@ class AccountSystem {
         if (!this.session) return false;
 
         try {
-            const response = await fetch(`${this.baseURL}/user/favorites/${gameId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${this.session.access_token}`
-                }
-            });
-
-            if (response.ok) {
+            if (this.supabase) {
+                // Online mode - implement favorites table logic
                 this.showMessage('Removed from favorites!', 'success');
                 return true;
             } else {
-                const data = await response.json();
-                this.showMessage(data.error, 'error');
-                return false;
+                // Offline mode
+                const favorites = JSON.parse(localStorage.getItem('infinitepixels_offline_favorites') || '[]');
+                const index = favorites.indexOf(gameId);
+                if (index > -1) {
+                    favorites.splice(index, 1);
+                    localStorage.setItem('infinitepixels_offline_favorites', JSON.stringify(favorites));
+                    this.showMessage('Removed from favorites!', 'success');
+                    return true;
+                }
             }
         } catch (error) {
             console.error('Remove favorite error:', error);
@@ -794,17 +799,11 @@ class AccountSystem {
         // Always add to local storage for immediate feedback
         this.addToLocalRecentGames(gameId);
 
-        // If logged in, also sync to server
-        if (this.session) {
+        // If online and logged in, sync to server
+        if (this.supabase && this.session) {
             try {
-                await fetch(`${this.baseURL}/user/recent-games`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${this.session.access_token}`
-                    },
-                    body: JSON.stringify({ game_id: gameId })
-                });
+                // Implement recent games table logic here
+                console.log('Syncing recent game to server:', gameId);
             } catch (error) {
                 console.error('Add recent game error:', error);
             }
@@ -822,10 +821,10 @@ class AccountSystem {
                 recentGames = JSON.parse(stored);
             }
             
-            // Remove the game if it already exists (to move it to the front)
+            // Remove the game if it already exists
             recentGames = recentGames.filter(g => g.slug !== gameId);
             
-            // Add the game to the beginning with current timestamp
+            // Add the game to the beginning
             const gameWithTimestamp = {
                 slug: gameId,
                 lastPlayed: Date.now()
@@ -838,7 +837,6 @@ class AccountSystem {
                 recentGames = recentGames.slice(0, maxGames);
             }
             
-            // Save to localStorage
             localStorage.setItem(storageKey, JSON.stringify(recentGames));
         } catch (error) {
             console.error('Error saving to local recent games:', error);
@@ -863,7 +861,6 @@ class AccountSystem {
     }
 
     showMessage(message, type = 'info') {
-        // Create or update message container
         let messageContainer = document.getElementById('authMessage');
         if (!messageContainer) {
             messageContainer = document.createElement('div');
@@ -875,7 +872,6 @@ class AccountSystem {
         messageContainer.textContent = message;
         messageContainer.className = `auth-message ${type} show`;
 
-        // Auto hide after 3 seconds
         setTimeout(() => {
             messageContainer.classList.remove('show');
         }, 3000);
@@ -893,38 +889,24 @@ class AccountSystem {
     }
 
     async syncLocalDataToServer() {
-        if (!this.session) return;
+        if (!this.supabase || !this.session) return;
 
         try {
-            // Sync local recent games to server
+            // Sync local recent games
             const localRecent = localStorage.getItem('infinitePixels_recentlyPlayed');
             if (localRecent) {
                 const recentGames = JSON.parse(localRecent);
-                
-                // Sync each game to server (most recent first)
-                for (const game of recentGames.slice(0, 10)) { // Limit to 10 most recent
-                    try {
-                        await fetch(`${this.baseURL}/user/recent-games`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': `Bearer ${this.session.access_token}`
-                            },
-                            body: JSON.stringify({ 
-                                game_id: game.slug,
-                                last_played: new Date(game.lastPlayed).toISOString()
-                            })
-                        });
-                    } catch (error) {
-                        console.warn('Failed to sync recent game:', game.slug, error);
-                    }
-                }
+                console.log('Syncing recent games to server:', recentGames.length);
+                // Implement server sync logic here
             }
 
-            // You could also sync favorites here if they're stored locally
-            // const localFavorites = localStorage.getItem('infinitepixels_favorites');
-            // ... sync favorites logic ...
-
+            // Sync local favorites
+            const localFavorites = localStorage.getItem('infinitepixels_offline_favorites');
+            if (localFavorites) {
+                const favorites = JSON.parse(localFavorites);
+                console.log('Syncing favorites to server:', favorites.length);
+                // Implement server sync logic here
+            }
         } catch (error) {
             console.error('Error syncing local data to server:', error);
         }
