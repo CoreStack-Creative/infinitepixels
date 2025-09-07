@@ -6701,18 +6701,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Function to track game visits (add this to your game pages)
 function trackGameVisit(gameSlug) {
-    console.log('🎯 Tracking game visit:', gameSlug);
-    
     // Track with the old recently played manager
     if (window.recentlyPlayedManager) {
         window.recentlyPlayedManager.addGameToRecent(gameSlug);
-        console.log('✅ Tracked with recently played manager');
     } else {
         // If manager isn't loaded yet, try again after a short delay
         setTimeout(() => {
             if (window.recentlyPlayedManager) {
                 window.recentlyPlayedManager.addGameToRecent(gameSlug);
-                console.log('✅ Tracked with recently played manager (delayed)');
             }
         }, 100);
     }
@@ -6721,12 +6717,10 @@ function trackGameVisit(gameSlug) {
     if (window.accountSystem) {
         if (window.accountSystem.isReady) {
             window.accountSystem.addToRecentGames(gameSlug);
-            console.log('✅ Tracked with account system');
         } else {
             // Wait for account system to be ready
             window.accountSystem.onReady(() => {
                 window.accountSystem.addToRecentGames(gameSlug);
-                console.log('✅ Tracked with account system (after ready)');
             });
         }
     } else {
@@ -6735,11 +6729,9 @@ function trackGameVisit(gameSlug) {
             if (window.accountSystem) {
                 if (window.accountSystem.isReady) {
                     window.accountSystem.addToRecentGames(gameSlug);
-                    console.log('✅ Tracked with account system (delayed)');
                 } else {
                     window.accountSystem.onReady(() => {
                         window.accountSystem.addToRecentGames(gameSlug);
-                        console.log('✅ Tracked with account system (delayed + ready)');
                     });
                 }
             }
@@ -6756,12 +6748,10 @@ if (window.location.pathname.includes('game.html')) {
         const attemptTracking = () => {
             if (window.accountSystem) {
                 window.accountSystem.addToRecentGames(gameSlug);
-                console.log('✅ Game tracked via account system:', gameSlug);
             }
             
             if (window.recentlyPlayedManager) {
                 window.recentlyPlayedManager.addGameToRecent(gameSlug);
-                console.log('✅ Game tracked via recently played manager:', gameSlug);
             }
         };
 

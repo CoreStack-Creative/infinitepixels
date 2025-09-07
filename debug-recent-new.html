@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recent Games Debug</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .debug-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        button { margin: 5px; padding: 10px; }
+        pre { background: #f5f5f5; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Recent Games Debug</h1>
+    
+    <div class="debug-section">
+        <h3>Add Test Games</h3>
+        <button onclick="addTestGame('1v1lol')">Add 1v1lol</button>
+        <button onclick="addTestGame('basketrandom')">Add basketrandom</button>
+        <button onclick="addTestGame('cookieclicker')">Add cookieclicker</button>
+        <button onclick="clearAll()">Clear All</button>
+    </div>
+
+    <div class="debug-section">
+        <h3>Current Storage</h3>
+        <button onclick="checkStorage()">Check Storage</button>
+        <div id="storage-info"></div>
+    </div>
+
+    <div class="debug-section">
+        <h3>Games Data</h3>
+        <button onclick="checkGamesData()">Check games.json</button>
+        <div id="games-info"></div>
+    </div>
+
+    <div class="debug-section">
+        <h3>Test Navigation</h3>
+        <button onclick="goToGame('1v1lol')">Go to 1v1lol Game</button>
+        <button onclick="goToRecent()">Go to Recent Page</button>
+    </div>
+
+    <script>
+        function addTestGame(slug) {
+            console.log('Adding test game:', slug);
+            
+            // Get existing recent games
+            let recentGames = [];
+            const stored = localStorage.getItem('infinitePixels_recentlyPlayed');
+            if (stored) {
+                recentGames = JSON.parse(stored);
+            }
+            
+            // Remove if already exists
+            recentGames = recentGames.filter(g => g.slug !== slug);
+            
+            // Add new game at the beginning
+            const newGame = {
+                slug: slug,
+                lastPlayed: Date.now()
+            };
+            recentGames.unshift(newGame);
+            
+            // Save back to localStorage
+            localStorage.setItem('infinitePixels_recentlyPlayed', JSON.stringify(recentGames));
+            
+            console.log('Added game:', newGame);
+            console.log('All recent games:', recentGames);
+            
+            checkStorage();
+        }
+
+        function clearAll() {
+            localStorage.removeItem('infinitePixels_recentlyPlayed');
+            checkStorage();
+        }
+
+        function checkStorage() {
+            const stored = localStorage.getItem('infinitePixels_recentlyPlayed');
+            const info = document.getElementById('storage-info');
+            
+            if (stored) {
+                try {
+                    const games = JSON.parse(stored);
+                    info.innerHTML = `
+                        <h4>Recent Games in Storage (${games.length} games):</h4>
+                        <pre>${JSON.stringify(games, null, 2)}</pre>
+                    `;
+                } catch (e) {
+                    info.innerHTML = `<p style="color: red;">Error parsing JSON: ${e.message}</p>`;
+                }
+            } else {
+                info.innerHTML = '<p>No recent games in localStorage</p>';
+            }
+        }
+
+        async function checkGamesData() {
+            const info = document.getElementById('games-info');
+            try {
+                const response = await fetch('games.json');
+                const games = await response.json();
+                
+                const testGames = ['1v1lol', 'basketrandom', 'cookieclicker'];
+                const foundGames = testGames.map(slug => {
+                    const game = games.find(g => g.slug === slug);
+                    return { slug, found: !!game, game: game };
+                });
+                
+                info.innerHTML = `
+                    <h4>Games Data (${games.length} total games):</h4>
+                    <h5>Test games lookup:</h5>
+                    <pre>${JSON.stringify(foundGames, null, 2)}</pre>
+                    <h5>First few games in database:</h5>
+                    <pre>${JSON.stringify(games.slice(0, 3), null, 2)}</pre>
+                `;
+            } catch (error) {
+                info.innerHTML = `<p style="color: red;">Error loading games: ${error.message}</p>`;
+            }
+        }
+
+        function goToGame(slug) {
+            window.location.href = `game.html?game=${slug}`;
+        }
+
+        function goToRecent() {
+            window.location.href = 'recent.html';
+        }
+
+        // Auto-check on load
+        window.addEventListener('load', () => {
+            checkStorage();
+            checkGamesData();
+        });
+    </script>
+</body>
+</html>

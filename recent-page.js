@@ -243,6 +243,7 @@ class RecentGamesPageManager {
         const gameCards = this.recentGames.map(recentGame => {
             // Handle both server format (game_id) and local format (slug)
             const gameIdentifier = recentGame.game_id || recentGame.slug;
+            
             const game = this.games.find(g => 
                 g.id === gameIdentifier || 
                 g.slug === gameIdentifier ||
