@@ -52,6 +52,16 @@ class AccountSystem {
         console.log('  Mode:', this.supabase ? 'Online (Supabase)' : 'Offline');
         console.log('  User Agent:', navigator.userAgent.includes('Mobile') ? 'Mobile' : 'Desktop');
         console.log('  Device:', this.getDeviceInfo());
+        
+        // Additional sync status info
+        if (this.supabase) {
+            console.log('  ✅ Supabase Status: Connected');
+            console.log('  🔄 Cross-device sync: ENABLED');
+        } else {
+            console.log('  ❌ Supabase Status: Not configured');
+            console.log('  📱 Cross-device sync: DISABLED (offline mode)');
+            console.log('  💡 To enable sync: Configure supabase-config.js');
+        }
     }
 
     getDeviceInfo() {
@@ -194,6 +204,7 @@ class AccountSystem {
             }
 
             const offlineIndicator = this.user.offline_mode ? '<span class="offline-indicator">📱 Offline</span>' : '';
+            const syncStatus = this.supabase ? '<span class="sync-indicator">🔄 Sync Enabled</span>' : '<span class="offline-indicator">📱 Device Only</span>';
             
             accountDropdown.querySelector('.account-dropdown-content').innerHTML = `
                 <div class="account-header">
@@ -201,6 +212,7 @@ class AccountSystem {
                         <span class="account-username">${this.user.username}</span>
                         <span class="account-email">${this.user.email}</span>
                         ${offlineIndicator}
+                        ${syncStatus}
                     </div>
                 </div>
                 <div class="account-menu">
@@ -446,6 +458,8 @@ class AccountSystem {
         // Sync local data to server if online
         if (this.supabase) {
             this.syncLocalDataToServer();
+            // Load server data to this device
+            await this.loadServerDataToDevice();
         }
     }
 
@@ -750,7 +764,25 @@ class AccountSystem {
 
         try {
             if (this.supabase) {
-                // Online mode - implement favorites table logic
+                // Online mode - save to server
+                const { error } = await this.supabase
+                    .from('user_favorites')
+                    .upsert({
+                        user_id: this.user.id,
+                        game_id: gameId
+                    }, {
+                        onConflict: 'user_id,game_id'
+                    });
+
+                if (error) throw error;
+
+                // Also save to local storage for immediate feedback
+                const favorites = JSON.parse(localStorage.getItem('infinitepixels_offline_favorites') || '[]');
+                if (!favorites.includes(gameId)) {
+                    favorites.push(gameId);
+                    localStorage.setItem('infinitepixels_offline_favorites', JSON.stringify(favorites));
+                }
+
                 this.showMessage('Added to favorites!', 'success');
                 return true;
             } else {
@@ -775,7 +807,23 @@ class AccountSystem {
 
         try {
             if (this.supabase) {
-                // Online mode - implement favorites table logic
+                // Online mode - remove from server
+                const { error } = await this.supabase
+                    .from('user_favorites')
+                    .delete()
+                    .eq('user_id', this.user.id)
+                    .eq('game_id', gameId);
+
+                if (error) throw error;
+
+                // Also remove from local storage
+                const favorites = JSON.parse(localStorage.getItem('infinitepixels_offline_favorites') || '[]');
+                const index = favorites.indexOf(gameId);
+                if (index > -1) {
+                    favorites.splice(index, 1);
+                    localStorage.setItem('infinitepixels_offline_favorites', JSON.stringify(favorites));
+                }
+
                 this.showMessage('Removed from favorites!', 'success');
                 return true;
             } else {
@@ -802,8 +850,17 @@ class AccountSystem {
         // If online and logged in, sync to server
         if (this.supabase && this.session) {
             try {
-                // Implement recent games table logic here
-                console.log('Syncing recent game to server:', gameId);
+                await this.supabase
+                    .from('user_recent_games')
+                    .upsert({
+                        user_id: this.user.id,
+                        game_id: gameId,
+                        last_played: new Date().toISOString()
+                    }, {
+                        onConflict: 'user_id,game_id'
+                    });
+                
+                console.log('✅ Recent game synced to server:', gameId);
             } catch (error) {
                 console.error('Add recent game error:', error);
             }
@@ -897,7 +954,18 @@ class AccountSystem {
             if (localRecent) {
                 const recentGames = JSON.parse(localRecent);
                 console.log('Syncing recent games to server:', recentGames.length);
-                // Implement server sync logic here
+                
+                for (const game of recentGames) {
+                    await this.supabase
+                        .from('user_recent_games')
+                        .upsert({
+                            user_id: this.user.id,
+                            game_id: game.slug,
+                            last_played: new Date(game.lastPlayed).toISOString()
+                        }, {
+                            onConflict: 'user_id,game_id'
+                        });
+                }
             }
 
             // Sync local favorites
@@ -905,11 +973,93 @@ class AccountSystem {
             if (localFavorites) {
                 const favorites = JSON.parse(localFavorites);
                 console.log('Syncing favorites to server:', favorites.length);
-                // Implement server sync logic here
+                
+                for (const gameId of favorites) {
+                    await this.supabase
+                        .from('user_favorites')
+                        .upsert({
+                            user_id: this.user.id,
+                            game_id: gameId
+                        }, {
+                            onConflict: 'user_id,game_id'
+                        });
+                }
             }
+
+            console.log('✅ Local data synced to server successfully');
         } catch (error) {
             console.error('Error syncing local data to server:', error);
         }
+    }
+
+    async loadServerDataToDevice() {
+        if (!this.supabase || !this.session) return;
+
+        try {
+            // Load recent games from server
+            const { data: recentGames, error: recentError } = await this.supabase
+                .from('user_recent_games')
+                .select('game_id, last_played')
+                .eq('user_id', this.user.id)
+                .order('last_played', { ascending: false })
+                .limit(24);
+
+            if (!recentError && recentGames) {
+                const formattedRecent = recentGames.map(game => ({
+                    slug: game.game_id,
+                    lastPlayed: new Date(game.last_played).getTime()
+                }));
+                
+                // Merge with local data, keeping the most recent timestamps
+                const localRecent = JSON.parse(localStorage.getItem('infinitePixels_recentlyPlayed') || '[]');
+                const mergedRecent = this.mergeGameLists(localRecent, formattedRecent);
+                
+                localStorage.setItem('infinitePixels_recentlyPlayed', JSON.stringify(mergedRecent));
+                console.log('✅ Recent games loaded from server:', recentGames.length);
+            }
+
+            // Load favorites from server
+            const { data: favorites, error: favError } = await this.supabase
+                .from('user_favorites')
+                .select('game_id')
+                .eq('user_id', this.user.id);
+
+            if (!favError && favorites) {
+                const serverFavorites = favorites.map(fav => fav.game_id);
+                
+                // Merge with local favorites
+                const localFavorites = JSON.parse(localStorage.getItem('infinitepixels_offline_favorites') || '[]');
+                const mergedFavorites = [...new Set([...localFavorites, ...serverFavorites])];
+                
+                localStorage.setItem('infinitepixels_offline_favorites', JSON.stringify(mergedFavorites));
+                console.log('✅ Favorites loaded from server:', favorites.length);
+            }
+
+        } catch (error) {
+            console.error('Error loading server data to device:', error);
+        }
+    }
+
+    mergeGameLists(localGames, serverGames) {
+        const gameMap = new Map();
+        
+        // Add local games first
+        localGames.forEach(game => {
+            gameMap.set(game.slug, game);
+        });
+        
+        // Add or update with server games (keeping most recent timestamp)
+        serverGames.forEach(game => {
+            const existing = gameMap.get(game.slug);
+            if (!existing || game.lastPlayed > existing.lastPlayed) {
+                gameMap.set(game.slug, game);
+            }
+        });
+        
+        // Convert back to array and sort by lastPlayed (most recent first)
+        return Array.from(gameMap.values())
+            .sort((a, b) => b.lastPlayed - a.lastPlayed)
+            .slice(0, 24); // Keep only the most recent 24 games
     }
 }
 
