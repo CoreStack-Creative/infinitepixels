@@ -6135,72 +6135,66 @@ class FavoritesManager {
         // Check if already favorited
         if (this.isFavorited(gameSlug)) return false;
 
-        const favoriteData = {
-            slug: gameSlug,
-            dateAdded: new Date().toISOString(),
-            timestamp: Date.now()
-        };
-
-        // Add to local storage first
-        this.favorites.push(favoriteData);
-        this.saveFavorites();
-
-        // Also add to server if logged in
-        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
-            try {
-                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites`, {
-                    method: 'POST',
-                    headers: {
-                        ...window.accountSystem.getAuthHeaders(),
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ game_id: gameSlug })
-                });
-                
-                if (response.ok) {
-                    console.log('Favorite synced to server:', gameSlug);
-                } else {
-                    console.warn('Failed to sync favorite to server:', gameSlug);
-                }
-            } catch (error) {
-                console.error('Error syncing favorite to server:', error);
+        // Use account system if available, otherwise store locally
+        if (window.accountSystem) {
+            const success = await window.accountSystem.addToFavorites(gameSlug);
+            if (success) {
+                // Reload local favorites from account system
+                this.favorites = this.loadFavorites();
             }
-        }
+            return success;
+        } else {
+            // Fallback for when account system is not available
+            const favoriteData = {
+                slug: gameSlug,
+                dateAdded: new Date().toISOString(),
+                timestamp: Date.now()
+            };
 
-        return true;
+            this.favorites.push(favoriteData);
+            this.saveFavorites();
+            return true;
+        }
     }
 
     async removeFromFavorites(gameSlug) {
-        const index = this.favorites.findIndex(fav => fav.slug === gameSlug);
-        if (index === -1) return false;
-
-        // Remove from local storage first
-        this.favorites.splice(index, 1);
-        this.saveFavorites();
-
-        // Also remove from server if logged in
-        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
-            try {
-                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites/${gameSlug}`, {
-                    method: 'DELETE',
-                    headers: window.accountSystem.getAuthHeaders()
-                });
-                
-                if (response.ok) {
-                    console.log('Favorite removed from server:', gameSlug);
-                } else {
-                    console.warn('Failed to remove favorite from server:', gameSlug);
-                }
-            } catch (error) {
-                console.error('Error removing favorite from server:', error);
+        // Use account system if available, otherwise remove locally
+        if (window.accountSystem) {
+            const success = await window.accountSystem.removeFromFavorites(gameSlug);
+            if (success) {
+                // Reload local favorites from account system
+                this.favorites = this.loadFavorites();
             }
-        }
+            return success;
+        } else {
+            // Fallback for when account system is not available
+            const index = this.favorites.findIndex(fav => {
+                // Handle both string and object formats
+                if (typeof fav === 'string') {
+                    return fav === gameSlug;
+                } else if (fav && fav.slug) {
+                    return fav.slug === gameSlug;
+                }
+                return false;
+            });
+            if (index === -1) return false;
 
-        return true;
+            this.favorites.splice(index, 1);
+            this.saveFavorites();
+            return true;
+        }
     }
 
     isFavorited(gameSlug) {
-        return this.favorites.some(fav => fav.slug === gameSlug);
+        return this.favorites.some(fav => {
+            // Handle both string and object formats
+            if (typeof fav === 'string') {
+                return fav === gameSlug;
+            } else if (fav && fav.slug) {
+                return fav.slug === gameSlug;
+            }
+            return false;
+        });
     }
 
     async toggleFavorite(gameSlug) {
@@ -6212,70 +6206,49 @@ class FavoritesManager {
     }
 
     async getFavoriteGames(sortOrder = 'newest') {
-        let allFavorites = [];
-        
-        // If user is logged in, try to get server favorites first
-        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
-            try {
-                console.log('Getting favorites from server for logged-in user...');
-                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites`, {
-                    headers: window.accountSystem.getAuthHeaders()
-                });
-                
-                if (response.ok) {
-                    const serverFavorites = await response.json();
-                    console.log('Server favorites loaded:', serverFavorites);
-                    
-                    // Convert server favorites to the expected format
-                    const serverFavoriteGames = serverFavorites.map(fav => {
-                        const game = gamesDatabase.find(g => g.slug === fav.game_id);
-                        return game ? { 
-                            ...game, 
-                            dateAdded: fav.created_at, 
-                            timestamp: new Date(fav.created_at).getTime(),
-                            source: 'server'
-                        } : null;
-                    }).filter(Boolean);
-                    
-                    allFavorites = [...serverFavoriteGames];
-                }
-            } catch (error) {
-                console.error('Error loading server favorites:', error);
-            }
-        }
-        
-        // Always check local favorites and merge
+        // Account system handles server sync, so we just read from local storage
         try {
             const stored = localStorage.getItem('infinitepixels_favorites');
             const localFavorites = stored ? JSON.parse(stored) : [];
             
-            const localFavoriteGames = localFavorites.map(fav => {
-                const game = gamesDatabase.find(g => g.slug === fav.slug);
+            const favoriteGames = localFavorites.map(fav => {
+                // Handle both object format (legacy) and string format (normalized)
+                let gameSlug, dateAdded, timestamp;
+                
+                if (typeof fav === 'string') {
+                    // New normalized format - just the game slug
+                    gameSlug = fav;
+                    dateAdded = new Date().toISOString(); // Default to current time
+                    timestamp = Date.now();
+                } else if (fav && fav.slug) {
+                    // Legacy object format
+                    gameSlug = fav.slug;
+                    dateAdded = fav.dateAdded || new Date().toISOString();
+                    timestamp = fav.timestamp || Date.now();
+                } else {
+                    return null; // Invalid format
+                }
+                
+                const game = gamesDatabase.find(g => g.slug === gameSlug);
                 return game ? { 
                     ...game, 
-                    dateAdded: fav.dateAdded, 
-                    timestamp: fav.timestamp,
-                    source: 'local'
+                    dateAdded: dateAdded, 
+                    timestamp: timestamp
                 } : null;
             }).filter(Boolean);
             
-            // Merge server and local favorites (avoid duplicates)
-            const serverSlugs = new Set(allFavorites.map(f => f.slug));
-            const uniqueLocalFavorites = localFavoriteGames.filter(f => !serverSlugs.has(f.slug));
-            
-            allFavorites = [...allFavorites, ...uniqueLocalFavorites];
+            console.log('Final merged favorites:', favoriteGames.length, 'games');
+
+            // Sort by date added
+            if (sortOrder === 'oldest') {
+                return favoriteGames.sort((a, b) => a.timestamp - b.timestamp);
+            } else {
+                return favoriteGames.sort((a, b) => b.timestamp - a.timestamp);
+            }
             
         } catch (error) {
-            console.error('Error loading local favorites:', error);
-        }
-
-        console.log('Final merged favorites:', allFavorites.length, 'games');
-
-        // Sort by date added
-        if (sortOrder === 'oldest') {
-            return allFavorites.sort((a, b) => a.timestamp - b.timestamp);
-        } else {
-            return allFavorites.sort((a, b) => b.timestamp - a.timestamp);
+            console.error('Error loading favorites:', error);
+            return [];
         }
     }
 
