@@ -857,7 +857,25 @@ class AccountSystem {
             }
 
             // Always save to local storage (works for both logged-in and offline users)
-            const favorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+            let favorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+            
+            // Normalize favorites to simple strings
+            favorites = favorites.map(item => {
+                if (typeof item === 'string') {
+                    try {
+                        const parsed = JSON.parse(item);
+                        return parsed.slug || item;
+                    } catch (e) {
+                        return item;
+                    }
+                } else if (item && item.slug) {
+                    return item.slug;
+                }
+                return item;
+            });
+            
+            // Remove duplicates and add new favorite
+            favorites = [...new Set(favorites)];
             if (!favorites.includes(gameId)) {
                 favorites.push(gameId);
                 localStorage.setItem('infinitepixels_favorites', JSON.stringify(favorites));
@@ -889,7 +907,25 @@ class AccountSystem {
             }
 
             // Always remove from local storage (works for both logged-in and offline users)
-            const favorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+            let favorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+            
+            // Normalize favorites to simple strings
+            favorites = favorites.map(item => {
+                if (typeof item === 'string') {
+                    try {
+                        const parsed = JSON.parse(item);
+                        return parsed.slug || item;
+                    } catch (e) {
+                        return item;
+                    }
+                } else if (item && item.slug) {
+                    return item.slug;
+                }
+                return item;
+            });
+            
+            // Remove duplicates and remove target favorite
+            favorites = [...new Set(favorites)];
             const index = favorites.indexOf(gameId);
             if (index > -1) {
                 favorites.splice(index, 1);
@@ -1063,9 +1099,43 @@ class AccountSystem {
             console.log('  Favorites to sync:', localFavorites ? JSON.parse(localFavorites) : []);
             
             if (localFavorites) {
-                const favorites = JSON.parse(localFavorites);
+                const rawFavorites = JSON.parse(localFavorites);
                 
-                for (const gameId of favorites) {
+                // Normalize favorites - extract just the game IDs/slugs
+                const normalizedFavorites = [];
+                rawFavorites.forEach(item => {
+                    if (typeof item === 'string') {
+                        try {
+                            // Try parsing if it's a JSON string
+                            const parsed = JSON.parse(item);
+                            if (parsed.slug) {
+                                normalizedFavorites.push(parsed.slug);
+                            } else {
+                                // It's just a plain game ID
+                                normalizedFavorites.push(item);
+                            }
+                        } catch (e) {
+                            // It's just a plain game ID
+                            normalizedFavorites.push(item);
+                        }
+                    } else if (item && item.slug) {
+                        // It's an object with slug property
+                        normalizedFavorites.push(item.slug);
+                    } else if (typeof item === 'string') {
+                        // It's a plain string game ID
+                        normalizedFavorites.push(item);
+                    }
+                });
+                
+                // Remove duplicates
+                const uniqueFavorites = [...new Set(normalizedFavorites)];
+                console.log('🔧 Normalized favorites for sync:', uniqueFavorites);
+                
+                // Update localStorage with clean format
+                localStorage.setItem('infinitepixels_favorites', JSON.stringify(uniqueFavorites));
+                
+                // Sync to server
+                for (const gameId of uniqueFavorites) {
                     await this.supabase
                         .from('user_favorites')
                         .upsert({
@@ -1159,13 +1229,46 @@ class AccountSystem {
 
     // Add this new method to check if a game is favorited
     isFavorited(gameId) {
-        const favorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+        let favorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+        
+        // Normalize favorites to simple strings
+        favorites = favorites.map(item => {
+            if (typeof item === 'string') {
+                try {
+                    const parsed = JSON.parse(item);
+                    return parsed.slug || item;
+                } catch (e) {
+                    return item;
+                }
+            } else if (item && item.slug) {
+                return item.slug;
+            }
+            return item;
+        });
+        
         return favorites.includes(gameId);
     }
 
     // Add this method to get all local favorites
     getLocalFavorites() {
-        return JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+        let favorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+        
+        // Normalize favorites to simple strings
+        favorites = favorites.map(item => {
+            if (typeof item === 'string') {
+                try {
+                    const parsed = JSON.parse(item);
+                    return parsed.slug || item;
+                } catch (e) {
+                    return item;
+                }
+            } else if (item && item.slug) {
+                return item.slug;
+            }
+            return item;
+        });
+        
+        return [...new Set(favorites)]; // Remove duplicates
     }
 }
 
