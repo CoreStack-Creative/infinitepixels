@@ -6067,9 +6067,11 @@ window.toggleDescription = function(cardId) {
 
 // Play game function - global scope
 window.playGame = function(gameSlug) {
-    if (gameSlug) {
-        window.location.href = `game.html?game=${gameSlug}`;
+    if (!gameSlug || gameSlug === 'undefined' || typeof gameSlug !== 'string') {
+        console.error('playGame called with invalid gameSlug:', gameSlug);
+        return;
     }
+    window.location.href = `game.html?game=${gameSlug}`;
 };
 
 // Initialize new games page when games data is loaded
@@ -6597,8 +6599,23 @@ class RecentlyPlayedManager {
 
     // Add a game to recently played (call this when a game is accessed)
     addGameToRecent(gameSlug) {
+        // Validate input
+        if (!gameSlug) {
+            console.warn('addGameToRecent called with invalid gameSlug:', gameSlug);
+            return;
+        }
+
+        // Check if gamesDatabase is loaded
+        if (!gamesDatabase || gamesDatabase.length === 0) {
+            console.warn('gamesDatabase not loaded yet, cannot add to recent games');
+            return;
+        }
+
         const game = gamesDatabase.find(g => g.slug === gameSlug);
-        if (!game) return;
+        if (!game || !game.slug) {
+            console.warn('Game not found in database for slug:', gameSlug);
+            return;
+        }
 
         let recentGames = this.getRecentGames();
         
@@ -6630,9 +6647,36 @@ class RecentlyPlayedManager {
     getRecentGames() {
         try {
             const stored = localStorage.getItem(this.storageKey);
-            return stored ? JSON.parse(stored) : [];
+            let recentGames = stored ? JSON.parse(stored) : [];
+            
+            // Filter out any invalid games
+            recentGames = recentGames.filter(game => {
+                if (!game || typeof game !== 'object') {
+                    console.warn('Filtering out invalid recent game (not an object):', game);
+                    return false;
+                }
+                if (!game.slug || typeof game.slug !== 'string') {
+                    console.warn('Filtering out recent game with invalid slug:', game);
+                    return false;
+                }
+                if (!game.name || typeof game.name !== 'string') {
+                    console.warn('Filtering out recent game with invalid name:', game);
+                    return false;
+                }
+                return true;
+            });
+            
+            // Update localStorage if we filtered out any games
+            if (stored && recentGames.length !== JSON.parse(stored).length) {
+                console.log('Updated localStorage after filtering invalid recent games');
+                localStorage.setItem(this.storageKey, JSON.stringify(recentGames));
+            }
+            
+            return recentGames;
         } catch (error) {
             console.error('Error loading recent games:', error);
+            // Clear corrupted data
+            localStorage.removeItem(this.storageKey);
             return [];
         }
     }
@@ -6643,7 +6687,10 @@ class RecentlyPlayedManager {
         
         if (!container) return;
 
-        const recentGames = this.getRecentGames();
+        let recentGames = this.getRecentGames();
+        
+        // Clean up any invalid recent games entries
+        recentGames = this.cleanUpRecentGames(recentGames);
         
         if (recentGames.length === 0) {
             container.style.display = 'none';
@@ -6654,20 +6701,53 @@ class RecentlyPlayedManager {
         container.style.display = 'grid';
         if (emptyState) emptyState.style.display = 'none';
 
-        container.innerHTML = recentGames.map(game => this.createGameCard(game)).join('');
+        // Filter out any null/empty cards
+        const gameCards = recentGames.map(game => this.createGameCard(game)).filter(card => card !== '');
+        container.innerHTML = gameCards.join('');
+    }
+
+    // Clean up invalid recent games entries
+    cleanUpRecentGames(recentGames) {
+        if (!Array.isArray(recentGames)) return [];
+        
+        const cleanedGames = recentGames.filter(game => {
+            // Check if the game has required properties
+            if (!game || typeof game !== 'object') return false;
+            if (!game.slug || typeof game.slug !== 'string') return false;
+            if (!game.name || typeof game.name !== 'string') return false;
+            
+            return true;
+        });
+        
+        // If we filtered out any games, update localStorage
+        if (cleanedGames.length !== recentGames.length) {
+            console.log(`Cleaned up recent games: ${recentGames.length} -> ${cleanedGames.length}`);
+            localStorage.setItem(this.storageKey, JSON.stringify(cleanedGames));
+        }
+        
+        return cleanedGames;
     }
 
     createGameCard(game) {
+        // Add safety checks for game data
+        if (!game || !game.slug) {
+            console.warn('Invalid game data in recent games:', game);
+            return '';
+        }
+
         const timeAgo = this.formatTimeAgo(game.lastPlayed);
+        const gameName = game.name || 'Unknown Game';
+        const gameImage = game.image || 'images/placeholder-game.jpg';
+        const gameTags = game.tags || [];
         
         return `
             <div class="game-card" onclick="window.location.href='https://www.infinite-pixels.com/game.html?game=${game.slug}'">
-                <img src="${game.image}" alt="${game.name}" class="recent-game-image" 
+                <img src="${gameImage}" alt="${gameName}" class="recent-game-image" 
                      onerror="this.src='images/placeholder-game.jpg'">
                 <div class="game-info">
-                    <h3 class="game-name">${game.name}</h3>
+                    <h3 class="game-name">${gameName}</h3>
                     <div class="game-tags">
-                        ${game.tags.map(tag => `<span class="game-tag">${tag}</span>`).join('')}
+                        ${gameTags.map(tag => `<span class="game-tag">${tag}</span>`).join('')}
                     </div>
                     <div class="last-played">
                         <i class="fas fa-clock"></i>
