@@ -1398,6 +1398,45 @@ class AccountSystem {
             console.log('  favoritesManager.favorites:', window.favoritesManager.favorites);
         }
     }
+
+    // Add method to refresh user profile (including profile image)
+    async refreshUserProfile() {
+        if (!this.supabase || !this.session) return;
+
+        try {
+            const { data: profile, error } = await this.supabase
+                .from('users')
+                .select('*')
+                .eq('id', this.session.user?.id)
+                .single();
+            
+            if (!error && profile) {
+                // Update local user data
+                this.user = profile;
+                
+                // Update stored session with fresh user data
+                const sessionData = localStorage.getItem('infinitepixels_session');
+                if (sessionData) {
+                    const session = JSON.parse(sessionData);
+                    const updatedSession = { ...session, user: this.user };
+                    localStorage.setItem('infinitepixels_session', JSON.stringify(updatedSession));
+                    this.session = updatedSession;
+                }
+                
+                // Update UI everywhere
+                this.updateAccountUI();
+                
+                // Trigger custom event for other components to update
+                window.dispatchEvent(new CustomEvent('userProfileUpdated', { 
+                    detail: { user: this.user } 
+                }));
+                
+                console.log('✅ User profile refreshed');
+            }
+        } catch (error) {
+            console.error('Error refreshing user profile:', error);
+        }
+    }
 }
 
 // Initialize account system

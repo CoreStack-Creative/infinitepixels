@@ -2,7 +2,6 @@
 class AccountPageManager {
     constructor() {
         this.currentUser = null;
-        this.baseURL = 'http://localhost:3000';
         this.init();
     }
 
@@ -119,13 +118,11 @@ class AccountPageManager {
                         <h2><i class="fas fa-lock"></i> Password & Security</h2>
                     </div>
                     <div class="section-content">
+                        <div class="password-info">
+                            <p><i class="fas fa-info-circle"></i> Password changes are managed through Supabase authentication.</p>
+                        </div>
                         <form id="changePasswordForm" onsubmit="accountPageManager.changePassword(event)">
                             <div class="password-form">
-                                <div class="info-group">
-                                    <label>Current Password</label>
-                                    <input type="password" id="currentPassword" required>
-                                </div>
-                                
                                 <div class="info-group">
                                     <label>New Password</label>
                                     <input type="password" id="newPassword" minlength="6" required>
@@ -285,9 +282,15 @@ class AccountPageManager {
         const file = event.target.files[0];
         if (!file) return;
 
-        // Validate file size (5MB max)
-        if (file.size > 5 * 1024 * 1024) {
-            this.showMessage('File size must be less than 5MB', 'error');
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            this.showMessage('Please select an image file', 'error');
+            return;
+        }
+
+        // Validate file size (2MB max)
+        if (file.size > 2 * 1024 * 1024) {
+            this.showMessage('File size must be less than 2MB', 'error');
             return;
         }
 
@@ -298,33 +301,83 @@ class AccountPageManager {
         changeBtn.disabled = true;
 
         try {
-            const formData = new FormData();
-            formData.append('avatar', file);
-
-            const response = await fetch(`${this.baseURL}/user/upload-avatar`, {
-                method: 'POST',
-                headers: accountSystem.getAuthHeaders(),
-                body: formData
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                // Update the UI with new avatar
-                const currentAvatar = document.querySelector('.current-avatar');
-                currentAvatar.innerHTML = `<img src="${data.profile_image_url}" alt="Profile Picture" class="profile-pic">`;
-                
-                // Update account system user data
-                accountSystem.user.profile_image_url = data.profile_image_url;
-                accountSystem.updateAccountUI();
-                
-                this.showMessage('Profile picture updated successfully!', 'success');
-            } else {
-                this.showMessage(data.error, 'error');
+            if (!accountSystem.supabase) {
+                this.showMessage('Profile images require account sync. Please enable online mode.', 'error');
+                return;
             }
+
+            // Get current user
+            const user = accountSystem.user;
+            if (!user || !user.id) {
+                this.showMessage('User not found. Please log in again.', 'error');
+                return;
+            }
+
+            // Create unique filename
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${user.id}/avatar-${Date.now()}.${fileExt}`;
+
+            // Remove old avatar if exists
+            if (user.profile_image_url) {
+                const oldFileName = user.profile_image_url.split('/').pop();
+                if (oldFileName) {
+                    await accountSystem.supabase.storage
+                        .from('avatars')
+                        .remove([`${user.id}/${oldFileName}`]);
+                }
+            }
+
+            // Upload to Supabase Storage
+            const { data: uploadData, error: uploadError } = await accountSystem.supabase.storage
+                .from('avatars')
+                .upload(fileName, file, {
+                    cacheControl: '3600',
+                    upsert: true
+                });
+
+            if (uploadError) {
+                console.error('Upload error:', uploadError);
+                this.showMessage('Error uploading image: ' + uploadError.message, 'error');
+                return;
+            }
+
+            // Get public URL
+            const { data: urlData } = accountSystem.supabase.storage
+                .from('avatars')
+                .getPublicUrl(fileName);
+
+            const publicUrl = urlData.publicUrl;
+
+            // Update user profile in database
+            const { error: updateError } = await accountSystem.supabase
+                .from('users')
+                .update({ profile_image_url: publicUrl })
+                .eq('id', user.id);
+
+            if (updateError) {
+                console.error('Database update error:', updateError);
+                this.showMessage('Error updating profile: ' + updateError.message, 'error');
+                return;
+            }
+
+            // Update local user data and UI
+            accountSystem.user.profile_image_url = publicUrl;
+            
+            // Update the current avatar display
+            const currentAvatar = document.querySelector('.current-avatar');
+            currentAvatar.innerHTML = `<img src="${publicUrl}" alt="Profile Picture" class="profile-pic">`;
+            
+            // Refresh the user profile to ensure consistency
+            await accountSystem.refreshUserProfile();
+            
+            // Re-render the account interface to show remove button
+            this.renderAccountInterface();
+            
+            this.showMessage('Profile picture updated successfully!', 'success');
+
         } catch (error) {
             console.error('Upload error:', error);
-            this.showMessage('Error uploading image', 'error');
+            this.showMessage('Error uploading image: ' + error.message, 'error');
         } finally {
             changeBtn.innerHTML = originalText;
             changeBtn.disabled = false;
@@ -337,36 +390,57 @@ class AccountPageManager {
         }
 
         try {
-            const response = await fetch(`${this.baseURL}/user/profile`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...accountSystem.getAuthHeaders()
-                },
-                body: JSON.stringify({ profile_image_url: null })
-            });
-
-            if (response.ok) {
-                // Update UI
-                const currentAvatar = document.querySelector('.current-avatar');
-                const user = accountSystem.user;
-                currentAvatar.innerHTML = `<div class="default-avatar">${user.username.charAt(0).toUpperCase()}</div>`;
-                
-                // Update account system user data
-                accountSystem.user.profile_image_url = null;
-                accountSystem.updateAccountUI();
-                
-                this.showMessage('Profile picture removed', 'success');
-                
-                // Re-render to update buttons
-                this.renderAccountInterface();
-            } else {
-                const data = await response.json();
-                this.showMessage(data.error, 'error');
+            if (!accountSystem.supabase) {
+                this.showMessage('Profile images require account sync. Please enable online mode.', 'error');
+                return;
             }
+
+            const user = accountSystem.user;
+            if (!user || !user.id) {
+                this.showMessage('User not found. Please log in again.', 'error');
+                return;
+            }
+
+            // Remove from Supabase Storage if exists
+            if (user.profile_image_url) {
+                const fileName = user.profile_image_url.split('/').pop();
+                if (fileName) {
+                    await accountSystem.supabase.storage
+                        .from('avatars')
+                        .remove([`${user.id}/${fileName}`]);
+                }
+            }
+
+            // Update user profile in database
+            const { error: updateError } = await accountSystem.supabase
+                .from('users')
+                .update({ profile_image_url: null })
+                .eq('id', user.id);
+
+            if (updateError) {
+                console.error('Database update error:', updateError);
+                this.showMessage('Error updating profile: ' + updateError.message, 'error');
+                return;
+            }
+
+            // Update local user data and UI
+            accountSystem.user.profile_image_url = null;
+            
+            // Update UI
+            const currentAvatar = document.querySelector('.current-avatar');
+            currentAvatar.innerHTML = `<div class="default-avatar">${user.username.charAt(0).toUpperCase()}</div>`;
+            
+            // Refresh the user profile to ensure consistency
+            await accountSystem.refreshUserProfile();
+            
+            this.showMessage('Profile picture removed', 'success');
+            
+            // Re-render to update buttons
+            this.renderAccountInterface();
+
         } catch (error) {
             console.error('Remove avatar error:', error);
-            this.showMessage('Error removing image', 'error');
+            this.showMessage('Error removing image: ' + error.message, 'error');
         }
     }
 
@@ -399,29 +473,39 @@ class AccountPageManager {
         }
 
         try {
-            const response = await fetch(`${this.baseURL}/user/profile`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...accountSystem.getAuthHeaders()
-                },
-                body: JSON.stringify({ username: newUsername })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                accountSystem.user.username = newUsername;
-                accountSystem.updateAccountUI();
-                this.showMessage('Username updated successfully!', 'success');
-                this.disableUsernameEdit();
-            } else {
-                this.showMessage(data.error, 'error');
-                usernameInput.value = accountSystem.user.username; // Reset to original
+            if (!accountSystem.supabase) {
+                this.showMessage('Profile updates require account sync. Please enable online mode.', 'error');
+                return;
             }
+
+            const user = accountSystem.user;
+            if (!user || !user.id) {
+                this.showMessage('User not found. Please log in again.', 'error');
+                return;
+            }
+
+            // Update user profile in database
+            const { error: updateError } = await accountSystem.supabase
+                .from('users')
+                .update({ username: newUsername })
+                .eq('id', user.id);
+
+            if (updateError) {
+                console.error('Database update error:', updateError);
+                this.showMessage('Error updating username: ' + updateError.message, 'error');
+                usernameInput.value = accountSystem.user.username; // Reset to original
+                return;
+            }
+
+            // Update local user data and UI
+            accountSystem.user.username = newUsername;
+            accountSystem.updateAccountUI();
+            this.showMessage('Username updated successfully!', 'success');
+            this.disableUsernameEdit();
+
         } catch (error) {
             console.error('Update username error:', error);
-            this.showMessage('Error updating username', 'error');
+            this.showMessage('Error updating username: ' + error.message, 'error');
             usernameInput.value = accountSystem.user.username; // Reset to original
         }
     }
@@ -449,7 +533,6 @@ class AccountPageManager {
     async changePassword(event) {
         event.preventDefault();
         
-        const currentPassword = document.getElementById('currentPassword').value;
         const newPassword = document.getElementById('newPassword').value;
         const confirmPassword = document.getElementById('confirmPassword').value;
         
@@ -464,29 +547,27 @@ class AccountPageManager {
         submitBtn.disabled = true;
 
         try {
-            const response = await fetch(`${this.baseURL}/user/change-password`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...accountSystem.getAuthHeaders()
-                },
-                body: JSON.stringify({
-                    currentPassword,
-                    newPassword
-                })
+            if (!accountSystem.supabase) {
+                this.showMessage('Password changes require account sync. Please enable online mode.', 'error');
+                return;
+            }
+
+            // Use Supabase auth to update password
+            const { error } = await accountSystem.supabase.auth.updateUser({
+                password: newPassword
             });
 
-            const data = await response.json();
-
-            if (response.ok) {
+            if (error) {
+                console.error('Password change error:', error);
+                this.showMessage('Error changing password: ' + error.message, 'error');
+            } else {
                 this.showMessage('Password changed successfully!', 'success');
                 document.getElementById('changePasswordForm').reset();
-            } else {
-                this.showMessage(data.error, 'error');
             }
+
         } catch (error) {
             console.error('Change password error:', error);
-            this.showMessage('Error changing password', 'error');
+            this.showMessage('Error changing password: ' + error.message, 'error');
         } finally {
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;

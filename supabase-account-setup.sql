@@ -216,7 +216,38 @@ CREATE TRIGGER cleanup_recent_games_trigger
     AFTER INSERT OR UPDATE ON public.user_recent_games
     FOR EACH ROW EXECUTE FUNCTION cleanup_recent_games();
 
--- 16. Create function for profanity filtering (basic implementation)
+-- =====================================================
+-- Storage Setup for Profile Images
+-- =====================================================
+
+-- 16. Create avatars storage bucket
+INSERT INTO storage.buckets (id, name, public) 
+VALUES ('avatars', 'avatars', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- 17. Storage policies for avatars bucket
+CREATE POLICY "Avatar images are publicly accessible" ON storage.objects
+    FOR SELECT USING (bucket_id = 'avatars');
+
+CREATE POLICY "Users can upload their own avatar" ON storage.objects
+    FOR INSERT WITH CHECK (
+        bucket_id = 'avatars' 
+        AND auth.uid()::text = (storage.foldername(name))[1]
+    );
+
+CREATE POLICY "Users can update their own avatar" ON storage.objects
+    FOR UPDATE USING (
+        bucket_id = 'avatars' 
+        AND auth.uid()::text = (storage.foldername(name))[1]
+    );
+
+CREATE POLICY "Users can delete their own avatar" ON storage.objects
+    FOR DELETE USING (
+        bucket_id = 'avatars' 
+        AND auth.uid()::text = (storage.foldername(name))[1]
+    );
+
+-- 18. Create function for profanity filtering (basic implementation)
 CREATE OR REPLACE FUNCTION check_username_profanity(username_text TEXT)
 RETURNS BOOLEAN AS $$
 DECLARE
@@ -247,4 +278,5 @@ $$ LANGUAGE plpgsql;
 -- =====================================================
 -- You're all set! Run this script in your Supabase SQL editor.
 -- Make sure to update your environment variables with proper Supabase credentials.
+-- Don't forget to create the 'avatars' storage bucket in your Supabase dashboard if it doesn't exist.
 -- =====================================================
