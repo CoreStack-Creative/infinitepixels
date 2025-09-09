@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Recent Games</title>
+</head>
+<body>
+    <h1>Test Recent Games Tracking</h1>
+    <button onclick="testAddGame()">Add Test Game to Recent</button>
+    <button onclick="checkLocalStorage()">Check localStorage</button>
+    <button onclick="clearRecent()">Clear Recent Games</button>
+    <button onclick="goToRecent()">Go to Recent Page</button>
+    
+    <div id="output"></div>
+
+    <script>
+        function testAddGame() {
+            // Test adding a game manually
+            const gameId = '1v1lol';
+            const storageKey = 'infinitePixels_recentlyPlayed';
+            
+            let recentGames = [];
+            const stored = localStorage.getItem(storageKey);
+            if (stored) {
+                recentGames = JSON.parse(stored);
+            }
+            
+            // Remove the game if it already exists
+            recentGames = recentGames.filter(g => g.slug !== gameId);
+            
+            // Add the game to the beginning
+            const gameWithTimestamp = {
+                slug: gameId,
+                lastPlayed: Date.now()
+            };
+            
+            recentGames.unshift(gameWithTimestamp);
+            
+            localStorage.setItem(storageKey, JSON.stringify(recentGames));
+            
+            document.getElementById('output').innerHTML = `<p>Added ${gameId} to recent games!</p>`;
+        }
+        
+        function checkLocalStorage() {
+            const storageKey = 'infinitePixels_recentlyPlayed';
+            const stored = localStorage.getItem(storageKey);
+            document.getElementById('output').innerHTML = `<pre>localStorage data: ${stored || 'null'}</pre>`;
+        }
+        
+        function clearRecent() {
+            localStorage.removeItem('infinitePixels_recentlyPlayed');
+            document.getElementById('output').innerHTML = `<p>Cleared recent games!</p>`;
+        }
+        
+        function goToRecent() {
+            window.location.href = 'recent.html';
+        }
+    </script>
+</body>
+</html>
