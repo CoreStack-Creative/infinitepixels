@@ -1,51 +1,78 @@
 // Recent Games Page Manager
 class RecentGamesPageManager {
     constructor() {
+        console.log('🏗️ RecentGamesPageManager constructor called');
         this.games = [];
         this.recentGames = [];
         this.isLoading = false;
         this.hasLoaded = false;
+        console.log('🚀 Starting initialization...');
         this.init();
     }
 
     async init() {
+        console.log('🚀 RecentGamesPageManager init starting...');
+        
         // Load games data first
         await this.loadGamesData();
+        console.log('✅ Games data loaded, count:', this.games.length);
         
         // Setup clear history button
         this.setupClearHistoryButton();
+        console.log('✅ Clear history button setup complete');
+        
+        // Try to load recent games immediately first, then setup proper listeners
+        console.log('🚀 Attempting immediate load of recent games...');
+        this.loadRecentGames();
         
         // Wait for account system to be ready, then load recent games
         if (window.accountSystem) {
+            console.log('🔍 Account system found, checking if ready...');
             if (window.accountSystem.isReady) {
-                // Account system is already ready
-                this.loadRecentGames();
+                console.log('✅ Account system is ready, reloading recent games...');
+                // Account system is already ready, reload to get server data if logged in
+                setTimeout(() => this.loadRecentGames(), 100);
             } else {
+                console.log('⏳ Account system not ready, waiting...');
                 // Wait for account system to be ready
-                accountSystem.onReady(() => {
-                    this.loadRecentGames();
-                });
+                if (typeof accountSystem.onReady === 'function') {
+                    accountSystem.onReady(() => {
+                        console.log('✅ Account system became ready, reloading recent games...');
+                        this.loadRecentGames();
+                    });
+                } else {
+                    console.warn('⚠️ Account system onReady method not found');
+                }
             }
         } else {
+            console.log('❌ Account system not found, setting up fallback...');
             // Account system not loaded yet, wait for it
             let attempts = 0;
             const waitForAccountSystem = () => {
                 attempts++;
+                console.log(`🔍 Attempt ${attempts} to find account system...`);
                 if (window.accountSystem) {
+                    console.log('✅ Account system found!');
                     if (window.accountSystem.isReady) {
+                        console.log('✅ Account system is ready, reloading recent games...');
                         this.loadRecentGames();
                     } else {
-                        window.accountSystem.onReady(() => {
-                            this.loadRecentGames();
-                        });
+                        console.log('⏳ Account system found but not ready, waiting...');
+                        if (typeof window.accountSystem.onReady === 'function') {
+                            window.accountSystem.onReady(() => {
+                                console.log('✅ Account system became ready, reloading recent games...');
+                                this.loadRecentGames();
+                            });
+                        } else {
+                            console.warn('⚠️ Account system onReady method not found');
+                        }
                     }
                 } else if (attempts < 10) {
                     // Try again after 100ms, up to 10 times (1 second total)
                     setTimeout(waitForAccountSystem, 100);
                 } else {
-                    // Give up waiting for account system, load anyway
-                    console.warn('Account system not available after 1 second, loading recent games anyway');
-                    this.loadRecentGames();
+                    // Give up waiting for account system
+                    console.warn('Account system not available after 1 second');
                 }
             };
             waitForAccountSystem();
@@ -74,6 +101,7 @@ class RecentGamesPageManager {
 
         // Listen for recent games updates from other parts of the system
         window.addEventListener('recentGamesUpdated', (event) => {
+            console.log('📢 Received recentGamesUpdated event:', event.detail);
             // Only refresh if we're not currently loading
             if (!this.isLoading) {
                 this.loadRecentGames();
@@ -83,6 +111,7 @@ class RecentGamesPageManager {
         // Listen for page visibility changes to refresh when user comes back
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden && this.hasLoaded) {
+                console.log('👁️ Page became visible, refreshing recent games...');
                 // Page became visible again, refresh recent games
                 this.loadRecentGames();
             }
@@ -91,6 +120,17 @@ class RecentGamesPageManager {
         // Listen for focus events to refresh when window gets focus
         window.addEventListener('focus', () => {
             if (this.hasLoaded) {
+                console.log('🎯 Window focused, refreshing recent games...');
+                this.loadRecentGames();
+            }
+        });
+        
+        // Listen for account system auth state changes
+        window.addEventListener('authStateChanged', (event) => {
+            console.log('🔐 Auth state changed in recent page:', event.detail);
+            // Refresh recent games when user logs in/out
+            if (this.hasLoaded) {
+                console.log('🔄 Refreshing recent games due to auth change...');
                 this.loadRecentGames();
             }
         });
@@ -106,6 +146,8 @@ class RecentGamesPageManager {
     }
 
     async loadRecentGames() {
+        console.log('📥 loadRecentGames called');
+        
         // Prevent multiple simultaneous loads
         if (this.isLoading) {
             console.log('Recent games already loading, skipping...');
@@ -113,19 +155,23 @@ class RecentGamesPageManager {
         }
         
         this.isLoading = true;
+        console.log('🔄 Setting loading state to true');
         
         const recentGamesGrid = document.getElementById('recentGamesGrid') || 
                                 document.querySelector('.recent-games-grid') ||
                                 document.querySelector('.games-grid');
         
         if (!recentGamesGrid) {
-            console.error('Recent games container not found');
+            console.error('❌ Recent games container not found');
             this.isLoading = false;
             return;
         }
+        
+        console.log('✅ Recent games container found:', recentGamesGrid.id);
 
         // Only show loading state if we haven't loaded before
         if (!this.hasLoaded) {
+            console.log('📺 Showing loading state...');
             recentGamesGrid.innerHTML = `
                 <div class="loading-recent">
                     <i class="fas fa-spinner fa-spin"></i>
@@ -136,15 +182,18 @@ class RecentGamesPageManager {
 
         try {
             if (window.accountSystem && window.accountSystem.isLoggedIn()) {
+                console.log('👤 User is logged in, loading from server...');
                 // User is logged in - load from server
                 await this.loadServerRecentGames();
             } else {
+                console.log('🏠 User not logged in, loading from localStorage...');
                 // User not logged in - load from localStorage
                 this.loadLocalRecentGames();
             }
             this.hasLoaded = true;
+            console.log('✅ Recent games loading completed successfully');
         } catch (error) {
-            console.error('Error loading recent games:', error);
+            console.error('❌ Error loading recent games:', error);
             recentGamesGrid.innerHTML = `
                 <div class="error-recent">
                     <i class="fas fa-exclamation-triangle"></i>
@@ -158,6 +207,7 @@ class RecentGamesPageManager {
             `;
         } finally {
             this.isLoading = false;
+            console.log('🔄 Setting loading state to false');
         }
     }
 
@@ -203,9 +253,20 @@ class RecentGamesPageManager {
     }
 
     loadLocalRecentGames() {
+        console.log('🏠 loadLocalRecentGames called');
         try {
             const stored = localStorage.getItem('infinitePixels_recentlyPlayed');
+            console.log('💾 Raw localStorage data:', stored);
+            
             const localRecent = stored ? JSON.parse(stored) : [];
+            console.log('📋 Parsed local recent games:', localRecent.length, 'entries');
+            
+            if (localRecent.length === 0) {
+                console.log('📭 No local recent games found');
+                this.recentGames = [];
+                this.renderRecentGames();
+                return;
+            }
             
             // Convert local format to server format for consistency and filter invalid entries
             this.recentGames = localRecent
@@ -226,20 +287,31 @@ class RecentGamesPageManager {
                     last_played: new Date(game.lastPlayed).toISOString()
                 }));
             
+            console.log('✅ Processed recent games for rendering:', this.recentGames.length, 'valid entries');
             this.renderRecentGames();
         } catch (error) {
-            console.error('Error loading local recent games:', error);
+            console.error('❌ Error loading local recent games:', error);
             this.recentGames = [];
             this.renderRecentGames();
         }
     }
 
     renderRecentGames() {
+        console.log('🖼️ renderRecentGames called with', this.recentGames.length, 'recent games');
+        
         const recentGamesGrid = document.getElementById('recentGamesGrid') || 
                                 document.querySelector('.recent-games-grid') ||
                                 document.querySelector('.games-grid');
 
+        if (!recentGamesGrid) {
+            console.error('❌ Recent games grid not found for rendering');
+            return;
+        }
+        
+        console.log('✅ Recent games grid found for rendering');
+
         if (this.recentGames.length === 0) {
+            console.log('📭 No recent games to display, showing empty state');
             recentGamesGrid.innerHTML = `
                 <div class="no-recent-games">
                     <div class="no-recent-content">
@@ -258,6 +330,9 @@ class RecentGamesPageManager {
             }
             return;
         }
+
+        console.log('🎮 Processing', this.recentGames.length, 'recent games for display');
+        console.log('📚 Games database has', this.games.length, 'games');
 
         // Hide empty state
         const emptyState = document.getElementById('emptyState');
@@ -287,13 +362,16 @@ class RecentGamesPageManager {
                 return null;
             }
 
+            console.log('✅ Creating card for game:', game.name, '(', gameIdentifier, ')');
             return this.createGameCard(game, recentGame);
         }).filter(card => card !== null);
 
+        console.log('🎨 Generated', gameCards.length, 'game cards');
         recentGamesGrid.innerHTML = gameCards.join('');
 
         // Add event listeners
         this.addEventListeners();
+        console.log('🔗 Event listeners added');
     }
 
     createGameCard(game, recentGame) {
@@ -538,7 +616,13 @@ class RecentGamesPageManager {
 
 // Initialize recent games manager when page loads
 document.addEventListener('DOMContentLoaded', () => {
-    window.recentGamesManager = new RecentGamesPageManager();
+    console.log('🚀 DOM Content Loaded - Initializing RecentGamesPageManager...');
+    try {
+        window.recentGamesManager = new RecentGamesPageManager();
+        console.log('✅ RecentGamesPageManager created successfully');
+    } catch (error) {
+        console.error('❌ Error creating RecentGamesPageManager:', error);
+    }
 });
 
 // Debug functions for browser console
