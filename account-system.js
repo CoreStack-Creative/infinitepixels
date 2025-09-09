@@ -1018,6 +1018,12 @@ class AccountSystem {
     }
 
     async addToRecentGames(gameId) {
+        // Validate gameId before processing
+        if (!gameId || gameId === 'undefined' || gameId === 'null' || typeof gameId !== 'string' || gameId.trim() === '') {
+            console.warn('addToRecentGames called with invalid gameId:', gameId);
+            return;
+        }
+
         // Always add to local storage for immediate feedback
         this.addToLocalRecentGames(gameId);
 
@@ -1056,6 +1062,12 @@ class AccountSystem {
 
     addToLocalRecentGames(gameId) {
         try {
+            // Additional validation for gameId
+            if (!gameId || gameId === 'undefined' || gameId === 'null' || typeof gameId !== 'string' || gameId.trim() === '') {
+                console.warn('addToLocalRecentGames called with invalid gameId:', gameId);
+                return;
+            }
+
             const storageKey = 'infinitePixels_recentlyPlayed';
             const maxGames = 24;
             
@@ -1063,6 +1075,16 @@ class AccountSystem {
             const stored = localStorage.getItem(storageKey);
             if (stored) {
                 recentGames = JSON.parse(stored);
+                
+                // Filter out any invalid entries that might exist
+                recentGames = recentGames.filter(game => 
+                    game && 
+                    game.slug && 
+                    game.slug !== 'undefined' && 
+                    game.slug !== 'null' && 
+                    typeof game.slug === 'string' && 
+                    game.slug.trim() !== ''
+                );
             }
             
             // Remove the game if it already exists
@@ -1140,9 +1162,20 @@ class AccountSystem {
             const localRecent = localStorage.getItem('infinitePixels_recentlyPlayed');
             if (localRecent) {
                 const recentGames = JSON.parse(localRecent);
-                console.log('📤 Syncing recent games to server:', recentGames.length);
                 
-                for (const game of recentGames) {
+                // Filter out invalid entries before syncing
+                const validRecentGames = recentGames.filter(game => 
+                    game && 
+                    game.slug && 
+                    game.slug !== 'undefined' && 
+                    game.slug !== 'null' && 
+                    typeof game.slug === 'string' && 
+                    game.slug.trim() !== ''
+                );
+                
+                console.log('📤 Syncing recent games to server:', validRecentGames.length);
+                
+                for (const game of validRecentGames) {
                     await this.supabase
                         .from('user_recent_games')
                         .upsert({
@@ -1152,6 +1185,12 @@ class AccountSystem {
                         }, {
                             onConflict: 'user_id,game_id'
                         });
+                }
+                
+                // Update localStorage with cleaned data if we filtered anything out
+                if (validRecentGames.length !== recentGames.length) {
+                    console.log(`🧹 Cleaned local recent games: ${recentGames.length} -> ${validRecentGames.length}`);
+                    localStorage.setItem('infinitePixels_recentlyPlayed', JSON.stringify(validRecentGames));
                 }
             }
 
@@ -1236,6 +1275,9 @@ class AccountSystem {
             }
 
             console.log('✅ Favorites synced successfully');
+            
+            // Run cleanup to remove any invalid entries that might exist on server
+            await this.cleanupInvalidServerEntries();
         } catch (error) {
             console.error('Error syncing local data to server:', error);
         }
@@ -1254,7 +1296,21 @@ class AccountSystem {
                 .limit(24);
 
             if (!recentError && recentGames) {
-                const formattedRecent = recentGames.map(game => ({
+                // Filter out invalid entries from server data
+                const validRecentGames = recentGames.filter(game => 
+                    game && 
+                    game.game_id && 
+                    game.game_id !== 'undefined' && 
+                    game.game_id !== 'null' && 
+                    typeof game.game_id === 'string' && 
+                    game.game_id.trim() !== ''
+                );
+                
+                if (validRecentGames.length !== recentGames.length) {
+                    console.warn(`🧹 Filtered out ${recentGames.length - validRecentGames.length} invalid recent games from server`);
+                }
+                
+                const formattedRecent = validRecentGames.map(game => ({
                     slug: game.game_id,
                     lastPlayed: new Date(game.last_played).getTime()
                 }));
@@ -1264,7 +1320,7 @@ class AccountSystem {
                 const mergedRecent = this.mergeGameLists(localRecent, formattedRecent);
                 
                 localStorage.setItem('infinitePixels_recentlyPlayed', JSON.stringify(mergedRecent));
-                console.log('✅ Recent games loaded from server:', recentGames.length);
+                console.log('✅ Recent games loaded from server:', validRecentGames.length);
             }
 
             // Load favorites from server
@@ -1314,13 +1370,23 @@ class AccountSystem {
     mergeGameLists(localGames, serverGames) {
         const gameMap = new Map();
         
-        // Add local games first
-        localGames.forEach(game => {
+        // Helper function to validate game entry
+        const isValidGame = (game) => {
+            return game && 
+                   game.slug && 
+                   game.slug !== 'undefined' && 
+                   game.slug !== 'null' && 
+                   typeof game.slug === 'string' && 
+                   game.slug.trim() !== '';
+        };
+        
+        // Add local games first (with validation)
+        localGames.filter(isValidGame).forEach(game => {
             gameMap.set(game.slug, game);
         });
         
         // Add or update with server games (keeping most recent timestamp)
-        serverGames.forEach(game => {
+        serverGames.filter(isValidGame).forEach(game => {
             const existing = gameMap.get(game.slug);
             if (!existing || game.lastPlayed > existing.lastPlayed) {
                 gameMap.set(game.slug, game);
@@ -1437,6 +1503,73 @@ class AccountSystem {
             console.error('Error refreshing user profile:', error);
         }
     }
+
+    // Add cleanup function for server database
+    async cleanupInvalidServerEntries() {
+        if (!this.supabase || !this.session) {
+            console.log('Cannot cleanup: not logged in or no Supabase connection');
+            return;
+        }
+
+        try {
+            console.log('🧹 Starting cleanup of invalid server entries...');
+            
+            // Clean up recent games with invalid game_id
+            const { data: invalidRecent, error: recentError } = await this.supabase
+                .from('user_recent_games')
+                .select('id, game_id')
+                .eq('user_id', this.user.id)
+                .or('game_id.is.null,game_id.eq.undefined,game_id.eq.null');
+
+            if (!recentError && invalidRecent && invalidRecent.length > 0) {
+                console.log(`🗑️ Found ${invalidRecent.length} invalid recent game entries`);
+                
+                const idsToDelete = invalidRecent.map(entry => entry.id);
+                const { error: deleteError } = await this.supabase
+                    .from('user_recent_games')
+                    .delete()
+                    .in('id', idsToDelete);
+
+                if (!deleteError) {
+                    console.log(`✅ Cleaned up ${invalidRecent.length} invalid recent game entries`);
+                } else {
+                    console.error('Error deleting invalid recent games:', deleteError);
+                }
+            }
+
+            // Clean up favorites with invalid game_id
+            const { data: invalidFavorites, error: favError } = await this.supabase
+                .from('user_favorites')
+                .select('id, game_id')
+                .eq('user_id', this.user.id)
+                .or('game_id.is.null,game_id.eq.undefined,game_id.eq.null');
+
+            if (!favError && invalidFavorites && invalidFavorites.length > 0) {
+                console.log(`🗑️ Found ${invalidFavorites.length} invalid favorite entries`);
+                
+                const idsToDelete = invalidFavorites.map(entry => entry.id);
+                const { error: deleteError } = await this.supabase
+                    .from('user_favorites')
+                    .delete()
+                    .in('id', idsToDelete);
+
+                if (!deleteError) {
+                    console.log(`✅ Cleaned up ${invalidFavorites.length} invalid favorite entries`);
+                } else {
+                    console.error('Error deleting invalid favorites:', deleteError);
+                }
+            }
+
+            console.log('🎉 Server cleanup completed');
+            
+            // Refresh recent games page after cleanup
+            if (window.recentGamesManager) {
+                window.recentGamesManager.loadRecentGames();
+            }
+        } catch (error) {
+            console.error('Error during server cleanup:', error);
+        }
+    }
 }
 
 // Initialize account system
@@ -1444,3 +1577,14 @@ const accountSystem = new AccountSystem();
 
 // Make account system available globally
 window.accountSystem = accountSystem;
+
+// Debug function to manually clean up invalid server entries (call from browser console)
+window.debugCleanupServer = async function() {
+    if (window.accountSystem && window.accountSystem.cleanupInvalidServerEntries) {
+        console.log('🔧 Manual server cleanup requested...');
+        await window.accountSystem.cleanupInvalidServerEntries();
+        console.log('✅ Manual cleanup completed');
+    } else {
+        console.log('❌ Account system not available or cleanup function not found');
+    }
+};

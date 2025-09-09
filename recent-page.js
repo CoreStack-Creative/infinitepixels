@@ -181,7 +181,20 @@ class RecentGamesPageManager {
                 throw new Error(`Failed to load recent games: ${error.message}`);
             }
 
-            this.recentGames = data || [];
+            // Filter out entries with invalid game_id values
+            const validData = (data || []).filter(item => {
+                const isValid = item.game_id && 
+                               item.game_id !== 'undefined' && 
+                               item.game_id !== 'null' && 
+                               item.game_id.toString().trim() !== '';
+                
+                if (!isValid) {
+                    console.warn('Filtering out invalid recent game entry:', item);
+                }
+                return isValid;
+            });
+
+            this.recentGames = validData;
             this.renderRecentGames();
         } catch (error) {
             console.error('Error loading server recent games:', error);
@@ -194,11 +207,24 @@ class RecentGamesPageManager {
             const stored = localStorage.getItem('infinitePixels_recentlyPlayed');
             const localRecent = stored ? JSON.parse(stored) : [];
             
-            // Convert local format to server format for consistency
-            this.recentGames = localRecent.map(game => ({
-                game_id: game.slug,
-                last_played: new Date(game.lastPlayed).toISOString()
-            }));
+            // Convert local format to server format for consistency and filter invalid entries
+            this.recentGames = localRecent
+                .filter(game => {
+                    const isValid = game && 
+                                   game.slug && 
+                                   game.slug !== 'undefined' && 
+                                   game.slug !== 'null' && 
+                                   game.slug.toString().trim() !== '';
+                    
+                    if (!isValid) {
+                        console.warn('Filtering out invalid local recent game entry:', game);
+                    }
+                    return isValid;
+                })
+                .map(game => ({
+                    game_id: game.slug,
+                    last_played: new Date(game.lastPlayed).toISOString()
+                }));
             
             this.renderRecentGames();
         } catch (error) {
@@ -243,6 +269,12 @@ class RecentGamesPageManager {
         const gameCards = this.recentGames.map(recentGame => {
             // Handle both server format (game_id) and local format (slug)
             const gameIdentifier = recentGame.game_id || recentGame.slug;
+            
+            // Skip entries with undefined/null/empty identifiers
+            if (!gameIdentifier || gameIdentifier === 'undefined' || gameIdentifier === 'null') {
+                console.warn('Skipping recent game with invalid identifier:', gameIdentifier, recentGame);
+                return null;
+            }
             
             const game = this.games.find(g => 
                 g.id === gameIdentifier || 
@@ -508,3 +540,48 @@ class RecentGamesPageManager {
 document.addEventListener('DOMContentLoaded', () => {
     window.recentGamesManager = new RecentGamesPageManager();
 });
+
+// Debug functions for browser console
+window.debugRecentGames = function() {
+    console.log('🔍 Recent Games Debug Information');
+    console.log('================================');
+    
+    if (window.recentGamesManager) {
+        console.log('✅ Recent Games Manager exists');
+        console.log('📊 Recent games count:', window.recentGamesManager.recentGames ? window.recentGamesManager.recentGames.length : 'N/A');
+        console.log('📋 Recent games data:', window.recentGamesManager.recentGames);
+        console.log('🎮 Games database loaded:', window.recentGamesManager.games ? window.recentGamesManager.games.length : 'N/A');
+    } else {
+        console.log('❌ Recent Games Manager not found');
+    }
+    
+    // Check localStorage
+    const localRecent = localStorage.getItem('infinitePixels_recentlyPlayed');
+    if (localRecent) {
+        try {
+            const parsed = JSON.parse(localRecent);
+            console.log('💾 Local storage recent games:', parsed.length);
+            console.log('💾 Local storage data:', parsed);
+        } catch (e) {
+            console.log('❌ Error parsing local storage data:', e);
+        }
+    } else {
+        console.log('💾 No local storage recent games found');
+    }
+    
+    // Check if user is logged in
+    if (window.accountSystem) {
+        console.log('👤 User logged in:', window.accountSystem.isLoggedIn());
+        console.log('👤 User ID:', window.accountSystem.user?.id || 'N/A');
+    }
+};
+
+// Function to manually refresh recent games
+window.refreshRecentGames = function() {
+    if (window.recentGamesManager) {
+        console.log('🔄 Refreshing recent games...');
+        window.recentGamesManager.loadRecentGames();
+    } else {
+        console.log('❌ Recent Games Manager not found');
+    }
+};

@@ -6791,6 +6791,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Function to track game visits (add this to your game pages)
 function trackGameVisit(gameSlug) {
+    // Validate gameSlug before processing
+    if (!gameSlug || gameSlug === 'undefined' || gameSlug === 'null' || typeof gameSlug !== 'string' || gameSlug.trim() === '') {
+        console.warn('trackGameVisit called with invalid gameSlug:', gameSlug);
+        return;
+    }
+
     // Track with the old recently played manager
     if (window.recentlyPlayedManager) {
         window.recentlyPlayedManager.addGameToRecent(gameSlug);
@@ -6833,7 +6839,14 @@ function trackGameVisit(gameSlug) {
 if (window.location.pathname.includes('game.html')) {
     const urlParams = new URLSearchParams(window.location.search);
     const gameSlug = urlParams.get('game');
-    if (gameSlug) {
+    
+    // Validate the gameSlug before processing
+    if (gameSlug && 
+        gameSlug !== 'undefined' && 
+        gameSlug !== 'null' && 
+        typeof gameSlug === 'string' && 
+        gameSlug.trim() !== '') {
+        
         // Try to track immediately if systems are ready
         const attemptTracking = () => {
             if (window.accountSystem) {
