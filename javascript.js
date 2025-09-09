@@ -6652,23 +6652,19 @@ class RecentlyPlayedManager {
             // Handle both old format (full game object) and new format (slug + lastPlayed only)
             recentGames = recentGames.filter(game => {
                 if (!game || typeof game !== 'object') {
-                    console.warn('Filtering out invalid recent game (not an object):', game);
                     return false;
                 }
                 
                 // New format: {slug: "gameName", lastPlayed: timestamp}
                 if (game.slug && game.lastPlayed && !game.name) {
-                    // This is the new format, it's valid
                     return true;
                 }
                 
                 // Old format: full game object with name property
                 if (!game.slug || typeof game.slug !== 'string') {
-                    console.warn('Filtering out recent game with invalid slug:', game);
                     return false;
                 }
                 if (!game.name || typeof game.name !== 'string') {
-                    console.warn('Filtering out recent game with invalid name:', game);
                     return false;
                 }
                 return true;
@@ -6813,67 +6809,39 @@ class RecentlyPlayedManager {
 
 // Initialize the recently played manager when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    window.recentlyPlayedManager = new RecentlyPlayedManager();
+    // window.recentlyPlayedManager = new RecentlyPlayedManager(); // Keep disabled, account system handles it
+    console.log('📝 Using account system for recent games tracking');
 });
 
 // Function to track game visits (add this to your game pages)
 function trackGameVisit(gameSlug) {
-    console.log('🎯 trackGameVisit called with gameSlug:', gameSlug);
-    
     // Validate gameSlug before processing
     if (!gameSlug || gameSlug === 'undefined' || gameSlug === 'null' || typeof gameSlug !== 'string' || gameSlug.trim() === '') {
         console.warn('trackGameVisit called with invalid gameSlug:', gameSlug);
         return;
     }
 
-    console.log('✅ Valid gameSlug, attempting to track:', gameSlug);
-
-    // Track with the old recently played manager
-    if (window.recentlyPlayedManager) {
-        console.log('📱 Tracking with recentlyPlayedManager...');
-        window.recentlyPlayedManager.addGameToRecent(gameSlug);
-    } else {
-        console.log('⏰ recentlyPlayedManager not ready, will retry...');
-        // If manager isn't loaded yet, try again after a short delay
-        setTimeout(() => {
-            if (window.recentlyPlayedManager) {
-                console.log('📱 Delayed tracking with recentlyPlayedManager...');
-                window.recentlyPlayedManager.addGameToRecent(gameSlug);
-            } else {
-                console.warn('❌ recentlyPlayedManager still not available after delay');
-            }
-        }, 100);
-    }
-
-    // Track with the new account system
+    // Use the account system for tracking
     if (window.accountSystem) {
         if (window.accountSystem.isReady) {
-            console.log('🔐 Tracking with accountSystem (ready)...');
             window.accountSystem.addToRecentGames(gameSlug);
         } else {
-            console.log('⏰ accountSystem not ready, waiting...');
             // Wait for account system to be ready
             window.accountSystem.onReady(() => {
-                console.log('🔐 Delayed tracking with accountSystem (now ready)...');
                 window.accountSystem.addToRecentGames(gameSlug);
             });
         }
     } else {
-        console.log('⏰ accountSystem not available, will retry...');
         // If account system isn't loaded yet, try again after a short delay
         setTimeout(() => {
             if (window.accountSystem) {
                 if (window.accountSystem.isReady) {
-                    console.log('🔐 Delayed tracking with accountSystem...');
                     window.accountSystem.addToRecentGames(gameSlug);
                 } else {
                     window.accountSystem.onReady(() => {
-                        console.log('🔐 Final delayed tracking with accountSystem...');
                         window.accountSystem.addToRecentGames(gameSlug);
                     });
                 }
-            } else {
-                console.warn('❌ accountSystem still not available after delay');
             }
         }, 100);
     }
@@ -6881,10 +6849,8 @@ function trackGameVisit(gameSlug) {
 
 // Auto-track visits when on game.html page
 if (window.location.pathname.includes('game.html')) {
-    console.log('🎮 Detected game.html page, attempting auto-tracking...');
     const urlParams = new URLSearchParams(window.location.search);
     const gameSlug = urlParams.get('game');
-    console.log('🔍 Game slug from URL:', gameSlug);
     
     // Validate the gameSlug before processing
     if (gameSlug && 
@@ -6893,19 +6859,10 @@ if (window.location.pathname.includes('game.html')) {
         typeof gameSlug === 'string' && 
         gameSlug.trim() !== '') {
         
-        console.log('✅ Valid game slug detected, setting up tracking...');
-        
         // Try to track immediately if systems are ready
         const attemptTracking = () => {
-            console.log('🚀 Attempting immediate tracking...');
             if (window.accountSystem) {
-                console.log('🔐 Using accountSystem for immediate tracking...');
                 window.accountSystem.addToRecentGames(gameSlug);
-            }
-            
-            if (window.recentlyPlayedManager) {
-                console.log('📱 Using recentlyPlayedManager for immediate tracking...');
-                window.recentlyPlayedManager.addGameToRecent(gameSlug);
             }
         };
 
@@ -6914,17 +6871,13 @@ if (window.location.pathname.includes('game.html')) {
 
         // Also try on DOM content loaded
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('📄 DOM loaded, calling trackGameVisit...');
             trackGameVisit(gameSlug);
         });
 
         // And try after a short delay to ensure all systems are loaded
         setTimeout(() => {
-            console.log('⏰ Delayed call to trackGameVisit...');
             trackGameVisit(gameSlug);
         }, 500);
-    } else {
-        console.warn('❌ Invalid or missing game slug in URL:', gameSlug);
     }
 }
 

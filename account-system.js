@@ -1018,22 +1018,17 @@ class AccountSystem {
     }
 
     async addToRecentGames(gameId) {
-        console.log('🎯 addToRecentGames called with gameId:', gameId);
-        
         // Validate gameId before processing
         if (!gameId || gameId === 'undefined' || gameId === 'null' || typeof gameId !== 'string' || gameId.trim() === '') {
             console.warn('addToRecentGames called with invalid gameId:', gameId);
             return;
         }
 
-        console.log('✅ Valid gameId, proceeding with tracking:', gameId);
-
         // Always add to local storage for immediate feedback
         this.addToLocalRecentGames(gameId);
 
         // If online and logged in, sync to server
         if (this.supabase && this.session) {
-            console.log('🔐 User logged in, syncing to server...');
             try {
                 await this.supabase
                     .from('user_recent_games')
@@ -1049,13 +1044,10 @@ class AccountSystem {
             } catch (error) {
                 console.error('Add recent game error:', error);
             }
-        } else {
-            console.log('🏠 User not logged in or no supabase, storing locally only');
         }
 
         // Notify recent games page if it exists
         if (window.recentGamesManager) {
-            console.log('🔄 Refreshing recent games manager...');
             window.recentGamesManager.refresh();
         }
 
@@ -1066,13 +1058,9 @@ class AccountSystem {
                 gameId: gameId 
             } 
         }));
-        
-        console.log('✅ addToRecentGames completed for:', gameId);
     }
 
     addToLocalRecentGames(gameId) {
-        console.log('💾 addToLocalRecentGames called with gameId:', gameId);
-        
         try {
             // Additional validation for gameId
             if (!gameId || gameId === 'undefined' || gameId === 'null' || typeof gameId !== 'string' || gameId.trim() === '') {
@@ -1083,18 +1071,13 @@ class AccountSystem {
             const storageKey = 'infinitePixels_recentlyPlayed';
             const maxGames = 24;
             
-            console.log(`💾 Using storage key: ${storageKey}, max games: ${maxGames}`);
-            
             let recentGames = [];
             const stored = localStorage.getItem(storageKey);
-            console.log('💾 Current localStorage content:', stored);
             
             if (stored) {
                 recentGames = JSON.parse(stored);
-                console.log('💾 Parsed recent games:', recentGames.length, 'entries');
                 
                 // Filter out any invalid entries that might exist
-                const beforeFilter = recentGames.length;
                 recentGames = recentGames.filter(game => 
                     game && 
                     game.slug && 
@@ -1103,18 +1086,10 @@ class AccountSystem {
                     typeof game.slug === 'string' && 
                     game.slug.trim() !== ''
                 );
-                
-                if (beforeFilter !== recentGames.length) {
-                    console.log(`💾 Filtered out ${beforeFilter - recentGames.length} invalid entries`);
-                }
             }
             
             // Remove the game if it already exists
-            const beforeRemove = recentGames.length;
             recentGames = recentGames.filter(g => g.slug !== gameId);
-            if (beforeRemove !== recentGames.length) {
-                console.log(`💾 Removed existing entry for ${gameId}`);
-            }
             
             // Add the game to the beginning
             const gameWithTimestamp = {
@@ -1122,19 +1097,14 @@ class AccountSystem {
                 lastPlayed: Date.now()
             };
             
-            console.log('💾 Adding new entry:', gameWithTimestamp);
             recentGames.unshift(gameWithTimestamp);
             
             // Keep only the most recent games
             if (recentGames.length > maxGames) {
                 recentGames = recentGames.slice(0, maxGames);
-                console.log(`💾 Trimmed to ${maxGames} most recent games`);
             }
             
-            const finalJson = JSON.stringify(recentGames);
-            localStorage.setItem(storageKey, finalJson);
-            console.log('💾 Saved to localStorage:', finalJson.substring(0, 100) + '...');
-            console.log('💾 Total recent games now:', recentGames.length);
+            localStorage.setItem(storageKey, JSON.stringify(recentGames));
         } catch (error) {
             console.error('Error saving to local recent games:', error);
         }
