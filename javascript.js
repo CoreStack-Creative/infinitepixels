@@ -6649,12 +6649,20 @@ class RecentlyPlayedManager {
             const stored = localStorage.getItem(this.storageKey);
             let recentGames = stored ? JSON.parse(stored) : [];
             
-            // Filter out any invalid games
+            // Handle both old format (full game object) and new format (slug + lastPlayed only)
             recentGames = recentGames.filter(game => {
                 if (!game || typeof game !== 'object') {
                     console.warn('Filtering out invalid recent game (not an object):', game);
                     return false;
                 }
+                
+                // New format: {slug: "gameName", lastPlayed: timestamp}
+                if (game.slug && game.lastPlayed && !game.name) {
+                    // This is the new format, it's valid
+                    return true;
+                }
+                
+                // Old format: full game object with name property
                 if (!game.slug || typeof game.slug !== 'string') {
                     console.warn('Filtering out recent game with invalid slug:', game);
                     return false;
@@ -6714,6 +6722,13 @@ class RecentlyPlayedManager {
             // Check if the game has required properties
             if (!game || typeof game !== 'object') return false;
             if (!game.slug || typeof game.slug !== 'string') return false;
+            
+            // New format only needs slug and lastPlayed
+            if (game.lastPlayed && !game.name) {
+                return true; // New format is valid
+            }
+            
+            // Old format needs name property
             if (!game.name || typeof game.name !== 'string') return false;
             
             return true;
@@ -6733,6 +6748,18 @@ class RecentlyPlayedManager {
         if (!game || !game.slug) {
             console.warn('Invalid game data in recent games:', game);
             return '';
+        }
+
+        // Handle new format - look up game data from gamesDatabase
+        if (!game.name && gamesDatabase && gamesDatabase.length > 0) {
+            const fullGame = gamesDatabase.find(g => g.slug === game.slug);
+            if (fullGame) {
+                // Merge the full game data with the recent game timestamp
+                game = { ...fullGame, lastPlayed: game.lastPlayed };
+            } else {
+                console.warn('Game not found in database for slug:', game.slug);
+                return ''; // Skip this game if we can't find it
+            }
         }
 
         const timeAgo = this.formatTimeAgo(game.lastPlayed);
