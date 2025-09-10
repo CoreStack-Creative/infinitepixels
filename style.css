@@ -7205,6 +7205,7 @@ select:focus {
 
 .game-info-panel {
     padding: 2rem;
+    position: relative;
 }
 
 .game-info-panel h3 {
@@ -7212,6 +7213,14 @@ select:focus {
     font-size: 1.4rem;
     font-weight: 800;
     color: #333;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+    opacity: 0.7;
+}
+
+.single-game-tile:hover .game-info-panel h3 {
+    transform: translateY(0);
+    opacity: 1;
 }
 
 .game-tags-list {
