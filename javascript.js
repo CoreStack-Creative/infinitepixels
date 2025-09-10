@@ -2200,12 +2200,13 @@ function populateFeaturedGamesGrid() {
             gameCard.innerHTML = `
                 <div class="game-image">
                     <img src="${game.image}" alt="${game.name}" class="placeholder-image" loading="lazy">
-                    <div class="game-overlay">
-                        <button class="play-btn">Play Now</button>
+                    <div class="tile-hover-effect">
+                        <h3 class="game-title">${game.name}</h3>
+                        <button class="tile-play-action">
+                            <i class="fas fa-play"></i>
+                            <span>Play Now</span>
+                        </button>
                     </div>
-                </div>
-                <div class="game-info">
-                    <h3 class="game-title">${game.name}</h3>
                 </div>
             `;
             
