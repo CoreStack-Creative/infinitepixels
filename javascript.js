@@ -3845,6 +3845,19 @@ class NewsManager {
         
         const sampleArticles = [
             {
+                id: 7,
+                title: "Revolutionary Account System Launch!",
+                summary: "Introducing our amazing new account feature that lets you back up and sync all your gaming progress across devices.",
+                image: "images/accountnews.png",
+                content: "We're thrilled to announce the launch of our revolutionary account system! This game-changing feature allows you to create a secure account and automatically back up all your gaming progress, achievements, and favorite games. Never lose your progress again! Whether you're switching devices, clearing your browser, or playing from a friend's computer, your gaming data is now safely stored in the cloud. Simply create an account and watch as all your hard-earned progress syncs seamlessly across all your devices. Join thousands of players who have already secured their gaming legacy with InfinitePixels accounts. Sign up today and experience worry-free gaming! - InfinitePixels Dev Team",
+                category: "updates",
+                tags: ["update", "huge updates", "community"],
+                date: new Date('2025-09-09'),
+                author: "Dev Team",
+                featured: true,
+                importance: 10,
+            },
+            {
                 id: 1,
                 title: "Website Now live!",
                 summary: "InfinitePixels is now live for anyone to play at any time.",
@@ -3854,7 +3867,7 @@ class NewsManager {
                 tags: ["update", "news"],
                 date: new Date('2025-08-03'),
                 author: "Dev Team",
-                featured: true,
+                featured: false,
                 importance: 10,
             },
             {
