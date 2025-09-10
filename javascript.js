@@ -2194,19 +2194,16 @@ function populateFeaturedGamesGrid() {
         const game = gamesDatabase.find(g => g.slug === slug);
         if (game) {
             const gameCard = document.createElement('div');
-            gameCard.className = 'game-card';
+            gameCard.className = 'homepage-game-card';
             gameCard.setAttribute('data-game-slug', game.slug);
+            gameCard.setAttribute('data-context', 'featured');
+            gameCard.setAttribute('data-has-video', 'false');
             
             gameCard.innerHTML = `
-                <div class="game-image">
-                    <img src="${game.image}" alt="${game.name}" class="placeholder-image" loading="lazy">
-                    <div class="tile-hover-effect">
-                        <h3 class="game-title">${game.name}</h3>
-                        <button class="tile-play-action">
-                            <i class="fas fa-play"></i>
-                            <span>Play Now</span>
-                        </button>
-                    </div>
+                <img src="${game.image}" alt="${game.name}" class="homepage-game-card-image" loading="lazy">
+                <div class="homepage-game-card-overlay">
+                    <div class="homepage-game-card-name">${game.name}</div>
+                    <button class="homepage-game-card-play">Play Now</button>
                 </div>
             `;
             
@@ -7935,7 +7932,7 @@ window.addEventListener('load', function() {
 document.addEventListener('DOMContentLoaded', function() {
     // Add click event listeners to featured game cards
     function initializeFeaturedGamesCards() {
-        const featuredGameCards = document.querySelectorAll('#featuredGamesGrid .game-card[data-game-slug]');
+        const featuredGameCards = document.querySelectorAll('#featuredGamesGrid .homepage-game-card[data-game-slug]');
         
         featuredGameCards.forEach(card => {
             const gameSlug = card.getAttribute('data-game-slug');
@@ -7946,7 +7943,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             // Add click event to the play button
-            const playBtn = card.querySelector('.play-btn');
+            const playBtn = card.querySelector('.homepage-game-card-play');
             if (playBtn) {
                 playBtn.addEventListener('click', function(e) {
                     e.stopPropagation(); // Prevent card click
