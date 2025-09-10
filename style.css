@@ -8260,28 +8260,45 @@ select:focus {
     bottom: 0;
     left: 0;
     right: 0;
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+    background: linear-gradient(135deg, rgba(76, 99, 210, 0.95), rgba(124, 77, 255, 0.95));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     padding: 20px 15px 15px;
+}
+
+.featured-games-grid .game-card:hover .game-info {
+    opacity: 1;
 }
 
 .featured-games-grid .game-title {
     color: white;
     font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 5px;
+    font-weight: 700;
+    margin-bottom: 15px;
     text-align: center;
+    transform: translateY(15px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.featured-games-grid .game-card:hover .game-title {
+    transform: translateY(0);
 }
 
 .featured-games-grid .play-btn {
-    background: linear-gradient(45deg, #8a2be2, #4b0082);
+    background: white;
+    color: #4c63d2;
     border: none;
     padding: 12px 25px;
     border-radius: 25px;
-    color: white;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s ease;
-    transform: translateY(10px);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(15px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
     margin: 0 auto;
     display: block;
 }
@@ -8291,8 +8308,9 @@ select:focus {
 }
 
 .featured-games-grid .play-btn:hover {
-    background: linear-gradient(45deg, #9932cc, #8a2be2);
+    background: #f8f9fa;
     transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
 }
 
 /* Compact Spotlight Box (Right Side) */
