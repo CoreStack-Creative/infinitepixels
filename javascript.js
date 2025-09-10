@@ -3149,7 +3149,15 @@ class AllGamesManager {
         
         filterTagsContainer.innerHTML = '';
         
-        Array.from(uniqueTagsSet).sort().forEach(tagName => {
+        // Sort tags by count (most games to least games), then alphabetically for ties
+        Array.from(uniqueTagsSet).sort((a, b) => {
+            const countA = this.getTagCount(a);
+            const countB = this.getTagCount(b);
+            if (countB !== countA) {
+                return countB - countA; // Sort by count descending
+            }
+            return a.localeCompare(b); // Sort alphabetically for ties
+        }).forEach(tagName => {
             const tagElement = document.createElement('div');
             tagElement.className = 'clickable-filter-tag';
             tagElement.innerHTML = `
