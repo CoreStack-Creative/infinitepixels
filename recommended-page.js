@@ -44,33 +44,12 @@ class RecommendedPage {
     }
 
     setupEventListeners() {
-        // Star rating listeners
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('.star')) {
-                const star = e.target.closest('.star');
-                const rating = parseInt(star.dataset.rating);
-                this.setStarRating(star.parentElement, rating);
-            }
-        });
-
-        // Modal listeners
+        // Modal listeners (keeping for potential future use)
         this.setupModalListeners();
     }
 
     setupModalListeners() {
-        // Close modal on overlay click
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('modal-overlay')) {
-                this.closeFeedbackModal();
-            }
-        });
-
-        // Close modal on escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                this.closeFeedbackModal();
-            }
-        });
+        // Modal listeners removed - no longer using feedback modals
     }
 
     async initializeInsights() {
@@ -257,7 +236,7 @@ class RecommendedPage {
                     AI Recommendations for You
                 </h3>
                 <div class="ai-recommendations-grid">
-                    ${recommendations.map(rec => this.renderRecommendationCard(rec)).join('')}
+                    ${recommendations.map(rec => recommendationsEngine.renderRecommendationCard(rec)).join('')}
                 </div>
             </div>
         `;
@@ -270,65 +249,6 @@ class RecommendedPage {
         // For now, this is a placeholder method
         // In a full implementation, this would render recommendations by category
         console.log('Category recommendations rendered');
-    }
-
-    renderRecommendationCard(recommendation, options = {}) {
-        const game = recommendationsEngine.allGames.find(g => g.id === recommendation.game_id);
-        if (!game) return '';
-
-        const { showReasons = false } = options;
-        const confidencePercent = Math.round(recommendation.model_confidence * 100);
-        const scoreOutOfTen = Math.round(recommendation.recommendation_score * 10);
-
-        return `
-            <div class="ai-game-card" data-game-id="${game.id}" data-recommendation-id="${recommendation.id || ''}">
-                <div class="ai-game-image-container">
-                    <img src="${game.image}" alt="${game.name}" class="ai-game-image" loading="lazy">
-                    <div class="ai-game-overlay">
-                        <button class="ai-play-btn" onclick="recommendationsEngine.playRecommendedGame('${game.id}')">
-                            <i class="fas fa-play"></i>
-                            Play Now
-                        </button>
-                        </button>
-                    </div>
-                    <div class="ai-score">${scoreOutOfTen}/10</div>
-                    <div class="ai-confidence">${confidencePercent}% match</div>
-                </div>
-                
-                <div class="ai-game-info">
-                    <h3>${game.name}</h3>
-                    <div class="ai-game-category">${game.category}</div>
-                    
-                    ${showReasons ? `
-                        <div class="ai-recommendation-reason">
-                            <i class="fas fa-lightbulb"></i>
-                            <span>${recommendation.reasoning || 'Recommended based on your preferences'}</span>
-                        </div>
-                    ` : ''}
-                    
-                    <div class="ai-game-meta">
-                        <span class="algorithm-badge">${recommendationsEngine.getAlgorithmLabel(recommendation.algorithm_used)}</span>
-                        <span class="confidence-badge" style="color: ${recommendationsEngine.getConfidenceColor(recommendation.model_confidence)}">
-                            ${confidencePercent}% confident
-                        </span>
-                    </div>
-                    
-                    <div class="ai-feedback-section">
-                        <div class="star-rating" data-game-id="${game.id}">
-                            ${[1,2,3,4,5].map(rating => `
-                                <span class="star-rating-star" data-rating="${rating}">
-                                    <i class="fas fa-star"></i>
-                                </span>
-                            `).join('')}
-                        </div>
-                        <button class="feedback-details-btn" onclick="recommendedPage.showFeedbackModal('${game.id}')">
-                            <i class="fas fa-comment"></i>
-                            Tell us more
-                        </button>
-                    </div>
-                </div>
-            </div>
-        `;
     }
 
     setupCardListeners(container) {
@@ -348,97 +268,6 @@ class RecommendedPage {
             
             observer.observe(card);
         });
-
-        // Setup star rating listeners
-        const starRatings = container.querySelectorAll('.star-rating');
-        starRatings.forEach(rating => {
-            const stars = rating.querySelectorAll('.star-rating-star');
-            stars.forEach(star => {
-                star.addEventListener('click', () => {
-                    const ratingValue = parseInt(star.dataset.rating);
-                    const gameId = rating.dataset.gameId;
-                    this.submitStarRating(gameId, ratingValue);
-                    this.setStarRating(rating, ratingValue);
-                });
-            });
-        });
-    }
-
-    setStarRating(container, rating) {
-        const stars = container.querySelectorAll('.star-rating-star');
-        stars.forEach((star, index) => {
-            if (index < rating) {
-                star.classList.add('active');
-            } else {
-                star.classList.remove('active');
-            }
-        });
-    }
-
-    async submitStarRating(gameId, rating) {
-        try {
-            await recommendationsEngine.submitFeedback(gameId, rating);
-            this.showNotification('Thanks for your feedback!', 'success');
-        } catch (error) {
-            console.error('Error submitting rating:', error);
-            this.showNotification('Failed to submit rating', 'error');
-        }
-    }
-
-    showFeedbackModal(gameId) {
-        const modal = document.getElementById('feedbackModal');
-        if (!modal) return;
-
-        // Store game ID for later use
-        modal.dataset.gameId = gameId;
-        
-        // Reset modal state
-        this.currentRating = 0;
-        this.resetModalStars();
-        document.getElementById('feedbackText').value = '';
-
-        // Show modal
-        modal.classList.add('show');
-        this.feedbackModal = modal;
-    }
-
-    closeFeedbackModal() {
-        const modal = document.getElementById('feedbackModal');
-        if (modal) {
-            modal.classList.remove('show');
-            this.feedbackModal = null;
-        }
-    }
-
-    resetModalStars() {
-        const stars = document.querySelectorAll('#feedbackModal .star');
-        stars.forEach(star => star.classList.remove('active'));
-    }
-
-    async submitFeedback() {
-        const modal = this.feedbackModal;
-        if (!modal) return;
-
-        const gameId = modal.dataset.gameId;
-        const feedbackText = document.getElementById('feedbackText').value;
-
-        if (this.currentRating === 0) {
-            this.showNotification('Please select a rating', 'warning');
-            return;
-        }
-
-        try {
-            await recommendationsEngine.submitFeedback(gameId, this.currentRating, {
-                text: feedbackText,
-                type: 'detailed_feedback'
-            });
-
-            this.showNotification('Thank you for your detailed feedback!', 'success');
-            this.closeFeedbackModal();
-        } catch (error) {
-            console.error('Error submitting detailed feedback:', error);
-            this.showNotification('Failed to submit feedback', 'error');
-        }
     }
 
     exportPreferences() {

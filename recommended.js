@@ -260,8 +260,9 @@ class RecommendationsEngine {
             <div class="ai-recommendations-section">
                 ${title ? `<h3 class="recommendations-title">${title}</h3>` : ''}
                 <div class="ai-recommendations-${layout}">
-                    ${recommendations.map(rec => this.renderRecommendationCard(rec, { showReasons, showFeedback })).join('')}
+                    ${recommendations.map(rec => this.renderRecommendationCard(rec, { showReasons, showFeedback: false })).join('')}
                 </div>
+                ${this.renderFeedbackSection()}
             </div>
         `;
 
@@ -287,7 +288,7 @@ class RecommendationsEngine {
                 <div class="ai-game-image-container">
                     <img src="${game.image}" alt="${game.name}" class="ai-game-image" loading="lazy">
                     <div class="ai-game-overlay">
-                        <button class="ai-play-btn" onclick="aiRecommendations.playRecommendedGame('${game.id}')">
+                        <button class="ai-play-btn" onclick="recommendationsEngine.playRecommendedGame('${game.id}')">
                             <i class="fas fa-play"></i>
                         </button>
                         <div class="ai-score">${scoreOutOfTen}/10</div>
@@ -312,22 +313,47 @@ class RecommendationsEngine {
                             ${confidencePercent}% confident
                         </span>
                     </div>
+                </div>
+            </div>
+        `;
+    }
+
+    renderFeedbackSection() {
+        return `
+            <div class="ai-feedback-section">
+                <div class="feedback-header">
+                    <h4><i class="fas fa-comment-dots"></i> Help Improve Our Recommendations</h4>
+                    <p>Your feedback helps us understand your preferences better and provide more personalized game suggestions.</p>
+                </div>
+                
+                <form class="feedback-form" id="recommendationsFeedbackForm">
+                    <div class="feedback-input-group">
+                        <label for="feedbackText">What did you think of these recommendations?</label>
+                        <textarea 
+                            id="feedbackText" 
+                            name="feedback" 
+                            placeholder="Tell us what you liked or didn't like about these suggestions. Were they relevant to your interests? Did you discover any new games you enjoyed?"
+                            rows="4"
+                            maxlength="500"
+                        ></textarea>
+                        <small class="char-counter">0/500 characters</small>
+                    </div>
                     
-                    ${showFeedback ? `
-                        <div class="ai-feedback-section">
-                            <div class="star-rating" data-game-id="${game.id}">
-                                ${[1,2,3,4,5].map(rating => `
-                                    <span class="star-rating-star" data-rating="${rating}">
-                                        <i class="fas fa-star"></i>
-                                    </span>
-                                `).join('')}
-                            </div>
-                            <button class="feedback-details-btn" onclick="aiRecommendationsPage.showFeedbackModal('${game.id}')">
-                                <i class="fas fa-comment"></i>
-                                Tell us more
-                            </button>
-                        </div>
-                    ` : ''}
+                    <div class="feedback-actions">
+                        <button type="submit" class="submit-feedback-btn">
+                            <i class="fas fa-paper-plane"></i>
+                            Submit Feedback
+                        </button>
+                        <button type="button" class="clear-feedback-btn">
+                            <i class="fas fa-eraser"></i>
+                            Clear
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="feedback-success" id="feedbackSuccess" style="display: none;">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Thank you for your feedback! It helps us improve our recommendations.</span>
                 </div>
             </div>
         `;
@@ -376,191 +402,155 @@ class RecommendationsEngine {
             
             observer.observe(card);
         });
+
+        // Setup feedback form listeners
+        this.setupFeedbackFormListeners(container);
+    }
+
+    setupFeedbackFormListeners(container) {
+        const feedbackForm = container.querySelector('#recommendationsFeedbackForm');
+        const feedbackText = container.querySelector('#feedbackText');
+        const charCounter = container.querySelector('.char-counter');
+        const clearBtn = container.querySelector('.clear-feedback-btn');
+
+        if (feedbackText && charCounter) {
+            // Character counter
+            feedbackText.addEventListener('input', () => {
+                const length = feedbackText.value.length;
+                charCounter.textContent = `${length}/500 characters`;
+                charCounter.style.color = length > 450 ? '#ff4444' : '#666';
+            });
+        }
+
+        if (clearBtn) {
+            // Clear button
+            clearBtn.addEventListener('click', () => {
+                if (feedbackText) {
+                    feedbackText.value = '';
+                    charCounter.textContent = '0/500 characters';
+                    charCounter.style.color = '#666';
+                }
+            });
+        }
+
+        if (feedbackForm) {
+            // Form submission
+            feedbackForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await this.submitRecommendationsFeedback(feedbackText.value);
+            });
+        }
+    }
+
+    async submitRecommendationsFeedback(feedbackText) {
+        if (!feedbackText.trim()) {
+            this.showFeedbackMessage('Please enter some feedback before submitting.', 'error');
+            return;
+        }
+
+        if (!accountSystem.isLoggedIn()) {
+            this.showFeedbackMessage('Please log in to submit feedback.', 'error');
+            return;
+        }
+
+        const submitBtn = document.querySelector('.submit-feedback-btn');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+        submitBtn.disabled = true;
+
+        try {
+            if (!accountSystem.supabase) {
+                this.showFeedbackMessage('Feedback submission requires online connection.', 'error');
+                return;
+            }
+
+            // Submit to Supabase
+            const { data, error } = await accountSystem.supabase
+                .from('recommendation_feedback')
+                .insert([
+                    {
+                        user_id: accountSystem.user.id,
+                        feedback_text: feedbackText.trim(),
+                        recommendation_count: this.recommendations.length,
+                        created_at: new Date().toISOString(),
+                        user_agent: navigator.userAgent,
+                        session_id: accountSystem.session?.access_token || 'offline'
+                    }
+                ]);
+
+            if (error) {
+                console.error('Supabase error:', error);
+                this.showFeedbackMessage('Error submitting feedback: ' + error.message, 'error');
+                return;
+            }
+
+            console.log('✅ Feedback submitted successfully:', data);
+            
+            // Show success message
+            this.showFeedbackSuccess();
+            
+            // Clear form
+            const feedbackTextarea = document.querySelector('#feedbackText');
+            const charCounter = document.querySelector('.char-counter');
+            if (feedbackTextarea) {
+                feedbackTextarea.value = '';
+                charCounter.textContent = '0/500 characters';
+                charCounter.style.color = '#666';
+            }
+
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+            this.showFeedbackMessage('An unexpected error occurred. Please try again.', 'error');
+        } finally {
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        }
+    }
+
+    showFeedbackSuccess() {
+        const successDiv = document.querySelector('#feedbackSuccess');
+        const form = document.querySelector('#recommendationsFeedbackForm');
+        
+        if (successDiv && form) {
+            form.style.display = 'none';
+            successDiv.style.display = 'flex';
+            
+            // Hide success message after 5 seconds and show form again
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+                form.style.display = 'block';
+            }, 5000);
+        }
+    }
+
+    showFeedbackMessage(message, type = 'info') {
+        // Use the account system's message system
+        if (accountSystem && accountSystem.showMessage) {
+            accountSystem.showMessage(message, type);
+        } else {
+            // Fallback to console
+            console.log(`Feedback ${type}:`, message);
+        }
     }
 
     // ===== GAME INTERACTION HANDLING ===== //
-    async playRecommendedGame(gameId) {
-        // Track the click
-        this.trackRecommendationClick(gameId);
-        
-        // Find the game
-        const game = this.allGames.find(g => g.id == gameId || g.id === gameId);
+    playRecommendedGame(gameId) {
+        const game = this.allGames.find(g => g.id === gameId);
         if (!game) {
             console.error('Game not found:', gameId);
             return;
         }
 
-        // Add to recent games if account system is available
-        if (typeof accountSystem !== 'undefined' && accountSystem.isLoggedIn()) {
-            accountSystem.addToRecentGames(gameId);
-        }
+        // Track play action
+        this.trackGamePlay(gameId);
 
-        // Track with AI tracking system if available
-        if (typeof aiTracking !== 'undefined') {
-            aiTracking.startGameSession(gameId);
-        }
-
-        // Navigate to game
-        if (game.gameurl) {
-            // External game URL
-            window.open(game.gameurl, '_blank');
-        } else if (game.slug) {
-            // Internal game page
-            window.location.href = `game.html?game=${game.slug}`;
-        } else {
-            // Fallback
-            window.location.href = `game.html?id=${gameId}`;
-        }
+        // Redirect to game page
+        window.location.href = `/game.html?id=${gameId}`;
     }
 
-    async trackRecommendationView(gameId, position) {
-        if (!accountSystem.isLoggedIn()) return;
-
-        try {
-            await fetch(`${this.baseURL}/ai/track-view`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...accountSystem.getAuthHeaders()
-                },
-                body: JSON.stringify({
-                    game_id: gameId,
-                    position: position,
-                    timestamp: Date.now(),
-                    context: 'recommendation_view'
-                })
-            });
-        } catch (error) {
-            console.error('Error tracking recommendation view:', error);
-        }
-    }
-
-    async trackRecommendationClick(gameId) {
-        if (!accountSystem.isLoggedIn()) return;
-
-        try {
-            await fetch(`${this.baseURL}/ai/track-click`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...accountSystem.getAuthHeaders()
-                },
-                body: JSON.stringify({
-                    game_id: gameId,
-                    timestamp: Date.now(),
-                    context: 'recommendation_click'
-                })
-            });
-        } catch (error) {
-            console.error('Error tracking recommendation click:', error);
-        }
-    }
-
-    // ===== FEEDBACK HANDLING ===== //
-    async submitFeedback(gameId, rating, feedbackData = {}) {
-        if (!accountSystem.isLoggedIn()) {
-            console.log('User not logged in, cannot submit feedback');
-            return false;
-        }
-
-        try {
-            const response = await fetch(`${this.baseURL}/ai/feedback`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...accountSystem.getAuthHeaders()
-                },
-                body: JSON.stringify({
-                    game_id: gameId,
-                    rating: rating,
-                    feedback_type: feedbackData.type || 'star_rating',
-                    feedback_text: feedbackData.text || '',
-                    tags: feedbackData.tags || {},
-                    timestamp: Date.now()
-                })
-            });
-
-            if (response.ok) {
-                console.log('✅ Feedback submitted successfully');
-                
-                // Update local recommendations cache
-                this.updateRecommendationCache(gameId, rating);
-                
-                return true;
-            } else {
-                console.error('Failed to submit feedback');
-                return false;
-            }
-        } catch (error) {
-            console.error('Error submitting feedback:', error);
-            return false;
-        }
-    }
-
-    updateRecommendationCache(gameId, rating) {
-        // Find and update the recommendation in our local cache
-        const recIndex = this.recommendations.findIndex(rec => rec.game_id === gameId);
-        if (recIndex !== -1) {
-            this.recommendations[recIndex].user_rating = rating;
-            this.recommendations[recIndex].has_feedback = true;
-        }
-    }
-
-    // ===== UTILITY METHODS ===== //
-    getAlgorithmLabel(algorithm) {
-        const labels = {
-            'collaborative_filtering': 'Similar Users',
-            'content_based': 'Game Features',
-            'hybrid': 'AI Hybrid',
-            'popularity_fallback': 'Popular',
-            'category_based': 'Category Match'
-        };
-        return labels[algorithm] || 'AI Recommended';
-    }
-
-    getConfidenceColor(confidence) {
-        if (confidence >= 0.8) return '#4CAF50'; // Green
-        if (confidence >= 0.6) return '#FF9800'; // Orange
-        if (confidence >= 0.4) return '#2196F3'; // Blue
-        return '#9E9E9E'; // Gray
-    }
-
-    // ===== LOCAL STORAGE MANAGEMENT ===== //
-    storeRecommendationsLocally(recommendations) {
-        try {
-            localStorage.setItem('ai_recommendations_cache', JSON.stringify({
-                recommendations: recommendations,
-                timestamp: Date.now(),
-                userId: accountSystem.user?.id
-            }));
-        } catch (error) {
-            console.error('Error storing recommendations locally:', error);
-        }
-    }
-
-    loadRecommendationsFromCache() {
-        try {
-            const cached = localStorage.getItem('ai_recommendations_cache');
-            if (cached) {
-                const data = JSON.parse(cached);
-                
-                // Check if cache is still valid (24 hours)
-                const cacheAge = Date.now() - data.timestamp;
-                const maxAge = 24 * 60 * 60 * 1000; // 24 hours
-                
-                if (cacheAge < maxAge && data.userId === accountSystem.user?.id) {
-                    this.recommendations = data.recommendations;
-                    return true;
-                }
-            }
-        } catch (error) {
-            console.error('Error loading recommendations from cache:', error);
-        }
-        return false;
-    }
-
-    clearRecommendationsCache() {
-        localStorage.removeItem('ai_recommendations_cache');
+    trackGamePlay(gameId) {
+        // TODO: Implement game play tracking (e.g., send event to analytics)
+        console.log('Game played:', gameId);
     }
 
     // ===== API METHODS FOR OTHER COMPONENTS ===== //
