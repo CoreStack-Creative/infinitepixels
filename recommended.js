@@ -284,11 +284,11 @@ class RecommendationsEngine {
         const scoreOutOfTen = Math.round(recommendation.recommendation_score * 10);
 
         return `
-            <div class="ai-game-card" data-game-id="${game.id}" data-recommendation-id="${recommendation.id || ''}">
+            <div class="ai-game-card" data-game-id="${game.id}" data-recommendation-id="${recommendation.id || ''}" style="cursor: pointer;" onclick="recommendationsEngine.playRecommendedGame('${game.id}')">
                 <div class="ai-game-image-container">
                     <img src="${game.image}" alt="${game.name}" class="ai-game-image" loading="lazy">
                     <div class="ai-game-overlay">
-                        <button class="ai-play-btn" onclick="recommendationsEngine.playRecommendedGame('${game.id}')">
+                        <button class="ai-play-btn" onclick="event.stopPropagation(); recommendationsEngine.playRecommendedGame('${game.id}')">
                             <i class="fas fa-play"></i>
                         </button>
                         <div class="ai-score">${scoreOutOfTen}/10</div>
@@ -376,7 +376,7 @@ class RecommendationsEngine {
                 </div>
                 <h3>Learning Your Preferences</h3>
                 <p>Play a few games to help our AI understand what you like!</p>
-                <button class="browse-games-btn" onclick="window.location.href='/games.html'">
+                <button class="browse-games-btn" onclick="window.location.href='https://www.infinite-pixels.com/games.html'">
                     <i class="fas fa-gamepad"></i>
                     Browse Games
                 </button>
@@ -555,16 +555,14 @@ class RecommendationsEngine {
             aiTracking.startGameSession(gameId);
         }
 
-        // Navigate to game
-        if (game.gameurl) {
-            // External game URL
-            window.open(game.gameurl, '_blank');
-        } else if (game.slug) {
-            // Internal game page
-            window.location.href = `game.html?game=${game.slug}`;
+        // Navigate to game using internal game page with full URL
+        if (game.slug) {
+            // Use internal game page with full URL
+            window.location.href = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
         } else {
-            // Fallback
-            window.location.href = `game.html?id=${gameId}`;
+            // Fallback - try to use game name as slug
+            const fallbackSlug = game.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+            window.location.href = `https://www.infinite-pixels.com/game.html?game=${fallbackSlug}`;
         }
     }
 
