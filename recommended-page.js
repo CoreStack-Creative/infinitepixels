@@ -39,7 +39,7 @@ class RecommendedPage {
     }
 
     isRecommendedPage() {
-        return window.location.pathname.includes('ai-recommendations') || 
+        return window.location.pathname.includes('recommended') || 
                document.getElementById('mainRecommendations');
     }
 
@@ -98,12 +98,31 @@ class RecommendedPage {
 
     async calculateAveragePlayTime() {
         try {
-            const recentGames = accountSystem.getRecentGames();
-            if (recentGames.length === 0) return '0 min';
+            if (!accountSystem.isLoggedIn()) {
+                return '-- min';
+            }
             
-            // Mock calculation - in real app, this would come from tracking data
-            const avgMinutes = Math.floor(Math.random() * 45) + 15; // 15-60 minutes
-            return `${avgMinutes} min`;
+            // Get actual total play time from the account system
+            const totalTimeMs = accountSystem.getTotalPlayTime();
+            const recentGames = accountSystem.getRecentGames();
+            
+            if (totalTimeMs === 0 || recentGames.length === 0) {
+                return '0 min';
+            }
+            
+            // Calculate average session time
+            const avgSessionTime = totalTimeMs / recentGames.length;
+            
+            if (avgSessionTime < 60000) { // Less than 1 minute
+                return `${Math.floor(avgSessionTime / 1000)}s avg`;
+            } else if (avgSessionTime < 3600000) { // Less than 1 hour
+                const minutes = Math.floor(avgSessionTime / 60000);
+                return `${minutes} min avg`;
+            } else {
+                const hours = Math.floor(avgSessionTime / 3600000);
+                const minutes = Math.floor((avgSessionTime % 3600000) / 60000);
+                return `${hours}h ${minutes}m avg`;
+            }
         } catch (error) {
             console.error('Error calculating play time:', error);
             return '-- min';
@@ -117,9 +136,25 @@ class RecommendedPage {
     }
 
     async getDiscoveryCount() {
-        // Mock discovery count
-        const count = Math.floor(Math.random() * 25) + 5; // 5-30 games
-        return count.toString();
+        try {
+            if (!accountSystem.isLoggedIn()) {
+                return '0';
+            }
+            
+            // Get actual count of unique games played
+            const recentGames = accountSystem.getRecentGames();
+            const uniqueGames = new Set();
+            recentGames.forEach(game => {
+                if (game.slug) {
+                    uniqueGames.add(game.slug);
+                }
+            });
+            
+            return uniqueGames.size.toString();
+        } catch (error) {
+            console.error('Error getting discovery count:', error);
+            return '0';
+        }
     }
 
     updateInsightCards(insights) {
@@ -142,10 +177,14 @@ class RecommendedPage {
         const statsContainer = document.getElementById('headerStats');
         if (!statsContainer) return;
 
+        const recentGamesCount = accountSystem.isLoggedIn() ? accountSystem.getRecentGames().length : 0;
+        const recommendationsCount = recommendationsEngine && recommendationsEngine.recommendations ? 
+                                     recommendationsEngine.recommendations.length : 0;
+
         const stats = [
-            { label: 'Recommendations', value: recommendationsEngine.recommendations.length },
-            { label: 'Accuracy', value: '94%' },
-            { label: 'Games Played', value: accountSystem.getRecentGames().length }
+            { label: 'Recommendations', value: recommendationsCount },
+            { label: 'Accuracy', value: '94%' }, // This could be calculated from user feedback
+            { label: 'Games Played', value: recentGamesCount }
         ];
 
         statsContainer.innerHTML = stats.map(stat => `
@@ -157,16 +196,36 @@ class RecommendedPage {
     }
 
     async loadRecommendations() {
+        console.log('🔄 Loading AI recommendations...');
+        
         if (!recommendationsEngine) {
-            console.error('AI Recommendations engine not available');
+            console.error('❌ AI Recommendations engine not available');
             return;
         }
 
         this.showLoadingState();
 
         try {
+            // Wait for engine to be ready
+            if (!recommendationsEngine.isInitialized) {
+                console.log('⏳ Waiting for recommendations engine to initialize...');
+                await new Promise(resolve => {
+                    const checkInit = () => {
+                        if (recommendationsEngine.isInitialized) {
+                            resolve();
+                        } else {
+                            setTimeout(checkInit, 100);
+                        }
+                    };
+                    checkInit();
+                });
+            }
+            
+            console.log('🎮 Generating recommendations...');
             // Generate fresh recommendations
-            await aiRecommendations.generateRecommendations();
+            await recommendationsEngine.generateRecommendations();
+            
+            console.log(`✅ Generated ${recommendationsEngine.recommendations.length} recommendations`);
             
             // Render main recommendations
             this.renderMainRecommendations();
@@ -175,7 +234,7 @@ class RecommendedPage {
             this.renderCategoryRecommendations();
             
         } catch (error) {
-            console.error('Error loading recommendations:', error);
+            console.error('❌ Error loading recommendations:', error);
             this.showErrorState();
         }
     }
@@ -184,7 +243,7 @@ class RecommendedPage {
         const container = document.getElementById('mainRecommendations');
         if (!container) return;
 
-        const recommendations = aiRecommendations.getTopRecommendations(12);
+        const recommendations = recommendationsEngine.getTopRecommendations(12);
         
         if (recommendations.length === 0) {
             this.showEmptyState(container);
@@ -205,10 +264,16 @@ class RecommendedPage {
 
         container.innerHTML = html;
         this.setupCardListeners(container);
+   }
+
+    renderCategoryRecommendations() {
+        // For now, this is a placeholder method
+        // In a full implementation, this would render recommendations by category
+        console.log('Category recommendations rendered');
     }
 
     renderRecommendationCard(recommendation, options = {}) {
-        const game = aiRecommendations.allGames.find(g => g.id === recommendation.game_id);
+        const game = recommendationsEngine.allGames.find(g => g.id === recommendation.game_id);
         if (!game) return '';
 
         const { showReasons = false } = options;
@@ -220,9 +285,10 @@ class RecommendedPage {
                 <div class="ai-game-image-container">
                     <img src="${game.image}" alt="${game.name}" class="ai-game-image" loading="lazy">
                     <div class="ai-game-overlay">
-                        <button class="ai-play-btn" onclick="aiRecommendations.playRecommendedGame('${game.id}')">
+                        <button class="ai-play-btn" onclick="recommendationsEngine.playRecommendedGame('${game.id}')">
                             <i class="fas fa-play"></i>
                             Play Now
+                        </button>
                         </button>
                     </div>
                     <div class="ai-score">${scoreOutOfTen}/10</div>
@@ -241,8 +307,8 @@ class RecommendedPage {
                     ` : ''}
                     
                     <div class="ai-game-meta">
-                        <span class="algorithm-badge">${aiRecommendations.getAlgorithmLabel(recommendation.algorithm_used)}</span>
-                        <span class="confidence-badge" style="color: ${aiRecommendations.getConfidenceColor(recommendation.model_confidence)}">
+                        <span class="algorithm-badge">${recommendationsEngine.getAlgorithmLabel(recommendation.algorithm_used)}</span>
+                        <span class="confidence-badge" style="color: ${recommendationsEngine.getConfidenceColor(recommendation.model_confidence)}">
                             ${confidencePercent}% confident
                         </span>
                     </div>
@@ -255,7 +321,7 @@ class RecommendedPage {
                                 </span>
                             `).join('')}
                         </div>
-                        <button class="feedback-details-btn" onclick="aiRecommendationsPage.showFeedbackModal('${game.id}')">
+                        <button class="feedback-details-btn" onclick="recommendedPage.showFeedbackModal('${game.id}')">
                             <i class="fas fa-comment"></i>
                             Tell us more
                         </button>
@@ -274,7 +340,7 @@ class RecommendedPage {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        aiRecommendations.trackRecommendationView(gameId, index);
+                        recommendationsEngine.trackRecommendationView(gameId, index);
                         observer.unobserve(entry.target);
                     }
                 });
@@ -311,7 +377,7 @@ class RecommendedPage {
 
     async submitStarRating(gameId, rating) {
         try {
-            await aiRecommendations.submitFeedback(gameId, rating);
+            await recommendationsEngine.submitFeedback(gameId, rating);
             this.showNotification('Thanks for your feedback!', 'success');
         } catch (error) {
             console.error('Error submitting rating:', error);
@@ -362,7 +428,7 @@ class RecommendedPage {
         }
 
         try {
-            await aiRecommendations.submitFeedback(gameId, this.currentRating, {
+            await recommendationsEngine.submitFeedback(gameId, this.currentRating, {
                 text: feedbackText,
                 type: 'detailed_feedback'
             });
@@ -384,7 +450,7 @@ class RecommendedPage {
         const data = {
             favorites: accountSystem.getFavorites(),
             recent: accountSystem.getRecentGames(),
-            recommendations: aiRecommendations.recommendations,
+            recommendations: recommendationsEngine.recommendations,
             exported_at: new Date().toISOString()
         };
 
@@ -496,7 +562,7 @@ class RecommendedPage {
     }
 
     getSystemStats() {
-        return aiRecommendations ? aiRecommendations.getSystemStats() : {};
+        return recommendationsEngine ? recommendationsEngine.getSystemStats() : {};
     }
 }
 

@@ -257,14 +257,14 @@ class AccountPageManager {
                 return;
             }
 
-            // Get favorites count
-            const favorites = accountSystem.getStoredData('favorites') || [];
+            // Get favorites count using the proper method
+            const favorites = accountSystem.getLocalFavorites() || [];
             
             // Get recent games and calculate unique games played
             const recentGames = accountSystem.getRecentGames() || [];
             const uniqueGames = new Set();
             recentGames.forEach(game => {
-                if (game.slug) {
+                if (game.slug && game.slug !== 'undefined' && game.slug !== 'null') {
                     uniqueGames.add(game.slug);
                 }
             });
@@ -285,7 +285,7 @@ class AccountPageManager {
             
             // Get reviews count from local storage and Supabase if available
             let reviewsCount = 0;
-            const localReviews = accountSystem.getStoredData('userReviews') || [];
+            const localReviews = JSON.parse(localStorage.getItem('infinitepixels_userReviews') || '[]');
             reviewsCount = localReviews.length;
             
             // Try to get reviews from Supabase if available

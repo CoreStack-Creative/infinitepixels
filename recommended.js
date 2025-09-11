@@ -6,9 +6,6 @@ class RecommendationsEngine {
         this.allGames = [];
         this.userProfile = null;
         this.modelCache = new Map();
-                                                    <button class="ai-play-btn" onclick="recommendationsEngine.playRecommendedGame('${game.id}')">
-                            <i class="fas fa-play"></i>
-                        </button>
         this.init();
     }
 
