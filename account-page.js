@@ -155,7 +155,7 @@ class AccountPageManager {
                                     <i class="fas fa-heart"></i>
                                 </div>
                                 <div class="stat-info">
-                                    <span class="stat-number" id="favoritesCount">-</span>
+                                    <span class="stat-number favorites-count" id="favoritesCount">-</span>
                                     <span class="stat-label">Favorites</span>
                                 </div>
                             </div>
@@ -165,7 +165,17 @@ class AccountPageManager {
                                     <i class="fas fa-clock"></i>
                                 </div>
                                 <div class="stat-info">
-                                    <span class="stat-number" id="recentGamesCount">-</span>
+                                    <span class="stat-number time-played-count" id="timePlayedCount">-</span>
+                                    <span class="stat-label">Time Played</span>
+                                </div>
+                            </div>
+                            
+                            <div class="stat-card">
+                                <div class="stat-icon">
+                                    <i class="fas fa-gamepad"></i>
+                                </div>
+                                <div class="stat-info">
+                                    <span class="stat-number games-played-count" id="gamesPlayedCount">-</span>
                                     <span class="stat-label">Games Played</span>
                                 </div>
                             </div>
@@ -175,7 +185,7 @@ class AccountPageManager {
                                     <i class="fas fa-star"></i>
                                 </div>
                                 <div class="stat-info">
-                                    <span class="stat-number" id="reviewsCount">-</span>
+                                    <span class="stat-number reviews-count" id="reviewsCount">-</span>
                                     <span class="stat-label">Reviews Written</span>
                                 </div>
                             </div>
@@ -221,6 +231,10 @@ class AccountPageManager {
                                 <i class="fas fa-sign-out-alt"></i>
                                 Log Out
                             </button>
+                            <button class="delete-account-btn" onclick="accountPageManager.deleteAccount()">
+                                <i class="fas fa-trash-alt"></i>
+                                Delete Account
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -238,39 +252,100 @@ class AccountPageManager {
 
     async loadAccountStats() {
         try {
-            // Load favorites count
-            const favoritesResponse = await fetch(`${this.baseURL}/user/favorites`, {
-                headers: accountSystem.getAuthHeaders()
-            });
-            if (favoritesResponse.ok) {
-                const favorites = await favoritesResponse.json();
-                document.getElementById('favoritesCount').textContent = favorites.length;
+            if (!accountSystem.user) {
+                console.log('No user logged in');
+                return;
             }
 
-            // Load recent games count
-            const recentResponse = await fetch(`${this.baseURL}/user/recent-games`, {
-                headers: accountSystem.getAuthHeaders()
-            });
-            if (recentResponse.ok) {
-                const recentGames = await recentResponse.json();
-                document.getElementById('recentGamesCount').textContent = recentGames.length;
+            // Get favorites count
+            const favorites = accountSystem.getStoredData('favorites') || [];
+            
+            // Get recent games count and calculate time played
+            const recentGames = accountSystem.getStoredData('recentGames') || [];
+            const gameSession = accountSystem.getStoredData('gameSession') || {};
+            
+            // Calculate total time played (in minutes)
+            let totalTimeMinutes = 0;
+            
+            // Add time from game sessions
+            if (gameSession.totalPlayTime) {
+                totalTimeMinutes += Math.floor(gameSession.totalPlayTime / 60000); // Convert from ms to minutes
             }
-
-            // Load reviews count
-            const reviewsResponse = await fetch(`${this.baseURL}/user/review-count`, {
-                headers: accountSystem.getAuthHeaders()
+            
+            // Add estimated time from recent games (assume 5 minutes per game session if no specific time recorded)
+            recentGames.forEach(game => {
+                if (game.playTime) {
+                    totalTimeMinutes += Math.floor(game.playTime / 60000);
+                } else {
+                    totalTimeMinutes += 5; // Default 5 minutes per game
+                }
             });
-            if (reviewsResponse.ok) {
-                const reviewData = await reviewsResponse.json();
-                document.getElementById('reviewsCount').textContent = reviewData.review_count;
+            
+            // Format time played
+            let timePlayedText = '';
+            if (totalTimeMinutes < 60) {
+                timePlayedText = `${totalTimeMinutes}m`;
+            } else {
+                const hours = Math.floor(totalTimeMinutes / 60);
+                const minutes = totalTimeMinutes % 60;
+                timePlayedText = `${hours}h ${minutes}m`;
             }
-
+            
+            // Get reviews count from local storage and Supabase if available
+            let reviewsCount = 0;
+            const localReviews = accountSystem.getStoredData('userReviews') || [];
+            reviewsCount = localReviews.length;
+            
+            // Try to get reviews from Supabase if available
+            if (accountSystem.supabase && accountSystem.user.id) {
+                try {
+                    const { data: reviews, error } = await accountSystem.supabase
+                        .from('reviews')
+                        .select('id')
+                        .eq('user_id', accountSystem.user.id);
+                    
+                    if (!error && reviews) {
+                        reviewsCount = Math.max(reviewsCount, reviews.length);
+                    }
+                } catch (dbError) {
+                    console.log('Could not fetch reviews from database:', dbError);
+                }
+            }
+            
+            // Calculate unique games played
+            const uniqueGames = new Set();
+            recentGames.forEach(game => {
+                if (game.id || game.name) {
+                    uniqueGames.add(game.id || game.name);
+                }
+            });
+            
+            // Update UI with stats
+            const statsContainer = document.querySelector('.stats-grid');
+            if (statsContainer) {
+                const favoritesCountElement = statsContainer.querySelector('.favorites-count');
+                const timePlayedElement = statsContainer.querySelector('.time-played-count');
+                const gamesPlayedCountElement = statsContainer.querySelector('.games-played-count');
+                const reviewsCountElement = statsContainer.querySelector('.reviews-count');
+                
+                if (favoritesCountElement) {
+                    favoritesCountElement.textContent = favorites.length;
+                }
+                
+                if (timePlayedElement) {
+                    timePlayedElement.textContent = timePlayedText;
+                }
+                
+                if (gamesPlayedCountElement) {
+                    gamesPlayedCountElement.textContent = uniqueGames.size;
+                }
+                
+                if (reviewsCountElement) {
+                    reviewsCountElement.textContent = reviewsCount;
+                }
+            }
         } catch (error) {
             console.error('Error loading account stats:', error);
-            // Set fallback values
-            document.getElementById('favoritesCount').textContent = '0';
-            document.getElementById('recentGamesCount').textContent = '0';
-            document.getElementById('reviewsCount').textContent = '0';
         }
     }
 
@@ -581,6 +656,101 @@ class AccountPageManager {
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 1000);
+        }
+    }
+
+    async deleteAccount() {
+        // First confirmation
+        const firstConfirm = confirm('⚠️ WARNING: This will permanently delete your account and all associated data. This action cannot be undone. Are you sure you want to continue?');
+        
+        if (!firstConfirm) {
+            return;
+        }
+
+        // Second confirmation with username verification
+        const username = accountSystem.user?.username || '';
+        const confirmText = prompt(`To confirm account deletion, please type your username: "${username}"`);
+        
+        if (confirmText !== username) {
+            this.showMessage('Username confirmation failed. Account deletion cancelled.', 'error');
+            return;
+        }
+
+        // Third and final confirmation
+        const finalConfirm = confirm('FINAL WARNING: This will immediately and permanently delete your account. Click OK to proceed with deletion.');
+        
+        if (!finalConfirm) {
+            return;
+        }
+
+        try {
+            if (!accountSystem.supabase) {
+                this.showMessage('Account deletion requires online connection. Please enable online mode.', 'error');
+                return;
+            }
+
+            const user = accountSystem.user;
+            if (!user || !user.id) {
+                this.showMessage('User not found. Please log in again.', 'error');
+                return;
+            }
+
+            this.showMessage('Deleting account... Please wait.', 'info');
+
+            // Delete user's avatar from storage if exists
+            if (user.profile_image_url) {
+                const fileName = user.profile_image_url.split('/').pop();
+                if (fileName) {
+                    await accountSystem.supabase.storage
+                        .from('avatars')
+                        .remove([`${user.id}/${fileName}`]);
+                }
+            }
+
+            // Delete user's reviews
+            const { error: reviewsError } = await accountSystem.supabase
+                .from('reviews')
+                .delete()
+                .eq('user_id', user.id);
+
+            if (reviewsError) {
+                console.error('Error deleting reviews:', reviewsError);
+            }
+
+            // Delete user profile from database
+            const { error: deleteError } = await accountSystem.supabase
+                .from('users')
+                .delete()
+                .eq('id', user.id);
+
+            if (deleteError) {
+                console.error('Database deletion error:', deleteError);
+                this.showMessage('Error deleting account: ' + deleteError.message, 'error');
+                return;
+            }
+
+            // Delete auth user
+            const { error: authError } = await accountSystem.supabase.auth.admin.deleteUser(user.id);
+            
+            if (authError) {
+                console.error('Auth deletion error:', authError);
+                // Continue anyway as the profile is deleted
+            }
+
+            // Clear all local data
+            accountSystem.clearAllUserData();
+            accountSystem.logout();
+
+            this.showMessage('Account permanently deleted. Redirecting to homepage...', 'success');
+            
+            // Redirect to home page
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
+
+        } catch (error) {
+            console.error('Delete account error:', error);
+            this.showMessage('Error deleting account: ' + error.message, 'error');
         }
     }
 

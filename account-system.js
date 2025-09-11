@@ -763,6 +763,35 @@ class AccountSystem {
         }
     }
 
+    clearAllUserData() {
+        // Clear all user-related data from localStorage
+        const keysToRemove = [
+            'infinitepixels_session',
+            'infinitepixels_favorites', 
+            'infinitepixels_recentGames',
+            'infinitepixels_userReviews',
+            'infinitepixels_gameSession',
+            'infinitepixels_userSettings',
+            'infinitepixels_userPreferences'
+        ];
+        
+        keysToRemove.forEach(key => {
+            localStorage.removeItem(key);
+        });
+        
+        // Clear any additional user data that might exist
+        const allKeys = Object.keys(localStorage);
+        allKeys.forEach(key => {
+            if (key.startsWith('infinitepixels_')) {
+                localStorage.removeItem(key);
+            }
+        });
+        
+        // Reset user state
+        this.user = null;
+        this.session = null;
+    }
+
     async fetchUserProfile() {
         if (!this.session) return;
 
