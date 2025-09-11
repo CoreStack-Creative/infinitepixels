@@ -6,32 +6,37 @@ class AccountPageManager {
     }
 
     init() {
-        // Wait for account system to be ready
-        if (window.accountSystem) {
-            accountSystem.onReady(() => {
-                this.currentUser = accountSystem.user;
-                this.loadAccountPage();
-            });
-        } else {
-            // Fallback for when account system isn't loaded yet
-            setTimeout(() => {
-                if (window.accountSystem) {
-                    accountSystem.onReady(() => {
-                        this.currentUser = accountSystem.user;
-                        this.loadAccountPage();
-                    });
-                } else {
-                    console.error('Account system not available');
+        console.log('AccountPageManager init called');
+        console.log('window.accountSystem exists:', !!window.accountSystem);
+        
+        // More robust waiting for account system
+        const waitForAccountSystem = () => {
+            if (window.accountSystem && typeof accountSystem.onReady === 'function') {
+                console.log('AccountSystem found, calling onReady');
+                accountSystem.onReady(() => {
+                    console.log('AccountSystem onReady callback fired');
+                    this.currentUser = accountSystem.user;
+                    console.log('Current user:', this.currentUser);
                     this.loadAccountPage();
-                }
-            }, 100);
-        }
+                });
+            } else {
+                console.log('AccountSystem not ready yet, retrying in 100ms');
+                setTimeout(waitForAccountSystem, 100);
+            }
+        };
+        
+        // Start waiting immediately
+        waitForAccountSystem();
     }
 
     loadAccountPage() {
+        console.log('loadAccountPage called');
+        console.log('accountSystem exists:', !!accountSystem);
+        
         const accountContent = document.getElementById('accountContent');
         
-        if (!accountSystem.isLoggedIn()) {
+        if (!accountSystem || !accountSystem.isLoggedIn()) {
+            console.log('User not logged in or account system not available, showing login prompt');
             // User not logged in
             accountContent.innerHTML = `
                 <div class="not-logged-in">
@@ -40,7 +45,7 @@ class AccountPageManager {
                     </div>
                     <h2>Please Log In</h2>
                     <p>You need to be logged in to access your account page.</p>
-                    <button class="login-redirect-btn" onclick="this.showLoginPrompt()">
+                    <button class="login-redirect-btn" onclick="accountPageManager.showLoginPrompt()">
                         <i class="fas fa-sign-in-alt"></i>
                         Log In Now
                     </button>
