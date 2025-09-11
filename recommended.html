@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Recommendations - InfinitePixels</title>
+  <title>Recommended Games - InfinitePixels</title>
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="ai-styles.css" />
+  <link rel="stylesheet" href="recommended-styles.css" />
   <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -135,11 +135,9 @@
                     </a>
                 </li>
                 <li>
-                    <a href="ai-recommendations.html" class="active">
-                        <i class="icon">
-                            <i class="fas fa-brain" style="font-size: 20px; color: #40E0D0;"></i>
-                        </i>
-                        <span>AI Picks</span>
+                                        <a href="recommended.html" class="nav-link active">
+                        <i class="fas fa-star"></i>
+                        <span>Recommended</span>
                     </a>
                 </li>
                 <li>
@@ -242,19 +240,19 @@
    </div>
 
     <main class="main-content" id="mainContent">
-        <div class="ai-recommendations-container">
-            <!-- AI Page Header -->
-            <div class="ai-page-header">
-                <div class="ai-header-content">
-                    <div class="ai-header-icon">
-                        <i class="fas fa-brain"></i>
+        <div class="recommendations-container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <div class="header-content">
+                    <div class="header-icon">
+                        <i class="fas fa-star"></i>
                     </div>
-                    <div class="ai-header-text">
-                        <h1>AI Game Recommendations</h1>
-                        <p>Powered by machine learning, tailored to your unique gaming preferences</p>
+                    <div class="header-text">
+                        <h1>Recommended Games</h1>
+                        <p>Games selected just for you based on your preferences</p>
                     </div>
                 </div>
-                <div class="ai-header-stats" id="aiHeaderStats">
+                <div class="header-stats" id="headerStats">
                     <!-- Stats will be populated by JavaScript -->
                 </div>
             </div>
@@ -271,17 +269,6 @@
                             <h3>Average Play Time</h3>
                             <div class="insight-value">-</div>
                             <div class="insight-description">Per gaming session</div>
-                        </div>
-                    </div>
-                    
-                    <div class="insight-card" id="categoryInsight">
-                        <div class="insight-icon">
-                            <i class="fas fa-gamepad"></i>
-                        </div>
-                        <div class="insight-content">
-                            <h3>Favorite Genre</h3>
-                            <div class="insight-value">-</div>
-                            <div class="insight-description">Most played category</div>
                         </div>
                     </div>
                     
@@ -310,24 +297,8 @@
             </div>
 
             <!-- Main AI Recommendations -->
-            <div class="main-ai-recommendations" id="mainAIRecommendations" data-ai-recommendations="true">
+            <div class="main-recommendations" id="mainRecommendations" data-recommendations="true">
                 <!-- AI recommendations will be rendered here -->
-            </div>
-
-            <!-- Category-Specific Recommendations -->
-            <div class="category-recommendations-section" id="categoryRecommendations">
-                <h2><i class="fas fa-layer-group"></i> Explore by Category</h2>
-                <div class="category-tabs">
-                    <button class="category-tab active" data-category="all">All Recommendations</button>
-                    <button class="category-tab" data-category="action">Action</button>
-                    <button class="category-tab" data-category="puzzle">Puzzle</button>
-                    <button class="category-tab" data-category="arcade">Arcade</button>
-                    <button class="category-tab" data-category="strategy">Strategy</button>
-                    <button class="category-tab" data-category="adventure">Adventure</button>
-                </div>
-                <div class="category-content" id="categoryContent">
-                    <!-- Category-specific recommendations will be rendered here -->
-                </div>
             </div>
 
             <!-- AI Model Information -->
@@ -432,8 +403,8 @@
 
     <script src="account-system.js"></script>
     <script src="ai-tracking.js"></script>
-    <script src="ai-recommendations.js"></script>
-    <script src="ai-recommendations-page.js"></script>
+    <script src="recommended.js"></script>
+    <script src="recommended-page.js"></script>
     <script src="javascript.js"></script>
 </body>
 </html>

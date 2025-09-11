@@ -1,12 +1,14 @@
-// AI Recommendations Engine - Client-side Implementation
-class AIRecommendationsEngine {
+// Recommendations Engine - Client-side Implementation
+class RecommendationsEngine {
     constructor() {
         this.baseURL = 'http://localhost:3000';
         this.recommendations = [];
         this.allGames = [];
         this.userProfile = null;
         this.modelCache = new Map();
-        this.isInitialized = false;
+                                                    <button class="ai-play-btn" onclick="recommendationsEngine.playRecommendedGame('${game.id}')">
+                            <i class="fas fa-play"></i>
+                        </button>
         this.init();
     }
 
@@ -23,7 +25,7 @@ class AIRecommendationsEngine {
         }
         
         this.isInitialized = true;
-        console.log('🤖 AI Recommendations Engine initialized');
+        console.log('🎮 Recommendations Engine initialized');
     }
 
     async waitForDependencies() {
@@ -44,7 +46,7 @@ class AIRecommendationsEngine {
             const response = await fetch('/games.json');
             if (response.ok) {
                 this.allGames = await response.json();
-                console.log(`📊 Loaded ${this.allGames.length} games for AI analysis`);
+                console.log(`📊 Loaded ${this.allGames.length} games for analysis`);
             }
         } catch (error) {
             console.error('Error loading games data:', error);
@@ -61,7 +63,7 @@ class AIRecommendationsEngine {
             
             if (response.ok) {
                 this.userProfile = await response.json();
-                console.log('👤 User AI profile loaded');
+                console.log('👤 User profile loaded');
             }
         } catch (error) {
             console.error('Error loading user profile:', error);
@@ -100,7 +102,7 @@ class AIRecommendationsEngine {
                 // Store recommendations locally for offline access
                 this.storeRecommendationsLocally(this.recommendations);
                 
-                console.log(`🎯 Generated ${this.recommendations.length} AI recommendations`);
+                console.log(`🎯 Generated ${this.recommendations.length} recommendations`);
                 return this.recommendations;
             } else {
                 console.error('Failed to generate recommendations, using fallback');
@@ -620,8 +622,8 @@ class AIRecommendationsEngine {
 
 // Initialize the AI Recommendations Engine
 document.addEventListener('DOMContentLoaded', () => {
-    window.aiRecommendations = new AIRecommendationsEngine();
+    window.recommendationsEngine = new RecommendationsEngine();
 });
 
 // Export for global access
-window.aiRecommendations = window.aiRecommendations || null;
+window.recommendationsEngine = window.recommendationsEngine || null;

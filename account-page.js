@@ -190,11 +190,6 @@ class AccountPageManager {
                                 </div>
                             </div>
                         </div>
-                        <div style="margin-top: 20px; text-align: center;">
-                            <button class="demo-stats-btn" onclick="accountPageManager.generateDemoStats()" style="padding: 8px 16px; background: rgba(var(--accent-rgb), 0.1); border: 1px solid rgba(var(--accent-rgb), 0.3); border-radius: 6px; color: var(--accent-color); cursor: pointer; font-size: 0.9em;">
-                                <i class="fas fa-chart-bar"></i> Generate Demo Stats
-                            </button>
-                        </div>
                     </div>
                 </div>
 
@@ -262,15 +257,11 @@ class AccountPageManager {
                 return;
             }
 
-            console.log('Loading account stats...');
-
             // Get favorites count
             const favorites = accountSystem.getStoredData('favorites') || [];
-            console.log('Favorites:', favorites);
             
             // Get recent games and calculate unique games played
             const recentGames = accountSystem.getRecentGames() || [];
-            console.log('Recent games:', recentGames);
             const uniqueGames = new Set();
             recentGames.forEach(game => {
                 if (game.slug) {
@@ -280,7 +271,6 @@ class AccountPageManager {
             
             // Calculate total time played using the new tracking system
             const totalTimeMs = accountSystem.getTotalPlayTime();
-            console.log('Total play time (ms):', totalTimeMs);
             let timePlayedText = '';
             if (totalTimeMs < 60000) { // Less than 1 minute
                 timePlayedText = `${Math.floor(totalTimeMs / 1000)}s`;
@@ -297,7 +287,6 @@ class AccountPageManager {
             let reviewsCount = 0;
             const localReviews = accountSystem.getStoredData('userReviews') || [];
             reviewsCount = localReviews.length;
-            console.log('Local reviews:', localReviews);
             
             // Try to get reviews from Supabase if available
             if (accountSystem.supabase && accountSystem.user.id) {
@@ -309,19 +298,11 @@ class AccountPageManager {
                     
                     if (!error && reviews) {
                         reviewsCount = Math.max(reviewsCount, reviews.length);
-                        console.log('Supabase reviews:', reviews);
                     }
                 } catch (dbError) {
                     console.log('Could not fetch reviews from database:', dbError);
                 }
             }
-            
-            console.log('Final stats:', {
-                favorites: favorites.length,
-                timePlayedText,
-                uniqueGames: uniqueGames.size,
-                reviewsCount
-            });
             
             // Update UI with stats
             const statsContainer = document.querySelector('.stats-grid');
@@ -346,10 +327,6 @@ class AccountPageManager {
                 if (reviewsCountElement) {
                     reviewsCountElement.textContent = reviewsCount;
                 }
-                
-                console.log('Stats UI updated successfully');
-            } else {
-                console.log('Stats container not found');
             }
         } catch (error) {
             console.error('Error loading account stats:', error);
@@ -763,20 +740,6 @@ class AccountPageManager {
 
     showLoginPrompt() {
         this.showMessage('Please use the account button in the top bar to log in', 'info');
-    }
-
-    generateDemoStats() {
-        if (accountSystem.isLoggedIn()) {
-            accountSystem.generateDemoStats();
-            this.showMessage('Demo stats generated! Refreshing...', 'success');
-            
-            // Reload stats after a short delay
-            setTimeout(() => {
-                this.loadAccountStats();
-            }, 500);
-        } else {
-            this.showMessage('Please log in to generate demo stats', 'error');
-        }
     }
 
     showMessage(message, type = 'info') {

@@ -225,10 +225,10 @@ class AIHomepageWidget {
 
         // Add "View More" button if there are more recommendations
         const viewMoreBtn = document.createElement('div');
-        viewMoreBtn.className = 'ai-view-more-container';
+        viewMoreBtn.className = 'view-more-container';
         viewMoreBtn.innerHTML = `
-            <a href="ai-recommendations.html" class="ai-view-more-btn">
-                <span>View All AI Recommendations</span>
+            <a href="recommended.html" class="view-more-btn">
+                <span>View All Recommended Games</span>
                 <i class="fas fa-arrow-right"></i>
             </a>
         `;

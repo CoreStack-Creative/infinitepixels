@@ -1,8 +1,7 @@
 // AI Recommendations Page Controller
-class AIRecommendationsPage {
+class RecommendedPage {
     constructor() {
         this.isInitialized = false;
-        this.currentCategory = 'all';
         this.feedbackModal = null;
         this.currentRating = 0;
         this.init();
@@ -13,7 +12,7 @@ class AIRecommendationsPage {
         await this.waitForDependencies();
         
         // Only initialize if we're on the AI recommendations page
-        if (!this.isAIRecommendationsPage()) {
+        if (!this.isRecommendedPage()) {
             return;
         }
 
@@ -29,7 +28,7 @@ class AIRecommendationsPage {
     async waitForDependencies() {
         return new Promise((resolve) => {
             const checkDependencies = () => {
-                if (typeof accountSystem !== 'undefined' && typeof aiRecommendations !== 'undefined') {
+                if (typeof accountSystem !== 'undefined' && typeof recommendationsEngine !== 'undefined') {
                     setTimeout(resolve, 100);
                 } else {
                     setTimeout(checkDependencies, 100);
@@ -39,21 +38,12 @@ class AIRecommendationsPage {
         });
     }
 
-    isAIRecommendationsPage() {
+    isRecommendedPage() {
         return window.location.pathname.includes('ai-recommendations') || 
-               document.getElementById('mainAIRecommendations');
+               document.getElementById('mainRecommendations');
     }
 
     setupEventListeners() {
-        // Category tab listeners
-        const categoryTabs = document.querySelectorAll('.category-tab');
-        categoryTabs.forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                const category = e.target.dataset.category;
-                this.switchCategory(category);
-            });
-        });
-
         // Star rating listeners
         document.addEventListener('click', (e) => {
             if (e.target.closest('.star')) {
@@ -99,7 +89,6 @@ class AIRecommendationsPage {
     async loadUserInsights() {
         const insights = {
             playTime: await this.calculateAveragePlayTime(),
-            favoriteGenre: await this.getFavoriteGenre(),
             aiAccuracy: await this.getAIAccuracy(),
             discoveries: await this.getDiscoveryCount()
         };
@@ -121,37 +110,6 @@ class AIRecommendationsPage {
         }
     }
 
-    async getFavoriteGenre() {
-        try {
-            const favorites = accountSystem.getFavorites();
-            if (favorites.length === 0) return 'None yet';
-            
-            // Count categories
-            const categoryCount = {};
-            favorites.forEach(gameId => {
-                const game = aiRecommendations.allGames.find(g => g.id === gameId);
-                if (game && game.category) {
-                    categoryCount[game.category] = (categoryCount[game.category] || 0) + 1;
-                }
-            });
-            
-            // Find most common category
-            let maxCategory = 'Action';
-            let maxCount = 0;
-            Object.entries(categoryCount).forEach(([category, count]) => {
-                if (count > maxCount) {
-                    maxCategory = category;
-                    maxCount = count;
-                }
-            });
-            
-            return maxCategory;
-        } catch (error) {
-            console.error('Error getting favorite genre:', error);
-            return 'Action';
-        }
-    }
-
     async getAIAccuracy() {
         // Mock AI accuracy - in real app, this would be calculated from user feedback
         const accuracy = Math.floor(Math.random() * 20) + 80; // 80-100%
@@ -166,15 +124,11 @@ class AIRecommendationsPage {
 
     updateInsightCards(insights) {
         const playTimeCard = document.getElementById('playTimeInsight');
-        const categoryCard = document.getElementById('categoryInsight');
         const accuracyCard = document.getElementById('accuracyInsight');
         const discoveryCard = document.getElementById('discoveryInsight');
 
         if (playTimeCard) {
             playTimeCard.querySelector('.insight-value').textContent = insights.playTime;
-        }
-        if (categoryCard) {
-            categoryCard.querySelector('.insight-value').textContent = insights.favoriteGenre;
         }
         if (accuracyCard) {
             accuracyCard.querySelector('.insight-value').textContent = insights.aiAccuracy;
@@ -185,11 +139,11 @@ class AIRecommendationsPage {
     }
 
     updateHeaderStats() {
-        const statsContainer = document.getElementById('aiHeaderStats');
+        const statsContainer = document.getElementById('headerStats');
         if (!statsContainer) return;
 
         const stats = [
-            { label: 'Recommendations', value: aiRecommendations.recommendations.length },
+            { label: 'Recommendations', value: recommendationsEngine.recommendations.length },
             { label: 'Accuracy', value: '94%' },
             { label: 'Games Played', value: accountSystem.getRecentGames().length }
         ];
@@ -203,7 +157,7 @@ class AIRecommendationsPage {
     }
 
     async loadRecommendations() {
-        if (!aiRecommendations) {
+        if (!recommendationsEngine) {
             console.error('AI Recommendations engine not available');
             return;
         }
@@ -227,7 +181,7 @@ class AIRecommendationsPage {
     }
 
     renderMainRecommendations() {
-        const container = document.getElementById('mainAIRecommendations');
+        const container = document.getElementById('mainRecommendations');
         if (!container) return;
 
         const recommendations = aiRecommendations.getTopRecommendations(12);
@@ -246,58 +200,6 @@ class AIRecommendationsPage {
                 <div class="ai-recommendations-grid">
                     ${recommendations.map(rec => this.renderRecommendationCard(rec)).join('')}
                 </div>
-            </div>
-        `;
-
-        container.innerHTML = html;
-        this.setupCardListeners(container);
-    }
-
-    renderCategoryRecommendations() {
-        const container = document.getElementById('categoryContent');
-        if (!container) return;
-
-        this.switchCategory(this.currentCategory);
-    }
-
-    switchCategory(category) {
-        this.currentCategory = category;
-        
-        // Update tab states
-        document.querySelectorAll('.category-tab').forEach(tab => {
-            tab.classList.remove('active');
-            if (tab.dataset.category === category) {
-                tab.classList.add('active');
-            }
-        });
-
-        // Render category content
-        const container = document.getElementById('categoryContent');
-        if (!container) return;
-
-        let recommendations;
-        if (category === 'all') {
-            recommendations = aiRecommendations.getDiverseRecommendations(12);
-        } else {
-            recommendations = aiRecommendations.getRecommendationsByCategory(category, 12);
-        }
-
-        if (recommendations.length === 0) {
-            container.innerHTML = `
-                <div class="ai-empty-recommendations">
-                    <div class="empty-icon">
-                        <i class="fas fa-search"></i>
-                    </div>
-                    <h3>No recommendations for ${category}</h3>
-                    <p>Try playing some ${category} games to get personalized recommendations!</p>
-                </div>
-            `;
-            return;
-        }
-
-        const html = `
-            <div class="ai-recommendations-grid">
-                ${recommendations.map(rec => this.renderRecommendationCard(rec, { showReasons: true })).join('')}
             </div>
         `;
 
@@ -500,12 +402,12 @@ class AIRecommendationsPage {
     }
 
     showLoadingState() {
-        const container = document.getElementById('mainAIRecommendations');
+        const container = document.getElementById('mainRecommendations');
         if (container) {
             container.innerHTML = `
-                <div class="ai-recommendations-loading">
-                    <i class="fas fa-brain fa-spin"></i>
-                    <h3>AI is analyzing your preferences...</h3>
+                <div class="recommendations-loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <h3>Finding great games for you...</h3>
                     <p>This may take a moment as we generate personalized recommendations</p>
                 </div>
             `;
@@ -513,10 +415,10 @@ class AIRecommendationsPage {
     }
 
     showErrorState() {
-        const container = document.getElementById('mainAIRecommendations');
+        const container = document.getElementById('mainRecommendations');
         if (container) {
             container.innerHTML = `
-                <div class="ai-recommendations-empty">
+                <div class="recommendations-empty">
                     <div class="empty-icon">
                         <i class="fas fa-exclamation-triangle"></i>
                     </div>
@@ -548,13 +450,13 @@ class AIRecommendationsPage {
     }
 
     showLoginPrompt() {
-        const container = document.getElementById('mainAIRecommendations');
+        const container = document.getElementById('mainRecommendations');
         if (container) {
             container.innerHTML = `
-                <div class="ai-recommendations-login-prompt">
+                <div class="recommendations-login-prompt">
                     <i class="fas fa-user-circle"></i>
                     <h3>Sign In for Personalized Recommendations</h3>
-                    <p>Our AI needs to learn your preferences to provide the best game recommendations</p>
+                    <p>We need to learn your preferences to provide the best game recommendations</p>
                     <button class="browse-games-btn" onclick="window.location.href='account.html'">
                         <i class="fas fa-sign-in-alt"></i>
                         Sign In Now
@@ -600,7 +502,7 @@ class AIRecommendationsPage {
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    window.aiRecommendationsPage = new AIRecommendationsPage();
+    window.recommendedPage = new RecommendedPage();
 });
 
 // Add notification styles

@@ -1243,54 +1243,6 @@ class AccountSystem {
         }
     }
 
-    // Helper method to populate some demo data for testing
-    generateDemoStats() {
-        try {
-            // Add some demo favorites
-            const demoFavorites = ['1v1lol', 'basketrandom', 'cookieclicker'];
-            this.setStoredData('favorites', demoFavorites);
-            
-            // Add demo game stats with play time
-            const demoGameStats = {
-                '1v1lol': {
-                    totalPlayTime: 1200000, // 20 minutes
-                    sessionCount: 3,
-                    lastPlayed: Date.now() - 86400000 // 1 day ago
-                },
-                'basketrandom': {
-                    totalPlayTime: 900000, // 15 minutes
-                    sessionCount: 2,
-                    lastPlayed: Date.now() - 43200000 // 12 hours ago
-                },
-                'cookieclicker': {
-                    totalPlayTime: 1800000, // 30 minutes
-                    sessionCount: 4,
-                    lastPlayed: Date.now() - 3600000 // 1 hour ago
-                }
-            };
-            this.setStoredData('gameStats', demoGameStats);
-            
-            // Add demo recent games
-            const demoRecentGames = [
-                { slug: 'cookieclicker', lastPlayed: Date.now() - 3600000 },
-                { slug: 'basketrandom', lastPlayed: Date.now() - 43200000 },
-                { slug: '1v1lol', lastPlayed: Date.now() - 86400000 }
-            ];
-            localStorage.setItem('infinitePixels_recentlyPlayed', JSON.stringify(demoRecentGames));
-            
-            // Add demo reviews
-            const demoReviews = [
-                { gameId: '1v1lol', rating: 5, comment: 'Amazing game!', timestamp: Date.now() - 86400000 },
-                { gameId: 'basketrandom', rating: 4, comment: 'Fun basketball game', timestamp: Date.now() - 172800000 }
-            ];
-            this.setStoredData('userReviews', demoReviews);
-            
-            console.log('Demo stats generated successfully');
-        } catch (error) {
-            console.error('Error generating demo stats:', error);
-        }
-    }
-
     showLogin() {
         const tabs = document.querySelectorAll('.auth-tab');
         const forms = document.querySelectorAll('.auth-form');
