@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .status { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .success { background: #d4edda; border-color: #c3e6cb; }
+        .error { background: #f8d7da; border-color: #f5c6cb; }
+        .loading { background: #d1ecf1; border-color: #bee5eb; }
+        button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>System Test</h1>
+    
+    <h2>Account System Test</h2>
+    <div id="account-status" class="status loading">Loading...</div>
+    <button onclick="testLogin()">Test Login</button>
+    <button onclick="testStats()">Test Stats</button>
+    
+    <h2>Recommendations System Test</h2>
+    <div id="recommendations-status" class="status loading">Loading...</div>
+    <button onclick="testRecommendations()">Test Recommendations</button>
+    
+    <h2>Console Output</h2>
+    <div id="console-output" style="background: #f5f5f5; padding: 10px; height: 200px; overflow-y: scroll;"></div>
+    
+    <!-- Dependencies -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2.0.0/dist/umd/supabase.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="account-system.js"></script>
+    <script src="ai-tracking.js"></script>
+    <script src="recommended.js"></script>
+    
+    <script>
+        // Capture console output
+        const originalLog = console.log;
+        const originalError = console.error;
+        const consoleOutput = document.getElementById('console-output');
+        
+        function addToConsole(type, message) {
+            const div = document.createElement('div');
+            div.style.color = type === 'error' ? 'red' : 'black';
+            div.textContent = `[${type.toUpperCase()}] ${message}`;
+            consoleOutput.appendChild(div);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToConsole('log', args.join(' '));
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToConsole('error', args.join(' '));
+        };
+        
+        // Test functions
+        function updateStatus(elementId, message, type = 'loading') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `status ${type}`;
+        }
+        
+        function testAccountSystem() {
+            try {
+                if (typeof accountSystem === 'undefined') {
+                    updateStatus('account-status', 'Account system not loaded', 'error');
+                    return;
+                }
+                
+                console.log('Testing account system...');
+                const isLoggedIn = accountSystem.isLoggedIn();
+                const hasUser = !!accountSystem.user;
+                
+                updateStatus('account-status', 
+                    `Account system loaded. Logged in: ${isLoggedIn}, Has user: ${hasUser}`, 
+                    'success');
+                    
+            } catch (error) {
+                updateStatus('account-status', `Error: ${error.message}`, 'error');
+                console.error('Account system error:', error);
+            }
+        }
+        
+        function testRecommendationsSystem() {
+            try {
+                if (typeof recommendationsEngine === 'undefined') {
+                    updateStatus('recommendations-status', 'Recommendations engine not loaded', 'error');
+                    return;
+                }
+                
+                console.log('Testing recommendations engine...');
+                const isInitialized = recommendationsEngine.isInitialized;
+                const hasRecommendations = recommendationsEngine.recommendations && recommendationsEngine.recommendations.length > 0;
+                
+                updateStatus('recommendations-status', 
+                    `Engine loaded. Initialized: ${isInitialized}, Has recommendations: ${hasRecommendations}`, 
+                    'success');
+                    
+            } catch (error) {
+                updateStatus('recommendations-status', `Error: ${error.message}`, 'error');
+                console.error('Recommendations error:', error);
+            }
+        }
+        
+        function testLogin() {
+            if (typeof accountSystem !== 'undefined') {
+                // Test some account methods
+                try {
+                    const recentGames = accountSystem.getRecentGames();
+                    const favorites = accountSystem.getFavorites();
+                    console.log('Recent games:', recentGames.length);
+                    console.log('Favorites:', favorites.length);
+                } catch (error) {
+                    console.error('Error testing account methods:', error);
+                }
+            }
+        }
+        
+        function testStats() {
+            if (typeof accountSystem !== 'undefined') {
+                try {
+                    const totalTime = accountSystem.getTotalPlayTime();
+                    console.log('Total play time:', totalTime);
+                } catch (error) {
+                    console.error('Error getting stats:', error);
+                }
+            }
+        }
+        
+        function testRecommendations() {
+            if (typeof recommendationsEngine !== 'undefined') {
+                try {
+                    recommendationsEngine.generateRecommendations()
+                        .then(() => {
+                            console.log('Recommendations generated successfully');
+                            testRecommendationsSystem();
+                        })
+                        .catch(error => {
+                            console.error('Error generating recommendations:', error);
+                        });
+                } catch (error) {
+                    console.error('Error calling generateRecommendations:', error);
+                }
+            }
+        }
+        
+        // Run initial tests
+        setTimeout(() => {
+            console.log('Running initial tests...');
+            testAccountSystem();
+            testRecommendationsSystem();
+        }, 1000);
+        
+        // Run tests again after longer delay
+        setTimeout(() => {
+            console.log('Running delayed tests...');
+            testAccountSystem();
+            testRecommendationsSystem();
+        }, 3000);
+    </script>
+</body>
+</html>

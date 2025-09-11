@@ -76,6 +76,9 @@ app.use((req, res, next) => {
 
 app.use(express.json());
 
+// Serve static files from parent directory (where HTML files are)
+app.use(express.static('..'));
+
 // Health check endpoint
 app.get('/', (req, res) => {
     res.json({ 
