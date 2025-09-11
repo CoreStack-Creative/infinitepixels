@@ -252,13 +252,27 @@ class AccountPageManager {
 
     async loadAccountStats() {
         try {
-            if (!accountSystem.user) {
-                console.log('No user logged in');
+            if (!accountSystem || !accountSystem.user) {
+                console.log('Account system or user not available');
                 return;
             }
 
+            // Ensure account system is ready
+            if (!accountSystem.isReady) {
+                console.log('Waiting for account system to be ready...');
+                await new Promise(resolve => {
+                    accountSystem.onReady(resolve);
+                });
+            }
+
             // Get favorites count using the proper method
-            const favorites = accountSystem.getLocalFavorites() || [];
+            let favorites = [];
+            try {
+                favorites = accountSystem.getLocalFavorites() || [];
+            } catch (error) {
+                console.warn('getLocalFavorites not available, falling back to direct localStorage access:', error);
+                favorites = JSON.parse(localStorage.getItem('infinitepixels_favorites') || '[]');
+            }
             
             // Get recent games and calculate unique games played
             const recentGames = accountSystem.getRecentGames() || [];
