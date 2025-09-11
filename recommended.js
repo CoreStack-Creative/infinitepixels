@@ -534,23 +534,188 @@ class RecommendationsEngine {
     }
 
     // ===== GAME INTERACTION HANDLING ===== //
-    playRecommendedGame(gameId) {
-        const game = this.allGames.find(g => g.id === gameId);
+    async playRecommendedGame(gameId) {
+        // Track the click
+        this.trackRecommendationClick(gameId);
+        
+        // Find the game
+        const game = this.allGames.find(g => g.id == gameId || g.id === gameId);
         if (!game) {
             console.error('Game not found:', gameId);
             return;
         }
 
-        // Track play action
-        this.trackGamePlay(gameId);
+        // Add to recent games if account system is available
+        if (typeof accountSystem !== 'undefined' && accountSystem.isLoggedIn()) {
+            accountSystem.addToRecentGames(gameId);
+        }
 
-        // Redirect to game page
-        window.location.href = `/game.html?id=${gameId}`;
+        // Track with AI tracking system if available
+        if (typeof aiTracking !== 'undefined') {
+            aiTracking.startGameSession(gameId);
+        }
+
+        // Navigate to game
+        if (game.gameurl) {
+            // External game URL
+            window.open(game.gameurl, '_blank');
+        } else if (game.slug) {
+            // Internal game page
+            window.location.href = `game.html?game=${game.slug}`;
+        } else {
+            // Fallback
+            window.location.href = `game.html?id=${gameId}`;
+        }
     }
 
-    trackGamePlay(gameId) {
-        // TODO: Implement game play tracking (e.g., send event to analytics)
-        console.log('Game played:', gameId);
+    async trackRecommendationView(gameId, position) {
+        if (!accountSystem.isLoggedIn()) return;
+
+        try {
+            await fetch(`${this.baseURL}/ai/track-view`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...accountSystem.getAuthHeaders()
+                },
+                body: JSON.stringify({
+                    game_id: gameId,
+                    position: position,
+                    timestamp: Date.now(),
+                    context: 'recommendation_view'
+                })
+            });
+        } catch (error) {
+            console.error('Error tracking recommendation view:', error);
+        }
+    }
+
+    async trackRecommendationClick(gameId) {
+        if (!accountSystem.isLoggedIn()) return;
+
+        try {
+            await fetch(`${this.baseURL}/ai/track-click`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...accountSystem.getAuthHeaders()
+                },
+                body: JSON.stringify({
+                    game_id: gameId,
+                    timestamp: Date.now(),
+                    context: 'recommendation_click'
+                })
+            });
+        } catch (error) {
+            console.error('Error tracking recommendation click:', error);
+        }
+    }
+
+    // ===== FEEDBACK HANDLING ===== //
+    async submitFeedback(gameId, rating, feedbackData = {}) {
+        if (!accountSystem.isLoggedIn()) {
+            console.log('User not logged in, cannot submit feedback');
+            return false;
+        }
+
+        try {
+            const response = await fetch(`${this.baseURL}/ai/feedback`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...accountSystem.getAuthHeaders()
+                },
+                body: JSON.stringify({
+                    game_id: gameId,
+                    rating: rating,
+                    feedback_type: feedbackData.type || 'star_rating',
+                    feedback_text: feedbackData.text || '',
+                    tags: feedbackData.tags || {},
+                    timestamp: Date.now()
+                })
+            });
+
+            if (response.ok) {
+                console.log('✅ Feedback submitted successfully');
+                
+                // Update local recommendations cache
+                this.updateRecommendationCache(gameId, rating);
+                
+                return true;
+            } else {
+                console.error('Failed to submit feedback');
+                return false;
+            }
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+            return false;
+        }
+    }
+
+    updateRecommendationCache(gameId, rating) {
+        // Find and update the recommendation in our local cache
+        const recIndex = this.recommendations.findIndex(rec => rec.game_id === gameId);
+        if (recIndex !== -1) {
+            this.recommendations[recIndex].user_rating = rating;
+            this.recommendations[recIndex].has_feedback = true;
+        }
+    }
+
+    // ===== UTILITY METHODS ===== //
+    getAlgorithmLabel(algorithm) {
+        const labels = {
+            'collaborative_filtering': 'Similar Users',
+            'content_based': 'Game Features',
+            'hybrid': 'AI Hybrid',
+            'popularity_fallback': 'Popular',
+            'category_based': 'Category Match'
+        };
+        return labels[algorithm] || 'AI Recommended';
+    }
+
+    getConfidenceColor(confidence) {
+        if (confidence >= 0.8) return '#4CAF50'; // Green
+        if (confidence >= 0.6) return '#FF9800'; // Orange
+        if (confidence >= 0.4) return '#2196F3'; // Blue
+        return '#9E9E9E'; // Gray
+    }
+
+    // ===== LOCAL STORAGE MANAGEMENT ===== //
+    storeRecommendationsLocally(recommendations) {
+        try {
+            localStorage.setItem('ai_recommendations_cache', JSON.stringify({
+                recommendations: recommendations,
+                timestamp: Date.now(),
+                userId: accountSystem.user?.id
+            }));
+        } catch (error) {
+            console.error('Error storing recommendations locally:', error);
+        }
+    }
+
+    loadRecommendationsFromCache() {
+        try {
+            const cached = localStorage.getItem('ai_recommendations_cache');
+            if (cached) {
+                const data = JSON.parse(cached);
+                
+                // Check if cache is still valid (24 hours)
+                const cacheAge = Date.now() - data.timestamp;
+                const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+                
+                if (cacheAge < maxAge && data.userId === accountSystem.user?.id) {
+                    this.recommendations = data.recommendations;
+                    return true;
+                }
+            }
+        } catch (error) {
+            console.error('Error loading recommendations from cache:', error);
+        }
+        return false;
+    }
+
+    clearRecommendationsCache() {
+        localStorage.removeItem('ai_recommendations_cache');
     }
 
     // ===== API METHODS FOR OTHER COMPONENTS ===== //
