@@ -19,6 +19,9 @@ class AccountSystem {
     }
 
     async init() {
+        // Wait for DOM to be ready
+        await this.waitForDOM();
+        
         // Initialize Supabase
         await this.initSupabase();
         
@@ -35,6 +38,17 @@ class AccountSystem {
         this.setupSessionExtension();
         // Mark as ready and notify callbacks
         this.setReady();
+    }
+
+    // Wait for DOM to be ready
+    waitForDOM() {
+        return new Promise((resolve) => {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', resolve);
+            } else {
+                resolve();
+            }
+        });
     }
 
     async initSupabase() {
