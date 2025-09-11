@@ -14049,6 +14049,28 @@ body.theme-light .cosmic-categories-pagination-button.cosmic-categories-active-p
     --about-gradient-nebula: linear-gradient(135deg, var(--about-blue-deep), var(--about-purple-medium));
     --about-gradient-aurora: linear-gradient(135deg, var(--about-purple-light), var(--about-blue-light));
     --about-glow-purple: 0 10px 40px rgba(138, 43, 226, 0.3);
+    
+    /* AI System Variables */
+    --ai-primary: #40E0D0;
+    --ai-secondary: #6A5ACD;
+    --ai-accent: #FF6B6B;
+    --ai-success: #4CAF50;
+    --ai-warning: #FF9800;
+    --ai-gradient: linear-gradient(135deg, var(--ai-primary) 0%, var(--ai-secondary) 100%);
+    --ai-glow: 0 0 20px rgba(64, 224, 208, 0.3);
+    --ai-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    --ai-border-radius: 16px;
+    --ai-transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+    
+    /* General UI Variables */
+    --text-primary: #ffffff;
+    --text-secondary: #b8b8ff;
+    --card-bg: rgba(30, 30, 63, 0.8);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --button-bg: rgba(255, 255, 255, 0.1);
+    --button-hover-bg: rgba(255, 255, 255, 0.2);
+    --input-bg: rgba(255, 255, 255, 0.05);
+    --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 /* Ensure main content has proper positioning */

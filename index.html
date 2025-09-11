@@ -144,6 +144,14 @@
                     </a>
                 </li>
                 <li>
+                    <a href="ai-recommendations.html">
+                        <i class="icon">
+                            <i class="fas fa-brain" style="font-size: 20px; color: #40E0D0;"></i>
+                        </i>
+                        <span>AI Picks</span>
+                    </a>
+                </li>
+                <li>
                     <a href="random.html">
                         <i class="icon">
                             <img src="images/random.png" alt="Random" width="20" height="20">
@@ -276,6 +284,11 @@
                    <!-- Games will be populated by JavaScript -->
                </div>
            </div>
+       </section>
+
+       <!-- AI Recommendations Section -->
+       <section class="ai-homepage-section" id="aiHomepageRecommendations">
+           <!-- AI recommendations will be populated by JavaScript -->
        </section>
 
        <!-- Games and Spotlight Section -->
@@ -683,6 +696,9 @@
 
    <!-- Load scripts in correct order -->
    <script src="account-system.js" data-cookieconsent="ignore"></script> <!-- Account system -->
+   <script src="ai-tracking.js" data-cookieconsent="ignore"></script> <!-- AI tracking -->
+   <script src="ai-recommendations.js" data-cookieconsent="ignore"></script> <!-- AI recommendations engine -->
+   <script src="ai-homepage-widget.js" data-cookieconsent="ignore"></script> <!-- AI homepage widget -->
    <script src="javascript.js" data-cookieconsent="ignore"></script> <!-- Then main javascript -->
    
    <script>
