@@ -6090,6 +6090,12 @@ window.playGame = function(gameSlug) {
         console.error('playGame called with invalid gameSlug:', gameSlug);
         return;
     }
+    
+    // Start game session tracking if account system is available
+    if (window.accountSystem && accountSystem.isLoggedIn()) {
+        accountSystem.startGameSession(gameSlug);
+    }
+    
     window.location.href = `game.html?game=${gameSlug}`;
 };
 

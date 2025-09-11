@@ -190,6 +190,11 @@ class AccountPageManager {
                                 </div>
                             </div>
                         </div>
+                        <div style="margin-top: 20px; text-align: center;">
+                            <button class="demo-stats-btn" onclick="accountPageManager.generateDemoStats()" style="padding: 8px 16px; background: rgba(var(--accent-rgb), 0.1); border: 1px solid rgba(var(--accent-rgb), 0.3); border-radius: 6px; color: var(--accent-color); cursor: pointer; font-size: 0.9em;">
+                                <i class="fas fa-chart-bar"></i> Generate Demo Stats
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -257,44 +262,42 @@ class AccountPageManager {
                 return;
             }
 
+            console.log('Loading account stats...');
+
             // Get favorites count
             const favorites = accountSystem.getStoredData('favorites') || [];
+            console.log('Favorites:', favorites);
             
-            // Get recent games count and calculate time played
-            const recentGames = accountSystem.getStoredData('recentGames') || [];
-            const gameSession = accountSystem.getStoredData('gameSession') || {};
-            
-            // Calculate total time played (in minutes)
-            let totalTimeMinutes = 0;
-            
-            // Add time from game sessions
-            if (gameSession.totalPlayTime) {
-                totalTimeMinutes += Math.floor(gameSession.totalPlayTime / 60000); // Convert from ms to minutes
-            }
-            
-            // Add estimated time from recent games (assume 5 minutes per game session if no specific time recorded)
+            // Get recent games and calculate unique games played
+            const recentGames = accountSystem.getRecentGames() || [];
+            console.log('Recent games:', recentGames);
+            const uniqueGames = new Set();
             recentGames.forEach(game => {
-                if (game.playTime) {
-                    totalTimeMinutes += Math.floor(game.playTime / 60000);
-                } else {
-                    totalTimeMinutes += 5; // Default 5 minutes per game
+                if (game.slug) {
+                    uniqueGames.add(game.slug);
                 }
             });
             
-            // Format time played
+            // Calculate total time played using the new tracking system
+            const totalTimeMs = accountSystem.getTotalPlayTime();
+            console.log('Total play time (ms):', totalTimeMs);
             let timePlayedText = '';
-            if (totalTimeMinutes < 60) {
-                timePlayedText = `${totalTimeMinutes}m`;
+            if (totalTimeMs < 60000) { // Less than 1 minute
+                timePlayedText = `${Math.floor(totalTimeMs / 1000)}s`;
+            } else if (totalTimeMs < 3600000) { // Less than 1 hour
+                const minutes = Math.floor(totalTimeMs / 60000);
+                timePlayedText = `${minutes}m`;
             } else {
-                const hours = Math.floor(totalTimeMinutes / 60);
-                const minutes = totalTimeMinutes % 60;
-                timePlayedText = `${hours}h ${minutes}m`;
+                const hours = Math.floor(totalTimeMs / 3600000);
+                const minutes = Math.floor((totalTimeMs % 3600000) / 60000);
+                timePlayedText = hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
             }
             
             // Get reviews count from local storage and Supabase if available
             let reviewsCount = 0;
             const localReviews = accountSystem.getStoredData('userReviews') || [];
             reviewsCount = localReviews.length;
+            console.log('Local reviews:', localReviews);
             
             // Try to get reviews from Supabase if available
             if (accountSystem.supabase && accountSystem.user.id) {
@@ -306,18 +309,18 @@ class AccountPageManager {
                     
                     if (!error && reviews) {
                         reviewsCount = Math.max(reviewsCount, reviews.length);
+                        console.log('Supabase reviews:', reviews);
                     }
                 } catch (dbError) {
                     console.log('Could not fetch reviews from database:', dbError);
                 }
             }
             
-            // Calculate unique games played
-            const uniqueGames = new Set();
-            recentGames.forEach(game => {
-                if (game.id || game.name) {
-                    uniqueGames.add(game.id || game.name);
-                }
+            console.log('Final stats:', {
+                favorites: favorites.length,
+                timePlayedText,
+                uniqueGames: uniqueGames.size,
+                reviewsCount
             });
             
             // Update UI with stats
@@ -333,7 +336,7 @@ class AccountPageManager {
                 }
                 
                 if (timePlayedElement) {
-                    timePlayedElement.textContent = timePlayedText;
+                    timePlayedElement.textContent = timePlayedText || '0s';
                 }
                 
                 if (gamesPlayedCountElement) {
@@ -343,6 +346,10 @@ class AccountPageManager {
                 if (reviewsCountElement) {
                     reviewsCountElement.textContent = reviewsCount;
                 }
+                
+                console.log('Stats UI updated successfully');
+            } else {
+                console.log('Stats container not found');
             }
         } catch (error) {
             console.error('Error loading account stats:', error);
@@ -756,6 +763,20 @@ class AccountPageManager {
 
     showLoginPrompt() {
         this.showMessage('Please use the account button in the top bar to log in', 'info');
+    }
+
+    generateDemoStats() {
+        if (accountSystem.isLoggedIn()) {
+            accountSystem.generateDemoStats();
+            this.showMessage('Demo stats generated! Refreshing...', 'success');
+            
+            // Reload stats after a short delay
+            setTimeout(() => {
+                this.loadAccountStats();
+            }, 500);
+        } else {
+            this.showMessage('Please log in to generate demo stats', 'error');
+        }
     }
 
     showMessage(message, type = 'info') {

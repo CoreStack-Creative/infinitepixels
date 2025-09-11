@@ -701,5 +701,33 @@
     <script src="supabase-config.js" data-cookieconsent="ignore"></script>
     <script src="account-system.js" data-cookieconsent="ignore"></script>
     <script src="javascript.js" data-cookieconsent="ignore"></script>
+    
+    <!-- Game session tracking -->
+    <script>
+        // Track when user leaves the game page
+        window.addEventListener('beforeunload', function() {
+            if (window.accountSystem && accountSystem.isLoggedIn()) {
+                accountSystem.endGameSession();
+            }
+        });
+        
+        // Track when user navigates away from the page
+        window.addEventListener('pagehide', function() {
+            if (window.accountSystem && accountSystem.isLoggedIn()) {
+                accountSystem.endGameSession();
+            }
+        });
+        
+        // Update session activity every 30 seconds while on game page
+        setInterval(function() {
+            if (window.accountSystem && accountSystem.isLoggedIn()) {
+                const sessionData = accountSystem.getStoredData('gameSession');
+                if (sessionData) {
+                    sessionData.lastActive = Date.now();
+                    accountSystem.setStoredData('gameSession', sessionData);
+                }
+            }
+        }, 30000);
+    </script>
 </body>
 </html>

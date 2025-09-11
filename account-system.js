@@ -1139,6 +1139,158 @@ class AccountSystem {
         }
     }
 
+    getRecentGames() {
+        try {
+            const storageKey = 'infinitePixels_recentlyPlayed';
+            const stored = localStorage.getItem(storageKey);
+            
+            if (!stored) {
+                return [];
+            }
+            
+            let recentGames = JSON.parse(stored);
+            
+            // Filter out any invalid entries
+            recentGames = recentGames.filter(game => 
+                game && 
+                game.slug && 
+                game.slug !== 'undefined' && 
+                game.slug !== 'null' && 
+                typeof game.slug === 'string' && 
+                game.slug.trim() !== ''
+            );
+            
+            return recentGames;
+        } catch (error) {
+            console.error('Error getting recent games:', error);
+            return [];
+        }
+    }
+
+    startGameSession(gameId) {
+        try {
+            const sessionData = {
+                gameId: gameId,
+                startTime: Date.now(),
+                lastActive: Date.now()
+            };
+            
+            this.setStoredData('gameSession', sessionData);
+            console.log(`Game session started for: ${gameId}`);
+        } catch (error) {
+            console.error('Error starting game session:', error);
+        }
+    }
+
+    endGameSession() {
+        try {
+            const sessionData = this.getStoredData('gameSession');
+            if (!sessionData || !sessionData.startTime) {
+                return;
+            }
+
+            const endTime = Date.now();
+            const playTime = endTime - sessionData.startTime;
+            
+            // Only track sessions longer than 30 seconds
+            if (playTime > 30000) {
+                this.addPlayTime(sessionData.gameId, playTime);
+            }
+            
+            // Clear the current session
+            localStorage.removeItem('infinitepixels_gameSession');
+            console.log(`Game session ended. Play time: ${Math.floor(playTime / 1000)}s`);
+        } catch (error) {
+            console.error('Error ending game session:', error);
+        }
+    }
+
+    addPlayTime(gameId, playTime) {
+        try {
+            let gameStats = this.getStoredData('gameStats') || {};
+            
+            if (!gameStats[gameId]) {
+                gameStats[gameId] = {
+                    totalPlayTime: 0,
+                    sessionCount: 0,
+                    lastPlayed: Date.now()
+                };
+            }
+            
+            gameStats[gameId].totalPlayTime += playTime;
+            gameStats[gameId].sessionCount += 1;
+            gameStats[gameId].lastPlayed = Date.now();
+            
+            this.setStoredData('gameStats', gameStats);
+        } catch (error) {
+            console.error('Error adding play time:', error);
+        }
+    }
+
+    getTotalPlayTime() {
+        try {
+            const gameStats = this.getStoredData('gameStats') || {};
+            let totalTime = 0;
+            
+            Object.values(gameStats).forEach(stats => {
+                totalTime += stats.totalPlayTime || 0;
+            });
+            
+            return totalTime;
+        } catch (error) {
+            console.error('Error getting total play time:', error);
+            return 0;
+        }
+    }
+
+    // Helper method to populate some demo data for testing
+    generateDemoStats() {
+        try {
+            // Add some demo favorites
+            const demoFavorites = ['1v1lol', 'basketrandom', 'cookieclicker'];
+            this.setStoredData('favorites', demoFavorites);
+            
+            // Add demo game stats with play time
+            const demoGameStats = {
+                '1v1lol': {
+                    totalPlayTime: 1200000, // 20 minutes
+                    sessionCount: 3,
+                    lastPlayed: Date.now() - 86400000 // 1 day ago
+                },
+                'basketrandom': {
+                    totalPlayTime: 900000, // 15 minutes
+                    sessionCount: 2,
+                    lastPlayed: Date.now() - 43200000 // 12 hours ago
+                },
+                'cookieclicker': {
+                    totalPlayTime: 1800000, // 30 minutes
+                    sessionCount: 4,
+                    lastPlayed: Date.now() - 3600000 // 1 hour ago
+                }
+            };
+            this.setStoredData('gameStats', demoGameStats);
+            
+            // Add demo recent games
+            const demoRecentGames = [
+                { slug: 'cookieclicker', lastPlayed: Date.now() - 3600000 },
+                { slug: 'basketrandom', lastPlayed: Date.now() - 43200000 },
+                { slug: '1v1lol', lastPlayed: Date.now() - 86400000 }
+            ];
+            localStorage.setItem('infinitePixels_recentlyPlayed', JSON.stringify(demoRecentGames));
+            
+            // Add demo reviews
+            const demoReviews = [
+                { gameId: '1v1lol', rating: 5, comment: 'Amazing game!', timestamp: Date.now() - 86400000 },
+                { gameId: 'basketrandom', rating: 4, comment: 'Fun basketball game', timestamp: Date.now() - 172800000 }
+            ];
+            this.setStoredData('userReviews', demoReviews);
+            
+            console.log('Demo stats generated successfully');
+        } catch (error) {
+            console.error('Error generating demo stats:', error);
+        }
+    }
+
     showLogin() {
         const tabs = document.querySelectorAll('.auth-tab');
         const forms = document.querySelectorAll('.auth-form');
@@ -1598,6 +1750,26 @@ class AccountSystem {
             }
         } catch (error) {
             console.error('Error during server cleanup:', error);
+        }
+    }
+
+    getStoredData(key) {
+        try {
+            const data = localStorage.getItem(`infinitepixels_${key}`);
+            return data ? JSON.parse(data) : null;
+        } catch (error) {
+            console.error(`Error getting stored data for key ${key}:`, error);
+            return null;
+        }
+    }
+
+    setStoredData(key, data) {
+        try {
+            localStorage.setItem(`infinitepixels_${key}`, JSON.stringify(data));
+            return true;
+        } catch (error) {
+            console.error(`Error setting stored data for key ${key}:`, error);
+            return false;
         }
     }
 }
