@@ -240,11 +240,16 @@ class AccountSystem {
         const topBar = document.querySelector('.top-bar');
         if (!topBar) return;
 
-        // Check if account container already exists
-        if (document.getElementById('accountContainer')) return;
+        // Check if account container already exists (either from auto-injection or manual HTML)
+        let accountContainer = document.getElementById('accountContainer');
+        if (accountContainer) {
+            // Account container exists, just update the UI
+            this.updateAccountUI();
+            return;
+        }
 
-        // Create account container
-        const accountContainer = document.createElement('div');
+        // Create account container only if it doesn't exist
+        accountContainer = document.createElement('div');
         accountContainer.className = 'account-container';
         accountContainer.id = 'accountContainer';
         accountContainer.innerHTML = `
