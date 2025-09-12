@@ -446,7 +446,8 @@ body {
    margin-left: 280px;
    transition: margin-left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
    min-height: 100vh;
-   padding-top: 70px; /* Account for the top bar */
+   height: auto;
+   padding-top: 70px;
 }
 
 
@@ -1638,6 +1639,7 @@ body {
    margin-left: 280px;
    transition: margin-left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
    min-height: 100vh;
+   height: auto;
    padding-top: 70px;
 }
 
@@ -1859,6 +1861,10 @@ body {
    border: 1px solid rgba(138, 43, 226, 0.2);
    backdrop-filter: blur(10px);
    position: relative;
+   height: auto;
+   min-height: auto;
+   max-height: none;
+   overflow: visible;
 }
 
 
