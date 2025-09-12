@@ -335,7 +335,7 @@
                     <p id="gameDescription">Loading game description...</p>
                     
                     <!-- Game Controls Section -->
-                    <div class="game-controls-section" id="gameControlsSection" style="display: none;">
+                    <div class="game-controls-section" id="gameControlsSection">
                         <div class="controls-header">
                             <i class="fas fa-gamepad controls-icon"></i>
                             <h4>Controls</h4>
@@ -415,6 +415,29 @@
     <script src="review-system.js" data-cookieconsent="ignore"></script>
 
     <style>
+    /* Force visibility and prevent cutoff */
+    .game-description {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        display: block !important;
+    }
+    
+    .game-controls-section {
+        display: block !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .game-section {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+    
     /* Star Rating System Styles */
     .star-rating-container {
         display: flex;
