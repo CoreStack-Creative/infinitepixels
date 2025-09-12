@@ -1188,17 +1188,105 @@ class AccountSystem {
 
     startGameSession(gameId) {
         try {
+            // End any existing session first
+            this.endGameSession();
+            
             const sessionData = {
                 gameId: gameId,
                 startTime: Date.now(),
-                lastActive: Date.now()
+                lastActive: Date.now(),
+                supabaseSessionId: null,
+                heartbeatInterval: null
             };
             
+            // Start periodic heartbeat to track active time accurately
+            sessionData.heartbeatInterval = setInterval(() => {
+                const currentTime = Date.now();
+                sessionData.lastActive = currentTime;
+                this.setStoredData('gameSession', sessionData);
+                
+                // Sync to database every 30 seconds if online
+                this.syncSessionToDatabase(sessionData);
+            }, 30000);
+            
             this.setStoredData('gameSession', sessionData);
+            
+            // Create session in database if logged in and online
+            if (this.isLoggedIn() && this.supabase) {
+                this.createDatabaseSession(gameId, sessionData);
+            }
+            
             console.log(`Game session started for: ${gameId}`);
         } catch (error) {
             console.error('Error starting game session:', error);
         }
+    }
+
+    async createDatabaseSession(gameId, sessionData) {
+        try {
+            const { data, error } = await this.supabase
+                .from('game_sessions')
+                .insert([{
+                    user_id: this.user.id,
+                    game_id: gameId,
+                    session_start: new Date(sessionData.startTime).toISOString(),
+                    device_type: this.getDeviceType(),
+                    session_data: {
+                        user_agent: navigator.userAgent,
+                        screen_resolution: `${screen.width}x${screen.height}`,
+                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                    }
+                }])
+                .select()
+                .single();
+
+            if (error) {
+                console.error('Database session creation error:', error);
+                return;
+            }
+
+            // Update session with database ID
+            sessionData.supabaseSessionId = data.id;
+            this.setStoredData('gameSession', sessionData);
+            
+            console.log('Database session created:', data.id);
+        } catch (error) {
+            console.error('Error creating database session:', error);
+        }
+    }
+
+    async syncSessionToDatabase(sessionData) {
+        try {
+            if (!this.isLoggedIn() || !this.supabase || !sessionData.supabaseSessionId) {
+                return;
+            }
+
+            const currentTime = Date.now();
+            const durationSeconds = Math.floor((currentTime - sessionData.startTime) / 1000);
+
+            await this.supabase
+                .from('game_sessions')
+                .update({
+                    last_activity: new Date(sessionData.lastActive).toISOString(),
+                    duration_seconds: durationSeconds
+                })
+                .eq('id', sessionData.supabaseSessionId)
+                .eq('user_id', this.user.id);
+
+        } catch (error) {
+            console.error('Error syncing session to database:', error);
+        }
+    }
+
+    getDeviceType() {
+        const userAgent = navigator.userAgent;
+        if (/tablet|ipad|playbook|silk/i.test(userAgent)) {
+            return 'tablet';
+        }
+        if (/mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/i.test(userAgent)) {
+            return 'mobile';
+        }
+        return 'desktop';
     }
 
     endGameSession() {
@@ -1208,12 +1296,22 @@ class AccountSystem {
                 return;
             }
 
+            // Clear heartbeat interval
+            if (sessionData.heartbeatInterval) {
+                clearInterval(sessionData.heartbeatInterval);
+            }
+
             const endTime = Date.now();
             const playTime = endTime - sessionData.startTime;
             
-            // Only track sessions longer than 30 seconds
-            if (playTime > 30000) {
+            // Only track sessions longer than 10 seconds (reduced threshold)
+            if (playTime > 10000) {
                 this.addPlayTime(sessionData.gameId, playTime);
+                
+                // End session in database if online
+                if (this.isLoggedIn() && this.supabase && sessionData.supabaseSessionId) {
+                    this.endDatabaseSession(sessionData, playTime);
+                }
             }
             
             // Clear the current session
@@ -1221,6 +1319,29 @@ class AccountSystem {
             console.log(`Game session ended. Play time: ${Math.floor(playTime / 1000)}s`);
         } catch (error) {
             console.error('Error ending game session:', error);
+        }
+    }
+
+    async endDatabaseSession(sessionData, playTime) {
+        try {
+            const durationSeconds = Math.floor(playTime / 1000);
+            const { error } = await this.supabase
+                .from('game_sessions')
+                .update({
+                    session_end: new Date().toISOString(),
+                    duration_seconds: durationSeconds,
+                    exit_reason: 'normal'
+                })
+                .eq('id', sessionData.supabaseSessionId)
+                .eq('user_id', this.user.id);
+
+            if (error) {
+                console.error('Database session end error:', error);
+            } else {
+                console.log('Database session ended successfully');
+            }
+        } catch (error) {
+            console.error('Error ending database session:', error);
         }
     }
 
@@ -1259,6 +1380,44 @@ class AccountSystem {
         } catch (error) {
             console.error('Error getting total play time:', error);
             return 0;
+        }
+    }
+
+    async getTotalPlayTimeFromDatabase() {
+        try {
+            if (!this.isLoggedIn() || !this.supabase) {
+                return 0;
+            }
+
+            const { data, error } = await this.supabase
+                .from('game_sessions')
+                .select('duration_seconds')
+                .eq('user_id', this.user.id)
+                .not('duration_seconds', 'is', null);
+
+            if (error) {
+                console.error('Error fetching play time from database:', error);
+                return 0;
+            }
+
+            const totalSeconds = data.reduce((sum, session) => sum + (session.duration_seconds || 0), 0);
+            return totalSeconds * 1000; // Convert to milliseconds to match local storage format
+        } catch (error) {
+            console.error('Error getting database play time:', error);
+            return 0;
+        }
+    }
+
+    async getCombinedPlayTime() {
+        try {
+            const localTime = this.getTotalPlayTime();
+            const databaseTime = await this.getTotalPlayTimeFromDatabase();
+            
+            // Return the maximum to avoid double counting if sessions are synced
+            return Math.max(localTime, databaseTime);
+        } catch (error) {
+            console.error('Error getting combined play time:', error);
+            return this.getTotalPlayTime(); // Fallback to local time
         }
     }
 

@@ -2428,6 +2428,14 @@ class GameLoader {
  if (gameFrame) {
  gameFrame.src = game.gameurl;
  gameFrame.title = game.name;
+ 
+ // Start game session tracking when iframe loads
+ gameFrame.onload = () => {
+     if (window.accountSystem && accountSystem.isLoggedIn()) {
+         accountSystem.startGameSession(game.slug || game.id);
+         console.log('Game session started for:', game.name);
+     }
+ };
  }
 
  // Update game title
@@ -6091,10 +6099,8 @@ window.playGame = function(gameSlug) {
         return;
     }
     
-    // Start game session tracking if account system is available
-    if (window.accountSystem && accountSystem.isLoggedIn()) {
-        accountSystem.startGameSession(gameSlug);
-    }
+    // Note: Game session tracking is now handled in the game.html page when the iframe loads
+    // This ensures more accurate timing since it starts when the game actually loads
     
     window.location.href = `game.html?game=${gameSlug}`;
 };

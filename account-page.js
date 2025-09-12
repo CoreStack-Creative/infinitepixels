@@ -185,15 +185,7 @@ class AccountPageManager {
                                 </div>
                             </div>
                             
-                            <div class="stat-card">
-                                <div class="stat-icon">
-                                    <i class="fas fa-star"></i>
-                                </div>
-                                <div class="stat-info">
-                                    <span class="stat-number reviews-count" id="reviewsCount">-</span>
-                                    <span class="stat-label">Reviews Written</span>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -288,8 +280,8 @@ class AccountPageManager {
                 }
             });
             
-            // Calculate total time played using the new tracking system
-            const totalTimeMs = accountSystem.getTotalPlayTime();
+            // Calculate total time played using the enhanced tracking system
+            const totalTimeMs = await accountSystem.getCombinedPlayTime();
             let timePlayedText = '';
             if (totalTimeMs < 60000) { // Less than 1 minute
                 timePlayedText = `${Math.floor(totalTimeMs / 1000)}s`;
@@ -303,25 +295,7 @@ class AccountPageManager {
             }
             
             // Get reviews count from local storage and Supabase if available
-            let reviewsCount = 0;
-            const localReviews = JSON.parse(localStorage.getItem('infinitepixels_userReviews') || '[]');
-            reviewsCount = localReviews.length;
-            
-            // Try to get reviews from Supabase if available
-            if (accountSystem.supabase && accountSystem.user.id) {
-                try {
-                    const { data: reviews, error } = await accountSystem.supabase
-                        .from('reviews')
-                        .select('id')
-                        .eq('user_id', accountSystem.user.id);
-                    
-                    if (!error && reviews) {
-                        reviewsCount = Math.max(reviewsCount, reviews.length);
-                    }
-                } catch (dbError) {
-                    console.log('Could not fetch reviews from database:', dbError);
-                }
-            }
+            // This has been removed - no longer tracking reviews written
             
             // Update UI with stats
             const statsContainer = document.querySelector('.stats-grid');
@@ -329,7 +303,6 @@ class AccountPageManager {
                 const favoritesCountElement = statsContainer.querySelector('.favorites-count');
                 const timePlayedElement = statsContainer.querySelector('.time-played-count');
                 const gamesPlayedCountElement = statsContainer.querySelector('.games-played-count');
-                const reviewsCountElement = statsContainer.querySelector('.reviews-count');
                 
                 if (favoritesCountElement) {
                     favoritesCountElement.textContent = favorites.length;
@@ -341,10 +314,6 @@ class AccountPageManager {
                 
                 if (gamesPlayedCountElement) {
                     gamesPlayedCountElement.textContent = uniqueGames.size;
-                }
-                
-                if (reviewsCountElement) {
-                    reviewsCountElement.textContent = reviewsCount;
                 }
             }
         } catch (error) {
