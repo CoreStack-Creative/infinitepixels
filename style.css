@@ -1655,9 +1655,6 @@ body {
    padding: 20px;
    max-width: 1400px;
    margin: 0 auto;
-   height: auto !important;
-   max-height: none !important;
-   overflow: visible !important;
 }
 
 
@@ -1666,9 +1663,6 @@ body {
    display: flex;
    flex-direction: column;
    gap: 20px;
-   height: auto !important;
-   max-height: none !important;
-   overflow: visible !important;
 }
 
 
@@ -1865,9 +1859,6 @@ body {
    border: 1px solid rgba(138, 43, 226, 0.2);
    backdrop-filter: blur(10px);
    position: relative;
-   height: auto !important;
-   max-height: none !important;
-   overflow: visible !important;
 }
 
 
@@ -1929,6 +1920,10 @@ body {
    color: #b8b8d4;
    line-height: 1.6;
    margin-bottom: 20px;
+   white-space: pre-wrap;
+   word-wrap: break-word;
+   max-height: none;
+   overflow: visible;
 }
 
 
