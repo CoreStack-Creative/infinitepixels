@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing... - InfinitePixels</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="auth-handler-container">
+        <h1>Processing your request...</h1>
+        <p>Please wait while we redirect you...</p>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const type = urlParams.get('type');
+        const token = urlParams.get('token');
+        const access_token = urlParams.get('access_token');
+        const refresh_token = urlParams.get('refresh_token');
+
+        console.log('Auth handler - Type:', type, 'Token present:', !!token);
+
+        // Route based on the type parameter
+        if (type === 'recovery' || type === 'magiclink') {
+            // Password reset or magic link - go to reset password page
+            if (access_token && refresh_token) {
+                // Set the session first
+                window.supabase?.auth.setSession({
+                    access_token: access_token,
+                    refresh_token: refresh_token
+                });
+            }
+            window.location.href = 'reset-password.html';
+        } else if (type === 'signup' || type === 'email_confirmation') {
+            // Account creation/email verification - go to account page or home
+            window.location.href = 'account.html';
+        } else if (type === 'invite') {
+            // Team invitation - handle accordingly
+            window.location.href = 'account.html';
+        } else {
+            // Default case - go to home
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
