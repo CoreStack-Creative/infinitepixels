@@ -740,7 +740,7 @@ class AccountSystem {
         
         try {
             const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
-                redirectTo: `${window.location.origin}/auth-handler.html`
+                redirectTo: `${window.location.origin}/reset-password.html`
             });
             
             if (error) {

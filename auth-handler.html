@@ -19,22 +19,26 @@
         async function handleAuth() {
             const debugDiv = document.getElementById('debug-info');
             
-            // Get URL parameters
+            // Get URL parameters from both search and hash
             const urlParams = new URLSearchParams(window.location.search);
-            const type = urlParams.get('type');
-            const token = urlParams.get('token');
-            const access_token = urlParams.get('access_token');
-            const refresh_token = urlParams.get('refresh_token');
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            
+            // Check both search params and hash params
+            const type = urlParams.get('type') || hashParams.get('type');
+            const token = urlParams.get('token') || hashParams.get('token');
+            const access_token = urlParams.get('access_token') || hashParams.get('access_token');
+            const refresh_token = urlParams.get('refresh_token') || hashParams.get('refresh_token');
 
             // Display debug info on page
             debugDiv.innerHTML = `
                 <strong>Debug Info:</strong><br>
                 Full URL: ${window.location.href}<br>
+                Search params: ${window.location.search || 'none'}<br>
+                Hash params: ${window.location.hash || 'none'}<br>
                 Type: ${type || 'null'}<br>
                 Token present: ${!!token}<br>
                 Access token present: ${!!access_token}<br>
                 Refresh token present: ${!!refresh_token}<br>
-                All params: ${window.location.search || 'none'}<br>
                 Supabase available: ${!!window.supabase}
             `;
 
