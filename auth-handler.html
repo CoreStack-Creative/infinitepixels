@@ -10,12 +10,15 @@
     <div class="auth-handler-container">
         <h1>Processing your request...</h1>
         <p>Please wait while we redirect you...</p>
+        <div id="debug-info" style="margin-top: 20px; padding: 10px; background: #f0f0f0; font-family: monospace; font-size: 12px;"></div>
     </div>
 
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script>
         async function handleAuth() {
+            const debugDiv = document.getElementById('debug-info');
+            
             // Get URL parameters
             const urlParams = new URLSearchParams(window.location.search);
             const type = urlParams.get('type');
@@ -23,17 +26,35 @@
             const access_token = urlParams.get('access_token');
             const refresh_token = urlParams.get('refresh_token');
 
+            // Display debug info on page
+            debugDiv.innerHTML = `
+                <strong>Debug Info:</strong><br>
+                Full URL: ${window.location.href}<br>
+                Type: ${type || 'null'}<br>
+                Token present: ${!!token}<br>
+                Access token present: ${!!access_token}<br>
+                Refresh token present: ${!!refresh_token}<br>
+                All params: ${window.location.search || 'none'}<br>
+                Supabase available: ${!!window.supabase}
+            `;
+
             console.log('Auth handler - Type:', type, 'Token present:', !!token);
             console.log('All URL params:', window.location.search);
             console.log('Access token present:', !!access_token);
             console.log('Refresh token present:', !!refresh_token);
 
+            // Wait a moment to show debug info
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
             // Check current session
             const { data: { session } } = await window.supabase?.auth.getSession() || { data: { session: null } };
             console.log('Current session:', !!session);
 
+            debugDiv.innerHTML += `<br>Current session: ${!!session}`;
+
             // Route based on the type parameter
             if (type === 'recovery' || type === 'magiclink') {
+                debugDiv.innerHTML += `<br><strong>Routing to: reset-password.html (recovery/magiclink)</strong>`;
                 // Password reset or magic link - go to reset password page
                 if (access_token && refresh_token) {
                     // Set the session first
@@ -42,24 +63,32 @@
                         refresh_token: refresh_token
                     });
                 }
-                window.location.href = 'reset-password.html';
-            } else if (access_token && refresh_token && !type) {
-                // This might be a password reset without explicit type
-                // Set the session and redirect to reset password page
+                setTimeout(() => window.location.href = 'reset-password.html', 1000);
+            } else if (access_token && refresh_token) {
+                debugDiv.innerHTML += `<br><strong>Routing to: reset-password.html (has tokens - assuming password reset)</strong>`;
+                // If we have tokens but no explicit type, assume it's password reset
+                // This is more aggressive detection for password reset
                 await window.supabase?.auth.setSession({
                     access_token: access_token,
                     refresh_token: refresh_token
                 });
-                window.location.href = 'reset-password.html';
+                setTimeout(() => window.location.href = 'reset-password.html', 1000);
+            } else if (token && !type) {
+                debugDiv.innerHTML += `<br><strong>Routing to: reset-password.html (has token - assuming password reset)</strong>`;
+                // If we have any token without type, assume password reset
+                setTimeout(() => window.location.href = 'reset-password.html', 1000);
             } else if (type === 'signup' || type === 'email_confirmation') {
+                debugDiv.innerHTML += `<br><strong>Routing to: account.html (signup/confirmation)</strong>`;
                 // Account creation/email verification - go to account page or home
-                window.location.href = 'account.html';
+                setTimeout(() => window.location.href = 'account.html', 1000);
             } else if (type === 'invite') {
+                debugDiv.innerHTML += `<br><strong>Routing to: account.html (invite)</strong>`;
                 // Team invitation - handle accordingly
-                window.location.href = 'account.html';
+                setTimeout(() => window.location.href = 'account.html', 1000);
             } else {
+                debugDiv.innerHTML += `<br><strong>Routing to: index.html (default case)</strong>`;
                 // Default case - go to home
-                window.location.href = 'index.html';
+                setTimeout(() => window.location.href = 'index.html', 1000);
             }
         }
 
