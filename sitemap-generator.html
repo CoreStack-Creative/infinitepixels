@@ -29,13 +29,15 @@
       "random.html": "0.7",
       "game-reviews.html": "0.7",
       "game-guides.html": "0.7",
+      "account.html": "0.6",
       "news.html": "0.6",
       "about.html": "0.5",
       "contact.html": "0.5",
       "faq.html": "0.5",
+      "settings.html": "0.4",
       "privacypolicy.html": "0.3",
       "termsandconditions.html": "0.3",
-      "settings.html": "0.3"
+      "game.html": "0.8"
     };
 
     async function discoverHtmlPages() {
@@ -61,24 +63,24 @@
         if (htmlPages.length === 0) {
           return [
             "index.html",
-            "recent.html",
-            "recommended.html", 
-            "games.html",
-            "favorites.html",
-            "random.html",
-            "newgames.html",
-            "category.html",
-            "news.html",
-            "faq.html",
-            "game-reviews.html",
-            "game-guides.html",
             "about.html",
-            "privacypolicy.html",
-            "termsandconditions.html",
-            "contact.html",
-            "settings.html",
             "account.html",
-            "game.html"
+            "category.html",
+            "contact.html", 
+            "faq.html",
+            "favorites.html",
+            "game.html",
+            "game-guides.html",
+            "game-reviews.html",
+            "games.html",
+            "news.html",
+            "newgames.html",
+            "privacypolicy.html",
+            "random.html",
+            "recent.html",
+            "recommended.html",
+            "settings.html",
+            "termsandconditions.html"
           ];
         }
 
@@ -88,24 +90,24 @@
         // Fallback list of known pages
         return [
           "index.html",
+          "about.html",
+          "account.html",
+          "category.html",
+          "contact.html",
+          "faq.html",
+          "favorites.html",
+          "game.html",
+          "game-guides.html",
+          "game-reviews.html",
+          "games.html",
+          "news.html",
+          "newgames.html",
+          "privacypolicy.html",
+          "random.html",
           "recent.html",
           "recommended.html",
-          "games.html", 
-          "favorites.html",
-          "random.html",
-          "newgames.html",
-          "category.html",
-          "news.html",
-          "faq.html",
-          "game-reviews.html",
-          "game-guides.html",
-          "about.html",
-          "privacypolicy.html",
-          "termsandconditions.html",
-          "contact.html",
           "settings.html",
-          "account.html",
-          "game.html"
+          "termsandconditions.html"
         ];
       }
     }
@@ -119,43 +121,71 @@
         const response = await fetch("games.json");
         const gamesDatabase = await response.json();
 
-        // Generate URLs for discovered HTML pages
-        const staticUrls = htmlPages.map(page => {
-          const path = page === "index.html" ? "/" : `/${page}`;
-          const priority = pagePriorities[page] || "0.6";
-          
-          return `
-  <url>
-    <loc>${baseUrl}${path}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
-    <priority>${priority}</priority>
-  </url>`;
-        }).join("");
+        // Create a Set to track unique URLs and avoid duplicates
+        const uniqueUrls = new Set();
+        const urlsArray = [];
 
-        // Add root URL separately if index.html is present
-        const rootUrl = htmlPages.includes("index.html") ? `
-  <url>
-    <loc>${baseUrl}/</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
-    <priority>1.0</priority>
-  </url>` : "";
+        // Add root URL first
+        if (htmlPages.includes("index.html")) {
+          const rootUrlObj = {
+            loc: `${baseUrl}/`,
+            lastmod: new Date().toISOString(),
+            priority: "1.0"
+          };
+          uniqueUrls.add(rootUrlObj.loc);
+          urlsArray.push(rootUrlObj);
+        }
 
-        // Generate URLs for game pages
-        const gameUrls = gamesDatabase.map(game => `
+        // Add all HTML pages (excluding index.html since we already added root)
+        htmlPages
+          .filter(page => page !== "index.html") // Skip index.html since we added root URL
+          .forEach(page => {
+            const url = `${baseUrl}/${page}`;
+            if (!uniqueUrls.has(url)) {
+              const priority = pagePriorities[page] || "0.6";
+              uniqueUrls.add(url);
+              urlsArray.push({
+                loc: url,
+                lastmod: new Date().toISOString(),
+                priority: priority
+              });
+            }
+          });
+
+        // Add game pages
+        gamesDatabase.forEach(game => {
+          const url = `${baseUrl}/game.html?game=${game.slug}`;
+          if (!uniqueUrls.has(url)) {
+            uniqueUrls.add(url);
+            urlsArray.push({
+              loc: url,
+              lastmod: new Date().toISOString(),
+              priority: "0.8"
+            });
+          }
+        });
+
+        // Sort URLs by priority (descending) then alphabetically
+        urlsArray.sort((a, b) => {
+          const priorityDiff = parseFloat(b.priority) - parseFloat(a.priority);
+          if (priorityDiff !== 0) return priorityDiff;
+          return a.loc.localeCompare(b.loc);
+        });
+
+        // Generate XML
+        const urlsXml = urlsArray.map(urlObj => `
   <url>
-    <loc>${baseUrl}/game.html?game=${game.slug}</loc>
-    <lastmod>${new Date().toISOString()}</lastmod>
-    <priority>0.8</priority>
+    <loc>${urlObj.loc}</loc>
+    <lastmod>${urlObj.lastmod}</lastmod>
+    <priority>${urlObj.priority}</priority>
   </url>`).join("");
 
         const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${rootUrl}
-${staticUrls}
-${gameUrls}
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urlsXml}
 </urlset>`;
 
         document.getElementById("output").textContent = sitemap;
-        console.log(`Generated sitemap with ${htmlPages.length} static pages and ${gamesDatabase.length} game pages`);
+        console.log(`Generated sitemap with ${urlsArray.length} unique URLs (${htmlPages.length} static pages + ${gamesDatabase.length} game pages)`);
         
       } catch (error) {
         console.error('Error generating sitemap:', error);
