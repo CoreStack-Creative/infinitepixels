@@ -15,34 +15,59 @@
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script src="supabase-config.js"></script>
     <script>
-        // Get URL parameters
-        const urlParams = new URLSearchParams(window.location.search);
-        const type = urlParams.get('type');
-        const token = urlParams.get('token');
-        const access_token = urlParams.get('access_token');
-        const refresh_token = urlParams.get('refresh_token');
+        async function handleAuth() {
+            // Get URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const type = urlParams.get('type');
+            const token = urlParams.get('token');
+            const access_token = urlParams.get('access_token');
+            const refresh_token = urlParams.get('refresh_token');
 
-        console.log('Auth handler - Type:', type, 'Token present:', !!token);
+            console.log('Auth handler - Type:', type, 'Token present:', !!token);
+            console.log('All URL params:', window.location.search);
+            console.log('Access token present:', !!access_token);
+            console.log('Refresh token present:', !!refresh_token);
 
-        // Route based on the type parameter
-        if (type === 'recovery' || type === 'magiclink') {
-            // Password reset or magic link - go to reset password page
-            if (access_token && refresh_token) {
-                // Set the session first
-                window.supabase?.auth.setSession({
+            // Check current session
+            const { data: { session } } = await window.supabase?.auth.getSession() || { data: { session: null } };
+            console.log('Current session:', !!session);
+
+            // Route based on the type parameter
+            if (type === 'recovery' || type === 'magiclink') {
+                // Password reset or magic link - go to reset password page
+                if (access_token && refresh_token) {
+                    // Set the session first
+                    await window.supabase?.auth.setSession({
+                        access_token: access_token,
+                        refresh_token: refresh_token
+                    });
+                }
+                window.location.href = 'reset-password.html';
+            } else if (access_token && refresh_token && !type) {
+                // This might be a password reset without explicit type
+                // Set the session and redirect to reset password page
+                await window.supabase?.auth.setSession({
                     access_token: access_token,
                     refresh_token: refresh_token
                 });
+                window.location.href = 'reset-password.html';
+            } else if (type === 'signup' || type === 'email_confirmation') {
+                // Account creation/email verification - go to account page or home
+                window.location.href = 'account.html';
+            } else if (type === 'invite') {
+                // Team invitation - handle accordingly
+                window.location.href = 'account.html';
+            } else {
+                // Default case - go to home
+                window.location.href = 'index.html';
             }
-            window.location.href = 'reset-password.html';
-        } else if (type === 'signup' || type === 'email_confirmation') {
-            // Account creation/email verification - go to account page or home
-            window.location.href = 'account.html';
-        } else if (type === 'invite') {
-            // Team invitation - handle accordingly
-            window.location.href = 'account.html';
+        }
+
+        // Run the auth handler
+        if (window.supabase) {
+            handleAuth();
         } else {
-            // Default case - go to home
+            // If Supabase is not available, redirect to home
             window.location.href = 'index.html';
         }
     </script>
