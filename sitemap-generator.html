@@ -11,51 +11,156 @@
   <script>
     const baseUrl = "https://www.infinite-pixels.com";
 
-    const staticPages = [
-      "/",
-      "/index.html",
-      "/recent.html",
-      "/games.html",
-      "/favorites.html",
-      "/random.html",
-      "/newgames.html",
-      "/category.html",
-      "/news.html",
-      "/faq.html",
-      "/reviews.html",
-      "/guides.html",
-      "/about.html",
-      "/privacypolicy.html",
-      "/termsandconditions.html",
-      "/contact.html"
+    // Pages to exclude from the sitemap (internal tools, admin pages, etc.)
+    const excludedPages = [
+      "sitemap-generator.html",
+      "reset-password.html"
     ];
 
-    async function generateSitemap() {
-      // Fetch games.json instead of hardcoding the array
-      const response = await fetch("games.json");
-      const gamesDatabase = await response.json();
+    // Priority mapping for different page types
+    const pagePriorities = {
+      "index.html": "1.0",
+      "games.html": "0.9",
+      "category.html": "0.9",
+      "newgames.html": "0.8",
+      "favorites.html": "0.8",
+      "recent.html": "0.8",
+      "recommended.html": "0.8",
+      "random.html": "0.7",
+      "game-reviews.html": "0.7",
+      "game-guides.html": "0.7",
+      "news.html": "0.6",
+      "about.html": "0.5",
+      "contact.html": "0.5",
+      "faq.html": "0.5",
+      "privacypolicy.html": "0.3",
+      "termsandconditions.html": "0.3",
+      "settings.html": "0.3"
+    };
 
-      const staticUrls = staticPages.map(path => `
+    async function discoverHtmlPages() {
+      try {
+        // Get the list of all files in the root directory
+        const response = await fetch('./');
+        const html = await response.text();
+        
+        // Parse HTML to find .html files
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        const links = doc.querySelectorAll('a[href$=".html"]');
+        
+        const htmlPages = [];
+        links.forEach(link => {
+          const href = link.getAttribute('href');
+          if (href && !excludedPages.includes(href)) {
+            htmlPages.push(href);
+          }
+        });
+
+        // Fallback: manually list known pages if directory listing doesn't work
+        if (htmlPages.length === 0) {
+          return [
+            "index.html",
+            "recent.html",
+            "recommended.html", 
+            "games.html",
+            "favorites.html",
+            "random.html",
+            "newgames.html",
+            "category.html",
+            "news.html",
+            "faq.html",
+            "game-reviews.html",
+            "game-guides.html",
+            "about.html",
+            "privacypolicy.html",
+            "termsandconditions.html",
+            "contact.html",
+            "settings.html",
+            "account.html",
+            "game.html"
+          ];
+        }
+
+        return htmlPages;
+      } catch (error) {
+        console.warn('Could not auto-discover HTML pages, using fallback list:', error);
+        // Fallback list of known pages
+        return [
+          "index.html",
+          "recent.html",
+          "recommended.html",
+          "games.html", 
+          "favorites.html",
+          "random.html",
+          "newgames.html",
+          "category.html",
+          "news.html",
+          "faq.html",
+          "game-reviews.html",
+          "game-guides.html",
+          "about.html",
+          "privacypolicy.html",
+          "termsandconditions.html",
+          "contact.html",
+          "settings.html",
+          "account.html",
+          "game.html"
+        ];
+      }
+    }
+
+    async function generateSitemap() {
+      try {
+        // Discover all HTML pages automatically
+        const htmlPages = await discoverHtmlPages();
+        
+        // Fetch games.json for dynamic game pages
+        const response = await fetch("games.json");
+        const gamesDatabase = await response.json();
+
+        // Generate URLs for discovered HTML pages
+        const staticUrls = htmlPages.map(page => {
+          const path = page === "index.html" ? "/" : `/${page}`;
+          const priority = pagePriorities[page] || "0.6";
+          
+          return `
   <url>
     <loc>${baseUrl}${path}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
-    <priority>0.80</priority>
-  </url>`).join("");
+    <priority>${priority}</priority>
+  </url>`;
+        }).join("");
 
-      const gameUrls = gamesDatabase.map(game => `
+        // Add root URL separately if index.html is present
+        const rootUrl = htmlPages.includes("index.html") ? `
+  <url>
+    <loc>${baseUrl}/</loc>
+    <lastmod>${new Date().toISOString()}</lastmod>
+    <priority>1.0</priority>
+  </url>` : "";
+
+        // Generate URLs for game pages
+        const gameUrls = gamesDatabase.map(game => `
   <url>
     <loc>${baseUrl}/game.html?game=${game.slug}</loc>
     <lastmod>${new Date().toISOString()}</lastmod>
-    <priority>0.80</priority>
+    <priority>0.8</priority>
   </url>`).join("");
 
-      const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+        const sitemap = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${rootUrl}
 ${staticUrls}
 ${gameUrls}
 </urlset>`;
 
-      document.getElementById("output").textContent = sitemap;
+        document.getElementById("output").textContent = sitemap;
+        console.log(`Generated sitemap with ${htmlPages.length} static pages and ${gamesDatabase.length} game pages`);
+        
+      } catch (error) {
+        console.error('Error generating sitemap:', error);
+        document.getElementById("output").textContent = `Error generating sitemap: ${error.message}`;
+      }
     }
   </script>
   <script src="account-system.js"></script>
