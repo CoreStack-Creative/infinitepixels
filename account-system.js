@@ -445,7 +445,14 @@ class AccountSystem {
             }
         } catch (error) {
             console.error('Login error:', error);
-            this.showMessage('Login failed. Please try again.', 'error');
+            // Only show login failed if we're not already logged in
+            if (!this.isLoggedIn()) {
+                this.showMessage('Login failed. Please try again.', 'error');
+            } else {
+                // If we're logged in but there was an error, it was likely a sync issue
+                console.warn('Login succeeded but post-login sync had issues:', error);
+                this.showMessage('Logged in successfully! Some sync features may be temporarily unavailable.', 'info');
+            }
         } finally {
             // Reset button state
             submitBtn.textContent = originalText;
@@ -542,9 +549,14 @@ class AccountSystem {
         
         // Sync local data to server if online
         if (this.supabase) {
-            this.syncLocalDataToServer();
-            // Load server data to this device
-            await this.loadServerDataToDevice();
+            try {
+                this.syncLocalDataToServer();
+                // Load server data to this device
+                await this.loadServerDataToDevice();
+            } catch (syncError) {
+                console.warn('Post-login sync failed, but login was successful:', syncError);
+                // Don't throw this error as it would show "login failed" message
+            }
         }
     }
 
