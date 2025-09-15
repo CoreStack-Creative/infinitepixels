@@ -2259,16 +2259,28 @@ function loadGamesData() {
         }
     };
 
-    // Use API endpoint if available, fallback to direct games.json
+    // Use API endpoint for production, fallback to games.json for local
     const gamesEndpoint = window.location.hostname === 'localhost' 
         ? 'games.json' 
         : '/api/games';
 
+    console.log('Loading games from:', gamesEndpoint);
+
     fetch(gamesEndpoint, fetchOptions)
       .then(response => {
         console.log('Fetch response received:', response.status, response.statusText);
-        console.log('Response headers:', response.headers);
         console.log('Response URL:', response.url);
+        if (!response.ok) {
+          // If API fails, try fallback to games.json
+          if (gamesEndpoint === '/api/games') {
+            console.log('API failed, trying fallback to games.json');
+            return fetch('games.json', fetchOptions);
+          }
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response;
+      })
+      .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
