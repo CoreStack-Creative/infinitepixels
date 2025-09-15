@@ -24,6 +24,6 @@
   "env": {
     "SUPABASE_URL": "https://yuyjmguvrnutyrjrqxwg.supabase.co",
     "SUPABASE_ANON_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1eWptZ3V2cm51dHlyanJxeHdnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY2NzE2NDAsImV4cCI6MjA3MjI0NzY0MH0.KzPK0ECohc0MF6C0xln5_EIILlxbu0uOu5TDe9HmGKw",
-    "SUPABASE_SERVICE_KEY": ""
+    "SUPABASE_SERVICE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1eWptZ3V2cm51dHlyanJxeHdnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc1NjY3MTY0MCwiZXhwIjoyMDcyMjQ3NjQwfQ.P8JA4mYVA-SbO0DakkQ3Sxs2XjvPIdzuPYSVnZijxKo"
   }
 }
