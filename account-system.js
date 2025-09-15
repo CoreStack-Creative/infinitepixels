@@ -6,6 +6,11 @@ class AccountSystem {
         this.isReady = false;
         this.readyCallbacks = [];
         
+        // API base URL - automatically detects if running locally or on Vercel
+        this.API_BASE = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000' 
+            : '';
+        
         // Initialize Supabase client
         if (typeof window !== 'undefined' && window.supabase && SUPABASE_CONFIG.enabled) {
             this.supabase = window.supabase;

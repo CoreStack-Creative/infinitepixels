@@ -2259,7 +2259,12 @@ function loadGamesData() {
         }
     };
 
-    fetch("games.json", fetchOptions)
+    // Use API endpoint if available, fallback to direct games.json
+    const gamesEndpoint = window.location.hostname === 'localhost' 
+        ? 'games.json' 
+        : '/api/games';
+
+    fetch(gamesEndpoint, fetchOptions)
       .then(response => {
         console.log('Fetch response received:', response.status, response.statusText);
         console.log('Response headers:', response.headers);
@@ -2277,8 +2282,10 @@ function loadGamesData() {
         return response.json();
       })
       .then(data => {
-        console.log('JSON parsed successfully, games count:', data.length);
-        gamesDatabase = data;
+        // Handle both direct games.json format and API response format
+        const games = data.games || data;
+        console.log('JSON parsed successfully, games count:', games.length);
+        gamesDatabase = games;
 
         // ✅ now use gamesDatabase exactly like before
         console.log("Loaded games:", gamesDatabase.length, "games");
@@ -2836,10 +2843,17 @@ class GameLoader {
             console.log('Submitting rating:', rating, 'for game:', gameSlug);
             
             // Send rating to server for global storage
-            const response = await fetch('http://localhost:3000/reviews', {
+            const apiBase = window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : '';
+            
+            const response = await fetch(`${apiBase}/api/reviews`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': window.accountSystem?.session?.access_token 
+                        ? `Bearer ${window.accountSystem.session.access_token}` 
+                        : ''
                 },
                 body: JSON.stringify({
                     game_id: gameSlug,
