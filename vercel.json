@@ -5,6 +5,14 @@
     {
       "source": "/api/(.*)",
       "destination": "/api/$1"
+    },
+    {
+      "source": "/.well-known/vercel.txt",
+      "destination": "/.well-known/vercel.txt"
+    },
+    {
+      "source": "/domain-verification",
+      "destination": "/api/verify-domain"
     }
   ],
   "headers": [
@@ -14,6 +22,12 @@
         { "key": "Access-Control-Allow-Origin", "value": "*" },
         { "key": "Access-Control-Allow-Methods", "value": "GET, POST, PUT, DELETE, OPTIONS" },
         { "key": "Access-Control-Allow-Headers", "value": "Content-Type, Authorization, X-Requested-With" }
+      ]
+    },
+    {
+      "source": "/.well-known/(.*)",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain" }
       ]
     }
   ]

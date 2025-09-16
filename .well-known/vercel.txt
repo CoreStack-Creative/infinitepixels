@@ -1,0 +1,4 @@
+# Vercel Domain Verification
+# This file can be used for domain verification
+# Replace with your actual verification token when needed
+vercel-domain-verification=your-verification-token-here
