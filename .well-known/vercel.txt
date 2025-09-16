@@ -1,4 +1,1 @@
-# Vercel Domain Verification
-# This file can be used for domain verification
-# Replace with your actual verification token when needed
-vercel-domain-verification=your-verification-token-here
+vc-domain-verify=ipg.hpc.tw,0955d958c22ed1670947

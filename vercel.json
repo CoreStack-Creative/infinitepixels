@@ -9,10 +9,6 @@
     {
       "source": "/.well-known/vercel.txt",
       "destination": "/.well-known/vercel.txt"
-    },
-    {
-      "source": "/domain-verification",
-      "destination": "/api/verify-domain"
     }
   ],
   "headers": [
