@@ -5,6 +5,10 @@ class RecentGamesPageManager {
         this.recentGames = [];
         this.isLoading = false;
         this.hasLoaded = false;
+        
+        // Make this available globally so account system can access it
+        window.recentGamesManager = this;
+        
         this.init();
     }
 
@@ -553,3 +557,9 @@ window.refreshRecentGames = function() {
         console.log('❌ Recent Games Manager not found');
     }
 };
+
+// Initialize the Recent Games Page Manager when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Initializing Recent Games Page Manager');
+    new RecentGamesPageManager();
+});

@@ -6866,7 +6866,8 @@ class RecentlyPlayedManager {
 
 // Initialize the recently played manager when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // window.recentlyPlayedManager = new RecentlyPlayedManager(); // Keep disabled, account system handles it
+    // Initialize Recently Played Manager
+    window.recentlyPlayedManager = new RecentlyPlayedManager();
     console.log('📝 Using account system for recent games tracking');
 });
 
