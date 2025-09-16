@@ -1,0 +1,1 @@
+vc-domain-verify=ipg.feezor.net,6408c4c682c79e75ecdf
