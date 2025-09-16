@@ -1,0 +1,1 @@
+vc-domain-verify=ipg.hpc.tw,0955d958c22ed1670947

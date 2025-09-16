@@ -9,6 +9,14 @@
     {
       "source": "/.well-known/vercel.txt",
       "destination": "/.well-known/vercel.txt"
+    },
+    {
+      "source": "/vercel-domain-verification.txt",
+      "destination": "/vercel-domain-verification.txt"
+    },
+    {
+      "source": "/.well-known/pki-validation/vercel-domain-verification.txt",
+      "destination": "/.well-known/pki-validation/vercel-domain-verification.txt"
     }
   ],
   "headers": [
@@ -22,6 +30,12 @@
     },
     {
       "source": "/.well-known/(.*)",
+      "headers": [
+        { "key": "Content-Type", "value": "text/plain" }
+      ]
+    },
+    {
+      "source": "/vercel-domain-verification.txt",
       "headers": [
         { "key": "Content-Type", "value": "text/plain" }
       ]
