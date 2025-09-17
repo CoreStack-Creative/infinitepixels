@@ -7152,6 +7152,8 @@ class HomepageGamesManager {
             { slug: "ball2048", isNew: false, isHot: false },
             { slug: "bitlife", isNew: false, isHot: false },
             { slug: "crowdycityio", isNew: false, isHot: false },
+            { slug: "drawclimber", isNew: false, isHot: false },
+            { slug: "helixjump", isNew: false, isHot: false },
             { 
                 slug: "polytrack", 
                 isSpecial: true, 
@@ -7159,8 +7161,6 @@ class HomepageGamesManager {
                 isHot: true,
                 videoUrl: "images/polytrackrec.mp4"
             },
-            { slug: "drawclimber", isNew: false, isHot: false },
-            { slug: "helixjump", isNew: false, isHot: false },
             { slug: "parkourblock3d", isNew: false, isHot: false },
             { slug: "mrracer", isNew: false, isHot: false },
             { slug: "rocketbikehighwayrace", isNew: false, isHot: false },
