@@ -7099,6 +7099,7 @@ class HomepageGamesManager {
         return [
             { slug: "1v1lol", isNew: false, isHot: true },
             { slug: "cookieclicker", isNew: false, isHot: false },
+            { slug: "polytrack", isSpecial: true, isNew: false, isHot: true, videoUrl: "images/polytrackrec.mp4" },
             { slug: "snowrider3d", isNew: true, isHot: false },
             { slug: "golfclash", isNew: false, isHot: false },
             { 
@@ -7145,13 +7146,6 @@ class HomepageGamesManager {
             { slug: "rocketbikehighwayrace", isNew: false, isHot: false },
             { slug: "funnyshooter2", isNew: false, isHot: false },
             { slug: "basketrandom", isNew: false, isHot: false },
-            { 
-                slug: "polytrack", 
-                isSpecial: true, 
-                isNew: false, 
-                isHot: true,
-                videoUrl: "images/polytrackrec.mp4"
-            },
             { slug: "rocketbotroyale", isNew: false, isHot: true },
             { slug: "shellshockers", isNew: false, isHot: false },
             { slug: "tallmanrun", isNew: false, isHot: false },
