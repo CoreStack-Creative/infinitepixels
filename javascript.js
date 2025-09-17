@@ -7146,8 +7146,6 @@ class HomepageGamesManager {
             { slug: "funnyshooter2", isNew: false, isHot: false },
             { slug: "basketrandom", isNew: false, isHot: false },
             { slug: "rocketbotroyale", isNew: false, isHot: true },
-            { slug: "shellshockers", isNew: false, isHot: false },
-            { slug: "tallmanrun", isNew: false, isHot: false },
             { 
                 slug: "polytrack", 
                 isSpecial: true, 
@@ -7155,6 +7153,8 @@ class HomepageGamesManager {
                 isHot: true,
                 videoUrl: "images/polytrackrec.mp4"
             },
+            { slug: "shellshockers", isNew: false, isHot: false },
+            { slug: "tallmanrun", isNew: false, isHot: false },
             { slug: "tinyfishing", isNew: false, isHot: false },
             { slug: "ball2048", isNew: false, isHot: false },
             { slug: "bitlife", isNew: false, isHot: false },
