@@ -9,7 +9,7 @@ const searchResults = document.getElementById('searchResults');
 
 
 // Sidebar functionality
-let sidebarCollapsed = false;
+let sidebarCollapsed = true;
 
 
 // DOM references for Paper.io simulation
@@ -631,41 +631,41 @@ if (shareBtn) {
 
 
 if (closeModal) {
-   closeModal.addEventListener('click', () => {
-       if (shareModal) shareModal.classList.remove('active');
-   });
-}
-
-
-if (shareModal) {
-   shareModal.addEventListener('click', (e) => {
-       if (e.target === shareModal) {
-           shareModal.classList.remove('active');
+   sidebarToggle.addEventListener('click', () => {
+       sidebarCollapsed = !sidebarCollapsed;
+       if (sidebar) sidebar.classList.toggle('collapsed');
+       if (mainContent) mainContent.classList.toggle('expanded');
+       // Only toggle expanded class for footers on pages that need it
+       const pageContainers = [
+           '.reviews-container',
+           '.guides-container', 
+           '.faq-container',
+           '.news-page-container',
+           '.about-page-container'
+       ];
+       pageContainers.forEach(containerClass => {
+           const container = document.querySelector(containerClass);
+           if (container) {
+               const footer = container.querySelector('.site-footer');
+               if (footer) {
+                   footer.classList.toggle('expanded');
+               }
+           }
+       });
+       // Existing news page specific code (keep this for compatibility)
+       const newsMainContent = document.querySelector('.news-page-container .news-main-content');
+       const newsFooter = document.querySelector('.news-page-container .site-footer');
+       if (newsMainContent) newsMainContent.classList.toggle('expanded');
+       if (newsFooter) newsFooter.classList.toggle('expanded');
+       mobileSidebarOverlayHandler();
+       // Selected when menu is open, unselected when closed
+       if (!sidebarCollapsed) {
+           sidebarToggle.classList.add('selected'); // Selected when open
+       } else {
+           sidebarToggle.classList.remove('selected'); // Unselected when closed
        }
+       sidebarToggle.innerHTML = '<i class="fas fa-bars"></i>'; // Always show bars icon
    });
-}
-
-
-if (copyBtn) {
-   copyBtn.addEventListener('click', () => {
-       if (shareLink) shareLink.select();
-       if (shareLink) shareLink.setSelectionRange(0, 99999);
-      
-       try {
-           document.execCommand('copy');
-           if (shareMessage) shareMessage.classList.add('show');
-           copyBtn.textContent = 'Copied!';
-          
-           setTimeout(() => {
-               if (shareMessage) shareMessage.classList.remove('show');
-               copyBtn.textContent = 'Copy';
-           }, 2000);
-       } catch (err) {
-           console.error('Copy failed:', err);
-       }
-   });
-}
-
 
 // Navigation link functionality
 navLinks.forEach(link => {
@@ -8032,8 +8032,9 @@ function initializeTipFavorites() {
 
 function initializeTipFiltering() {
     // Placeholder for tip filtering functionality
-    console.log('Tip filtering initialized');
-}
+        console.log('Tip filtering initialized');
+    }
+    }
 
 // ============== ENHANCED INITIALIZATION SYSTEM ===============
 // This system ensures that games load properly even when cookies are denied
