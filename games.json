@@ -2231,7 +2231,7 @@
   "name": "Sausage Flip",
   "image": "images/sausageflipimage.jpg",
   "slug": "sausageflip",
-  "gameurl": "https://html5.gamemonetize.co/sg0qh3o90hxhdvsggxqfuwuihhhsr3vo/",
+  "gameurl": "https://html5.gamemonetize.co/7wy770uggn81toy38j8u1mlsl18dsxdv/",
   "tags": [
    "clicker",
    "levels",
@@ -2242,6 +2242,23 @@
    "Mouse": "Click to interact",
    "Left Click": "Primary action",
    "Space": "Pause/Resume"
+  }
+ },
+ {
+  "id": 102,
+  "name": "Eggy Car",
+  "image": "images/eggycarimage.jpg",
+  "slug": "eggycar",
+  "gameurl": "https://ubggo.github.io/ub-games/eggy-car/",
+  "tags": [
+   "driving",
+   "cars",
+   "endless"
+  ],
+  "description": "Eggy Car is a fun and quirky driving game where you must carefully transport a fragile egg across bumpy, hilly roads. Your car can accelerate and brake, but every bump, slope, or sudden movement puts the egg at risk of cracking. The challenge is to drive as far as possible without letting the egg fall off the car. Along the way, you can collect coins and power-ups to boost your score.",
+  "controls": {
+   "Left Arrow / A": "Go straigh",
+   "Right Arrow / D": "Go backwards"
   }
  }
 ]
