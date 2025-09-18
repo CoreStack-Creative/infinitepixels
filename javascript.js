@@ -8788,3 +8788,384 @@ function initializeTipFiltering() {
     // Placeholder for tip filtering functionality
     console.log('Tip filtering initialized');
 }
+
+// Hero Section JavaScript for Game Slideshow
+
+class GameSlideshow {
+    constructor(gameSlugs = []) {
+        this.currentSlide = 0;
+        this.slides = [];
+        this.dots = [];
+        this.autoSlideInterval = null;
+        this.isTransitioning = false;
+        this.games = [];
+        this.allGames = []; // Store all games from JSON
+        
+        // Default game slugs to show (you can customize this)
+        this.featuredGameSlugs = gameSlugs.length > 0 ? gameSlugs : [
+            '1v1lol',
+            'narrowonet', 
+            'icefishing'
+            // Add 5 more game slugs here for your featured games
+        ];
+        
+        this.init();
+    }
+    
+    async init() {
+        await this.loadGamesFromJSON();
+        this.generateSlides();
+        this.startAutoSlide();
+        this.addEventListeners();
+    }
+    
+    // Load games from JSON file
+    async loadGamesFromJSON() {
+        try {
+            const response = await fetch('games.json');
+            this.allGames = await response.json();
+            
+            // Filter games based on featured slugs
+            this.games = this.featuredGameSlugs.map(slug => {
+                return this.allGames.find(game => game.slug === slug);
+            }).filter(game => game !== undefined); // Remove any undefined games
+            
+            console.log(`Loaded ${this.games.length} featured games for slideshow`);
+            
+        } catch (error) {
+            console.error('Error loading games from JSON:', error);
+            // Fallback to sample data if JSON fails to load
+            this.loadFallbackGames();
+        }
+    }
+    
+    // Fallback games if JSON loading fails
+    loadFallbackGames() {
+        this.games = [
+            {
+                name: "Game Loading...",
+                image: "images/placeholder.jpg",
+                slug: "loading",
+                description: "Games are loading. Please check your games.json file."
+            }
+        ];
+    }
+    
+    // Generate slides dynamically from games data
+    async generateSlides() {
+        const container = document.querySelector('.slideshow-container');
+        
+        if (!container) {
+            console.error('Slideshow container not found');
+            return;
+        }
+        
+        // Clear existing slides except navigation
+        const existingSlides = container.querySelectorAll('.slide');
+        existingSlides.forEach(slide => slide.remove());
+        
+        // Wait for games to load if not already loaded
+        if (this.games.length === 0) {
+            await this.loadGamesFromJSON();
+        }
+        
+        // Generate new slides
+        this.games.forEach((game, index) => {
+            const slide = this.createSlide(game, index);
+            container.insertBefore(slide, container.querySelector('.slideshow-nav'));
+        });
+        
+        // Update slides and dots references
+        this.slides = document.querySelectorAll('.slide');
+        this.updateNavDots();
+        
+        // Show first slide
+        if (this.slides.length > 0) {
+            this.slides[0].classList.add('active');
+        }
+    }
+    
+    // Create individual slide element
+    createSlide(game, index) {
+        const slide = document.createElement('div');
+        slide.className = index === 0 ? 'slide active' : 'slide';
+        slide.dataset.game = game.slug;
+        
+        // Truncate description
+        const truncatedDescription = this.truncateDescription(game.description, 80);
+        
+        // Generate the correct game URL
+        const gameUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
+        
+        slide.innerHTML = `
+            <div class="game-image">
+                <img src="${game.image}" alt="${game.name}" loading="lazy">
+            </div>
+            <div class="game-overlay">
+                <div class="game-info">
+                    <h3 class="game-title">${game.name}</h3>
+                    <p class="game-description">${truncatedDescription}</p>
+                    <button class="play-button" onclick="playGame('${gameUrl}')">
+                        <span class="play-icon">▶</span>
+                        Play Game
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        return slide;
+    }
+    
+    // Update navigation dots
+    updateNavDots() {
+        const navContainer = document.querySelector('.slideshow-nav');
+        if (!navContainer) return;
+        
+        navContainer.innerHTML = '';
+        
+        this.games.forEach((_, index) => {
+            const dot = document.createElement('span');
+            dot.className = index === 0 ? 'nav-dot active' : 'nav-dot';
+            dot.onclick = () => this.goToSlide(index);
+            navContainer.appendChild(dot);
+        });
+        
+        this.dots = document.querySelectorAll('.nav-dot');
+    }
+    
+    // Truncate description with ellipsis
+    truncateDescription(text, maxLength) {
+        if (text.length <= maxLength) return text;
+        return text.substr(0, maxLength) + '...';
+    }
+    
+    // Go to specific slide
+    goToSlide(slideIndex) {
+        if (this.isTransitioning || slideIndex === this.currentSlide) return;
+        
+        this.isTransitioning = true;
+        
+        // Remove active class from current slide and dot
+        this.slides[this.currentSlide].classList.remove('active');
+        this.dots[this.currentSlide].classList.remove('active');
+        
+        // Update current slide index
+        this.currentSlide = slideIndex;
+        
+        // Add active class to new slide and dot
+        this.slides[this.currentSlide].classList.add('active');
+        this.dots[this.currentSlide].classList.add('active');
+        
+        // Reset transition flag after animation
+        setTimeout(() => {
+            this.isTransitioning = false;
+        }, 800);
+        
+        // Restart auto slide timer
+        this.restartAutoSlide();
+    }
+    
+    // Navigate to next/previous slide
+    changeSlide(direction) {
+        let newSlide = this.currentSlide + direction;
+        
+        if (newSlide >= this.slides.length) {
+            newSlide = 0;
+        } else if (newSlide < 0) {
+            newSlide = this.slides.length - 1;
+        }
+        
+        this.goToSlide(newSlide);
+    }
+    
+    // Start automatic slideshow
+    startAutoSlide() {
+        this.autoSlideInterval = setInterval(() => {
+            if (!this.isTransitioning) {
+                this.changeSlide(1);
+            }
+        }, 5000); // Change slide every 5 seconds
+    }
+    
+    // Stop automatic slideshow
+    stopAutoSlide() {
+        if (this.autoSlideInterval) {
+            clearInterval(this.autoSlideInterval);
+            this.autoSlideInterval = null;
+        }
+    }
+    
+    // Restart automatic slideshow
+    restartAutoSlide() {
+        this.stopAutoSlide();
+        this.startAutoSlide();
+    }
+    
+    // Add event listeners
+    addEventListeners() {
+        // Pause auto slide on hover
+        const container = document.querySelector('.slideshow-container');
+        container.addEventListener('mouseenter', () => this.stopAutoSlide());
+        container.addEventListener('mouseleave', () => this.startAutoSlide());
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                this.changeSlide(-1);
+            } else if (e.key === 'ArrowRight') {
+                this.changeSlide(1);
+            }
+        });
+        
+        // Touch/swipe support for mobile
+        this.addTouchSupport();
+    }
+    
+    // Add touch/swipe support
+    addTouchSupport() {
+        const container = document.querySelector('.slideshow-container');
+        let startX = 0;
+        let endX = 0;
+        
+        container.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        });
+        
+        container.addEventListener('touchend', (e) => {
+            endX = e.changedTouches[0].clientX;
+            this.handleSwipe(startX, endX);
+        });
+    }
+    
+    // Handle swipe gestures
+    handleSwipe(startX, endX) {
+        const threshold = 50;
+        const diff = startX - endX;
+        
+        if (Math.abs(diff) > threshold) {
+            if (diff > 0) {
+                // Swipe left - next slide
+                this.changeSlide(1);
+            } else {
+                // Swipe right - previous slide
+                this.changeSlide(-1);
+            }
+        }
+    }
+}
+
+// Global functions for button clicks
+function changeSlide(direction) {
+    if (window.gameSlideshow) {
+        window.gameSlideshow.changeSlide(direction);
+    }
+}
+
+function currentSlide(slideIndex) {
+    if (window.gameSlideshow) {
+        window.gameSlideshow.goToSlide(slideIndex - 1); // Convert to 0-based index
+    }
+}
+
+function playGame(gameUrl) {
+    // Add smooth transition effect before navigation
+    const button = event.target.closest('.play-button');
+    button.style.transform = 'scale(0.95)';
+    
+    setTimeout(() => {
+        // You can customize this behavior:
+        // Option 1: Open in same window
+        window.location.href = gameUrl;
+        
+        // Option 2: Open in new tab/window
+        // window.open(gameUrl, '_blank');
+        
+        // Option 3: Open in iframe modal (requires additional modal code)
+        // openGameModal(gameUrl);
+    }, 150);
+}
+
+// Initialize slideshow when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Example: Initialize with specific game slugs (customize this list)
+    const featuredGameSlugs = [
+        '1v1lol',
+        '3dformularacing',
+        'basketrandom'
+        // Add up to 8 game slugs here for your featured games
+    ];
+    
+    window.gameSlideshow = new GameSlideshow(featuredGameSlugs);
+});
+
+// Utility functions for managing featured games
+function addFeaturedGame(gameSlug) {
+    if (window.gameSlideshow) {
+        return window.gameSlideshow.addFeaturedGame(gameSlug);
+    }
+    return false;
+}
+
+function removeFeaturedGame(gameSlug) {
+    if (window.gameSlideshow) {
+        return window.gameSlideshow.removeFeaturedGame(gameSlug);
+    }
+    return false;
+}
+
+function setFeaturedGames(gameSlugs) {
+    if (window.gameSlideshow) {
+        window.gameSlideshow.setFeaturedGames(gameSlugs);
+    }
+}
+
+// Add featured games by slug
+function addFeaturedGameBySlug(gameSlug) {
+    const game = window.gameSlideshow?.allGames.find(g => g.slug === gameSlug);
+    if (game && !window.gameSlideshow.games.find(g => g.slug === gameSlug)) {
+        window.gameSlideshow.games.push(game);
+        window.gameSlideshow.generateSlides();
+        return true;
+    }
+    return false;
+}
+
+// Remove featured game by slug
+function removeFeaturedGameBySlug(gameSlug) {
+    if (!window.gameSlideshow) return false;
+    
+    const index = window.gameSlideshow.games.findIndex(g => g.slug === gameSlug);
+    if (index !== -1) {
+        window.gameSlideshow.games.splice(index, 1);
+        window.gameSlideshow.generateSlides();
+        return true;
+    }
+    return false;
+}
+
+// Update featured games list
+function updateFeaturedGames(gameSlugs) {
+    if (!window.gameSlideshow) return;
+    
+    window.gameSlideshow.featuredGameSlugs = gameSlugs;
+    window.gameSlideshow.games = gameSlugs.map(slug => {
+        return window.gameSlideshow.allGames.find(game => game.slug === slug);
+    }).filter(game => game !== undefined);
+    window.gameSlideshow.generateSlides();
+}
+
+// Get game by slug
+function getGameBySlug(slug) {
+    return window.gameSlideshow?.allGames.find(game => game.slug === slug);
+}
+
+// Handle visibility change to pause/resume slideshow
+document.addEventListener('visibilitychange', () => {
+    if (window.gameSlideshow) {
+        if (document.hidden) {
+            window.gameSlideshow.stopAutoSlide();
+        } else {
+            window.gameSlideshow.startAutoSlide();
+        }
+    }
+});
