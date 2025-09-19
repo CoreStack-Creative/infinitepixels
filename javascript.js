@@ -8789,9 +8789,9 @@ function initializeTipFiltering() {
     console.log('Tip filtering initialized');
 }
 
-// Game Slideshow JavaScript
+// Featured Game Slideshow JavaScript with Unique Names
 
-class GameSlideshow {
+class FeaturedGameSlideshow {
     constructor(gameSlugs = []) {
         this.currentSlide = 0;
         this.slides = [];
@@ -8867,25 +8867,25 @@ class GameSlideshow {
     
     // Generate slides dynamically from games data
     async generateSlides() {
-        const container = document.querySelector('.slideshow-container');
+        const container = document.querySelector('.featured-slideshow-container');
         
         if (!container) {
-            console.error('Slideshow container not found');
+            console.error('Featured slideshow container not found');
             return;
         }
         
         // Clear existing slides except navigation
-        const existingSlides = container.querySelectorAll('.slide');
+        const existingSlides = container.querySelectorAll('.featured-game-slide');
         existingSlides.forEach(slide => slide.remove());
         
         // Generate new slides
         this.games.forEach((game, index) => {
             const slide = this.createSlide(game, index);
-            container.insertBefore(slide, container.querySelector('.slideshow-nav'));
+            container.insertBefore(slide, container.querySelector('.featured-slideshow-nav'));
         });
         
         // Update slides and dots references
-        this.slides = document.querySelectorAll('.slide');
+        this.slides = document.querySelectorAll('.featured-game-slide');
         this.updateNavDots();
         
         // Show first slide
@@ -8893,35 +8893,35 @@ class GameSlideshow {
             this.slides[0].classList.add('active');
         }
         
-        console.log(`Generated ${this.slides.length} slides`);
+        console.log(`Generated ${this.slides.length} featured slides`);
     }
     
     // Create individual slide element
     createSlide(game, index) {
         const slide = document.createElement('div');
-        slide.className = index === 0 ? 'slide active' : 'slide';
+        slide.className = index === 0 ? 'featured-game-slide active' : 'featured-game-slide';
         slide.dataset.game = game.slug;
         
         // Truncate description
         const truncatedDescription = this.truncateDescription(game.description, 120);
         
-        // Generate the correct game URL (fixed double URL issue)
+        // Generate the correct game URL
         const gameUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
         
         // Get first tag for display
         const firstTag = game.tags && game.tags.length > 0 ? game.tags[0] : '';
         
         slide.innerHTML = `
-            <div class="game-image">
+            <div class="featured-game-image-container">
                 <img src="${game.image}" alt="${game.name}" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4='">
             </div>
-            <div class="game-info-overlay">
-                <div class="game-content">
-                    <h3 class="game-title">${game.name}</h3>
-                    ${firstTag ? `<p class="game-category">${firstTag}</p>` : ''}
-                    <p class="game-description">${truncatedDescription}</p>
-                    <button class="play-button" onclick="playGame('${gameUrl}')">
-                        <span class="play-icon">▶</span>
+            <div class="featured-game-info-overlay">
+                <div class="featured-game-content-wrapper">
+                    <h3 class="featured-game-title-display">${game.name}</h3>
+                    ${firstTag ? `<p class="featured-game-category-label">${firstTag}</p>` : ''}
+                    <p class="featured-game-description-text">${truncatedDescription}</p>
+                    <button class="featured-game-play-button" data-game-url="${gameUrl}">
+                        <span class="featured-game-play-icon">▶</span>
                         Play Game
                     </button>
                 </div>
@@ -8933,19 +8933,19 @@ class GameSlideshow {
     
     // Update navigation dots
     updateNavDots() {
-        const navContainer = document.querySelector('.slideshow-nav');
+        const navContainer = document.querySelector('.featured-slideshow-nav');
         if (!navContainer) return;
         
         navContainer.innerHTML = '';
         
         this.games.forEach((_, index) => {
             const dot = document.createElement('span');
-            dot.className = index === 0 ? 'nav-dot active' : 'nav-dot';
+            dot.className = index === 0 ? 'featured-nav-dot active' : 'featured-nav-dot';
             dot.onclick = () => this.goToSlide(index);
             navContainer.appendChild(dot);
         });
         
-        this.dots = document.querySelectorAll('.nav-dot');
+        this.dots = document.querySelectorAll('.featured-nav-dot');
     }
     
     // Truncate description with ellipsis
@@ -9029,11 +9029,31 @@ class GameSlideshow {
     // Add event listeners
     addEventListeners() {
         // Pause auto slide on hover
-        const container = document.querySelector('.slideshow-container');
+        const container = document.querySelector('.featured-slideshow-container');
         if (container) {
             container.addEventListener('mouseenter', () => this.stopAutoSlide());
             container.addEventListener('mouseleave', () => this.startAutoSlide());
         }
+        
+        // Play button click handler - FIX FOR DOUBLE OPENING
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.featured-game-play-button')) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const button = e.target.closest('.featured-game-play-button');
+                const gameUrl = button.getAttribute('data-game-url');
+                
+                if (gameUrl) {
+                    // Add button animation
+                    button.style.transform = 'scale(0.95)';
+                    
+                    setTimeout(() => {
+                        window.location.href = gameUrl;
+                    }, 150);
+                }
+            }
+        });
         
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
@@ -9050,7 +9070,7 @@ class GameSlideshow {
     
     // Add touch/swipe support
     addTouchSupport() {
-        const container = document.querySelector('.slideshow-container');
+        const container = document.querySelector('.featured-slideshow-container');
         if (!container) return;
         
         let startX = 0;
@@ -9118,29 +9138,16 @@ class GameSlideshow {
     }
 }
 
-// Global functions for button clicks
-function changeSlide(direction) {
-    if (window.gameSlideshow) {
-        window.gameSlideshow.changeSlide(direction);
+// Global functions for button clicks with unique names
+function changeFeaturedSlide(direction) {
+    if (window.featuredGameSlideshow) {
+        window.featuredGameSlideshow.changeSlide(direction);
     }
 }
 
-function currentSlide(slideIndex) {
-    if (window.gameSlideshow) {
-        window.gameSlideshow.goToSlide(slideIndex - 1); // Convert to 0-based index
-    }
-}
-
-function playGame(gameUrl) {
-    // Add smooth transition effect before navigation
-    const button = event.target.closest('.play-button');
-    if (button) {
-        button.style.transform = 'scale(0.95)';
-        
-        setTimeout(() => {
-            // Navigate to game page
-            window.location.href = gameUrl;
-        }, 150);
+function goToFeaturedSlide(slideIndex) {
+    if (window.featuredGameSlideshow) {
+        window.featuredGameSlideshow.goToSlide(slideIndex - 1); // Convert to 0-based index
     }
 }
 
@@ -9154,44 +9161,44 @@ document.addEventListener('DOMContentLoaded', () => {
         // Add up to 8 game slugs here
     ];
     
-    window.gameSlideshow = new GameSlideshow(featuredGameSlugs);
+    window.featuredGameSlideshow = new FeaturedGameSlideshow(featuredGameSlugs);
 });
 
 // Utility functions for managing featured games
-function addFeaturedGame(gameSlug) {
-    return window.gameSlideshow?.addFeaturedGame(gameSlug) || false;
+function addFeaturedGameToSlideshow(gameSlug) {
+    return window.featuredGameSlideshow?.addFeaturedGame(gameSlug) || false;
 }
 
-function removeFeaturedGame(gameSlug) {
-    return window.gameSlideshow?.removeFeaturedGame(gameSlug) || false;
+function removeFeaturedGameFromSlideshow(gameSlug) {
+    return window.featuredGameSlideshow?.removeFeaturedGame(gameSlug) || false;
 }
 
-function setFeaturedGames(gameSlugs) {
-    if (window.gameSlideshow) {
-        window.gameSlideshow.setFeaturedGames(gameSlugs);
+function setFeaturedGamesInSlideshow(gameSlugs) {
+    if (window.featuredGameSlideshow) {
+        window.featuredGameSlideshow.setFeaturedGames(gameSlugs);
     }
 }
 
-function getGameBySlug(slug) {
-    return window.gameSlideshow?.allGames.find(game => game.slug === slug);
+function getFeaturedGameBySlug(slug) {
+    return window.featuredGameSlideshow?.allGames.find(game => game.slug === slug);
 }
 
 // Handle visibility change to pause/resume slideshow
 document.addEventListener('visibilitychange', () => {
-    if (window.gameSlideshow) {
+    if (window.featuredGameSlideshow) {
         if (document.hidden) {
-            window.gameSlideshow.stopAutoSlide();
+            window.featuredGameSlideshow.stopAutoSlide();
         } else {
-            window.gameSlideshow.startAutoSlide();
+            window.featuredGameSlideshow.startAutoSlide();
         }
     }
 });
 
 // Performance optimization: Preload next image
-function preloadNextImage() {
-    if (window.gameSlideshow && window.gameSlideshow.games.length > 1) {
-        const nextIndex = (window.gameSlideshow.currentSlide + 1) % window.gameSlideshow.games.length;
-        const nextGame = window.gameSlideshow.games[nextIndex];
+function preloadNextFeaturedImage() {
+    if (window.featuredGameSlideshow && window.featuredGameSlideshow.games.length > 1) {
+        const nextIndex = (window.featuredGameSlideshow.currentSlide + 1) % window.featuredGameSlideshow.games.length;
+        const nextGame = window.featuredGameSlideshow.games[nextIndex];
         if (nextGame) {
             const img = new Image();
             img.src = nextGame.image;
@@ -9201,8 +9208,8 @@ function preloadNextImage() {
 
 // Preload images after initialization
 setTimeout(() => {
-    if (window.gameSlideshow) {
-        window.gameSlideshow.games.forEach(game => {
+    if (window.featuredGameSlideshow) {
+        window.featuredGameSlideshow.games.forEach(game => {
             const img = new Image();
             img.src = game.image;
         });
