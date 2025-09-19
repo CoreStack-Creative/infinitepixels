@@ -551,13 +551,12 @@ body {
 }
 
 .game-category {
-    color: rgba(255, 255, 255, 0.95);
-    font-size: 2rem;              /* ✅ noticeably larger */
-    font-weight: 600;
-    margin-bottom: 2rem;
-    text-decoration: underline;   /* ✅ underline instead of bubble */
-    text-shadow: none;            /* ✅ remove glowing bubble */
-    text-transform: none;         /* ✅ no auto-uppercase */
+    color: rgba(255, 255, 255, 0.85);  /* ✅ simple white, no gradient */
+    font-size: 2rem;                   /* ✅ larger for balance with title */
+    font-weight: 600;                  /* ✅ slightly bolder */
+    margin-bottom: 1.5rem;
+    text-transform: none;              /* ✅ no forced uppercase */
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.6); /* ✅ subtle depth */
     letter-spacing: 0.5px;
 }
 
