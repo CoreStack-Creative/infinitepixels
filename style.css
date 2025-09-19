@@ -513,15 +513,21 @@ body {
     position: absolute;
     top: 0;
     right: 0;
-    width: 450px;
+    width: 500px;
     height: 100%;
     background: linear-gradient(
-        135deg, 
-        rgba(26, 26, 46, 0) 0%,
-        rgba(26, 26, 46, 0.3) 20%,
-        rgba(26, 26, 46, 0.8) 60%,
-        rgba(26, 26, 46, 0.95) 80%,
-        rgba(26, 26, 46, 1) 100%
+        to left, 
+        rgba(26, 26, 46, 1) 0%,
+        rgba(26, 26, 46, 0.98) 15%,
+        rgba(26, 26, 46, 0.95) 25%,
+        rgba(26, 26, 46, 0.9) 35%,
+        rgba(26, 26, 46, 0.8) 45%,
+        rgba(26, 26, 46, 0.65) 55%,
+        rgba(26, 26, 46, 0.45) 65%,
+        rgba(26, 26, 46, 0.25) 75%,
+        rgba(26, 26, 46, 0.1) 85%,
+        rgba(26, 26, 46, 0.05) 92%,
+        rgba(26, 26, 46, 0) 100%
     );
     display: flex;
     align-items: center;
@@ -583,13 +589,12 @@ body {
 }
 
 .play-button:hover {
-    transform: translateY(-3px);
     box-shadow: 0 15px 35px rgba(102, 126, 234, 0.6);
     background: linear-gradient(45deg, #764ba2, #667eea);
 }
 
 .play-button:active {
-    transform: translateY(-1px);
+    transform: none;
 }
 
 .play-button::before {
@@ -685,8 +690,7 @@ body {
 
 .nav-arrow {
     position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
+    bottom: 30px;
     background: rgba(26, 26, 46, 0.7);
     backdrop-filter: blur(10px);
     border: 2px solid rgba(255, 255, 255, 0.2);
@@ -707,7 +711,6 @@ body {
 .nav-arrow:hover {
     background: linear-gradient(45deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
     border-color: rgba(255, 255, 255, 0.5);
-    transform: translateY(-50%) scale(1.1);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
@@ -754,8 +757,22 @@ body {
 /* Responsive Design */
 @media (max-width: 1200px) {
     .game-info-overlay {
-        width: 400px;
+        width: 450px;
         padding: 2.5rem;
+        background: linear-gradient(
+            to left, 
+            rgba(26, 26, 46, 1) 0%,
+            rgba(26, 26, 46, 0.98) 12%,
+            rgba(26, 26, 46, 0.95) 22%,
+            rgba(26, 26, 46, 0.9) 32%,
+            rgba(26, 26, 46, 0.8) 42%,
+            rgba(26, 26, 46, 0.65) 52%,
+            rgba(26, 26, 46, 0.45) 62%,
+            rgba(26, 26, 46, 0.25) 72%,
+            rgba(26, 26, 46, 0.1) 82%,
+            rgba(26, 26, 46, 0.05) 90%,
+            rgba(26, 26, 46, 0) 100%
+        );
     }
     
     .game-content {
@@ -784,9 +801,15 @@ body {
         background: linear-gradient(
             to top,
             rgba(26, 26, 46, 1) 0%,
-            rgba(26, 26, 46, 0.95) 20%,
-            rgba(26, 26, 46, 0.8) 60%,
-            rgba(26, 26, 46, 0.3) 80%,
+            rgba(26, 26, 46, 0.98) 10%,
+            rgba(26, 26, 46, 0.95) 18%,
+            rgba(26, 26, 46, 0.9) 26%,
+            rgba(26, 26, 46, 0.8) 34%,
+            rgba(26, 26, 46, 0.65) 42%,
+            rgba(26, 26, 46, 0.45) 50%,
+            rgba(26, 26, 46, 0.25) 60%,
+            rgba(26, 26, 46, 0.1) 70%,
+            rgba(26, 26, 46, 0.05) 85%,
             rgba(26, 26, 46, 0) 100%
         );
         padding: 2rem;
