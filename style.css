@@ -579,9 +579,12 @@ body {
     margin-bottom: 2.5rem;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     overflow: hidden;
+
+    /* ✅ Fixed line clamp */
     display: -webkit-box;
-    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    line-clamp: 4;
 }
 
 .play-button {
@@ -854,7 +857,13 @@ body {
     .game-description {
         font-size: 1rem;
         margin-bottom: 2rem;
+        overflow: hidden;
+
+        /* ✅ Fixed line clamp */
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
         -webkit-line-clamp: 3;
+        line-clamp: 3;
     }
     
     .play-button {
@@ -909,6 +918,7 @@ body {
         right: 15px;
     }
 }
+
 
 
 /* Games Sections */
