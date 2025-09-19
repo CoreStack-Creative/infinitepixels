@@ -518,21 +518,12 @@ body {
     background: linear-gradient(
         to left, 
         rgba(26, 26, 46, 1) 0%,
-        rgba(26, 26, 46, 1) 5%,
-        rgba(26, 26, 46, 0.98) 10%,
-        rgba(26, 26, 46, 0.96) 15%,
-        rgba(26, 26, 46, 0.94) 20%,
-        rgba(26, 26, 46, 0.9) 25%,
-        rgba(26, 26, 46, 0.85) 30%,
-        rgba(26, 26, 46, 0.75) 35%,
-        rgba(26, 26, 46, 0.65) 40%,
-        rgba(26, 26, 46, 0.5) 45%,
-        rgba(26, 26, 46, 0.35) 50%,
-        rgba(26, 26, 46, 0.2) 55%,
-        rgba(26, 26, 46, 0.1) 65%,
-        rgba(26, 26, 46, 0.05) 75%,
-        rgba(26, 26, 46, 0.02) 85%,
-        rgba(26, 26, 46, 0) 100%
+        rgba(26, 26, 46, 1) 15%,
+        rgba(26, 26, 46, 0.95) 35%,
+        rgba(26, 26, 46, 0.85) 55%,
+        rgba(26, 26, 46, 0.7) 75%,
+        rgba(26, 26, 46, 0.5) 90%,
+        rgba(26, 26, 46, 0.35) 100%
     );
     display: flex;
     align-items: center;
@@ -563,13 +554,14 @@ body {
 }
 
 .game-category {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-bottom: 1.5rem;
-    text-transform: capitalize;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-    letter-spacing: 0.5px;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1.6rem;              /* much larger */
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-transform: uppercase;
+    text-decoration: underline;     /* ✅ underline instead of bubble */
+    text-shadow: none;              /* remove glow/bubble effect */
+    letter-spacing: 1px;
 }
 
 .game-description {
