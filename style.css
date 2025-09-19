@@ -540,29 +540,27 @@ body {
 }
 
 .game-title {
-    font-size: 3.2rem;
-    font-weight: 800;
-    color: white;
-    margin-bottom: 0.5rem;
-    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+    font-size: 4.5rem;            /* ✅ larger, hero-style text */
+    font-weight: 900;             /* ✅ extra bold for impact */
+    color: #ffffff;               /* ✅ clean solid white */
+    margin-bottom: 1rem;
     line-height: 1.1;
-    background: linear-gradient(45deg, #a8edea, #fed6e3);
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: titleGlow 3s ease-in-out infinite alternate;
+    text-shadow: 0 6px 15px rgba(0, 0, 0, 0.85); /* ✅ deeper shadow for contrast */
+    animation: none;              /* ✅ no glow animation */
+    text-transform: none;         /* ✅ preserve normal capitalization */
 }
 
 .game-category {
     color: rgba(255, 255, 255, 0.95);
-    font-size: 1.6rem;              /* much larger */
+    font-size: 2rem;              /* ✅ noticeably larger */
     font-weight: 600;
     margin-bottom: 2rem;
-    text-transform: uppercase;
-    text-decoration: underline;     /* ✅ underline instead of bubble */
-    text-shadow: none;              /* remove glow/bubble effect */
-    letter-spacing: 1px;
+    text-decoration: underline;   /* ✅ underline instead of bubble */
+    text-shadow: none;            /* ✅ remove glowing bubble */
+    text-transform: none;         /* ✅ no auto-uppercase */
+    letter-spacing: 0.5px;
 }
+
 
 .game-description {
     color: rgba(255, 255, 255, 0.9);
