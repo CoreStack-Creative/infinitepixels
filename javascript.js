@@ -8789,7 +8789,7 @@ function initializeTipFiltering() {
     console.log('Tip filtering initialized');
 }
 
-// Hero Section JavaScript for Game Slideshow
+// Game Slideshow JavaScript
 
 class GameSlideshow {
     constructor(gameSlugs = []) {
@@ -8799,14 +8799,14 @@ class GameSlideshow {
         this.autoSlideInterval = null;
         this.isTransitioning = false;
         this.games = [];
-        this.allGames = []; // Store all games from JSON
+        this.allGames = [];
         
-        // Default game slugs to show (you can customize this)
+        // Default featured game slugs - customize this array
         this.featuredGameSlugs = gameSlugs.length > 0 ? gameSlugs : [
             '1v1lol',
-            'narrowonet', 
+            'polytrack', 
             'icefishing'
-            // Add 5 more game slugs here for your featured games
+            // Add up to 8 game slugs here
         ];
         
         this.init();
@@ -8814,7 +8814,7 @@ class GameSlideshow {
     
     async init() {
         await this.loadGamesFromJSON();
-        this.generateSlides();
+        await this.generateSlides();
         this.startAutoSlide();
         this.addEventListeners();
     }
@@ -8822,31 +8822,45 @@ class GameSlideshow {
     // Load games from JSON file
     async loadGamesFromJSON() {
         try {
+            console.log('Loading games from JSON...');
             const response = await fetch('games.json');
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
             this.allGames = await response.json();
             
             // Filter games based on featured slugs
             this.games = this.featuredGameSlugs.map(slug => {
-                return this.allGames.find(game => game.slug === slug);
-            }).filter(game => game !== undefined); // Remove any undefined games
+                const game = this.allGames.find(game => game.slug === slug);
+                if (!game) {
+                    console.warn(`Game with slug "${slug}" not found in JSON`);
+                }
+                return game;
+            }).filter(game => game !== undefined);
             
-            console.log(`Loaded ${this.games.length} featured games for slideshow`);
+            console.log(`Successfully loaded ${this.games.length} featured games`);
+            
+            if (this.games.length === 0) {
+                throw new Error('No games found matching the featured slugs');
+            }
             
         } catch (error) {
             console.error('Error loading games from JSON:', error);
-            // Fallback to sample data if JSON fails to load
             this.loadFallbackGames();
         }
     }
     
     // Fallback games if JSON loading fails
     loadFallbackGames() {
+        console.log('Loading fallback games...');
         this.games = [
             {
-                name: "Game Loading...",
-                image: "images/placeholder.jpg",
-                slug: "loading",
-                description: "Games are loading. Please check your games.json file."
+                name: "Games Loading Error",
+                image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVycm9yIExvYWRpbmcgR2FtZXM8L3RleHQ+PC9zdmc+",
+                slug: "error",
+                description: "Unable to load games from JSON file. Please check that games.json exists and is accessible."
             }
         ];
     }
@@ -8864,11 +8878,6 @@ class GameSlideshow {
         const existingSlides = container.querySelectorAll('.slide');
         existingSlides.forEach(slide => slide.remove());
         
-        // Wait for games to load if not already loaded
-        if (this.games.length === 0) {
-            await this.loadGamesFromJSON();
-        }
-        
         // Generate new slides
         this.games.forEach((game, index) => {
             const slide = this.createSlide(game, index);
@@ -8883,6 +8892,8 @@ class GameSlideshow {
         if (this.slides.length > 0) {
             this.slides[0].classList.add('active');
         }
+        
+        console.log(`Generated ${this.slides.length} slides`);
     }
     
     // Create individual slide element
@@ -8892,17 +8903,17 @@ class GameSlideshow {
         slide.dataset.game = game.slug;
         
         // Truncate description
-        const truncatedDescription = this.truncateDescription(game.description, 80);
+        const truncatedDescription = this.truncateDescription(game.description, 120);
         
         // Generate the correct game URL
         const gameUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
         
         slide.innerHTML = `
             <div class="game-image">
-                <img src="${game.image}" alt="${game.name}" loading="lazy">
+                <img src="${game.image}" alt="${game.name}" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4='">
             </div>
-            <div class="game-overlay">
-                <div class="game-info">
+            <div class="game-info-overlay">
+                <div class="game-content">
                     <h3 class="game-title">${game.name}</h3>
                     <p class="game-description">${truncatedDescription}</p>
                     <button class="play-button" onclick="playGame('${gameUrl}')">
@@ -8935,31 +8946,39 @@ class GameSlideshow {
     
     // Truncate description with ellipsis
     truncateDescription(text, maxLength) {
-        if (text.length <= maxLength) return text;
-        return text.substr(0, maxLength) + '...';
+        if (!text || text.length <= maxLength) return text || '';
+        return text.substr(0, maxLength).trim() + '...';
     }
     
     // Go to specific slide
     goToSlide(slideIndex) {
-        if (this.isTransitioning || slideIndex === this.currentSlide) return;
+        if (this.isTransitioning || slideIndex === this.currentSlide || !this.slides.length) return;
         
         this.isTransitioning = true;
         
         // Remove active class from current slide and dot
-        this.slides[this.currentSlide].classList.remove('active');
-        this.dots[this.currentSlide].classList.remove('active');
+        if (this.slides[this.currentSlide]) {
+            this.slides[this.currentSlide].classList.remove('active');
+        }
+        if (this.dots[this.currentSlide]) {
+            this.dots[this.currentSlide].classList.remove('active');
+        }
         
         // Update current slide index
         this.currentSlide = slideIndex;
         
         // Add active class to new slide and dot
-        this.slides[this.currentSlide].classList.add('active');
-        this.dots[this.currentSlide].classList.add('active');
+        if (this.slides[this.currentSlide]) {
+            this.slides[this.currentSlide].classList.add('active');
+        }
+        if (this.dots[this.currentSlide]) {
+            this.dots[this.currentSlide].classList.add('active');
+        }
         
         // Reset transition flag after animation
         setTimeout(() => {
             this.isTransitioning = false;
-        }, 800);
+        }, 1000);
         
         // Restart auto slide timer
         this.restartAutoSlide();
@@ -8967,6 +8986,8 @@ class GameSlideshow {
     
     // Navigate to next/previous slide
     changeSlide(direction) {
+        if (!this.slides.length) return;
+        
         let newSlide = this.currentSlide + direction;
         
         if (newSlide >= this.slides.length) {
@@ -8981,10 +9002,10 @@ class GameSlideshow {
     // Start automatic slideshow
     startAutoSlide() {
         this.autoSlideInterval = setInterval(() => {
-            if (!this.isTransitioning) {
+            if (!this.isTransitioning && this.slides.length > 0) {
                 this.changeSlide(1);
             }
-        }, 5000); // Change slide every 5 seconds
+        }, 6000); // Change slide every 6 seconds
     }
     
     // Stop automatic slideshow
@@ -9005,8 +9026,10 @@ class GameSlideshow {
     addEventListeners() {
         // Pause auto slide on hover
         const container = document.querySelector('.slideshow-container');
-        container.addEventListener('mouseenter', () => this.stopAutoSlide());
-        container.addEventListener('mouseleave', () => this.startAutoSlide());
+        if (container) {
+            container.addEventListener('mouseenter', () => this.stopAutoSlide());
+            container.addEventListener('mouseleave', () => this.startAutoSlide());
+        }
         
         // Keyboard navigation
         document.addEventListener('keydown', (e) => {
@@ -9024,17 +9047,19 @@ class GameSlideshow {
     // Add touch/swipe support
     addTouchSupport() {
         const container = document.querySelector('.slideshow-container');
+        if (!container) return;
+        
         let startX = 0;
         let endX = 0;
         
         container.addEventListener('touchstart', (e) => {
             startX = e.touches[0].clientX;
-        });
+        }, { passive: true });
         
         container.addEventListener('touchend', (e) => {
             endX = e.changedTouches[0].clientX;
             this.handleSwipe(startX, endX);
-        });
+        }, { passive: true });
     }
     
     // Handle swipe gestures
@@ -9051,6 +9076,41 @@ class GameSlideshow {
                 this.changeSlide(-1);
             }
         }
+    }
+    
+    // Add featured games by slug
+    addFeaturedGame(gameSlug) {
+        const game = this.allGames.find(g => g.slug === gameSlug);
+        if (game && !this.games.find(g => g.slug === gameSlug)) {
+            this.games.push(game);
+            this.generateSlides();
+            return true;
+        }
+        return false;
+    }
+    
+    // Remove featured game by slug
+    removeFeaturedGame(gameSlug) {
+        const index = this.games.findIndex(g => g.slug === gameSlug);
+        if (index !== -1) {
+            this.games.splice(index, 1);
+            if (this.currentSlide >= this.games.length) {
+                this.currentSlide = Math.max(0, this.games.length - 1);
+            }
+            this.generateSlides();
+            return true;
+        }
+        return false;
+    }
+    
+    // Update featured games list
+    setFeaturedGames(gameSlugs) {
+        this.featuredGameSlugs = gameSlugs;
+        this.games = gameSlugs.map(slug => {
+            return this.allGames.find(game => game.slug === slug);
+        }).filter(game => game !== undefined);
+        this.currentSlide = 0;
+        this.generateSlides();
     }
 }
 
@@ -9070,29 +9130,24 @@ function currentSlide(slideIndex) {
 function playGame(gameUrl) {
     // Add smooth transition effect before navigation
     const button = event.target.closest('.play-button');
-    button.style.transform = 'scale(0.95)';
-    
-    setTimeout(() => {
-        // You can customize this behavior:
-        // Option 1: Open in same window
-        window.location.href = gameUrl;
+    if (button) {
+        button.style.transform = 'scale(0.95)';
         
-        // Option 2: Open in new tab/window
-        // window.open(gameUrl, '_blank');
-        
-        // Option 3: Open in iframe modal (requires additional modal code)
-        // openGameModal(gameUrl);
-    }, 150);
+        setTimeout(() => {
+            // Navigate to game page
+            window.location.href = gameUrl;
+        }, 150);
+    }
 }
 
 // Initialize slideshow when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Example: Initialize with specific game slugs (customize this list)
+    // Customize this array with your featured game slugs
     const featuredGameSlugs = [
         '1v1lol',
         '3dformularacing',
         'basketrandom'
-        // Add up to 8 game slugs here for your featured games
+        // Add up to 8 game slugs here
     ];
     
     window.gameSlideshow = new GameSlideshow(featuredGameSlugs);
@@ -9100,17 +9155,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Utility functions for managing featured games
 function addFeaturedGame(gameSlug) {
-    if (window.gameSlideshow) {
-        return window.gameSlideshow.addFeaturedGame(gameSlug);
-    }
-    return false;
+    return window.gameSlideshow?.addFeaturedGame(gameSlug) || false;
 }
 
 function removeFeaturedGame(gameSlug) {
-    if (window.gameSlideshow) {
-        return window.gameSlideshow.removeFeaturedGame(gameSlug);
-    }
-    return false;
+    return window.gameSlideshow?.removeFeaturedGame(gameSlug) || false;
 }
 
 function setFeaturedGames(gameSlugs) {
@@ -9119,42 +9168,6 @@ function setFeaturedGames(gameSlugs) {
     }
 }
 
-// Add featured games by slug
-function addFeaturedGameBySlug(gameSlug) {
-    const game = window.gameSlideshow?.allGames.find(g => g.slug === gameSlug);
-    if (game && !window.gameSlideshow.games.find(g => g.slug === gameSlug)) {
-        window.gameSlideshow.games.push(game);
-        window.gameSlideshow.generateSlides();
-        return true;
-    }
-    return false;
-}
-
-// Remove featured game by slug
-function removeFeaturedGameBySlug(gameSlug) {
-    if (!window.gameSlideshow) return false;
-    
-    const index = window.gameSlideshow.games.findIndex(g => g.slug === gameSlug);
-    if (index !== -1) {
-        window.gameSlideshow.games.splice(index, 1);
-        window.gameSlideshow.generateSlides();
-        return true;
-    }
-    return false;
-}
-
-// Update featured games list
-function updateFeaturedGames(gameSlugs) {
-    if (!window.gameSlideshow) return;
-    
-    window.gameSlideshow.featuredGameSlugs = gameSlugs;
-    window.gameSlideshow.games = gameSlugs.map(slug => {
-        return window.gameSlideshow.allGames.find(game => game.slug === slug);
-    }).filter(game => game !== undefined);
-    window.gameSlideshow.generateSlides();
-}
-
-// Get game by slug
 function getGameBySlug(slug) {
     return window.gameSlideshow?.allGames.find(game => game.slug === slug);
 }
@@ -9169,3 +9182,25 @@ document.addEventListener('visibilitychange', () => {
         }
     }
 });
+
+// Performance optimization: Preload next image
+function preloadNextImage() {
+    if (window.gameSlideshow && window.gameSlideshow.games.length > 1) {
+        const nextIndex = (window.gameSlideshow.currentSlide + 1) % window.gameSlideshow.games.length;
+        const nextGame = window.gameSlideshow.games[nextIndex];
+        if (nextGame) {
+            const img = new Image();
+            img.src = nextGame.image;
+        }
+    }
+}
+
+// Preload images after initialization
+setTimeout(() => {
+    if (window.gameSlideshow) {
+        window.gameSlideshow.games.forEach(game => {
+            const img = new Image();
+            img.src = game.image;
+        });
+    }
+}, 2000);
