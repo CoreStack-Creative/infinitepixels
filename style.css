@@ -508,7 +508,7 @@ body {
     transform: scale(1.05);
 }
 
-/* Faded overlay on right side */
+/* Seamless gradient overlay - darker on right */
 .game-info-overlay {
     position: absolute;
     top: 0;
@@ -517,13 +517,17 @@ body {
     height: 100%;
     background: linear-gradient(
         to left, 
-        rgba(26, 26, 46, 1) 0%,
-        rgba(26, 26, 46, 1) 15%,
-        rgba(26, 26, 46, 0.95) 35%,
-        rgba(26, 26, 46, 0.85) 55%,
-        rgba(26, 26, 46, 0.7) 75%,
-        rgba(26, 26, 46, 0.5) 90%,
-        rgba(26, 26, 46, 0.35) 100%
+        rgba(16, 16, 32, 1) 0%,
+        rgba(18, 18, 34, 0.98) 10%,
+        rgba(20, 20, 36, 0.95) 20%,
+        rgba(22, 22, 38, 0.9) 30%,
+        rgba(24, 24, 40, 0.8) 40%,
+        rgba(26, 26, 42, 0.7) 50%,
+        rgba(26, 26, 46, 0.6) 60%,
+        rgba(26, 26, 46, 0.45) 70%,
+        rgba(26, 26, 46, 0.3) 80%,
+        rgba(26, 26, 46, 0.15) 90%,
+        rgba(26, 26, 46, 0) 100%
     );
     display: flex;
     align-items: center;
@@ -536,30 +540,35 @@ body {
     max-width: 450px;
     text-align: right;
     animation: slideInRight 1s ease-out;
-    margin-right: 2rem;
+    margin-right: 1rem;
+    padding-right: 2rem;
 }
 
 .game-title {
-    font-size: 4.5rem;            /* ✅ larger, hero-style text */
-    font-weight: 900;             /* ✅ extra bold for impact */
-    color: #ffffff;               /* ✅ clean solid white */
+    font-size: 5.5rem;
+    font-weight: 900;
+    color: #ffffff;
     margin-bottom: 1rem;
     line-height: 1.1;
-    text-shadow: 0 6px 15px rgba(0, 0, 0, 0.85); /* ✅ deeper shadow for contrast */
-    animation: none;              /* ✅ no glow animation */
-    text-transform: none;         /* ✅ preserve normal capitalization */
+    text-shadow: 0 6px 15px rgba(0, 0, 0, 0.85);
+    animation: none;
+    text-transform: none;
 }
 
 .game-category {
-    color: rgba(255, 255, 255, 0.85);  /* ✅ simple white, no gradient */
-    font-size: 2rem;                   /* ✅ larger for balance with title */
-    font-weight: 600;                  /* ✅ slightly bolder */
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 2rem;
+    font-weight: 600;
     margin-bottom: 1.5rem;
-    text-transform: none;              /* ✅ no forced uppercase */
-    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.6); /* ✅ subtle depth */
+    text-transform: none;
+    text-shadow: 0 3px 6px rgba(0, 0, 0, 0.6);
     letter-spacing: 0.5px;
+    background: none;
+    border: none;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
 }
-
 
 .game-description {
     color: rgba(255, 255, 255, 0.9);
@@ -568,8 +577,12 @@ body {
     margin-bottom: 2.5rem;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     overflow: hidden;
-
-    /* ✅ Fixed line clamp */
+    background: none;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    border-bottom: 3px solid #667eea;
+    padding-bottom: 1rem;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 4;
@@ -769,12 +782,12 @@ body {
         padding: 2.5rem 3rem;
         background: linear-gradient(
             to left, 
-            rgba(26, 26, 46, 1) 0%,
-            rgba(26, 26, 46, 1) 8%,
-            rgba(26, 26, 46, 0.98) 15%,
-            rgba(26, 26, 46, 0.95) 22%,
-            rgba(26, 26, 46, 0.9) 30%,
-            rgba(26, 26, 46, 0.8) 38%,
+            rgba(16, 16, 32, 1) 0%,
+            rgba(18, 18, 34, 0.98) 8%,
+            rgba(20, 20, 36, 0.95) 15%,
+            rgba(22, 22, 38, 0.9) 22%,
+            rgba(24, 24, 40, 0.85) 30%,
+            rgba(26, 26, 42, 0.8) 38%,
             rgba(26, 26, 46, 0.65) 46%,
             rgba(26, 26, 46, 0.45) 54%,
             rgba(26, 26, 46, 0.25) 62%,
@@ -786,11 +799,12 @@ body {
     
     .game-content {
         max-width: 350px;
-        margin-right: 1.5rem;
+        margin-right: 1rem;
+        padding-right: 1.5rem;
     }
     
     .game-title {
-        font-size: 2.8rem;
+        font-size: 4rem;
     }
 }
 
@@ -810,12 +824,12 @@ body {
         height: auto;
         background: linear-gradient(
             to top,
-            rgba(26, 26, 46, 1) 0%,
-            rgba(26, 26, 46, 1) 5%,
-            rgba(26, 26, 46, 0.98) 12%,
-            rgba(26, 26, 46, 0.95) 20%,
-            rgba(26, 26, 46, 0.9) 28%,
-            rgba(26, 26, 46, 0.8) 36%,
+            rgba(16, 16, 32, 1) 0%,
+            rgba(18, 18, 34, 0.98) 5%,
+            rgba(20, 20, 36, 0.95) 12%,
+            rgba(22, 22, 38, 0.9) 20%,
+            rgba(24, 24, 40, 0.85) 28%,
+            rgba(26, 26, 42, 0.8) 36%,
             rgba(26, 26, 46, 0.65) 44%,
             rgba(26, 26, 46, 0.45) 52%,
             rgba(26, 26, 46, 0.25) 62%,
@@ -831,10 +845,11 @@ body {
         text-align: center;
         max-width: 100%;
         margin-right: 0;
+        padding-right: 0;
     }
     
     .game-title {
-        font-size: 2.5rem;
+        font-size: 3rem;
         margin-bottom: 0.5rem;
     }
     
@@ -847,8 +862,7 @@ body {
         font-size: 1rem;
         margin-bottom: 2rem;
         overflow: hidden;
-
-        /* ✅ Fixed line clamp */
+        border-bottom: 2px solid #667eea;
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 3;
@@ -892,7 +906,7 @@ body {
     }
     
     .game-title {
-        font-size: 2.2rem;
+        font-size: 2.8rem;
     }
     
     .game-category {
