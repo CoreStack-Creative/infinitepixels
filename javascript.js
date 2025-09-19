@@ -8804,8 +8804,8 @@ class GameSlideshow {
         // Default featured game slugs - customize this array
         this.featuredGameSlugs = gameSlugs.length > 0 ? gameSlugs : [
             '1v1lol',
-            'polytrack', 
-            'icefishing'
+            '3dformularacing', 
+            'basketrandom'
             // Add up to 8 game slugs here
         ];
         
@@ -8905,8 +8905,11 @@ class GameSlideshow {
         // Truncate description
         const truncatedDescription = this.truncateDescription(game.description, 120);
         
-        // Generate the correct game URL
+        // Generate the correct game URL (fixed double URL issue)
         const gameUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
+        
+        // Get first tag for display
+        const firstTag = game.tags && game.tags.length > 0 ? game.tags[0] : '';
         
         slide.innerHTML = `
             <div class="game-image">
@@ -8915,6 +8918,7 @@ class GameSlideshow {
             <div class="game-info-overlay">
                 <div class="game-content">
                     <h3 class="game-title">${game.name}</h3>
+                    ${firstTag ? `<p class="game-category">${firstTag}</p>` : ''}
                     <p class="game-description">${truncatedDescription}</p>
                     <button class="play-button" onclick="playGame('${gameUrl}')">
                         <span class="play-icon">▶</span>

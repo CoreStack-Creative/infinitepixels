@@ -513,47 +513,63 @@ body {
     position: absolute;
     top: 0;
     right: 0;
-    width: 500px;
+    width: 65%;
     height: 100%;
     background: linear-gradient(
         to left, 
         rgba(26, 26, 46, 1) 0%,
-        rgba(26, 26, 46, 0.98) 15%,
-        rgba(26, 26, 46, 0.95) 25%,
-        rgba(26, 26, 46, 0.9) 35%,
-        rgba(26, 26, 46, 0.8) 45%,
-        rgba(26, 26, 46, 0.65) 55%,
-        rgba(26, 26, 46, 0.45) 65%,
-        rgba(26, 26, 46, 0.25) 75%,
-        rgba(26, 26, 46, 0.1) 85%,
-        rgba(26, 26, 46, 0.05) 92%,
+        rgba(26, 26, 46, 1) 5%,
+        rgba(26, 26, 46, 0.98) 10%,
+        rgba(26, 26, 46, 0.96) 15%,
+        rgba(26, 26, 46, 0.94) 20%,
+        rgba(26, 26, 46, 0.9) 25%,
+        rgba(26, 26, 46, 0.85) 30%,
+        rgba(26, 26, 46, 0.75) 35%,
+        rgba(26, 26, 46, 0.65) 40%,
+        rgba(26, 26, 46, 0.5) 45%,
+        rgba(26, 26, 46, 0.35) 50%,
+        rgba(26, 26, 46, 0.2) 55%,
+        rgba(26, 26, 46, 0.1) 65%,
+        rgba(26, 26, 46, 0.05) 75%,
+        rgba(26, 26, 46, 0.02) 85%,
         rgba(26, 26, 46, 0) 100%
     );
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 3rem;
+    padding: 3rem 4rem;
     z-index: 10;
 }
 
 .game-content {
-    max-width: 350px;
+    max-width: 450px;
     text-align: right;
     animation: slideInRight 1s ease-out;
+    margin-right: 2rem;
 }
 
 .game-title {
-    font-size: 2.5rem;
+    font-size: 3.2rem;
     font-weight: 800;
     color: white;
-    margin-bottom: 1.5rem;
-    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    line-height: 1.2;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
+    line-height: 1.1;
     background: linear-gradient(45deg, #a8edea, #fed6e3);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     animation: titleGlow 3s ease-in-out infinite alternate;
+}
+
+.game-category {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+    font-weight: 500;
+    margin-bottom: 1.5rem;
+    text-transform: capitalize;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    letter-spacing: 0.5px;
 }
 
 .game-description {
@@ -757,30 +773,32 @@ body {
 /* Responsive Design */
 @media (max-width: 1200px) {
     .game-info-overlay {
-        width: 450px;
-        padding: 2.5rem;
+        width: 60%;
+        padding: 2.5rem 3rem;
         background: linear-gradient(
             to left, 
             rgba(26, 26, 46, 1) 0%,
-            rgba(26, 26, 46, 0.98) 12%,
+            rgba(26, 26, 46, 1) 8%,
+            rgba(26, 26, 46, 0.98) 15%,
             rgba(26, 26, 46, 0.95) 22%,
-            rgba(26, 26, 46, 0.9) 32%,
-            rgba(26, 26, 46, 0.8) 42%,
-            rgba(26, 26, 46, 0.65) 52%,
-            rgba(26, 26, 46, 0.45) 62%,
-            rgba(26, 26, 46, 0.25) 72%,
-            rgba(26, 26, 46, 0.1) 82%,
-            rgba(26, 26, 46, 0.05) 90%,
+            rgba(26, 26, 46, 0.9) 30%,
+            rgba(26, 26, 46, 0.8) 38%,
+            rgba(26, 26, 46, 0.65) 46%,
+            rgba(26, 26, 46, 0.45) 54%,
+            rgba(26, 26, 46, 0.25) 62%,
+            rgba(26, 26, 46, 0.1) 72%,
+            rgba(26, 26, 46, 0.05) 82%,
             rgba(26, 26, 46, 0) 100%
         );
     }
     
     .game-content {
-        max-width: 300px;
+        max-width: 350px;
+        margin-right: 1.5rem;
     }
     
     .game-title {
-        font-size: 2.2rem;
+        font-size: 2.8rem;
     }
 }
 
@@ -801,14 +819,15 @@ body {
         background: linear-gradient(
             to top,
             rgba(26, 26, 46, 1) 0%,
-            rgba(26, 26, 46, 0.98) 10%,
-            rgba(26, 26, 46, 0.95) 18%,
-            rgba(26, 26, 46, 0.9) 26%,
-            rgba(26, 26, 46, 0.8) 34%,
-            rgba(26, 26, 46, 0.65) 42%,
-            rgba(26, 26, 46, 0.45) 50%,
-            rgba(26, 26, 46, 0.25) 60%,
-            rgba(26, 26, 46, 0.1) 70%,
+            rgba(26, 26, 46, 1) 5%,
+            rgba(26, 26, 46, 0.98) 12%,
+            rgba(26, 26, 46, 0.95) 20%,
+            rgba(26, 26, 46, 0.9) 28%,
+            rgba(26, 26, 46, 0.8) 36%,
+            rgba(26, 26, 46, 0.65) 44%,
+            rgba(26, 26, 46, 0.45) 52%,
+            rgba(26, 26, 46, 0.25) 62%,
+            rgba(26, 26, 46, 0.1) 72%,
             rgba(26, 26, 46, 0.05) 85%,
             rgba(26, 26, 46, 0) 100%
         );
@@ -819,10 +838,16 @@ body {
     .game-content {
         text-align: center;
         max-width: 100%;
+        margin-right: 0;
     }
     
     .game-title {
-        font-size: 2rem;
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .game-category {
+        font-size: 1rem;
         margin-bottom: 1rem;
     }
     
@@ -869,7 +894,11 @@ body {
     }
     
     .game-title {
-        font-size: 1.8rem;
+        font-size: 2.2rem;
+    }
+    
+    .game-category {
+        font-size: 0.9rem;
     }
     
     .nav-arrow.prev {
