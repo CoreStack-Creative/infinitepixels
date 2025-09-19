@@ -9156,8 +9156,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Customize this array with your featured game slugs
     const featuredGameSlugs = [
         '1v1lol',
-        '3dformularacing',
-        'basketrandom'
+        'bloxedio',
+        'narrowone',
+        'snowrider3d',
+        'icefishing',
+        'eggycar',
+        'holeio'
         // Add up to 8 game slugs here
     ];
     
