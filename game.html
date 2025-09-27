@@ -294,37 +294,6 @@
                 <div class="game-description" style="position:relative;">
                     <div class="description-header" style="display:flex; align-items:center; justify-content:space-between;">
                         <h3 style="margin-bottom:0;">About This Game</h3>
-                        <!-- Star Rating System -->
-                        <div class="star-rating-container">
-                            <div class="star-rating-display">
-                                <div class="average-rating">
-                                    <span class="rating-number" id="averageRating">0.0</span>
-                                    <div class="stars-interactive" id="starsInteractive">
-                                        <button class="star-display-btn" data-rating="1">
-                                            <i class="fas fa-star"></i>
-                                            <div class="star-underline"></div>
-                                        </button>
-                                        <button class="star-display-btn" data-rating="2">
-                                            <i class="fas fa-star"></i>
-                                            <div class="star-underline"></div>
-                                        </button>
-                                        <button class="star-display-btn" data-rating="3">
-                                            <i class="fas fa-star"></i>
-                                            <div class="star-underline"></div>
-                                        </button>
-                                        <button class="star-display-btn" data-rating="4">
-                                            <i class="fas fa-star"></i>
-                                            <div class="star-underline"></div>
-                                        </button>
-                                        <button class="star-display-btn" data-rating="5">
-                                            <i class="fas fa-star"></i>
-                                            <div class="star-underline"></div>
-                                        </button>
-                                    </div>
-                                    <span class="rating-count" id="ratingCount">(0 votes)</span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     
                     <!-- Game Tags/Categories -->
@@ -411,7 +380,6 @@
     </div>
 
     <script src="javascript.js" data-cookieconsent="ignore"></script>
-    <script src="account-system.js" data-cookieconsent="ignore"></script>
     <script src="review-system.js" data-cookieconsent="ignore"></script>
 
     <style>
@@ -698,104 +666,7 @@
 
     <!-- JavaScript files for game functionality and tracking -->
     <script src="https://unpkg.com/@supabase/supabase-js@2" data-cookieconsent="ignore"></script>
-    <script src="supabase-config.js" data-cookieconsent="ignore"></script>
-    <script src="account-system.js" data-cookieconsent="ignore"></script>
     <script src="javascript.js" data-cookieconsent="ignore"></script>
     
-    <!-- Game session tracking -->
-    <script>
-        // Enhanced game session tracking with pause/resume functionality
-        let sessionPaused = false;
-        let pauseStartTime = null;
-        
-        // Track when user leaves the game page
-        window.addEventListener('beforeunload', function() {
-            if (window.accountSystem && accountSystem.isLoggedIn()) {
-                accountSystem.endGameSession();
-            }
-        });
-        
-        // Track when user navigates away from the page
-        window.addEventListener('pagehide', function() {
-            if (window.accountSystem && accountSystem.isLoggedIn()) {
-                accountSystem.endGameSession();
-            }
-        });
-        
-        // Handle page visibility changes (tab switching, minimizing)
-        document.addEventListener('visibilitychange', function() {
-            if (window.accountSystem && accountSystem.isLoggedIn()) {
-                const sessionData = accountSystem.getStoredData('gameSession');
-                if (sessionData) {
-                    if (document.hidden) {
-                        // Page is hidden - pause tracking
-                        if (!sessionPaused) {
-                            pauseStartTime = Date.now();
-                            sessionPaused = true;
-                            console.log('Game session paused (tab hidden)');
-                        }
-                    } else {
-                        // Page is visible - resume tracking
-                        if (sessionPaused) {
-                            const pauseDuration = Date.now() - pauseStartTime;
-                            // Adjust start time to exclude pause duration
-                            sessionData.startTime += pauseDuration;
-                            accountSystem.setStoredData('gameSession', sessionData);
-                            sessionPaused = false;
-                            console.log(`Game session resumed (paused for ${Math.floor(pauseDuration / 1000)}s)`);
-                        }
-                    }
-                }
-            }
-        });
-        
-        // Handle window focus/blur events
-        window.addEventListener('blur', function() {
-            if (window.accountSystem && accountSystem.isLoggedIn() && !document.hidden) {
-                const sessionData = accountSystem.getStoredData('gameSession');
-                if (sessionData && !sessionPaused) {
-                    pauseStartTime = Date.now();
-                    sessionPaused = true;
-                    console.log('Game session paused (window lost focus)');
-                }
-            }
-        });
-        
-        window.addEventListener('focus', function() {
-            if (window.accountSystem && accountSystem.isLoggedIn() && !document.hidden) {
-                const sessionData = accountSystem.getStoredData('gameSession');
-                if (sessionData && sessionPaused) {
-                    const pauseDuration = Date.now() - pauseStartTime;
-                    sessionData.startTime += pauseDuration;
-                    accountSystem.setStoredData('gameSession', sessionData);
-                    sessionPaused = false;
-                    console.log(`Game session resumed (focused after ${Math.floor(pauseDuration / 1000)}s)`);
-                }
-            }
-        });
-        
-        // Update session activity every 30 seconds while on game page
-        setInterval(function() {
-            if (window.accountSystem && accountSystem.isLoggedIn() && !sessionPaused) {
-                const sessionData = accountSystem.getStoredData('gameSession');
-                if (sessionData) {
-                    sessionData.lastActive = Date.now();
-                    accountSystem.setStoredData('gameSession', sessionData);
-                }
-            }
-        }, 30000);
-        
-        // Handle iframe interaction to detect game activity
-        window.addEventListener('message', function(event) {
-            // Update activity when receiving messages from game iframe
-            if (window.accountSystem && accountSystem.isLoggedIn() && !sessionPaused) {
-                const sessionData = accountSystem.getStoredData('gameSession');
-                if (sessionData) {
-                    sessionData.lastActive = Date.now();
-                    accountSystem.setStoredData('gameSession', sessionData);
-                }
-            }
-        });
-    </script>
 </body>
 </html>
