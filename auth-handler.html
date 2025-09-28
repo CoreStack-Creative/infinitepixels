@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing... - InfinitePixels</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="auth-handler-container">
+        <h1>Processing your request...</h1>
+        <p>Please wait while we redirect you...</p>
+        <div id="debug-info" style="margin-top: 20px; padding: 10px; background: #f0f0f0; font-family: monospace; font-size: 12px;"></div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="supabase-config.js"></script>
+    <script>
+        async function handleAuth() {
+            const debugDiv = document.getElementById('debug-info');
+            
+            // Get URL parameters from both search and hash
+            const urlParams = new URLSearchParams(window.location.search);
+            const hashParams = new URLSearchParams(window.location.hash.substring(1));
+            
+            // Check both search params and hash params
+            const type = urlParams.get('type') || hashParams.get('type');
+            const token = urlParams.get('token') || hashParams.get('token');
+            const access_token = urlParams.get('access_token') || hashParams.get('access_token');
+            const refresh_token = urlParams.get('refresh_token') || hashParams.get('refresh_token');
+
+            // Display debug info on page
+            debugDiv.innerHTML = `
+                <strong>Debug Info:</strong><br>
+                Full URL: ${window.location.href}<br>
+                Search params: ${window.location.search || 'none'}<br>
+                Hash params: ${window.location.hash || 'none'}<br>
+                Type: ${type || 'null'}<br>
+                Token present: ${!!token}<br>
+                Access token present: ${!!access_token}<br>
+                Refresh token present: ${!!refresh_token}<br>
+                Supabase available: ${!!window.supabase}
+            `;
+
+            console.log('Auth handler - Type:', type, 'Token present:', !!token);
+            console.log('All URL params:', window.location.search);
+            console.log('Access token present:', !!access_token);
+            console.log('Refresh token present:', !!refresh_token);
+
+            // Wait a moment to show debug info
+            await new Promise(resolve => setTimeout(resolve, 5000));
+
+            // Check current session
+            const { data: { session } } = await window.supabase?.auth.getSession() || { data: { session: null } };
+            console.log('Current session:', !!session);
+
+            debugDiv.innerHTML += `<br>Current session: ${!!session}`;
+
+            // Route based on the type parameter
+            if (type === 'recovery' || type === 'magiclink') {
+                debugDiv.innerHTML += `<br><strong>Routing to: reset-password.html (recovery/magiclink)</strong>`;
+                // Password reset or magic link - go to reset password page
+                if (access_token && refresh_token) {
+                    // Set the session first
+                    await window.supabase?.auth.setSession({
+                        access_token: access_token,
+                        refresh_token: refresh_token
+                    });
+                }
+                setTimeout(() => window.location.href = 'reset-password.html', 3000);
+            } else if (access_token && refresh_token) {
+                debugDiv.innerHTML += `<br><strong>Routing to: reset-password.html (has tokens - assuming password reset)</strong>`;
+                // If we have tokens but no explicit type, assume it's password reset
+                // This is more aggressive detection for password reset
+                await window.supabase?.auth.setSession({
+                    access_token: access_token,
+                    refresh_token: refresh_token
+                });
+                setTimeout(() => window.location.href = 'reset-password.html', 3000);
+            } else if (token && !type) {
+                debugDiv.innerHTML += `<br><strong>Routing to: reset-password.html (has token - assuming password reset)</strong>`;
+                // If we have any token without type, assume password reset
+                setTimeout(() => window.location.href = 'reset-password.html', 3000);
+            } else if (type === 'signup' || type === 'email_confirmation') {
+                debugDiv.innerHTML += `<br><strong>Routing to: account.html (signup/confirmation)</strong>`;
+                // Account creation/email verification - go to account page or home
+                setTimeout(() => window.location.href = 'account.html', 3000);
+            } else if (type === 'invite') {
+                debugDiv.innerHTML += `<br><strong>Routing to: account.html (invite)</strong>`;
+                // Team invitation - handle accordingly
+                setTimeout(() => window.location.href = 'account.html', 3000);
+            } else {
+                debugDiv.innerHTML += `<br><strong>Routing to: index.html (default case)</strong>`;
+                // Default case - go to home
+                setTimeout(() => window.location.href = 'index.html', 3000);
+            }
+        }
+
+        // Run the auth handler
+        if (window.supabase) {
+            handleAuth();
+        } else {
+            // If Supabase is not available, redirect to home
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

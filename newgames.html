@@ -72,6 +72,9 @@
 
   <!-- ❌ DO NOT put AdSense in <head> with data-cookieconsent -->
   <!-- ✅ Place AdSense inside <body>, controlled by Cookiebot -->
+  <!-- Supabase JavaScript Client -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2" data-cookieconsent="ignore"></script>
+  <script src="supabase-config.js" data-cookieconsent="ignore"></script>
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
@@ -118,6 +121,14 @@
                             <img src="images/recent.png" alt="Recent" width="20" height="20">
                         </i>
                         <span>Recently Played</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="recommended.html">
+                        <i class="icon">
+                            <img src="images/recommended.png" alt="Recommended" width="20" height="20">
+                        </i>
+                        <span>Recommended</span>
                     </a>
                 </li>
                 <li>
@@ -311,7 +322,6 @@
     </main>
 
     <!-- Include scripts -->
-    <script src="account-system.js"></script>
-    <script src="javascript.js"></script>
+    <script src="javascript.js" data-cookieconsent="ignore"></script>
 </body>
 </html>

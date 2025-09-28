@@ -72,6 +72,10 @@
 
   <!-- ❌ DO NOT put AdSense in <head> with data-cookieconsent -->
   <!-- ✅ Place AdSense inside <body>, controlled by Cookiebot -->
+
+  <!-- Supabase JavaScript Client -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2" data-cookieconsent="ignore"></script>
+  <script src="supabase-config.js" data-cookieconsent="ignore"></script>
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
@@ -118,6 +122,14 @@
                             <img src="images/recent.png" alt="Recent" width="20" height="20">
                         </i>
                         <span>Recently Played</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="recommended.html">
+                        <i class="icon">
+                            <img src="images/recommended.png" alt="Recommended" width="20" height="20">
+                        </i>
+                        <span>Recommended</span>
                     </a>
                 </li>
                 <li>
@@ -282,37 +294,6 @@
                 <div class="game-description" style="position:relative;">
                     <div class="description-header" style="display:flex; align-items:center; justify-content:space-between;">
                         <h3 style="margin-bottom:0;">About This Game</h3>
-                        <!-- Star Rating System -->
-                        <div class="star-rating-container">
-                            <div class="star-rating-display">
-                                <div class="average-rating">
-                                    <span class="rating-number" id="averageRating">0.0</span>
-                                    <div class="stars-interactive" id="starsInteractive">
-                                        <button class="star-display-btn" data-rating="1">
-                                            <i class="fas fa-star"></i>
-                                            <div class="star-underline"></div>
-                                        </button>
-                                        <button class="star-display-btn" data-rating="2">
-                                            <i class="fas fa-star"></i>
-                                            <div class="star-underline"></div>
-                                        </button>
-                                        <button class="star-display-btn" data-rating="3">
-                                            <i class="fas fa-star"></i>
-                                            <div class="star-underline"></div>
-                                        </button>
-                                        <button class="star-display-btn" data-rating="4">
-                                            <i class="fas fa-star"></i>
-                                            <div class="star-underline"></div>
-                                        </button>
-                                        <button class="star-display-btn" data-rating="5">
-                                            <i class="fas fa-star"></i>
-                                            <div class="star-underline"></div>
-                                        </button>
-                                    </div>
-                                    <span class="rating-count" id="ratingCount">(0 votes)</span>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     
                     <!-- Game Tags/Categories -->
@@ -323,44 +304,13 @@
                     <p id="gameDescription">Loading game description...</p>
                     
                     <!-- Game Controls Section -->
-                    <div class="game-controls-section" id="gameControlsSection" style="display: none;">
+                    <div class="game-controls-section" id="gameControlsSection">
                         <div class="controls-header">
                             <i class="fas fa-gamepad controls-icon"></i>
                             <h4>Controls</h4>
                         </div>
                         <div class="controls-list" id="gameControlsList">
                             <!-- Controls will be populated here -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Reviews Section -->
-                <div class="reviews-section" id="reviewsSection">
-                    <div class="reviews-header">
-                        <h3>Player Reviews</h3>
-                        <button class="write-review-btn" onclick="reviewSystem.showReviewForm()" style="display: none;">
-                            <i class="fas fa-star"></i>
-                            Write a Review
-                        </button>
-                    </div>
-                    
-                    <!-- Review Statistics -->
-                    <div class="review-stats" id="reviewStats">
-                        <!-- Stats will be populated here -->
-                    </div>
-                    
-                    <!-- Reviews Container -->
-                    <div class="reviews-container">
-                        <!-- Review form will be inserted here when needed -->
-                        
-                        <!-- Reviews List -->
-                        <div class="reviews-list">
-                            <div class="reviews-loading">Loading reviews...</div>
-                        </div>
-                        
-                        <!-- Pagination -->
-                        <div class="review-pagination">
-                            <!-- Pagination will be populated here -->
                         </div>
                     </div>
                 </div>
@@ -429,11 +379,33 @@
         </div>
     </div>
 
-    <script src="javascript.js"></script>
-    <script src="account-system.js"></script>
-    <script src="review-system.js"></script>
+    <script src="javascript.js" data-cookieconsent="ignore"></script>
+    <script src="review-system.js" data-cookieconsent="ignore"></script>
 
     <style>
+    /* Force visibility and prevent cutoff */
+    .game-description {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        display: block !important;
+    }
+    
+    .game-controls-section {
+        display: block !important;
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .game-section {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+    
     /* Star Rating System Styles */
     .star-rating-container {
         display: flex;
@@ -691,5 +663,10 @@
         }
     }
     </style>
+
+    <!-- JavaScript files for game functionality and tracking -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2" data-cookieconsent="ignore"></script>
+    <script src="javascript.js" data-cookieconsent="ignore"></script>
+    
 </body>
 </html>

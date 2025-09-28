@@ -2194,18 +2194,16 @@ function populateFeaturedGamesGrid() {
         const game = gamesDatabase.find(g => g.slug === slug);
         if (game) {
             const gameCard = document.createElement('div');
-            gameCard.className = 'game-card';
+            gameCard.className = 'homepage-game-card';
             gameCard.setAttribute('data-game-slug', game.slug);
+            gameCard.setAttribute('data-context', 'featured');
+            gameCard.setAttribute('data-has-video', 'false');
             
             gameCard.innerHTML = `
-                <div class="game-image">
-                    <img src="${game.image}" alt="${game.name}" class="placeholder-image" loading="lazy">
-                    <div class="game-overlay">
-                        <button class="play-btn">Play Now</button>
-                    </div>
-                </div>
-                <div class="game-info">
-                    <h3 class="game-title">${game.name}</h3>
+                <img src="${game.image}" alt="${game.name}" class="homepage-game-card-image" loading="lazy">
+                <div class="homepage-game-card-overlay">
+                    <div class="homepage-game-card-name">${game.name}</div>
+                    <button class="homepage-game-card-play">Play Now</button>
                 </div>
             `;
             
@@ -2251,11 +2249,38 @@ function updateFeaturedGames(newSlugs) {
 function loadGamesData() {
     console.log('Starting to fetch games.json...');
 
-    fetch("games.json")
+    // Configure fetch with explicit cache and credentials settings for cookie-free operation
+    const fetchOptions = {
+        method: 'GET',
+        cache: 'default',
+        credentials: 'omit', // Don't send cookies with this request
+        headers: {
+            'Accept': 'application/json',
+        }
+    };
+
+    // Use API endpoint for production, fallback to games.json for local
+    const gamesEndpoint = window.location.hostname === 'localhost' 
+        ? 'games.json' 
+        : '/api/games';
+
+    console.log('Loading games from:', gamesEndpoint);
+
+    fetch(gamesEndpoint, fetchOptions)
       .then(response => {
         console.log('Fetch response received:', response.status, response.statusText);
-        console.log('Response headers:', response.headers);
         console.log('Response URL:', response.url);
+        if (!response.ok) {
+          // If API fails, try fallback to games.json
+          if (gamesEndpoint === '/api/games') {
+            console.log('API failed, trying fallback to games.json');
+            return fetch('games.json', fetchOptions);
+          }
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response;
+      })
+      .then(response => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -2269,8 +2294,10 @@ function loadGamesData() {
         return response.json();
       })
       .then(data => {
-        console.log('JSON parsed successfully, games count:', data.length);
-        gamesDatabase = data;
+        // Handle both direct games.json format and API response format
+        const games = data.games || data;
+        console.log('JSON parsed successfully, games count:', games.length);
+        gamesDatabase = games;
 
         // ✅ now use gamesDatabase exactly like before
         console.log("Loaded games:", gamesDatabase.length, "games");
@@ -2420,6 +2447,14 @@ class GameLoader {
  if (gameFrame) {
  gameFrame.src = game.gameurl;
  gameFrame.title = game.name;
+ 
+ // Start game session tracking when iframe loads
+ gameFrame.onload = () => {
+     if (window.accountSystem && accountSystem.isLoggedIn()) {
+         accountSystem.startGameSession(game.slug || game.id);
+         console.log('Game session started for:', game.name);
+     }
+ };
  }
 
  // Update game title
@@ -2820,10 +2855,17 @@ class GameLoader {
             console.log('Submitting rating:', rating, 'for game:', gameSlug);
             
             // Send rating to server for global storage
-            const response = await fetch('http://localhost:3000/reviews', {
+            const apiBase = window.location.hostname === 'localhost' 
+                ? 'http://localhost:3000' 
+                : '';
+            
+            const response = await fetch(`${apiBase}/api/reviews`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': window.accountSystem?.session?.access_token 
+                        ? `Bearer ${window.accountSystem.session.access_token}` 
+                        : ''
                 },
                 body: JSON.stringify({
                     game_id: gameSlug,
@@ -3139,7 +3181,15 @@ class AllGamesManager {
         
         filterTagsContainer.innerHTML = '';
         
-        Array.from(uniqueTagsSet).sort().forEach(tagName => {
+        // Sort tags by count (most games to least games), then alphabetically for ties
+        Array.from(uniqueTagsSet).sort((a, b) => {
+            const countA = this.getTagCount(a);
+            const countB = this.getTagCount(b);
+            if (countB !== countA) {
+                return countB - countA; // Sort by count descending
+            }
+            return a.localeCompare(b); // Sort alphabetically for ties
+        }).forEach(tagName => {
             const tagElement = document.createElement('div');
             tagElement.className = 'clickable-filter-tag';
             tagElement.innerHTML = `
@@ -3835,6 +3885,19 @@ class NewsManager {
         
         const sampleArticles = [
             {
+                id: 7,
+                title: "Revolutionary Account System Launch!",
+                summary: "Introducing our amazing new account feature that lets you back up and sync all your gaming progress across devices.",
+                image: "images/accountnews.png",
+                content: "We're thrilled to announce the launch of our revolutionary account system! This game-changing feature allows you to create a secure account and automatically back up all your gaming progress, achievements, and favorite games. Never lose your progress again! Whether you're switching devices, clearing your browser, or playing from a friend's computer, your gaming data is now safely stored in the cloud. Simply create an account and watch as all your hard-earned progress syncs seamlessly across all your devices. Join thousands of players who have already secured their gaming legacy with InfinitePixels accounts. Sign up today and experience worry-free gaming! - InfinitePixels Dev Team",
+                category: "updates",
+                tags: ["update", "huge updates", "community"],
+                date: new Date('2025-09-09'),
+                author: "Dev Team",
+                featured: true,
+                importance: 10,
+            },
+            {
                 id: 1,
                 title: "Website Now live!",
                 summary: "InfinitePixels is now live for anyone to play at any time.",
@@ -3844,7 +3907,7 @@ class NewsManager {
                 tags: ["update", "news"],
                 date: new Date('2025-08-03'),
                 author: "Dev Team",
-                featured: true,
+                featured: false,
                 importance: 10,
             },
             {
@@ -6057,9 +6120,15 @@ window.toggleDescription = function(cardId) {
 
 // Play game function - global scope
 window.playGame = function(gameSlug) {
-    if (gameSlug) {
-        window.location.href = `game.html?game=${gameSlug}`;
+    if (!gameSlug || gameSlug === 'undefined' || typeof gameSlug !== 'string') {
+        console.error('playGame called with invalid gameSlug:', gameSlug);
+        return;
     }
+    
+    // Note: Game session tracking is now handled in the game.html page when the iframe loads
+    // This ensures more accurate timing since it starts when the game actually loads
+    
+    window.location.href = `game.html?game=${gameSlug}`;
 };
 
 // Initialize new games page when games data is loaded
@@ -6090,6 +6159,7 @@ class FavoritesManager {
     constructor() {
         this.favorites = this.loadFavorites();
         this.init();
+        this.setupEventListeners();
     }
 
     init() {
@@ -6101,6 +6171,26 @@ class FavoritesManager {
             typeof gamesDatabase !== 'undefined' && gamesDatabase.length > 0) {
             this.initFavoritesPage();
         }
+    }
+
+    setupEventListeners() {
+        // Listen for favorites updates from account system
+        window.addEventListener('favoritesUpdated', (event) => {
+            console.log('🔄 FavoritesManager received favoritesUpdated event:', event.detail);
+            // Refresh our local favorites data
+            this.favorites = this.loadFavorites();
+            
+            // Update heart icons on all pages
+            this.updateHeartIcons();
+            
+            // If we're on the favorites page, refresh the display
+            if (window.location.pathname.includes('favorites.html')) {
+                console.log('📄 Refreshing favorites page display...');
+                setTimeout(() => {
+                    this.renderFavoritesPage();
+                }, 100); // Small delay to ensure localStorage has been updated
+            }
+        });
     }
 
     // Method to be called when games data is loaded
@@ -6135,72 +6225,97 @@ class FavoritesManager {
         // Check if already favorited
         if (this.isFavorited(gameSlug)) return false;
 
-        const favoriteData = {
-            slug: gameSlug,
-            dateAdded: new Date().toISOString(),
-            timestamp: Date.now()
-        };
-
-        // Add to local storage first
-        this.favorites.push(favoriteData);
-        this.saveFavorites();
-
-        // Also add to server if logged in
-        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
-            try {
-                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites`, {
-                    method: 'POST',
-                    headers: {
-                        ...window.accountSystem.getAuthHeaders(),
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ game_id: gameSlug })
-                });
-                
-                if (response.ok) {
-                    console.log('Favorite synced to server:', gameSlug);
-                } else {
-                    console.warn('Failed to sync favorite to server:', gameSlug);
-                }
-            } catch (error) {
-                console.error('Error syncing favorite to server:', error);
+        // Use account system if available, otherwise store locally
+        if (window.accountSystem) {
+            const success = await window.accountSystem.addToFavorites(gameSlug);
+            if (success) {
+                // Reload local favorites from account system
+                this.favorites = this.loadFavorites();
             }
-        }
+            return success;
+        } else {
+            // Fallback for when account system is not available
+            const favoriteData = {
+                slug: gameSlug,
+                dateAdded: new Date().toISOString(),
+                timestamp: Date.now()
+            };
 
-        return true;
+            this.favorites.push(favoriteData);
+            this.saveFavorites();
+            return true;
+        }
     }
 
     async removeFromFavorites(gameSlug) {
-        const index = this.favorites.findIndex(fav => fav.slug === gameSlug);
-        if (index === -1) return false;
-
-        // Remove from local storage first
-        this.favorites.splice(index, 1);
-        this.saveFavorites();
-
-        // Also remove from server if logged in
-        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
-            try {
-                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites/${gameSlug}`, {
-                    method: 'DELETE',
-                    headers: window.accountSystem.getAuthHeaders()
-                });
-                
-                if (response.ok) {
-                    console.log('Favorite removed from server:', gameSlug);
-                } else {
-                    console.warn('Failed to remove favorite from server:', gameSlug);
-                }
-            } catch (error) {
-                console.error('Error removing favorite from server:', error);
-            }
+        console.log('🔍 FavoritesManager.removeFromFavorites called for:', gameSlug);
+        console.log('  window.accountSystem exists:', !!window.accountSystem);
+        console.log('  typeof window.accountSystem:', typeof window.accountSystem);
+        console.log('  window.accountSystem?.removeFromFavorites exists:', !!window.accountSystem?.removeFromFavorites);
+        console.log('  typeof window.accountSystem?.removeFromFavorites:', typeof window.accountSystem?.removeFromFavorites);
+        
+        // Debug: Check what's actually on window.accountSystem
+        if (window.accountSystem) {
+            console.log('  window.accountSystem properties:', Object.getOwnPropertyNames(window.accountSystem));
+            console.log('  window.accountSystem.isLoggedIn:', window.accountSystem.isLoggedIn?.());
+            console.log('  window.accountSystem.user:', window.accountSystem.user);
+            console.log('  window.accountSystem.session:', !!window.accountSystem.session);
+        } else {
+            console.log('  ❌ window.accountSystem is null/undefined');
         }
+        
+        // Use account system if available, otherwise remove locally
+        if (window.accountSystem && window.accountSystem.removeFromFavorites) {
+            console.log('  ✅ Calling window.accountSystem.removeFromFavorites...');
+            const success = await window.accountSystem.removeFromFavorites(gameSlug);
+            console.log('  Account system returned:', success);
+            if (success) {
+                // Force reload of local favorites from storage
+                this.favorites = this.loadFavorites();
+                console.log('  🔄 Favorites reloaded, new count:', this.favorites.length);
+                
+                // Trigger immediate UI refresh if we're on favorites page
+                if (window.location.pathname.includes('favorites.html')) {
+                    console.log('  📄 Triggering immediate favorites page refresh...');
+                    setTimeout(() => {
+                        if (typeof this.initFavoritesPage === 'function') {
+                            this.initFavoritesPage();
+                        }
+                    }, 50);
+                }
+            }
+            return success;
+        } else {
+            console.log('  ❌ No account system or removeFromFavorites method, using fallback...');
+            console.log('    Reason: accountSystem exists =', !!window.accountSystem, ', removeFromFavorites exists =', !!(window.accountSystem?.removeFromFavorites));
+            // Fallback for when account system is not available
+            const index = this.favorites.findIndex(fav => {
+                // Handle both string and object formats
+                if (typeof fav === 'string') {
+                    return fav === gameSlug;
+                } else if (fav && fav.slug) {
+                    return fav.slug === gameSlug;
+                }
+                return false;
+            });
+            if (index === -1) return false;
 
-        return true;
+            this.favorites.splice(index, 1);
+            this.saveFavorites();
+            return true;
+        }
     }
 
     isFavorited(gameSlug) {
-        return this.favorites.some(fav => fav.slug === gameSlug);
+        return this.favorites.some(fav => {
+            // Handle both string and object formats
+            if (typeof fav === 'string') {
+                return fav === gameSlug;
+            } else if (fav && fav.slug) {
+                return fav.slug === gameSlug;
+            }
+            return false;
+        });
     }
 
     async toggleFavorite(gameSlug) {
@@ -6212,70 +6327,49 @@ class FavoritesManager {
     }
 
     async getFavoriteGames(sortOrder = 'newest') {
-        let allFavorites = [];
-        
-        // If user is logged in, try to get server favorites first
-        if (window.accountSystem && window.accountSystem.isLoggedIn()) {
-            try {
-                console.log('Getting favorites from server for logged-in user...');
-                const response = await fetch(`${window.accountSystem.baseURL}/user/favorites`, {
-                    headers: window.accountSystem.getAuthHeaders()
-                });
-                
-                if (response.ok) {
-                    const serverFavorites = await response.json();
-                    console.log('Server favorites loaded:', serverFavorites);
-                    
-                    // Convert server favorites to the expected format
-                    const serverFavoriteGames = serverFavorites.map(fav => {
-                        const game = gamesDatabase.find(g => g.slug === fav.game_id);
-                        return game ? { 
-                            ...game, 
-                            dateAdded: fav.created_at, 
-                            timestamp: new Date(fav.created_at).getTime(),
-                            source: 'server'
-                        } : null;
-                    }).filter(Boolean);
-                    
-                    allFavorites = [...serverFavoriteGames];
-                }
-            } catch (error) {
-                console.error('Error loading server favorites:', error);
-            }
-        }
-        
-        // Always check local favorites and merge
+        // Account system handles server sync, so we just read from local storage
         try {
             const stored = localStorage.getItem('infinitepixels_favorites');
             const localFavorites = stored ? JSON.parse(stored) : [];
             
-            const localFavoriteGames = localFavorites.map(fav => {
-                const game = gamesDatabase.find(g => g.slug === fav.slug);
+            const favoriteGames = localFavorites.map(fav => {
+                // Handle both object format (legacy) and string format (normalized)
+                let gameSlug, dateAdded, timestamp;
+                
+                if (typeof fav === 'string') {
+                    // New normalized format - just the game slug
+                    gameSlug = fav;
+                    dateAdded = new Date().toISOString(); // Default to current time
+                    timestamp = Date.now();
+                } else if (fav && fav.slug) {
+                    // Legacy object format
+                    gameSlug = fav.slug;
+                    dateAdded = fav.dateAdded || new Date().toISOString();
+                    timestamp = fav.timestamp || Date.now();
+                } else {
+                    return null; // Invalid format
+                }
+                
+                const game = gamesDatabase.find(g => g.slug === gameSlug);
                 return game ? { 
                     ...game, 
-                    dateAdded: fav.dateAdded, 
-                    timestamp: fav.timestamp,
-                    source: 'local'
+                    dateAdded: dateAdded, 
+                    timestamp: timestamp
                 } : null;
             }).filter(Boolean);
             
-            // Merge server and local favorites (avoid duplicates)
-            const serverSlugs = new Set(allFavorites.map(f => f.slug));
-            const uniqueLocalFavorites = localFavoriteGames.filter(f => !serverSlugs.has(f.slug));
-            
-            allFavorites = [...allFavorites, ...uniqueLocalFavorites];
+            console.log('Final merged favorites:', favoriteGames.length, 'games');
+
+            // Sort by date added
+            if (sortOrder === 'oldest') {
+                return favoriteGames.sort((a, b) => a.timestamp - b.timestamp);
+            } else {
+                return favoriteGames.sort((a, b) => b.timestamp - a.timestamp);
+            }
             
         } catch (error) {
-            console.error('Error loading local favorites:', error);
-        }
-
-        console.log('Final merged favorites:', allFavorites.length, 'games');
-
-        // Sort by date added
-        if (sortOrder === 'oldest') {
-            return allFavorites.sort((a, b) => a.timestamp - b.timestamp);
-        } else {
-            return allFavorites.sort((a, b) => b.timestamp - a.timestamp);
+            console.error('Error loading favorites:', error);
+            return [];
         }
     }
 
@@ -6353,8 +6447,21 @@ class FavoritesManager {
 
         console.log('Found favorites page elements, proceeding with initialization');
 
+        // Store references for later use
+        this.favoritesGrid = favoritesGrid;
+        this.noFavorites = noFavorites;
+        this.favoritesFilter = favoritesFilter;
+
         const renderFavorites = async () => {
             const sortOrder = favoritesFilter?.value || 'newest';
+            
+            console.log('🎨 renderFavorites called with sortOrder:', sortOrder);
+            console.log('  this.favorites.length:', this.favorites.length);
+            console.log('  localStorage favorites:', localStorage.getItem('infinitepixels_favorites'));
+            
+            // Refresh favorites data before rendering
+            this.favorites = this.loadFavorites();
+            console.log('  Refreshed favorites count:', this.favorites.length);
             
             // Show loading state
             favoritesGrid.innerHTML = `
@@ -6410,8 +6517,28 @@ class FavoritesManager {
 
         // Method to remove favorite and refresh the display
         this.removeFavoriteAndRefresh = async (gameSlug) => {
-            await this.removeFromFavorites(gameSlug);
-            await renderFavorites();
+            console.log('🔄 removeFavoriteAndRefresh called for:', gameSlug);
+            console.log('  About to call this.removeFromFavorites...');
+            
+            const success = await this.removeFromFavorites(gameSlug);
+            console.log('  removeFromFavorites result:', success);
+            
+            if (success) {
+                console.log('  ✅ Removal successful, completely refreshing favorites page...');
+                
+                // Force refresh of local favorites data
+                this.favorites = this.loadFavorites();
+                console.log('  🔄 Updated favorites count:', this.favorites.length);
+                
+                // Use the dedicated rendering method
+                setTimeout(() => {
+                    console.log('  📄 Calling renderFavoritesPage...');
+                    this.renderFavoritesPage();
+                    console.log('  ✅ Page rendered');
+                }, 50);
+            } else {
+                console.log('  ❌ Removal failed');
+            }
         };
 
         // Initial render
@@ -6430,6 +6557,42 @@ class FavoritesManager {
         
         // Initialize the favorites popup
         this.initFavoritesPopup();
+    }
+
+    updateHeartIcons() {
+        // Update all heart icons across the site to reflect current favorite status
+        console.log('💖 Updating heart icons across the site...');
+        
+        const heartButtons = document.querySelectorAll('.favorite-btn, .heart-icon, [data-favorite-btn]');
+        heartButtons.forEach(button => {
+            const gameSlug = button.getAttribute('data-slug') || 
+                           button.getAttribute('data-game-slug') ||
+                           button.closest('[data-slug]')?.getAttribute('data-slug');
+            
+            if (gameSlug) {
+                const isFavorited = this.isFavorited(gameSlug);
+                
+                // Update button appearance
+                if (isFavorited) {
+                    button.classList.add('favorited');
+                    button.classList.remove('not-favorited');
+                } else {
+                    button.classList.remove('favorited');
+                    button.classList.add('not-favorited');
+                }
+                
+                // Update icon
+                const icon = button.querySelector('i') || button;
+                if (icon.classList.contains('fas') || icon.classList.contains('far')) {
+                    icon.className = isFavorited ? 'fas fa-heart' : 'far fa-heart';
+                }
+                
+                // Update title
+                button.title = isFavorited ? 'Remove from favorites' : 'Add to favorites';
+                
+                console.log(`💖 Updated heart icon for ${gameSlug}: ${isFavorited ? 'favorited' : 'not favorited'}`);
+            }
+        });
     }
 
 
@@ -6493,8 +6656,23 @@ class RecentlyPlayedManager {
 
     // Add a game to recently played (call this when a game is accessed)
     addGameToRecent(gameSlug) {
+        // Validate input
+        if (!gameSlug) {
+            console.warn('addGameToRecent called with invalid gameSlug:', gameSlug);
+            return;
+        }
+
+        // Check if gamesDatabase is loaded
+        if (!gamesDatabase || gamesDatabase.length === 0) {
+            console.warn('gamesDatabase not loaded yet, cannot add to recent games');
+            return;
+        }
+
         const game = gamesDatabase.find(g => g.slug === gameSlug);
-        if (!game) return;
+        if (!game || !game.slug) {
+            console.warn('Game not found in database for slug:', gameSlug);
+            return;
+        }
 
         let recentGames = this.getRecentGames();
         
@@ -6526,9 +6704,40 @@ class RecentlyPlayedManager {
     getRecentGames() {
         try {
             const stored = localStorage.getItem(this.storageKey);
-            return stored ? JSON.parse(stored) : [];
+            let recentGames = stored ? JSON.parse(stored) : [];
+            
+            // Handle both old format (full game object) and new format (slug + lastPlayed only)
+            recentGames = recentGames.filter(game => {
+                if (!game || typeof game !== 'object') {
+                    return false;
+                }
+                
+                // New format: {slug: "gameName", lastPlayed: timestamp}
+                if (game.slug && game.lastPlayed && !game.name) {
+                    return true;
+                }
+                
+                // Old format: full game object with name property
+                if (!game.slug || typeof game.slug !== 'string') {
+                    return false;
+                }
+                if (!game.name || typeof game.name !== 'string') {
+                    return false;
+                }
+                return true;
+            });
+            
+            // Update localStorage if we filtered out any games
+            if (stored && recentGames.length !== JSON.parse(stored).length) {
+                console.log('Updated localStorage after filtering invalid recent games');
+                localStorage.setItem(this.storageKey, JSON.stringify(recentGames));
+            }
+            
+            return recentGames;
         } catch (error) {
             console.error('Error loading recent games:', error);
+            // Clear corrupted data
+            localStorage.removeItem(this.storageKey);
             return [];
         }
     }
@@ -6539,7 +6748,10 @@ class RecentlyPlayedManager {
         
         if (!container) return;
 
-        const recentGames = this.getRecentGames();
+        let recentGames = this.getRecentGames();
+        
+        // Clean up any invalid recent games entries
+        recentGames = this.cleanUpRecentGames(recentGames);
         
         if (recentGames.length === 0) {
             container.style.display = 'none';
@@ -6550,20 +6762,72 @@ class RecentlyPlayedManager {
         container.style.display = 'grid';
         if (emptyState) emptyState.style.display = 'none';
 
-        container.innerHTML = recentGames.map(game => this.createGameCard(game)).join('');
+        // Filter out any null/empty cards
+        const gameCards = recentGames.map(game => this.createGameCard(game)).filter(card => card !== '');
+        container.innerHTML = gameCards.join('');
+    }
+
+    // Clean up invalid recent games entries
+    cleanUpRecentGames(recentGames) {
+        if (!Array.isArray(recentGames)) return [];
+        
+        const cleanedGames = recentGames.filter(game => {
+            // Check if the game has required properties
+            if (!game || typeof game !== 'object') return false;
+            if (!game.slug || typeof game.slug !== 'string') return false;
+            
+            // New format only needs slug and lastPlayed
+            if (game.lastPlayed && !game.name) {
+                return true; // New format is valid
+            }
+            
+            // Old format needs name property
+            if (!game.name || typeof game.name !== 'string') return false;
+            
+            return true;
+        });
+        
+        // If we filtered out any games, update localStorage
+        if (cleanedGames.length !== recentGames.length) {
+            console.log(`Cleaned up recent games: ${recentGames.length} -> ${cleanedGames.length}`);
+            localStorage.setItem(this.storageKey, JSON.stringify(cleanedGames));
+        }
+        
+        return cleanedGames;
     }
 
     createGameCard(game) {
+        // Add safety checks for game data
+        if (!game || !game.slug) {
+            console.warn('Invalid game data in recent games:', game);
+            return '';
+        }
+
+        // Handle new format - look up game data from gamesDatabase
+        if (!game.name && gamesDatabase && gamesDatabase.length > 0) {
+            const fullGame = gamesDatabase.find(g => g.slug === game.slug);
+            if (fullGame) {
+                // Merge the full game data with the recent game timestamp
+                game = { ...fullGame, lastPlayed: game.lastPlayed };
+            } else {
+                console.warn('Game not found in database for slug:', game.slug);
+                return ''; // Skip this game if we can't find it
+            }
+        }
+
         const timeAgo = this.formatTimeAgo(game.lastPlayed);
+        const gameName = game.name || 'Unknown Game';
+        const gameImage = game.image || 'images/placeholder-game.jpg';
+        const gameTags = game.tags || [];
         
         return `
             <div class="game-card" onclick="window.location.href='https://www.infinite-pixels.com/game.html?game=${game.slug}'">
-                <img src="${game.image}" alt="${game.name}" class="recent-game-image" 
+                <img src="${gameImage}" alt="${gameName}" class="recent-game-image" 
                      onerror="this.src='images/placeholder-game.jpg'">
                 <div class="game-info">
-                    <h3 class="game-name">${game.name}</h3>
+                    <h3 class="game-name">${gameName}</h3>
                     <div class="game-tags">
-                        ${game.tags.map(tag => `<span class="game-tag">${tag}</span>`).join('')}
+                        ${gameTags.map(tag => `<span class="game-tag">${tag}</span>`).join('')}
                     </div>
                     <div class="last-played">
                         <i class="fas fa-clock"></i>
@@ -6602,18 +6866,40 @@ class RecentlyPlayedManager {
 
 // Initialize the recently played manager when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize Recently Played Manager
     window.recentlyPlayedManager = new RecentlyPlayedManager();
+    console.log('📝 Using account system for recent games tracking');
 });
 
 // Function to track game visits (add this to your game pages)
 function trackGameVisit(gameSlug) {
-    if (window.recentlyPlayedManager) {
-        window.recentlyPlayedManager.addGameToRecent(gameSlug);
+    // Validate gameSlug before processing
+    if (!gameSlug || gameSlug === 'undefined' || gameSlug === 'null' || typeof gameSlug !== 'string' || gameSlug.trim() === '') {
+        console.warn('trackGameVisit called with invalid gameSlug:', gameSlug);
+        return;
+    }
+
+    // Use the account system for tracking
+    if (window.accountSystem) {
+        if (window.accountSystem.isReady) {
+            window.accountSystem.addToRecentGames(gameSlug);
+        } else {
+            // Wait for account system to be ready
+            window.accountSystem.onReady(() => {
+                window.accountSystem.addToRecentGames(gameSlug);
+            });
+        }
     } else {
-        // If manager isn't loaded yet, try again after a short delay
+        // If account system isn't loaded yet, try again after a short delay
         setTimeout(() => {
-            if (window.recentlyPlayedManager) {
-                window.recentlyPlayedManager.addGameToRecent(gameSlug);
+            if (window.accountSystem) {
+                if (window.accountSystem.isReady) {
+                    window.accountSystem.addToRecentGames(gameSlug);
+                } else {
+                    window.accountSystem.onReady(() => {
+                        window.accountSystem.addToRecentGames(gameSlug);
+                    });
+                }
             }
         }, 100);
     }
@@ -6623,10 +6909,33 @@ function trackGameVisit(gameSlug) {
 if (window.location.pathname.includes('game.html')) {
     const urlParams = new URLSearchParams(window.location.search);
     const gameSlug = urlParams.get('game');
-    if (gameSlug) {
+    
+    // Validate the gameSlug before processing
+    if (gameSlug && 
+        gameSlug !== 'undefined' && 
+        gameSlug !== 'null' && 
+        typeof gameSlug === 'string' && 
+        gameSlug.trim() !== '') {
+        
+        // Try to track immediately if systems are ready
+        const attemptTracking = () => {
+            if (window.accountSystem) {
+                window.accountSystem.addToRecentGames(gameSlug);
+            }
+        };
+
+        // Try immediately
+        attemptTracking();
+
+        // Also try on DOM content loaded
         document.addEventListener('DOMContentLoaded', () => {
             trackGameVisit(gameSlug);
         });
+
+        // And try after a short delay to ensure all systems are loaded
+        setTimeout(() => {
+            trackGameVisit(gameSlug);
+        }, 500);
     }
 }
 
@@ -6790,6 +7099,7 @@ class HomepageGamesManager {
         return [
             { slug: "1v1lol", isNew: false, isHot: true },
             { slug: "cookieclicker", isNew: false, isHot: false },
+            { slug: "polytrack", isSpecial: true, isNew: false, isHot: true, videoUrl: "images/polytrackrec.mp4" },
             { slug: "snowrider3d", isNew: true, isHot: false },
             { slug: "golfclash", isNew: false, isHot: false },
             { 
@@ -6837,13 +7147,6 @@ class HomepageGamesManager {
             { slug: "funnyshooter2", isNew: false, isHot: false },
             { slug: "basketrandom", isNew: false, isHot: false },
             { slug: "rocketbotroyale", isNew: false, isHot: true },
-            { 
-                slug: "polytrack", 
-                isSpecial: true, 
-                isNew: false, 
-                isHot: true,
-                videoUrl: "images/polytrackrec.mp4"
-            },
             { slug: "shellshockers", isNew: false, isHot: false },
             { slug: "tallmanrun", isNew: false, isHot: false },
             { slug: "tinyfishing", isNew: false, isHot: false },
@@ -7662,7 +7965,7 @@ window.addEventListener('load', function() {
 document.addEventListener('DOMContentLoaded', function() {
     // Add click event listeners to featured game cards
     function initializeFeaturedGamesCards() {
-        const featuredGameCards = document.querySelectorAll('#featuredGamesGrid .game-card[data-game-slug]');
+        const featuredGameCards = document.querySelectorAll('#featuredGamesGrid .homepage-game-card[data-game-slug]');
         
         featuredGameCards.forEach(card => {
             const gameSlug = card.getAttribute('data-game-slug');
@@ -7673,7 +7976,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             // Add click event to the play button
-            const playBtn = card.querySelector('.play-btn');
+            const playBtn = card.querySelector('.homepage-game-card-play');
             if (playBtn) {
                 playBtn.addEventListener('click', function(e) {
                     e.stopPropagation(); // Prevent card click
@@ -7731,6 +8034,204 @@ function initializeTipFiltering() {
     // Placeholder for tip filtering functionality
     console.log('Tip filtering initialized');
 }
+
+// ============== ENHANCED INITIALIZATION SYSTEM ===============
+// This system ensures that games load properly even when cookies are denied
+
+// Robust initialization system for homepage
+function robustHomepageInit() {
+    console.log('🔄 Robust homepage initialization starting...');
+    
+    // Check if we're on the homepage
+    const isHomepage = window.location.pathname === '/' || 
+                      window.location.pathname === '/index.html' || 
+                      window.location.pathname.endsWith('index.html');
+    
+    if (!isHomepage) {
+        console.log('Not on homepage, skipping homepage init');
+        return;
+    }
+    
+    // Check for required elements
+    const grids = {
+        main: document.getElementById('homepageGamesGrid'),
+        featured: document.getElementById('featuredGamesGrid'),
+        category: document.getElementById('homepageCategoryGrid'),
+        multiplayer: document.getElementById('homepageMultiplayerGrid'),
+        new: document.getElementById('homepageNewGrid'),
+        reviews: document.getElementById('homepageReviewsGrid')
+    };
+    
+    console.log('📊 Grid elements found:', Object.keys(grids).filter(key => grids[key]).length, 'of', Object.keys(grids).length);
+    
+    // Check games database
+    if (!gamesDatabase || gamesDatabase.length === 0) {
+        console.log('❌ Games database not ready, retrying in 1 second...');
+        setTimeout(robustHomepageInit, 1000);
+        return;
+    }
+    
+    console.log('✅ Games database ready with', gamesDatabase.length, 'games');
+    
+    // Try standard initialization first
+    if (typeof initializeHomepageGamesManager === 'function') {
+        const standardResult = initializeHomepageGamesManager();
+        if (standardResult) {
+            console.log('✅ Standard homepage manager initialization successful');
+            return;
+        }
+    }
+    
+    // Fallback: Manual grid population
+    console.log('🔧 Standard init failed, using fallback manual population...');
+    
+    // Populate main games grid
+    if (grids.main && grids.main.children.length === 0) {
+        const popularGames = gamesDatabase.slice(0, 12);
+        grids.main.innerHTML = popularGames.map(game => `
+            <div class="game-card">
+                <div class="game-image">
+                    <img src="${game.image}" alt="${game.name}" loading="lazy">
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">${game.name}</h3>
+                    <div class="game-tags">
+                        ${game.tags ? game.tags.slice(0, 2).map(tag => `<span class="game-tag">${tag}</span>`).join('') : ''}
+                    </div>
+                </div>
+                <div class="game-actions">
+                    <a href="game.html?game=${game.slug}" class="play-btn">Play Now</a>
+                </div>
+            </div>
+        `).join('');
+        console.log('✅ Main games grid populated');
+    }
+    
+    // Populate featured games grid
+    if (grids.featured && grids.featured.children.length === 0) {
+        const featuredGames = gamesDatabase.filter(game => 
+            game.tags && (game.tags.includes('featured') || game.tags.includes('action') || game.tags.includes('popular'))
+        ).slice(0, 8);
+        grids.featured.innerHTML = featuredGames.map(game => `
+            <div class="game-card featured-game">
+                <div class="game-image">
+                    <img src="${game.image}" alt="${game.name}" loading="lazy">
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">${game.name}</h3>
+                </div>
+                <div class="game-actions">
+                    <a href="game.html?game=${game.slug}" class="play-btn">Play</a>
+                </div>
+            </div>
+        `).join('');
+        console.log('✅ Featured games grid populated');
+    }
+    
+    // Populate category grids
+    const categories = {
+        action: grids.category,
+        multiplayer: grids.multiplayer
+    };
+    
+    Object.entries(categories).forEach(([category, grid]) => {
+        if (grid && grid.children.length === 0) {
+            const categoryGames = gamesDatabase.filter(game => 
+                game.tags && game.tags.includes(category)
+            ).slice(0, 6);
+            
+            if (categoryGames.length > 0) {
+                grid.innerHTML = categoryGames.map(game => `
+                    <div class="game-card category-game">
+                        <div class="game-image">
+                            <img src="${game.image}" alt="${game.name}" loading="lazy">
+                        </div>
+                        <div class="game-info">
+                            <h3 class="game-title">${game.name}</h3>
+                        </div>
+                        <div class="game-actions">
+                            <a href="game.html?game=${game.slug}" class="play-btn">Play</a>
+                        </div>
+                    </div>
+                `).join('');
+                console.log(`✅ ${category} games grid populated`);
+            }
+        }
+    });
+    
+    // Populate new games grid
+    if (grids.new && grids.new.children.length === 0) {
+        const newGames = gamesDatabase.slice(-6).reverse(); // Last 6 games, newest first
+        grids.new.innerHTML = newGames.map(game => `
+            <div class="game-card new-game">
+                <div class="game-image">
+                    <img src="${game.image}" alt="${game.name}" loading="lazy">
+                    <span class="new-badge">NEW</span>
+                </div>
+                <div class="game-info">
+                    <h3 class="game-title">${game.name}</h3>
+                </div>
+                <div class="game-actions">
+                    <a href="game.html?game=${game.slug}" class="play-btn">Play</a>
+                </div>
+            </div>
+        `).join('');
+        console.log('✅ New games grid populated');
+    }
+    
+    console.log('🎉 Robust homepage initialization complete!');
+}
+
+// Enhanced initialization system
+function enhancedInitialization() {
+    console.log('🚀 Enhanced initialization system starting...');
+    
+    // Multiple initialization attempts with different triggers
+    const initAttempts = [
+        // Immediate attempt
+        () => setTimeout(robustHomepageInit, 100),
+        // After DOM content loaded
+        () => {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', robustHomepageInit);
+            } else {
+                robustHomepageInit();
+            }
+        },
+        // After window load
+        () => {
+            if (document.readyState !== 'complete') {
+                window.addEventListener('load', robustHomepageInit);
+            } else {
+                setTimeout(robustHomepageInit, 100);
+            }
+        },
+        // Delayed attempts in case of cookie blocking
+        () => setTimeout(robustHomepageInit, 1000),
+        () => setTimeout(robustHomepageInit, 2000),
+        () => setTimeout(robustHomepageInit, 5000)
+    ];
+    
+    initAttempts.forEach((attempt, index) => {
+        try {
+            attempt();
+        } catch (error) {
+            console.warn(`Init attempt ${index + 1} failed:`, error);
+        }
+    });
+    
+    // Listen for custom games data loaded event
+    window.addEventListener('gamesDataLoaded', () => {
+        console.log('📢 Games data loaded event received, triggering robust init');
+        setTimeout(robustHomepageInit, 100);
+    });
+}
+
+// Start enhanced initialization
+enhancedInitialization();
+
+// Global flag for debugging
+window.debugHomepage = robustHomepageInit;
 
 // Debug function to test API endpoints (call from browser console)
 window.debugRatingAPI = async function(gameSlug = 'cookieclicker') {
@@ -8287,3 +8788,434 @@ function initializeTipFiltering() {
     // Placeholder for tip filtering functionality
     console.log('Tip filtering initialized');
 }
+
+// Featured Game Slideshow JavaScript with Unique Names
+
+class FeaturedGameSlideshow {
+    constructor(gameSlugs = []) {
+        this.currentSlide = 0;
+        this.slides = [];
+        this.dots = [];
+        this.autoSlideInterval = null;
+        this.isTransitioning = false;
+        this.games = [];
+        this.allGames = [];
+        
+        // Default featured game slugs - customize this array
+        this.featuredGameSlugs = gameSlugs.length > 0 ? gameSlugs : [
+            '1v1lol',
+            '3dformularacing', 
+            'basketrandom'
+            // Add up to 8 game slugs here
+        ];
+        
+        this.init();
+    }
+    
+    async init() {
+        await this.loadGamesFromJSON();
+        await this.generateSlides();
+        this.startAutoSlide();
+        this.addEventListeners();
+    }
+    
+    // Load games from JSON file
+    async loadGamesFromJSON() {
+        try {
+            console.log('Loading games from JSON...');
+            const response = await fetch('games.json');
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            this.allGames = await response.json();
+            
+            // Filter games based on featured slugs
+            this.games = this.featuredGameSlugs.map(slug => {
+                const game = this.allGames.find(game => game.slug === slug);
+                if (!game) {
+                    console.warn(`Game with slug "${slug}" not found in JSON`);
+                }
+                return game;
+            }).filter(game => game !== undefined);
+            
+            console.log(`Successfully loaded ${this.games.length} featured games`);
+            
+            if (this.games.length === 0) {
+                throw new Error('No games found matching the featured slugs');
+            }
+            
+        } catch (error) {
+            console.error('Error loading games from JSON:', error);
+            this.loadFallbackGames();
+        }
+    }
+    
+    // Fallback games if JSON loading fails
+    loadFallbackGames() {
+        console.log('Loading fallback games...');
+        this.games = [
+            {
+                name: "Games Loading Error",
+                image: "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkVycm9yIExvYWRpbmcgR2FtZXM8L3RleHQ+PC9zdmc+",
+                slug: "error",
+                description: "Unable to load games from JSON file. Please check that games.json exists and is accessible."
+            }
+        ];
+    }
+    
+    // Generate slides dynamically from games data
+    async generateSlides() {
+        const container = document.querySelector('.featured-slideshow-container');
+        
+        if (!container) {
+            console.error('Featured slideshow container not found');
+            return;
+        }
+        
+        // Clear existing slides except navigation
+        const existingSlides = container.querySelectorAll('.featured-game-slide');
+        existingSlides.forEach(slide => slide.remove());
+        
+        // Generate new slides
+        this.games.forEach((game, index) => {
+            const slide = this.createSlide(game, index);
+            container.insertBefore(slide, container.querySelector('.featured-slideshow-nav'));
+        });
+        
+        // Update slides and dots references
+        this.slides = document.querySelectorAll('.featured-game-slide');
+        this.updateNavDots();
+        
+        // Show first slide
+        if (this.slides.length > 0) {
+            this.slides[0].classList.add('active');
+        }
+        
+        console.log(`Generated ${this.slides.length} featured slides`);
+    }
+    
+    // Create individual slide element
+    createSlide(game, index) {
+        const slide = document.createElement('div');
+        slide.className = index === 0 ? 'featured-game-slide active' : 'featured-game-slide';
+        slide.dataset.game = game.slug;
+        
+        // Truncate description
+        const truncatedDescription = this.truncateDescription(game.description, 120);
+        
+        // Generate the correct game URL
+        const gameUrl = `https://www.infinite-pixels.com/game.html?game=${game.slug}`;
+        
+        // Get first tag for display
+        const firstTag = game.tags && game.tags.length > 0 ? game.tags[0] : '';
+        
+        slide.innerHTML = `
+            <div class="featured-game-image-container">
+                <img src="${game.image}" alt="${game.name}" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjMzMzIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxOCIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkltYWdlIE5vdCBGb3VuZDwvdGV4dD48L3N2Zz4='">
+            </div>
+            <div class="featured-game-info-overlay">
+                <div class="featured-game-content-wrapper">
+                    <h3 class="featured-game-title-display">${game.name}</h3>
+                    ${firstTag ? `<p class="featured-game-category-label">${firstTag}</p>` : ''}
+                    <p class="featured-game-description-text">${truncatedDescription}</p>
+                    <button class="featured-game-play-button" data-game-url="${gameUrl}">
+                        <span class="featured-game-play-icon">▶</span>
+                        Play Game
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        return slide;
+    }
+    
+    // Update navigation dots
+    updateNavDots() {
+        const navContainer = document.querySelector('.featured-slideshow-nav');
+        if (!navContainer) return;
+        
+        navContainer.innerHTML = '';
+        
+        this.games.forEach((_, index) => {
+            const dot = document.createElement('span');
+            dot.className = index === 0 ? 'featured-nav-dot active' : 'featured-nav-dot';
+            dot.onclick = () => this.goToSlide(index);
+            navContainer.appendChild(dot);
+        });
+        
+        this.dots = document.querySelectorAll('.featured-nav-dot');
+    }
+    
+    // Truncate description with ellipsis
+    truncateDescription(text, maxLength) {
+        if (!text || text.length <= maxLength) return text || '';
+        return text.substr(0, maxLength).trim() + '...';
+    }
+    
+    // Go to specific slide
+    goToSlide(slideIndex) {
+        if (this.isTransitioning || slideIndex === this.currentSlide || !this.slides.length) return;
+        
+        this.isTransitioning = true;
+        
+        // Remove active class from current slide and dot
+        if (this.slides[this.currentSlide]) {
+            this.slides[this.currentSlide].classList.remove('active');
+        }
+        if (this.dots[this.currentSlide]) {
+            this.dots[this.currentSlide].classList.remove('active');
+        }
+        
+        // Update current slide index
+        this.currentSlide = slideIndex;
+        
+        // Add active class to new slide and dot
+        if (this.slides[this.currentSlide]) {
+            this.slides[this.currentSlide].classList.add('active');
+        }
+        if (this.dots[this.currentSlide]) {
+            this.dots[this.currentSlide].classList.add('active');
+        }
+        
+        // Reset transition flag after animation
+        setTimeout(() => {
+            this.isTransitioning = false;
+        }, 1000);
+        
+        // Restart auto slide timer
+        this.restartAutoSlide();
+    }
+    
+    // Navigate to next/previous slide
+    changeSlide(direction) {
+        if (!this.slides.length) return;
+        
+        let newSlide = this.currentSlide + direction;
+        
+        if (newSlide >= this.slides.length) {
+            newSlide = 0;
+        } else if (newSlide < 0) {
+            newSlide = this.slides.length - 1;
+        }
+        
+        this.goToSlide(newSlide);
+    }
+    
+    // Start automatic slideshow
+    startAutoSlide() {
+        this.autoSlideInterval = setInterval(() => {
+            if (!this.isTransitioning && this.slides.length > 0) {
+                this.changeSlide(1);
+            }
+        }, 6000); // Change slide every 6 seconds
+    }
+    
+    // Stop automatic slideshow
+    stopAutoSlide() {
+        if (this.autoSlideInterval) {
+            clearInterval(this.autoSlideInterval);
+            this.autoSlideInterval = null;
+        }
+    }
+    
+    // Restart automatic slideshow
+    restartAutoSlide() {
+        this.stopAutoSlide();
+        this.startAutoSlide();
+    }
+    
+    // Add event listeners
+    addEventListeners() {
+        // Pause auto slide on hover
+        const container = document.querySelector('.featured-slideshow-container');
+        if (container) {
+            container.addEventListener('mouseenter', () => this.stopAutoSlide());
+            container.addEventListener('mouseleave', () => this.startAutoSlide());
+        }
+        
+        // Play button click handler - FIX FOR DOUBLE OPENING
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.featured-game-play-button')) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const button = e.target.closest('.featured-game-play-button');
+                const gameUrl = button.getAttribute('data-game-url');
+                
+                if (gameUrl) {
+                    // Add button animation
+                    button.style.transform = 'scale(0.95)';
+                    
+                    setTimeout(() => {
+                        window.location.href = gameUrl;
+                    }, 150);
+                }
+            }
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                this.changeSlide(-1);
+            } else if (e.key === 'ArrowRight') {
+                this.changeSlide(1);
+            }
+        });
+        
+        // Touch/swipe support for mobile
+        this.addTouchSupport();
+    }
+    
+    // Add touch/swipe support
+    addTouchSupport() {
+        const container = document.querySelector('.featured-slideshow-container');
+        if (!container) return;
+        
+        let startX = 0;
+        let endX = 0;
+        
+        container.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+        }, { passive: true });
+        
+        container.addEventListener('touchend', (e) => {
+            endX = e.changedTouches[0].clientX;
+            this.handleSwipe(startX, endX);
+        }, { passive: true });
+    }
+    
+    // Handle swipe gestures
+    handleSwipe(startX, endX) {
+        const threshold = 50;
+        const diff = startX - endX;
+        
+        if (Math.abs(diff) > threshold) {
+            if (diff > 0) {
+                // Swipe left - next slide
+                this.changeSlide(1);
+            } else {
+                // Swipe right - previous slide
+                this.changeSlide(-1);
+            }
+        }
+    }
+    
+    // Add featured games by slug
+    addFeaturedGame(gameSlug) {
+        const game = this.allGames.find(g => g.slug === gameSlug);
+        if (game && !this.games.find(g => g.slug === gameSlug)) {
+            this.games.push(game);
+            this.generateSlides();
+            return true;
+        }
+        return false;
+    }
+    
+    // Remove featured game by slug
+    removeFeaturedGame(gameSlug) {
+        const index = this.games.findIndex(g => g.slug === gameSlug);
+        if (index !== -1) {
+            this.games.splice(index, 1);
+            if (this.currentSlide >= this.games.length) {
+                this.currentSlide = Math.max(0, this.games.length - 1);
+            }
+            this.generateSlides();
+            return true;
+        }
+        return false;
+    }
+    
+    // Update featured games list
+    setFeaturedGames(gameSlugs) {
+        this.featuredGameSlugs = gameSlugs;
+        this.games = gameSlugs.map(slug => {
+            return this.allGames.find(game => game.slug === slug);
+        }).filter(game => game !== undefined);
+        this.currentSlide = 0;
+        this.generateSlides();
+    }
+}
+
+// Global functions for button clicks with unique names
+function changeFeaturedSlide(direction) {
+    if (window.featuredGameSlideshow) {
+        window.featuredGameSlideshow.changeSlide(direction);
+    }
+}
+
+function goToFeaturedSlide(slideIndex) {
+    if (window.featuredGameSlideshow) {
+        window.featuredGameSlideshow.goToSlide(slideIndex - 1); // Convert to 0-based index
+    }
+}
+
+// Initialize slideshow when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Customize this array with your featured game slugs
+    const featuredGameSlugs = [
+        '1v1lol',
+        'bloxedio',
+        'narrowone',
+        'snowrider3d',
+        'icefishing',
+        'eggycar',
+        'holeio'
+        // Add up to 8 game slugs here
+    ];
+    
+    window.featuredGameSlideshow = new FeaturedGameSlideshow(featuredGameSlugs);
+});
+
+// Utility functions for managing featured games
+function addFeaturedGameToSlideshow(gameSlug) {
+    return window.featuredGameSlideshow?.addFeaturedGame(gameSlug) || false;
+}
+
+function removeFeaturedGameFromSlideshow(gameSlug) {
+    return window.featuredGameSlideshow?.removeFeaturedGame(gameSlug) || false;
+}
+
+function setFeaturedGamesInSlideshow(gameSlugs) {
+    if (window.featuredGameSlideshow) {
+        window.featuredGameSlideshow.setFeaturedGames(gameSlugs);
+    }
+}
+
+function getFeaturedGameBySlug(slug) {
+    return window.featuredGameSlideshow?.allGames.find(game => game.slug === slug);
+}
+
+// Handle visibility change to pause/resume slideshow
+document.addEventListener('visibilitychange', () => {
+    if (window.featuredGameSlideshow) {
+        if (document.hidden) {
+            window.featuredGameSlideshow.stopAutoSlide();
+        } else {
+            window.featuredGameSlideshow.startAutoSlide();
+        }
+    }
+});
+
+// Performance optimization: Preload next image
+function preloadNextFeaturedImage() {
+    if (window.featuredGameSlideshow && window.featuredGameSlideshow.games.length > 1) {
+        const nextIndex = (window.featuredGameSlideshow.currentSlide + 1) % window.featuredGameSlideshow.games.length;
+        const nextGame = window.featuredGameSlideshow.games[nextIndex];
+        if (nextGame) {
+            const img = new Image();
+            img.src = nextGame.image;
+        }
+    }
+}
+
+// Preload images after initialization
+setTimeout(() => {
+    if (window.featuredGameSlideshow) {
+        window.featuredGameSlideshow.games.forEach(game => {
+            const img = new Image();
+            img.src = game.image;
+        });
+    }
+}, 2000);

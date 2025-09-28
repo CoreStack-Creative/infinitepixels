@@ -4,6 +4,7 @@ console.log('📁 Loading .env from:', __dirname + '/.env');
 const express = require('express');
 const cors = require('cors');
 const { createClient } = require('@supabase/supabase-js');
+const os = require('os');
 // const multer = require('multer'); // Temporarily disabled
 const crypto = require('crypto');
 
@@ -11,6 +12,7 @@ console.log('📦 Packages loaded successfully');
 
 const app = express();
 const PORT = 3000;
+const isDevelopment = process.env.NODE_ENV !== 'production';
 
 // Load environment variables
 const supabaseUrl = process.env.SUPABASE_URL;
@@ -20,7 +22,8 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_KEY;
 console.log('🔐 Environment variables:', {
     supabaseUrl: supabaseUrl ? '✅ Loaded' : '❌ Missing',
     supabaseKey: supabaseKey ? '✅ Loaded' : '❌ Missing',
-    supabaseServiceKey: supabaseServiceKey ? '✅ Loaded' : '⚠️ Missing (optional)'
+    supabaseServiceKey: supabaseServiceKey ? '✅ Loaded' : '⚠️ Missing (optional)',
+    environment: isDevelopment ? '🔧 Development' : '🚀 Production'
 });
 
 if (!supabaseUrl || !supabaseKey) {
@@ -51,8 +54,40 @@ console.log('✅ Supabase clients initialized');
 // });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: '*', // Allow all origins for development
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+
+// Add explicit OPTIONS handling for preflight requests
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    
+    if (req.method === 'OPTIONS') {
+        res.sendStatus(200);
+    } else {
+        next();
+    }
+});
+
 app.use(express.json());
+
+// Serve static files from parent directory (where HTML files are)
+app.use(express.static('..'));
+
+// Health check endpoint
+app.get('/', (req, res) => {
+    res.json({ 
+        message: 'InfinitePixels Account Server',
+        status: 'running',
+        environment: isDevelopment ? 'development' : 'production',
+        version: '1.0.0'
+    });
+});
 
 // Routes
 
@@ -105,26 +140,58 @@ app.post('/auth/signup', async (req, res) => {
             });
         }
         
-        // Sign up user
+        // Sign up user - in development, disable email confirmation
+        const signupOptions = {
+            data: {
+                username: username
+            }
+        };
+        
+        // In development, don't require email confirmation
+        if (isDevelopment) {
+            signupOptions.emailRedirectTo = undefined;
+        } else {
+            signupOptions.emailRedirectTo = `${req.headers.origin || 'http://localhost:3000'}/auth/callback`;
+        }
+        
         const { data, error } = await supabase.auth.signUp({
             email,
             password,
-            options: {
-                data: {
-                    username: username
-                }
-            }
+            options: signupOptions
         });
         
         if (error) {
+            console.error('Supabase signup error:', error);
             return res.status(400).json({
                 error: error.message
             });
         }
         
+        // In development, try to auto-confirm user if service key is available
+        if (isDevelopment && data.user && !data.user.email_confirmed_at && supabaseServiceKey) {
+            try {
+                console.log('🔧 Development mode: Auto-confirming user email...');
+                const { error: confirmError } = await supabaseAdmin.auth.admin.updateUserById(
+                    data.user.id,
+                    { email_confirm: true }
+                );
+                
+                if (!confirmError) {
+                    console.log('✅ User email auto-confirmed for development');
+                    // Update the returned user object
+                    data.user.email_confirmed_at = new Date().toISOString();
+                } else {
+                    console.warn('⚠️ Could not auto-confirm email:', confirmError.message);
+                }
+            } catch (confirmErr) {
+                console.warn('⚠️ Auto-confirm failed:', confirmErr.message);
+            }
+        }
+        
         res.status(201).json({
-            message: 'User created successfully. Please check your email for verification.',
-            user: data.user
+            message: 'Account created successfully! You can now log in.',
+            user: data.user,
+            requiresVerification: false // Always false in development
         });
     } catch (err) {
         console.error('Signup error:', err);
@@ -151,6 +218,52 @@ app.post('/auth/login', async (req, res) => {
         });
         
         if (error) {
+            // In development, if email not confirmed, try to auto-confirm and retry
+            if (isDevelopment && error.message === 'Email not confirmed' && supabaseServiceKey) {
+                try {
+                    console.log('🔧 Development mode: Auto-confirming email for login...');
+                    
+                    // Find user by email
+                    const { data: users, error: getUserError } = await supabaseAdmin.auth.admin.listUsers();
+                    if (!getUserError) {
+                        const user = users.users.find(u => u.email === email);
+                        if (user) {
+                            // Confirm the user
+                            const { error: confirmError } = await supabaseAdmin.auth.admin.updateUserById(
+                                user.id,
+                                { email_confirm: true }
+                            );
+                            
+                            if (!confirmError) {
+                                console.log('✅ Email auto-confirmed, retrying login...');
+                                // Retry login
+                                const { data: retryData, error: retryError } = await supabase.auth.signInWithPassword({
+                                    email,
+                                    password
+                                });
+                                
+                                if (!retryError) {
+                                    // Success! Use the retry data
+                                    const { data: profile } = await supabase
+                                        .from('users')
+                                        .select('*')
+                                        .eq('id', retryData.user.id)
+                                        .single();
+                                    
+                                    return res.json({
+                                        user: retryData.user,
+                                        profile: profile,
+                                        session: retryData.session
+                                    });
+                                }
+                            }
+                        }
+                    }
+                } catch (autoConfirmErr) {
+                    console.warn('⚠️ Auto-confirm failed:', autoConfirmErr.message);
+                }
+            }
+            
             return res.status(400).json({
                 error: error.message
             });
@@ -190,6 +303,61 @@ app.post('/auth/logout', async (req, res) => {
         res.json({ message: 'Logged out successfully' });
     } catch (err) {
         console.error('Logout error:', err);
+        res.status(500).json({
+            error: 'Internal server error'
+        });
+    }
+});
+
+// POST /auth/dev-confirm - Development only: manually confirm user email
+app.post('/auth/dev-confirm', async (req, res) => {
+    if (!isDevelopment) {
+        return res.status(404).json({ error: 'Not found' });
+    }
+    
+    try {
+        const { email } = req.body;
+        
+        if (!email) {
+            return res.status(400).json({
+                error: 'Email is required'
+            });
+        }
+        
+        // Use admin client to confirm user
+        const { data: users, error: getUserError } = await supabaseAdmin.auth.admin.listUsers();
+        
+        if (getUserError) {
+            return res.status(400).json({
+                error: 'Error finding user: ' + getUserError.message
+            });
+        }
+        
+        const user = users.users.find(u => u.email === email);
+        
+        if (!user) {
+            return res.status(404).json({
+                error: 'User not found'
+            });
+        }
+        
+        const { error: confirmError } = await supabaseAdmin.auth.admin.updateUserById(
+            user.id,
+            { email_confirm: true }
+        );
+        
+        if (confirmError) {
+            return res.status(400).json({
+                error: 'Error confirming user: ' + confirmError.message
+            });
+        }
+        
+        res.json({
+            message: 'User email confirmed successfully',
+            user_id: user.id
+        });
+    } catch (err) {
+        console.error('Dev confirm error:', err);
         res.status(500).json({
             error: 'Internal server error'
         });
@@ -1218,7 +1386,25 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
     console.log('🚀 Server running on http://localhost:3000');
+    console.log('🌐 Server accessible on all network interfaces');
     console.log('✅ Account system ready for testing');
+    
+    // Show local network IP for other devices
+    const os = require('os');
+    const networkInterfaces = os.networkInterfaces();
+    const ips = [];
+    
+    Object.keys(networkInterfaces).forEach(interfaceName => {
+        networkInterfaces[interfaceName].forEach(interface => {
+            if (interface.family === 'IPv4' && !interface.internal) {
+                ips.push(interface.address);
+            }
+        });
+    });
+    
+    if (ips.length > 0) {
+        console.log('📱 For other devices, use: http://' + ips[0] + ':3000');
+    }
 });

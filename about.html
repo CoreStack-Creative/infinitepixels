@@ -72,6 +72,12 @@
 
   <!-- ❌ DO NOT put AdSense in <head> with data-cookieconsent -->
   <!-- ✅ Place AdSense inside <body>, controlled by Cookiebot -->
+  <!-- Supabase JavaScript Client -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2" data-cookieconsent="ignore"></script>
+  <script data-cookieconsent="ignore">
+    // Replace with your actual Supabase URL and anon key
+    // window.supabase = supabase.createClient('YOUR_SUPABASE_URL', 'YOUR_SUPABASE_ANON_KEY');
+  </script>
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
@@ -118,6 +124,14 @@
                             <img src="images/recent.png" alt="Recent" width="20" height="20">
                         </i>
                         <span>Recently Played</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="recommended.html">
+                        <i class="icon">
+                            <img src="images/recommended.png" alt="Recommended" width="20" height="20">
+                        </i>
+                        <span>Recommended</span>
                     </a>
                 </li>
                 <li>
@@ -233,6 +247,22 @@
            </div>
            <div class="search-results" id="searchResults">
                <!-- Search results will be displayed here -->
+           </div>
+       </div>
+
+       <!-- Account Container -->
+       <div class="account-container" id="accountContainer">
+           <div class="account-wrapper">
+               <button class="account-btn" id="accountBtn">
+                   <div class="account-avatar" id="accountAvatar">
+                       <i class="fas fa-user"></i>
+                   </div>
+               </button>
+               <div class="account-dropdown" id="accountDropdown">
+                   <div class="account-dropdown-content">
+                       <!-- Will be populated dynamically -->
+                   </div>
+               </div>
            </div>
        </div>
    </div>
@@ -436,7 +466,6 @@
        </footer>
     </main>
 
-    <script src="account-system.js"></script>
-    <script src="javascript.js"></script>
+    <script src="javascript.js" data-cookieconsent="ignore"></script>
 </body>
 </html>
