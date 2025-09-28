@@ -740,10 +740,40 @@
            });
        });
 
-       document.addEventListener('DOMContentLoaded', function() {
-        if (typeof window.renderAIRecommendations === 'function') {
-            window.renderAIRecommendations();
+       function renderLocalRecommendedGames() {
+        var section = document.getElementById('homepageRecommendedSection');
+        var grid = document.getElementById('homepageRecommendedGrid');
+        var msg = grid.querySelector('.no-recommendations-message');
+        if (!section || !grid) return;
+        var recommendedSlugs = [];
+        try {
+            recommendedSlugs = JSON.parse(localStorage.getItem('recommendedGames') || '[]');
+        } catch (e) {
+            recommendedSlugs = [];
         }
+        var gamesDatabase = window.gamesDatabase || [];
+        var recommendedGames = gamesDatabase.filter(function(game) {
+            return recommendedSlugs.includes(game.slug);
+        });
+        if (recommendedGames.length > 0) {
+            section.style.display = 'block';
+            if (msg) msg.style.display = 'none';
+            grid.innerHTML = recommendedGames.map(function(game) {
+                return `<div class="recommended-game-card">
+                    <img src="${game.image}" alt="${game.name}" style="width:100px;height:100px;object-fit:cover;border-radius:8px;">
+                    <h4>${game.name}</h4>
+                    <p>${game.description || ''}</p>
+                    <a href="game.html?game=${game.slug}" class="btn-primary">Play</a>
+                </div>`;
+            }).join('');
+        } else {
+            section.style.display = 'block';
+            if (msg) msg.style.display = 'block';
+            grid.innerHTML = msg.outerHTML;
+        }
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        renderLocalRecommendedGames();
     });
    </script>
 </body>
