@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -14,7 +15,6 @@
     referrerpolicy="no-referrer"
   />
 
-  <!-- ✅ Logo structured data for Google -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -29,7 +29,6 @@
   }
   </script>
 
-  <!-- ✅ Cookiebot CMP (must come first, only include once) -->
   <script 
     id="Cookiebot"
     src="https://consent.cookiebot.com/uc.js"
@@ -38,7 +37,6 @@
     type="text/javascript">
   </script>
 
-  <!-- ✅ Google Consent Mode v2 defaults: deny until consent given -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -50,7 +48,6 @@
     });
   </script>
 
-  <!-- ✅ Google Tag Manager (blocked until 'marketing' consent) -->
   <script type="text/plain" data-cookieconsent="marketing">
     (function (w, d, s, l, i) {
       w[l] = w[l] || [];
@@ -64,15 +61,11 @@
     })(window, document, "script", "dataLayer", "GTM-NPJXGVHN");
   </script>
 
-  <!-- ✅ Google Analytics 4 (fires only if Statistics accepted) -->
   <script type="text/plain" data-cookieconsent="statistics">
     gtag("js", new Date());
     gtag("config", "G-0YQ8BM0QCT");
   </script>
 
-  <!-- ❌ DO NOT put AdSense in <head> with data-cookieconsent -->
-  <!-- ✅ Place AdSense inside <body>, controlled by Cookiebot -->
-  <!-- Supabase JavaScript Client -->
   <script src="https://unpkg.com/@supabase/supabase-js@2" data-cookieconsent="ignore"></script>
   <script data-cookieconsent="ignore">
     // Replace with your actual Supabase URL and anon key
@@ -80,20 +73,16 @@
   </script>
 </head>
 <body>
-    <!-- Google Tag Manager (noscript) -->
     <noscript>
       <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-NPJXGVHN"
       height="0" width="0" style="display:none;visibility:hidden"></iframe>
     </noscript>
-    <!-- End Google Tag Manager (noscript) -->
 
-    <!-- ✅ AdSense script (Cookiebot auto-blocks until Marketing consent) -->
     <script async 
       src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"
       data-ad-client="ca-pub-8164325902033897">
     </script>
 
-    <!-- Sidebar -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <a href="index.html" class="logo-link">
@@ -106,9 +95,7 @@
             </a>
         </div>
 
-        <!-- ✅ Scrollable content -->
         <div class="sidebar-content">
-            <!-- Primary links -->
             <ul class="nav-links">
                 <li>
                     <a href="index.html">
@@ -176,10 +163,8 @@
                 </li>
             </ul>
 
-            <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <!-- Secondary links -->
             <ul class="nav-links secondary-links">
                 <li>
                     <a href="news.html">
@@ -246,11 +231,9 @@
                </div>
            </div>
            <div class="search-results" id="searchResults">
-               <!-- Search results will be displayed here -->
            </div>
        </div>
 
-       <!-- Account Container -->
        <div class="account-container" id="accountContainer">
            <div class="account-wrapper">
                <button class="account-btn" id="accountBtn">
@@ -260,7 +243,6 @@
                </button>
                <div class="account-dropdown" id="accountDropdown">
                    <div class="account-dropdown-content">
-                       <!-- Will be populated dynamically -->
                    </div>
                </div>
            </div>
@@ -269,7 +251,6 @@
 
     <main class="main-content" id="mainContent">
         <div class="guides-container">
-            <!-- Header Section -->
             <section class="guides-header">
                 <h1>Game Guides & Expert Tips</h1>
                 <p class="guides-description">
@@ -279,7 +260,6 @@
                 </p>
             </section>
 
-            <!-- Popular Guides Section -->
             <section class="popular-guides">
                 <h2><i class="fas fa-fire"></i> Most Popular Guides</h2>
                 <div class="guides-grid">
@@ -300,8 +280,6 @@
                                 <span class="difficulty"><i class="fas fa-star"></i> Advanced</span>
                             </div>
                             <div class="guide-stats">
-                                <span><i class="fas fa-eye"></i> 15,234 views</span>
-                                <span><i class="fas fa-thumbs-up"></i> 892 likes</span>
                             </div>
                             <div class="guide-read-btn">
                                 <i class="fas fa-arrow-right"></i>
@@ -327,8 +305,6 @@
                                 <span class="difficulty"><i class="fas fa-star"></i> Intermediate</span>
                             </div>
                             <div class="guide-stats">
-                                <span><i class="fas fa-eye"></i> 12,587 views</span>
-                                <span><i class="fas fa-thumbs-up"></i> 743 likes</span>
                             </div>
                             <div class="guide-read-btn">
                                 <i class="fas fa-arrow-right"></i>
@@ -354,8 +330,7 @@
                                 <span class="difficulty"><i class="fas fa-star"></i> Beginner</span>
                             </div>
                             <div class="guide-stats">
-                                <span><i class="fas fa-eye"></i> 9,234 views</span>
-                                <span><i class="fas fa-thumbs-up"></i> 521 likes</span>
+
                             </div>
                             <div class="guide-read-btn">
                                 <i class="fas fa-arrow-right"></i>
@@ -381,8 +356,85 @@
                                 <span class="difficulty"><i class="fas fa-star"></i> Intermediate</span>
                             </div>
                             <div class="guide-stats">
-                                <span><i class="fas fa-eye"></i> 8,145 views</span>
-                                <span><i class="fas fa-thumbs-up"></i> 634 likes</span>
+
+                            </div>
+                            <div class="guide-read-btn">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>Read Full Guide</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="guide-card clickable" data-guide="survivalrace">
+                        <div class="guide-image">
+                            <img src="images/survivalraceimage.jpg" alt="Survival Race Guide" loading="lazy">
+                            <div class="guide-category">Racing</div>
+                        </div>
+                        <div class="guide-content">
+                            <h3>Survival Race: Master All Four Game Modes</h3>
+                            <p class="guide-excerpt">
+                                Navigate treacherous terrains across Practice, Battle, Parkour, and Autoball modes in Survival Race. 
+                                Master vehicle control, learn mode-specific strategies, and discover advanced techniques 
+                                to consistently reach the finish line first.
+                            </p>
+                            <div class="guide-meta">
+                                <span class="read-time"><i class="fas fa-clock"></i> 9 min read</span>
+                                <span class="difficulty"><i class="fas fa-star"></i> Advanced</span>
+                            </div>
+                            <div class="guide-stats">
+
+                            </div>
+                            <div class="guide-read-btn">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>Read Full Guide</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="guide-card clickable" data-guide="gooberdash">
+                        <div class="guide-image">
+                            <img src="images/gooberdashimage.jpg" alt="Goober Dash Guide" loading="lazy">
+                            <div class="guide-category">Platformer</div>
+                        </div>
+                        <div class="guide-content">
+                            <h3>Goober Dash: Speedrunning & Precision Platforming</h3>
+                            <p class="guide-excerpt">
+                                Perfect your platforming skills in Goober Dash with expert movement techniques. Learn optimal 
+                                routes, advanced jump mechanics, and speedrunning strategies to shave seconds off your times 
+                                and dominate the leaderboards.
+                            </p>
+                            <div class="guide-meta">
+                                <span class="read-time"><i class="fas fa-clock"></i> 6 min read</span>
+                                <span class="difficulty"><i class="fas fa-star"></i> Intermediate</span>
+                            </div>
+                            <div class="guide-stats">
+
+                            </div>
+                            <div class="guide-read-btn">
+                                <i class="fas fa-arrow-right"></i>
+                                <span>Read Full Guide</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="guide-card clickable" data-guide="rocketbotroyale">
+                        <div class="guide-image">
+                            <img src="images/rocketbotroyaleimage.jpg" alt="Rocket Bot Royale Guide" loading="lazy">
+                            <div class="guide-category">Battle Royale</div>
+                        </div>
+                        <div class="guide-content">
+                            <h3>Rocket Bot Royale: Tank Combat & Survival Tactics</h3>
+                            <p class="guide-excerpt">
+                                Master the unique blend of battle royale and tank warfare in Rocket Bot Royale. Learn optimal 
+                                landing strategies, resource management, combat positioning, and late-game tactics to secure 
+                                victory in this competitive arena.
+                            </p>
+                            <div class="guide-meta">
+                                <span class="read-time"><i class="fas fa-clock"></i> 10 min read</span>
+                                <span class="difficulty"><i class="fas fa-star"></i> Advanced</span>
+                            </div>
+                            <div class="guide-stats">
+
                             </div>
                             <div class="guide-read-btn">
                                 <i class="fas fa-arrow-right"></i>
@@ -393,7 +445,6 @@
                 </div>
             </section>
 
-            <!-- Game Categories Guides -->
             <section class="category-guides">
                 <h2><i class="fas fa-gamepad"></i> Guides by Game Category</h2>
                 
@@ -454,7 +505,6 @@
                 </div>
             </section>
 
-            <!-- Tips and Tricks Section -->
             <section class="general-tips">
                 <h2><i class="fas fa-lightbulb"></i> Universal Gaming Tips</h2>
                 <div class="tips-grid">
@@ -492,7 +542,6 @@
                 </div>
             </section>
 
-            <!-- FAQ Section -->
             <section class="guides-faq">
                 <h2><i class="fas fa-question-circle"></i> Frequently Asked Questions</h2>
                 <div class="faq-container">
@@ -528,9 +577,8 @@
                 </div>
             </section>
 
-        </div> <!-- This closes the guides-container -->
+        </div>
 
-        <!-- Guide Detail Modals -->
         <div class="guide-modal-overlay" id="guideModalOverlay">
             <div class="guide-modal" id="guideModal">
                 <div class="guide-modal-header">
@@ -541,25 +589,19 @@
                 </div>
                 <div class="guide-modal-content">
                     <div class="guide-modal-video" id="guideModalVideo">
-                        <!-- Video will be inserted here -->
                     </div>
                     <div class="guide-modal-article" id="guideModalArticle">
-                        <!-- Article content will be inserted here -->
                     </div>
                 </div>
             </div>
         </div>
 
-       <!-- Footer Section -->
        <footer class="site-footer">
            <div class="footer-container">
-               <!-- Main Footer Content -->
                <div class="footer-content">
-                   <!-- Logo and Company Info -->
                    <div class="footer-brand">
                        <div class="footer-logo">
                            <div class="logo-icon">
-                               <!-- Use the current logo image instead of shapes -->
                                <img src="images/infinitepixleslogo.webp" alt="InfinitePixels Logo" width="48" height="48" style="display:block;">
                            </div>
                            <div class="logo-text">
@@ -574,7 +616,7 @@
                        </p>
                        <div class="social-links">
                            <a href="https://www.tiktok.com/@infinitepixelsgames" class="social-link" aria-label="TikTok">
-                              <svg viewBox="0 0 512 512" width="20" height="20">
+                                                             <svg viewBox="0 0 512 512" width="20" height="20">
                                    <path fill="currentColor" d="M412.19,118.66a109.27,109.27,0,0,1-9.45-5.5,132.87,132.87,0,0,1-24.27-20.62c-18.1-20.71-24.86-41.72-27.35-56.43h.1C349.14,23.9,350,16,350.13,16H267.69V334.78c0,4.28,0,8.51-.18,12.69,0,.52-.05,1-.08,1.56,0,.23,0,.47-.05.71,0,.06,0,.12,0,.18a70,70,0,0,1-35.22,55.56,68.8,68.8,0,0,1-34.11,9c-38.41,0-69.54-31.32-69.54-70s31.13-70,69.54-70a68.9,68.9,0,0,1,21.41,3.39l.1-83.94a153.14,153.14,0,0,0-118,34.52,161.79,161.79,0,0,0-35.3,43.53c-3.48,6-16.61,30.11-18.2,69.24-1,22.21,5.67,45.22,8.85,54.73v.2c2,5.6,9.75,24.71,22.38,40.82A167.53,167.53,0,0,0,115,470.66v-.2l.2.2C155.11,497.78,199.36,496,199.36,496c7.66-.31,33.32,0,62.46-13.81,32.32-15.31,50.72-38.12,50.72-38.12a158.46,158.46,0,0,0,27.64-45.93c7.46-19.61,9.95-43.13,9.95-52.53V176.49c1,.6,14.32,9.41,14.32,9.41s19.19,12.3,49.13,20.31c21.48,5.7,50.42,6.9,50.42,6.9V131.27C453.86,132.37,433.27,129.17,412.19,118.66Z"/>
                                </svg>
                            </a>                           
@@ -586,8 +628,6 @@
                         </div>
                    </div>
 
-
-                   <!-- Quick Links -->
                    <div class="footer-links">
                        <div class="link-column">
                            <h4 class="link-title">Games</h4>
@@ -599,7 +639,6 @@
                            </ul>
                        </div>
 
-
                        <div class="link-column">
                            <h4 class="link-title">Support</h4>
                            <ul class="link-list">
@@ -609,7 +648,6 @@
                                <li><a href="game-guides.html" class="footer-link">Guides</a></li>
                            </ul>
                        </div>
-
 
                        <div class="link-column">
                            <h4 class="link-title">Company</h4>
@@ -623,8 +661,6 @@
                    </div>
                </div>
 
-
-               <!-- Footer Bottom -->
                <div class="footer-bottom">
                    <div class="footer-bottom-content">
                        <p class="copyright">
@@ -643,21 +679,15 @@
        </footer>
     </main>
 
-    <script src="javascript.js" data-cookieconsent="ignore"></script>
+<script src="javascript.js" data-cookieconsent="ignore"></script>
     
     <script>
+      document.addEventListener('DOMContentLoaded', function() {
         // Guide content data
         const guideData = {
             '1v1lol': {
                 title: 'Complete 1v1.LOL Guide: Building & Combat Mastery',
-                video: `
-                    <div class="video-player">
-                        <video controls width="100%" height="400">
-                            <source src="images/1v1lolrec.mov" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
-                `,
+                videoId: 'M2ZTbHhAY-A', // Replace with your YouTube video ID
                 article: `
                     <div class="guide-article-content">
                         <div class="guide-meta-bar">
@@ -708,14 +738,7 @@
             },
             'cookieclicker': {
                 title: 'Cookie Clicker Optimization: Maximize Your Production',
-                video: `
-                    <div class="video-player">
-                        <video controls width="100%" height="400">
-                            <source src="images/cookieclickerrec.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
-                `,
+                videoId: '_B3AaEtlxQE', // Replace with your YouTube video ID
                 article: `
                     <div class="guide-article-content">
                         <div class="guide-meta-bar">
@@ -769,14 +792,7 @@
             },
             'basketrandom': {
                 title: 'Basket Random: Physics-Based Basketball Mastery',
-                video: `
-                    <div class="video-player">
-                        <video controls width="100%" height="400">
-                            <source src="images/basketrandomrec.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
-                `,
+                videoId: 'olnktlLIjJQ', // Replace with your YouTube video ID
                 article: `
                     <div class="guide-article-content">
                         <div class="guide-meta-bar">
@@ -830,14 +846,7 @@
             },
             'polytrack': {
                 title: 'Polytrack Mastery: High-Speed Racing Excellence',
-                video: `
-                    <div class="video-player">
-                        <video controls width="100%" height="400">
-                            <source src="images/polytrackrec.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
-                `,
+                videoId: 'htfWxicMgm0', // Replace with your YouTube video ID
                 article: `
                     <div class="guide-article-content">
                         <div class="guide-meta-bar">
@@ -910,6 +919,307 @@
                         </div>
                     </div>
                 `
+            },
+            'survivalrace': {
+                title: 'Survival Race: Master All Four Game Modes',
+                videoId: 'H9yx5gO3z7E', // Replace with your YouTube video ID
+                article: `
+                    <div class="guide-article-content">
+                        <div class="guide-meta-bar">
+                            <span class="difficulty-badge advanced">Advanced</span>
+                            <span class="read-time"><i class="fas fa-clock"></i> 9 min read</span>
+                            <span class="views"><i class="fas fa-eye"></i> 11,892 views</span>
+                        </div>
+                        
+                        <h3>Conquer All Four Unique Game Modes</h3>
+                        <p>Survival Race challenges players to navigate treacherous obstacle courses across four distinct game modes: Practice, Battle, Parkour, and Autoball. Each mode requires different skills and strategies to master.</p>
+                        
+                        <h4><i class="fas fa-car-crash"></i> Vehicle Control Fundamentals</h4>
+                        <ul class="guide-list">
+                            <li><strong>Throttle Modulation:</strong> Learn to feather the gas pedal for precise control over obstacles</li>
+                            <li><strong>Weight Distribution:</strong> Use acceleration and braking to shift your vehicle's weight for better traction</li>
+                            <li><strong>Air Control:</strong> Adjust your vehicle's angle mid-air using throttle and brake inputs</li>
+                            <li><strong>Recovery Techniques:</strong> Master the art of flipping back onto your wheels after crashes</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-dumbbell"></i> Practice Mode Mastery</h4>
+                        <p>Practice mode lets you learn tracks without the pressure of competition:</p>
+                        <ul class="guide-list">
+                            <li><strong>Track Memorization:</strong> Take time to learn obstacle positions and timing</li>
+                            <li><strong>Line Optimization:</strong> Experiment with different paths to find the fastest routes</li>
+                            <li><strong>Checkpoint Familiarity:</strong> Know where checkpoints are for recovery planning</li>
+                            <li><strong>Skill Building:</strong> Focus on mastering difficult sections before competitive play</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-skull-crossbones"></i> Battle Mode Tactics</h4>
+                        <p>Battle mode adds competitive racing where contact is allowed:</p>
+                        <ul class="guide-list">
+                            <li><strong>Aggressive Positioning:</strong> Block opponents from passing on narrow sections</li>
+                            <li><strong>Bump Strategy:</strong> Use calculated bumps to slow down competitors</li>
+                            <li><strong>Defensive Driving:</strong> Protect your position while maintaining speed</li>
+                            <li><strong>Overtaking Zones:</strong> Identify safe areas to pass without crashing</li>
+                            <li><strong>Risk Management:</strong> Know when to fight and when to focus on your own race</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-mountain"></i> Parkour Mode Excellence</h4>
+                        <p>Parkour mode features extreme obstacle courses requiring precision:</p>
+                        <ul class="guide-list">
+                            <li><strong>Patience Over Speed:</strong> Take your time on difficult sections</li>
+                            <li><strong>Balance Control:</strong> Master maintaining vehicle balance on narrow platforms</li>
+                            <li><strong>Jump Precision:</strong> Learn exact speeds needed for gap jumps</li>
+                            <li><strong>Checkpoint Strategy:</strong> Use checkpoints wisely to avoid repeating long sections</li>
+                            <li><strong>Momentum Management:</strong> Carry just enough speed without overshooting platforms</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-futbol"></i> Autoball Mode Strategy</h4>
+                        <p>Autoball combines racing with soccer mechanics:</p>
+                        <ul class="guide-list">
+                            <li><strong>Ball Control:</strong> Learn to push the ball toward the goal while maintaining speed</li>
+                            <li><strong>Team Coordination:</strong> Work with teammates to set up scoring opportunities</li>
+                            <li><strong>Defensive Positioning:</strong> Block opponent shots while transitioning to offense</li>
+                            <li><strong>Boost Management:</strong> Save boost for critical moments when pushing the ball</li>
+                            <li><strong>Goal Scoring:</strong> Angle your vehicle to direct the ball into the net</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-exclamation-triangle"></i> Common Obstacle Solutions</h4>
+                        <ul class="guide-list">
+                            <li><strong>See-Saws:</strong> Approach at moderate speed and balance on the center pivot point</li>
+                            <li><strong>Rotating Platforms:</strong> Match your speed to the platform's rotation and enter smoothly</li>
+                            <li><strong>Gap Jumps:</strong> Build speed but avoid excessive velocity that causes loss of control</li>
+                            <li><strong>Swinging Hammers:</strong> Time your approach and accelerate through gaps quickly</li>
+                            <li><strong>Moving Barriers:</strong> Watch patterns and find the rhythm before committing</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-map-marked-alt"></i> Track-Specific Tips</h4>
+                        <p><strong>Desert Tracks:</strong> Watch for loose sand that reduces traction in corners.</p>
+                        <p><strong>Ice Tracks:</strong> Anticipate slides early and make gentler steering inputs.</p>
+                        <p><strong>Urban Tracks:</strong> Use walls as guides but avoid direct collisions.</p>
+                        <p><strong>Sky Tracks:</strong> Focus on staying centered - falling means checkpoint restarts.</p>
+                        
+                        <h4><i class="fas fa-brain"></i> Mental Approach</h4>
+                        <ul class="guide-list">
+                            <li><strong>Stay Calm:</strong> Panic leads to over-correction and more crashes</li>
+                            <li><strong>Learn from Failure:</strong> Each crash teaches you about obstacle timing</li>
+                            <li><strong>Mode Selection:</strong> Start with Practice, move to Battle, master Parkour, then try Autoball</li>
+                            <li><strong>Adapt Quickly:</strong> Each track variation requires slight strategy adjustments</li>
+                        </ul>
+                        
+                        <div class="guide-tip">
+                            <i class="fas fa-lightbulb"></i>
+                            <strong>Pro Tip:</strong> Master Practice mode first to learn all track obstacles, then take those skills into competitive Battle and Parkour modes!
+                        </div>
+                    </div>
+                `
+            },
+            'gooberdash': {
+                title: 'Goober Dash: Speedrunning & Precision Platforming',
+                videoId: 'eyOgyYVQKYk', // Replace with your YouTube video ID
+                article: `
+                    <div class="guide-article-content">
+                        <div class="guide-meta-bar">
+                            <span class="difficulty-badge intermediate">Intermediate</span>
+                            <span class="read-time"><i class="fas fa-clock"></i> 6 min read</span>
+                            <span class="views"><i class="fas fa-eye"></i> 7,543 views</span>
+                        </div>
+                        
+                        <h3>Master Precision Platforming and Speed Techniques</h3>
+                        <p>Goober Dash combines fast-paced platforming with precise movement mechanics. Whether you're aiming for level completion or speedrun records, this guide will help you achieve mastery through advanced techniques and optimal routing.</p>
+                        
+                        <h4><i class="fas fa-running"></i> Core Movement Mechanics</h4>
+                        <ul class="guide-list">
+                            <li><strong>Jump Timing:</strong> Press jump just as you reach platform edges for maximum distance</li>
+                            <li><strong>Variable Jump Height:</strong> Hold jump longer for higher jumps, tap briefly for precise short hops</li>
+                            <li><strong>Momentum Preservation:</strong> Maintain running speed through jumps by not releasing directional input</li>
+                            <li><strong>Wall Sliding:</strong> Touch walls while falling to slow descent and set up wall jumps</li>
+                            <li><strong>Dash Mechanics:</strong> Use your dash ability at the peak of jumps for maximum horizontal distance</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-bolt"></i> Advanced Techniques</h4>
+                        <ul class="guide-list">
+                            <li><strong>Dash Jumping:</strong> Combine dash and jump simultaneously for explosive distance</li>
+                            <li><strong>Corner Boosting:</strong> Use corners to redirect momentum without losing speed</li>
+                            <li><strong>Buffered Inputs:</strong> Press jump slightly before landing to execute frame-perfect jumps</li>
+                            <li><strong>Coyote Time:</strong> You can jump for a brief moment after leaving a platform edge</li>
+                            <li><strong>Chain Dashing:</strong> String together multiple dash resets for continuous high-speed movement</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-route"></i> Level Navigation & Routing</h4>
+                        <ul class="guide-list">
+                            <li><strong>Route Planning:</strong> Identify the critical path that minimizes backtracking</li>
+                            <li><strong>Collectible Priority:</strong> Determine which collectibles are worth grabbing vs. which slow you down</li>
+                            <li><strong>Safe vs. Risky:</strong> Learn which shortcuts are consistent enough for speedruns</li>
+                            <li><strong>Checkpoint Management:</strong> Know where checkpoints are to take calculated risks</li>
+                            <li><strong>Enemy Patterns:</strong> Memorize enemy positions and timing to navigate without slowing</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-clock"></i> Speedrunning Strategies</h4>
+                        <ul class="guide-list">
+                            <li><strong>Segment Practice:</strong> Break levels into sections and perfect each individually</li>
+                            <li><strong>Movement Optimization:</strong> Eliminate unnecessary movements and inputs</li>
+                            <li><strong>Risk Assessment:</strong> Decide which tricks are worth attempting based on time save</li>
+                            <li><strong>Consistency Over Speed:</strong> A slower but reliable strategy often beats a fast but risky one</li>
+                            <li><strong>Mental Reset:</strong> Don't let one bad run affect your next attempt</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-skull-crossbones"></i> Hazard Navigation</h4>
+                        <ul class="guide-list">
+                            <li><strong>Spike Timing:</strong> Learn the rhythm of moving hazards to pass safely</li>
+                            <li><strong>Saw Blades:</strong> These typically have predictable patterns - memorize and navigate confidently</li>
+                            <li><strong>Falling Platforms:</strong> Don't panic - you usually have more time than you think</li>
+                            <li><strong>Moving Platforms:</strong> Jump onto them from the side they're moving toward for easier landing</li>
+                            <li><strong>Laser Walls:</strong> Time your movements to pass through gaps in rotating patterns</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-star"></i> Collectible Strategies</h4>
+                        <ul class="guide-list">
+                            <li><strong>Star Routes:</strong> Plan paths that collect stars without major detours</li>
+                            <li><strong>Time vs. Completion:</strong> Decide if you're going for speed or 100% completion</li>
+                            <li><strong>Secret Areas:</strong> Look for suspicious walls or platforms that hint at hidden paths</li>
+                            <li><strong>Risk/Reward:</strong> Some collectibles require dangerous jumps - know when to skip them</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-trophy"></i> Boss Battle Tips</h4>
+                        <ul class="guide-list">
+                            <li><strong>Pattern Recognition:</strong> Bosses have predictable attack patterns - learn and exploit them</li>
+                            <li><strong>Safe Zones:</strong> Identify areas where you can safely avoid attacks</li>
+                            <li><strong>Attack Windows:</strong> Strike immediately after boss attacks when they're vulnerable</li>
+                            <li><strong>Stay Mobile:</strong> Constant movement makes you harder to hit</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-chart-line"></i> Practice Techniques</h4>
+                        <ul class="guide-list">
+                            <li><strong>Focused Sessions:</strong> Work on one difficult section at a time until mastered</li>
+                            <li><strong>Slow-Mo Practice:</strong> If available, use practice modes to understand mechanics</li>
+                            <li><strong>Replay Analysis:</strong> Watch your own runs to identify inefficiencies</li>
+                            <li><strong>Muscle Memory:</strong> Repeat sections until movements become automatic</li>
+                        </ul>
+                        
+                        <div class="guide-tip">
+                            <i class="fas fa-lightbulb"></i>
+                            <strong>Pro Tip:</strong> Use practice mode to learn difficult sections without checkpoint penalties, then apply that knowledge to full runs!
+                        </div>
+                    </div>
+                `
+            },
+            'rocketbotroyale': {
+                title: 'Rocket Bot Royale: Tank Combat & Survival Tactics',
+                videoId: '7eIppFAFHlY', // Replace with your YouTube video ID
+                article: `
+                    <div class="guide-article-content">
+                        <div class="guide-meta-bar">
+                            <span class="difficulty-badge advanced">Advanced</span>
+                            <span class="read-time"><i class="fas fa-clock"></i> 10 min read</span>
+                            <span class="views"><i class="fas fa-eye"></i> 13,621 views</span>
+                        </div>
+                        
+                        <h3>Dominate the Tank Battle Royale Arena</h3>
+                        <p>Rocket Bot Royale uniquely combines battle royale mechanics with tank-based combat, creating a strategic environment where positioning, resource management, and tactical decision-making are just as important as shooting accuracy. Master these elements to consistently reach the top spots.</p>
+                        
+                        <h4><i class="fas fa-parachute-box"></i> Landing Strategy & Early Game</h4>
+                        <ul class="guide-list">
+                            <li><strong>Landing Zone Selection:</strong> Choose areas with good loot density but moderate player traffic</li>
+                            <li><strong>Hot Drop vs. Safe Drop:</strong> Hot drops offer better loot but higher risk - assess your skill level</li>
+                            <li><strong>Initial Looting Priority:</strong> Focus on weapons first, then armor, then utility items</li>
+                            <li><strong>Early Engagements:</strong> Avoid fights until you have basic equipment unless absolutely necessary</li>
+                            <li><strong>Resource Collection:</strong> Gather materials for tank upgrades before zone forces movement</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-crosshairs"></i> Combat Mechanics Mastery</h4>
+                        <ul class="guide-list">
+                            <li><strong>Projectile Physics:</strong> Account for bullet drop and travel time when aiming</li>
+                            <li><strong>Leading Targets:</strong> Aim ahead of moving enemies based on their speed and distance</li>
+                            <li><strong>Turret Rotation:</strong> Pre-aim your turret toward expected enemy positions</li>
+                            <li><strong>Splash Damage:</strong> Use rockets' area damage by aiming at ground near enemies</li>
+                            <li><strong>Weapon Switching:</strong> Know when to use primary vs. secondary weapons for different situations</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-shield-alt"></i> Tank Upgrade Strategies</h4>
+                        <ul class="guide-list">
+                            <li><strong>Balanced Build:</strong> Distribute upgrades between firepower, armor, and mobility</li>
+                            <li><strong>Early Game Priority:</strong> Focus on mobility upgrades to rotate safely</li>
+                            <li><strong>Mid Game Priority:</strong> Balance offense and defense as player count decreases</li>
+                            <li><strong>Late Game Priority:</strong> Maximize armor and firepower for final confrontations</li>
+                            <li><strong>Situational Builds:</strong> Adapt upgrades based on available resources and play style</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-map-marked-alt"></i> Map Awareness & Positioning</h4>
+                        <ul class="guide-list">
+                            <li><strong>High Ground Advantage:</strong> Elevated positions provide better sightlines and cover</li>
+                            <li><strong>Cover Utilization:</strong> Always position near destructible or solid cover</li>
+                            <li><strong>Zone Positioning:</strong> Stay near zone center to minimize forced rotations</li>
+                            <li><strong>Escape Routes:</strong> Always plan multiple retreat paths before engaging</li>
+                            <li><strong>Chokepoint Control:</strong> Hold narrow passages to funnel and eliminate enemies</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-bullseye"></i> Advanced Combat Techniques</h4>
+                        <ul class="guide-list">
+                            <li><strong>Peek Shooting:</strong> Fire from behind cover and immediately retreat</li>
+                            <li><strong>Strafe Shooting:</strong> Move unpredictably while maintaining accurate fire</li>
+                            <li><strong>Bait and Punish:</strong> Expose yourself briefly to draw enemy fire, then counter-attack</li>
+                            <li><strong>Third Party Prevention:</strong> Avoid prolonged fights that attract other players</li>
+                            <li><strong>Finishing Strategies:</strong> Push aggressively on weakened enemies before they heal</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-boxes"></i> Resource Management</h4>
+                        <ul class="guide-list">
+                            <li><strong>Ammo Conservation:</strong> Only engage when you have tactical advantage</li>
+                            <li><strong>Material Priority:</strong> Upgrade essentials first, luxuries later</li>
+                            <li><strong>Healing Items:</strong> Use cover to heal safely, never in open areas</li>
+                            <li><strong>Loot Timing:</strong> Quickly loot defeated enemies but stay vigilant</li>
+                            <li><strong>Inventory Management:</strong> Drop excess items to make room for critical supplies</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-circle-notch"></i> Zone Rotation Tactics</h4>
+                        <ul class="guide-list">
+                            <li><strong>Early Rotation:</strong> Move toward safe zone before it closes to avoid damage</li>
+                            <li><strong>Path Selection:</strong> Choose routes with cover and avoid open areas</li>
+                            <li><strong>Edge Play:</strong> Stay near zone edge to attack players forced to rotate</li>
+                            <li><strong>Storm Damage Management:</strong> Know how much damage you can tank if needed</li>
+                            <li><strong>Rotation Timing:</strong> Move during combat distractions when enemies are distracted</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-trophy"></i> End Game Strategies</h4>
+                        <ul class="guide-list">
+                            <li><strong>Final Circle Positioning:</strong> Secure central position with cover before final zone</li>
+                            <li><strong>Tank Management:</strong> Preserve armor and ammo for final confrontations</li>
+                            <li><strong>Patience vs. Aggression:</strong> Let remaining players weaken each other when possible</li>
+                            <li><strong>1v1 Techniques:</strong> Use superior positioning and patience to outlast final opponent</li>
+                            <li><strong>Victory Conditions:</strong> Sometimes survival matters more than eliminations</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-brain"></i> Mental Game & Decision Making</h4>
+                        <ul class="guide-list">
+                            <li><strong>Stay Calm:</strong> Panic leads to poor decisions and missed shots</li>
+                            <li><strong>Adapt Strategies:</strong> Adjust tactics based on remaining players and zone</li>
+                            <li><strong>Learn from Deaths:</strong> Analyze what went wrong in each engagement</li>
+                            <li><strong>Risk Assessment:</strong> Know when to engage and when to disengage</li>
+                            <li><strong>Long-Term Thinking:</strong> Every decision should increase your win probability</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-users"></i> Team Mode Coordination</h4>
+                        <ul class="guide-list">
+                            <li><strong>Communication:</strong> Call out enemy positions and coordinate attacks</li>
+                            <li><strong>Role Assignment:</strong> Designate scouts, attackers, and support players</li>
+                            <li><strong>Crossfire Positioning:</strong> Attack enemies from multiple angles</li>
+                            <li><strong>Revive Priority:</strong> Protect downed teammates and revive when safe</li>
+                            <li><strong>Resource Sharing:</strong> Distribute loot based on team needs</li>
+                        </ul>
+                        
+                        <h4><i class="fas fa-graduation-cap"></i> Training & Improvement</h4>
+                        <ul class="guide-list">
+                            <li><strong>Aim Practice:</strong> Spend time in training mode perfecting shot accuracy</li>
+                            <li><strong>Replay Analysis:</strong> Watch your games to identify mistakes</li>
+                            <li><strong>Watch Top Players:</strong> Learn strategies from leaderboard players</li>
+                            <li><strong>Experiment Builds:</strong> Try different upgrade paths to find your style</li>
+                            <li><strong>Consistent Practice:</strong> Regular play sessions improve mechanical skills</li>
+                        </ul>
+                        
+                        <div class="guide-tip">
+                            <i class="fas fa-lightbulb"></i>
+                            <strong>Pro Tip:</strong> Early game survival is more important than early eliminations. Focus on gearing up and positioning yourself for mid-game success!
+                        </div>
+                    </div>
+                `
             }
         };
 
@@ -933,7 +1243,23 @@
             if (!guide) return;
 
             modalTitle.textContent = guide.title;
-            modalVideo.innerHTML = guide.video;
+            
+            // Create YouTube embed iframe
+            if (guide.videoId) {
+                modalVideo.innerHTML = `
+                    <div class="video-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+                        <iframe 
+                            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                            src="https://www.youtube.com/embed/${guide.videoId}" 
+                            title="YouTube video player" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                `;
+            }
+            
             modalArticle.innerHTML = guide.article;
             
             modal.style.display = 'flex';
@@ -944,12 +1270,8 @@
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';
             
-            // Pause any videos
-            const videos = modal.querySelectorAll('video');
-            videos.forEach(video => {
-                video.pause();
-                video.currentTime = 0;
-            });
+            // Clear video to stop playback
+            modalVideo.innerHTML = '';
         }
 
         // Close modal handlers
@@ -983,6 +1305,7 @@
                 }
             }
         });
+      });
     </script>
 
     <!-- Load theme from settings -->
